@@ -68,18 +68,6 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Engine\Texture\RenderTexture2D.cpp" />
-    <ClCompile Include="application\GameObject\Chair\Chair.cpp">
-      <Filter>Application</Filter>
-    </ClCompile>
-    <ClCompile Include="application\Scene\TD3_4month\CoffeeScene.cpp">
-      <Filter>Application</Filter>
-    </ClCompile>
-    <ClCompile Include="application\GameObject\YoshidaMath\CollisionManager\Collider.cpp">
-      <Filter>Application</Filter>
-    </ClCompile>
-    <ClCompile Include="application\GameObject\YoshidaMath\CollisionManager\CollisionManager.cpp">
-      <Filter>Application</Filter>
-    </ClCompile>
     <ClCompile Include="Engine\Camera\Camera.cpp">
       <Filter>Engine\Camera</Filter>
     </ClCompile>
@@ -113,26 +101,8 @@
     <ClCompile Include="Engine\BaseScene\FrameWork.cpp">
       <Filter>Engine\BaseScene</Filter>
     </ClCompile>
-    <ClCompile Include="application\GameObject\Flashlight\Flashlight.cpp">
-      <Filter>Application</Filter>
-    </ClCompile>
-    <ClCompile Include="application\GameObject\Edamame\Edamame.cpp">
-      <Filter>Application</Filter>
-    </ClCompile>
-    <ClCompile Include="application\GameObject\YoshidaMath\Easing.cpp">
-      <Filter>Application</Filter>
-    </ClCompile>
     <ClCompile Include="Engine\base\GameBase.cpp">
       <Filter>Engine\Base</Filter>
-    </ClCompile>
-    <ClCompile Include="application\Scene\Game\Game.cpp">
-      <Filter>Application</Filter>
-    </ClCompile>
-    <ClCompile Include="application\Scene\GameOverScene.cpp">
-      <Filter>Application</Filter>
-    </ClCompile>
-    <ClCompile Include="application\Scene\GameScene.cpp">
-      <Filter>Application</Filter>
     </ClCompile>
     <ClCompile Include="application\GameTimer\GameTimer.cpp">
       <Filter>Application</Filter>
@@ -160,12 +130,6 @@
     </ClCompile>
     <ClCompile Include="externals\imgui\imgui_widgets.cpp">
       <Filter>Extarnals</Filter>
-    </ClCompile>
-    <ClCompile Include="application\GameObject\Key\Key.cpp">
-      <Filter>Application</Filter>
-    </ClCompile>
-    <ClCompile Include="application\GameObject\KeyBindConfig.cpp">
-      <Filter>Application</Filter>
     </ClCompile>
     <ClCompile Include="Engine\Log\Logger.cpp">
       <Filter>Engine\Logger</Filter>
@@ -314,24 +278,18 @@
     <ClCompile Include="Engine\Texture\TextureManager.cpp">
       <Filter>Engine\Texture</Filter>
     </ClCompile>
+    <ClCompile Include="application\Scene\Game\Game.cpp">
+      <Filter>Application\Game</Filter>
+    </ClCompile>
+    <ClCompile Include="application\Scene\GameOverScene.cpp">
+      <Filter>Application\GameOverScene</Filter>
+    </ClCompile>
+    <ClCompile Include="application\Scene\GameScene.cpp">
+      <Filter>Application\GameScene</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Engine\Texture\RenderTexture2D.h" />
-    <ClInclude Include="application\GameObject\Chair\Chair.h">
-      <Filter>Application</Filter>
-    </ClInclude>
-    <ClInclude Include="application\Scene\TD3_4month\CoffeeScene.h">
-      <Filter>Application</Filter>
-    </ClInclude>
-    <ClInclude Include="application\GameObject\YoshidaMath\CollisionManager\Collider.h">
-      <Filter>Application</Filter>
-    </ClInclude>
-    <ClInclude Include="application\GameObject\YoshidaMath\CollisionManager\CollisionConfig.h">
-      <Filter>Application</Filter>
-    </ClInclude>
-    <ClInclude Include="application\GameObject\YoshidaMath\CollisionManager\CollisionManager.h">
-      <Filter>Application</Filter>
-    </ClInclude>
     <ClInclude Include="Engine\Camera\Camera.h">
       <Filter>Engine\Camera</Filter>
     </ClInclude>
@@ -380,28 +338,10 @@
     <ClInclude Include="Engine\BaseScene\FrameWork.h">
       <Filter>Engine\BaseScene</Filter>
     </ClInclude>
-    <ClInclude Include="application\GameObject\Flashlight\Flashlight.h">
-      <Filter>Application</Filter>
-    </ClInclude>
-    <ClInclude Include="application\GameObject\Edamame\Edamame.h">
-      <Filter>Application</Filter>
-    </ClInclude>
-    <ClInclude Include="application\GameObject\YoshidaMath\Easing.h">
-      <Filter>Application</Filter>
-    </ClInclude>
     <ClInclude Include="Engine\base\GameBase.h">
       <Filter>Engine\Base</Filter>
     </ClInclude>
     <ClInclude Include="application\GameTimer\GameTimer.h">
-      <Filter>Application</Filter>
-    </ClInclude>
-    <ClInclude Include="application\Scene\Game\Game.h">
-      <Filter>Application</Filter>
-    </ClInclude>
-    <ClInclude Include="application\Scene\GameOverScene.h">
-      <Filter>Application</Filter>
-    </ClInclude>
-    <ClInclude Include="application\Scene\GameScene.h">
       <Filter>Application</Filter>
     </ClInclude>
     <ClInclude Include="Engine\Editor\Hierarchy.h">
@@ -430,9 +370,6 @@
     </ClInclude>
     <ClInclude Include="externals\imgui\imstb_textedit.h">
       <Filter>Extarnals</Filter>
-    </ClInclude>
-    <ClInclude Include="application\GameObject\KeyBindConfig.h">
-      <Filter>Application</Filter>
     </ClInclude>
     <ClInclude Include="Engine\Log\Logger.h">
       <Filter>Engine\Logger</Filter>
@@ -614,6 +551,15 @@
     <ClInclude Include="Engine\Texture\TextureManager.h">
       <Filter>Engine\Texture</Filter>
     </ClInclude>
+    <ClInclude Include="application\Scene\Game\Game.h">
+      <Filter>Application\Game</Filter>
+    </ClInclude>
+    <ClInclude Include="application\Scene\GameOverScene.h">
+      <Filter>Application\GameOverScene</Filter>
+    </ClInclude>
+    <ClInclude Include="application\Scene\GameScene.h">
+      <Filter>Application\GameScene</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include=".editorconfig" />
@@ -705,6 +651,15 @@
     </Filter>
     <Filter Include="Engine\Texture\Sprite">
       <UniqueIdentifier>{53b3abf0-0600-4328-aa87-cb9be84d6181}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Application\Game">
+      <UniqueIdentifier>{0b9e5e02-40ef-4487-94b8-040e092c0250}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Application\GameOverScene">
+      <UniqueIdentifier>{96e0ee46-1ba3-45ff-b6d2-2ab42ddef23c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Application\GameScene">
+      <UniqueIdentifier>{23b1100c-d156-41f2-b59d-c02f9ff70aba}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>

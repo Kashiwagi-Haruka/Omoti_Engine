@@ -3,7 +3,7 @@
 
 void Game::Initialize() {
 	FrameWork::Initialize();
-	GameBase::GetInstance()->Initialize(L"3102_p-再打刻", 1280, 720);
+	GameBase::GetInstance()->Initialize(L"LE2A_04_カシワギ_ハルカ", 1280, 720);
 
 	SetUnhandledExceptionFilter(GameBase::GetInstance()->ExportDump);
 
@@ -14,8 +14,7 @@ void Game::Initialize() {
 	//SceneManager::GetInstance()->ChangeScene("Game");
 	/*SceneManager::GetInstance()->ChangeScene("Result");*/
 	/*SceneManager::GetInstance()->ChangeScene("Tutorial");*/
-	//4か月開発のシーンの作成
-	/*SceneManager::GetInstance()->ChangeScene("ShadowGame");*/
+
 }
 
 void Game::Update() {
