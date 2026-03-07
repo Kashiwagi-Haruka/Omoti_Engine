@@ -282,7 +282,6 @@ copy "$(WindowsSdkDir)\bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)\
   <ItemGroup>
     <ClInclude Include="application\CameraController\CameraController.h" />
     <ClInclude Include="application\CollisionManager\CollisionManager.h" />
-    <ClInclude Include="application\GameObject\Key\Key.h" />
     <ClInclude Include="application\Object\Background\SkyDome.h" />
     <ClInclude Include="application\Object\Boss\Boss.h" />
     <ClInclude Include="application\Object\Character\CharacterDisplay\CharacterDisplay.h" />
