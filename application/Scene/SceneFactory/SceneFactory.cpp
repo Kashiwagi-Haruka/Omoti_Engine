@@ -1,6 +1,6 @@
 #include "SceneFactory.h"
 #include "Scene/GameOverScene.h"
-#include "Scene/GameScene.h"
+#include "Scene/GameScene/GameScene.h"
 #include "Scene/ResultScene.h"
 #include "Scene/SampleScene/SampleScene.h"
 #include "Scene/TitleScene.h"

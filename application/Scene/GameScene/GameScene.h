@@ -1,20 +1,21 @@
 #pragma once
 #include "Audio.h"
 #include "BaseScene.h"
-#include "Object/Character/Model/CharacterModel.h"
 #include "CollisionManager/CollisionManager.h"
 #include "GameBase.h"
 #include "Light/DirectionalLight.h"
 #include "Light/PointLight.h"
 #include "Light/SpotLight.h"
+#include "Object/Character/CharacterDisplay/CharacterDisplay.h"
+#include "Object/Character/Model/CharacterModel.h"
 #include "Object/MapchipField.h"
 #include "Object3d/Object3d.h"
 #include "Particles/Particles.h"
 #include "Pause/Pause.h"
+#include "Rasen/Rasen.h"
 #include "SceneTransition/SceneTransition.h"
 #include "Sprite.h"
 #include "UIManager/UIManager.h"
-#include "Object/Character/CharacterDisplay/CharacterDisplay.h"
 #include "Vector2.h"
 #include <array>
 #include <cstdint>
@@ -23,7 +24,7 @@
 class Player;
 class CameraController;
 class SkyDome;
-
+class Boss;
 
 class GameScene : public BaseScene {
 
@@ -56,8 +57,8 @@ private:
 	CharacterModel characterModel;
 	std::unique_ptr<CharacterDisplay> characterDisplay_;
 
-
 	std::unique_ptr<Boss> boss_;
+	std::unique_ptr<Rasen> rasen_;
 
 	DirectionalLight directionalLight_{};
 	std::array<PointLight, kMaxPointLights> pointLights_{};
@@ -65,11 +66,8 @@ private:
 	std::array<SpotLight, kMaxSpotLights> spotLights_{};
 	uint32_t activeSpotLightCount_ = 0;
 
-
-
 	bool sceneEndClear = false;
 	bool sceneEndOver = false;
-
 
 public:
 	GameScene();

@@ -9,6 +9,7 @@
 #include "Object/Player/Player.h"
 #include "Object3d/Object3dCommon.h"
 #include "ParticleManager.h"
+#include "Rasen/Rasen.h"
 #include "SceneManager.h"
 #include "Sprite/SpriteCommon.h"
 #include "TextureManager.h"
@@ -22,15 +23,13 @@ GameScene::GameScene() {
 	particles = std::make_unique<Particles>();
 	skyDome = std::make_unique<SkyDome>();
 	player = std::make_unique<Player>();
-	enemyManager = std::make_unique<EnemyManager>();
-	expCubeManager = std::make_unique<ExpCubeManager>();
 	boss_ = std::make_unique<Boss>();
+	rasen_ = std::make_unique<Rasen>();
 
 	field = std::make_unique<MapchipField>();
 	sceneTransition = std::make_unique<SceneTransition>();
 	uimanager = std::make_unique<UIManager>();
 	/*BG = std::make_unique<Background>();*/
-	house = std::make_unique<House>();
 
 	pause = std::make_unique<Pause>();
 	BGMData = Audio::GetInstance()->SoundLoadFile("Resources/audio/BGM/Tailshaft.mp3");
@@ -47,10 +46,7 @@ void GameScene::Finalize() {
 
 	Audio::GetInstance()->SoundUnload(&BGMData);
 
-	// level up icons
-	for (int i = 0; i < 4; i++) {
-		levelupIcons[i].reset();
-	}
+	rasen_->Finalize();
 }
 
 void GameScene::Initialize() {
@@ -66,8 +62,6 @@ void GameScene::Initialize() {
 	skyDome->Initialize(cameraController->GetCamera());
 	player->Initialize(cameraController->GetCamera());
 
-	enemyManager->Initialize(cameraController->GetCamera());
-	expCubeManager->Initialize(cameraController->GetCamera());
 	field->LoadFromCSV("Resources/CSV/MapChip_stage1.csv");
 	field->Initialize(cameraController->GetCamera());
 	sceneTransition->Initialize(false);
@@ -76,64 +70,8 @@ void GameScene::Initialize() {
 	nextSceneName.clear();
 	uimanager->SetPlayerHPMax(player->GetHPMax());
 	uimanager->SetPlayerHP(player->GetHP());
-
 	uimanager->Initialize();
-	house->Initialize(cameraController->GetCamera());
-	// ==================
-	// ★ レベルアップ用スプライト画像読み込み
-	// ==================
-
-	int handle[4]{};
-	handle[0] = TextureManager::GetInstance()->GetTextureIndexByfilePath("Resources/2d/levelup_attack.png");
-	handle[1] = TextureManager::GetInstance()->GetTextureIndexByfilePath("Resources/2d/levelup_speed.png");
-	handle[2] = TextureManager::GetInstance()->GetTextureIndexByfilePath("Resources/2d/levelup_hp.png");
-	handle[3] = TextureManager::GetInstance()->GetTextureIndexByfilePath("Resources/2d/levelup_allow.png");
-
-	for (int i = 0; i < 4; i++) {
-
-		levelupIcons[i] = std::make_unique<Sprite>();
-		levelupIcons[i]->Initialize(handle[i]);
-		levelupIcons[i]->SetScale({256, 256});
-	}
-
-	uint32_t phaseHandles[5] = {
-	    TextureManager::GetInstance()->GetTextureIndexByfilePath("Resources/2d/phase1.png"), TextureManager::GetInstance()->GetTextureIndexByfilePath("Resources/2d/phase2.png"),
-	    TextureManager::GetInstance()->GetTextureIndexByfilePath("Resources/2d/phase3.png"), TextureManager::GetInstance()->GetTextureIndexByfilePath("Resources/2d/phase4.png"),
-	    TextureManager::GetInstance()->GetTextureIndexByfilePath("Resources/2d/phase5.png"),
-	};
-
-	const uint32_t bossHpBarHandle = TextureManager::GetInstance()->GetTextureIndexByfilePath("Resources/2d/BossHpBar.png");
-
-	for (int i = 0; i < 5; i++) {
-		phaseSprites_[i] = std::make_unique<Sprite>();
-		phaseSprites_[i]->Initialize(phaseHandles[i]);
-		phaseSprites_[i]->SetScale(phaseSpriteSize_);
-	}
-	bossHpBarSprite_ = std::make_unique<Sprite>();
-	bossHpBarSprite_->Initialize(bossHpBarHandle);
-	bossHpBarSprite_->SetAnchorPoint({0.0f, 0.0f});
-	bossHpBarSprite_->SetColor({0.9f, 0.0f, 0.0f, 1.0f});
-	bossHpBarSprite_->SetScale(bossHpBarSize_);
-	bossHpBarSprite_->SetPosition({640.0f - bossHpBarSize_.x / 2.0f, phaseSpriteY_});
-	bossHpBarBackSprite_ = std::make_unique<Sprite>();
-	bossHpBarBackSprite_->Initialize(bossHpBarHandle);
-	bossHpBarBackSprite_->SetAnchorPoint({0.0f, 0.0f});
-	bossHpBarBackSprite_->SetScale(bossHpBarSize_);
-	bossHpBarBackSprite_->SetColor({0.3f, 0.3f, 0.3f, 1.0f});
-	bossHpBarBackSprite_->SetPosition({640.0f - bossHpBarSize_.x / 2.0f, phaseSpriteY_});
-	debugPhaseSelection_ = std::clamp(enemyManager->GetCurrentWave(), 1, 5) - 1;
-	lastWave_ = 0;
-	isPhaseSpriteActive_ = false;
-	isPhaseSpritePaused_ = false;
-	isWarningActive_ = false;
-	warningTimer_ = 0.0f;
-	isBossActive_ = false;
-
-	const uint32_t warningHandle = TextureManager::GetInstance()->GetTextureIndexByfilePath("Resources/2d/warnig.png");
-	warningSprite_ = std::make_unique<Sprite>();
-	warningSprite_->Initialize(warningHandle);
-	warningSprite_->SetScale(warningSpriteBaseScale_);
-	warningSprite_->SetPosition({640.0f - warningSpriteBaseScale_.x / 2.0f, 360.0f - warningSpriteBaseScale_.y / 2.0f});
+	rasen_->Initialize(cameraController->GetCamera());
 
 	activePointLightCount_ = 3;
 	pointLights_[0].color = {1.0f, 1.0f, 1.0f, 1.0f};
@@ -151,6 +89,7 @@ void GameScene::Initialize() {
 	pointLights_[2].intensity = 1.0f;
 	pointLights_[2].radius = 5.0f;
 	pointLights_[2].decay = 0.7f;
+
 
 	directionalLight_.color = {76.0f/255.0f, 96.0f/255.0f, 178/255.0f, 1.0f};
 	directionalLight_.direction = {0.0f, -1.0f, 0.5f};
@@ -209,63 +148,18 @@ void GameScene::DebugImGui() {
 		}
 	}
 	ImGui::End();
-	// ★ ウェーブ情報の表示
-	if (ImGui::Begin("Wave Info")) {
-		ImGui::Text("Current Wave: %d", enemyManager->GetCurrentWave());
-		ImGui::Text("Alive Enemies: %d", enemyManager->GetAliveEnemyCount());
-		ImGui::Text("Total Killed: %d", enemyManager->GetTotalEnemiesKilled());
-		ImGui::ProgressBar(enemyManager->GetWaveProgress(), ImVec2(0.0f, 0.0f));
-
-		const char* stateNames[] = {"Waiting", "Spawning", "Active", "Complete"};
-		int stateIndex = static_cast<int>(enemyManager->GetWaveState());
-		ImGui::Text("Wave State: %s", stateNames[stateIndex]);
-
-		float waveDelay = 3.0f;
-		if (ImGui::DragFloat("Wave Delay", &waveDelay, 0.1f, 0.5f, 10.0f)) {
-			enemyManager->SetWaveDelay(waveDelay);
-		}
-		ImGui::Separator();
-		ImGui::Text("Phase Select");
-		const char* phaseItems[] = {"Phase 1", "Phase 2", "Phase 3", "Phase 4", "Phase 5", "Boss"};
-		ImGui::Combo("Phase", &debugPhaseSelection_, phaseItems, IM_ARRAYSIZE(phaseItems));
-		if (ImGui::Button("Apply Phase")) {
-			ApplyPhaseSelection(debugPhaseSelection_);
-		}
-		ImGui::End();
-	}
+	rasen_->DebugImGui(boss_.get(), cameraController->GetCamera());
 
 #endif // USE_IMGUI
 }
 
-void GameScene::ApplyPhaseSelection(int selectionIndex) {
-	isWarningActive_ = false;
-	warningTimer_ = 0.0f;
-	isPhaseSpriteActive_ = false;
-	isPhaseSpritePaused_ = false;
-	phaseSpriteStopTimer_ = 0.0f;
-	phaseSpriteX_ = 0.0f;
-	goalActive = false;
-
-	const int bossIndex = 5;
-	if (selectionIndex == bossIndex) {
-		enemyManager->ForceBossPhase();
-		isBossActive_ = true;
-		boss_->Initialize(cameraController->GetCamera(), {10.0f, 2.5f, -40.0f});
-		return;
-	}
-
-	isBossActive_ = false;
-	const int waveNumber = selectionIndex + 1;
-	enemyManager->ForceStartWave(waveNumber);
-	lastWave_ = waveNumber - 1;
-}
 void GameScene::Update() {
 	GameTimer::GetInstance()->Update();
 	if (!isBGMPlaying) {
 		Audio::GetInstance()->SoundPlayWave(BGMData, true);
 		isBGMPlaying = true;
 	}
-	if (!isLevelSelecting && !isTransitionIn && !isTransitionOut) {
+	if (!rasen_->IsLevelSelecting() && !isTransitionIn && !isTransitionOut) {
 		if (Input::GetInstance()->TriggerKey(DIK_C)) {
 			isCharacterDisplayMode_ = !isCharacterDisplayMode_;
 			if (isCharacterDisplayMode_) {
@@ -306,54 +200,10 @@ void GameScene::Update() {
 		characterDisplay_->Update();
 		return;
 	}
-	// ★ レベルアップ選択中は操作受付
-	if (isLevelSelecting) {
-
-		// A で左、D で右
-		if (Input::GetInstance()->TriggerKey(DIK_A)) {
-			cursorIndex = 0;
-		}
-		if (Input::GetInstance()->TriggerKey(DIK_D)) {
-			cursorIndex = 1;
-		}
-
-		// SPACEで決定
-		if (Input::GetInstance()->TriggerKey(DIK_SPACE)) {
-
-			int choice = selectChoices[cursorIndex];
-			auto params = player->GetParameters();
-
-			switch (choice) {
-			case 0:
-				params.AttuckUp++;
-				break;
-			case 1:
-				params.SpeedUp++;
-				break;
-			case 2:
-				params.HPUp++;
-				break;
-			case 3:
-				params.AllowUp++;
-				break;
-			}
-
-			player->SetParameters(params);
-
-			player->IsLevelUp(false);
-			isLevelSelecting = false;
-		}
-
-		// 選択中はその他の更新停止
-		return;
-	}
-
-
-	
 	if (player->GetIsSkillAttack()) {
 		pointLights_[1].intensity = 1.0f;
 		pointLights_[1].position = {player->GetSkillPosition().x, player->GetSkillPosition().y + 4, player->GetSkillPosition().z};
-		
+
 	} else {
 		pointLights_[1].intensity = 0.0f;
 		pointLights_[1].position = {player->GetPosition().x, player->GetPosition().y + 4, player->GetPosition().z};
@@ -371,114 +221,13 @@ void GameScene::Update() {
 	ParticleManager::GetInstance()->Update(cameraController->GetCamera());
 	skyDome->Update();
 	field->Update();
-	house->Update(cameraController->GetCamera());
 	player->Update();
-	// ===========================
-	// ★ レベルアップを検知して選択画面へ
-	// ===========================
-	if (player->GetLv() && !isLevelSelecting) {
-
-		isLevelSelecting = true;
-
-		// ランダムで 0～3 から2個選ぶ
-		int a = rand() % 4;
-		int b = rand() % 4;
-		while (b == a) {
-			b = rand() % 4;
-		}
-
-		selectChoices[0] = a;
-		selectChoices[1] = b;
-
-		cursorIndex = 0; // 左から開始
-
-		// プレイヤーの動きを停止させたい場合はここで何もしない(GameScene が制御)
+	rasen_->Update(cameraController->GetCamera(), player.get(), boss_.get());
+	if (rasen_->IsLevelSelecting()) {
+		return;
 	}
 
-	// ★ ウェーブシステムの更新
-	enemyManager->Update(cameraController->GetCamera(), house->GetPosition(), house->GetScale(), player->GetPosition(), player->GetIsAlive());
-	expCubeManager->Update(cameraController->GetCamera(), player->GetMovementLimitCenter(), player->GetMovementLimitRadius());
-	int currentWave = enemyManager->GetCurrentWave();
-	if (currentWave != lastWave_) {
-		lastWave_ = currentWave;
-		currentPhaseSpriteIndex_ = std::clamp(currentWave, 1, 5) - 1;
-		isPhaseSpriteActive_ = true;
-		isPhaseSpritePaused_ = false;
-		phaseSpriteStopTimer_ = 0.0f;
-		phaseSpriteX_ = 1280.0f + phaseSpriteSize_.x;
-	}
-
-		if (isPhaseSpriteActive_ && !isBossActive_) {
-		const float deltaTime = 1.0f / 60.0f;
-		const float moveSpeed = 500.0f;
-		const float stopDuration = 0.8f;
-		const float centerX = 640.0f - phaseSpriteSize_.x / 2.0f;
-
-		if (isPhaseSpritePaused_) {
-			phaseSpriteStopTimer_ += deltaTime;
-			if (phaseSpriteStopTimer_ >= stopDuration) {
-				isPhaseSpritePaused_ = false;
-			}
-		} else {
-			phaseSpriteX_ -= moveSpeed * deltaTime;
-			if (phaseSpriteX_ <= centerX) {
-				phaseSpriteX_ = centerX;
-				isPhaseSpritePaused_ = true;
-				phaseSpriteStopTimer_ = 0.0f;
-			}
-		}
-
-		if (!isPhaseSpritePaused_ && phaseSpriteX_ <= -phaseSpriteSize_.x) {
-			isPhaseSpriteActive_ = false;
-		}
-
-		auto* phaseSprite = phaseSprites_[currentPhaseSpriteIndex_].get();
-		phaseSprite->SetPosition({phaseSpriteX_, phaseSpriteY_});
-		phaseSprite->Update();
-	}
-	if (isBossActive_ && boss_->GetIsAlive()) {
-		const int bossMaxHp = boss_->GetMaxHP();
-		if (bossMaxHp > 0) {
-			const float hpRatio = std::clamp(static_cast<float>(boss_->GetHP()) / static_cast<float>(bossMaxHp), 0.0f, 1.0f);
-			Vector2 bossHpBarScale = bossHpBarSize_;
-			bossHpBarScale.x *= hpRatio;
-			bossHpBarSprite_->SetScale(bossHpBarScale);
-			bossHpBarSprite_->SetPosition({640.0f - bossHpBarSize_.x / 2.0f, phaseSpriteY_});
-		}
-
-		bossHpBarSprite_->Update();
-		bossHpBarBackSprite_->Update();
-	}
-
-	// ★ 全フェーズ終了後に警告表示→ボス登場
-	if (enemyManager->AreAllWavesComplete() && !isBossActive_) {
-		const float deltaTime = 1.0f / 60.0f;
-		if (!isWarningActive_) {
-			isWarningActive_ = true;
-			warningTimer_ = 0.0f;
-		}
-		warningTimer_ += deltaTime;
-		float pulse = 1.0f + std::sin(warningTimer_ * 6.0f) * 0.05f;
-		warningSprite_->SetScale({warningSpriteBaseScale_.x * pulse, warningSpriteBaseScale_.y * pulse});
-		warningSprite_->SetPosition({640.0f - warningSpriteBaseScale_.x * pulse / 2.0f, 360.0f - warningSpriteBaseScale_.y * pulse / 2.0f});
-		warningSprite_->Update();
-		if (warningTimer_ >= warningDuration_) {
-			isWarningActive_ = false;
-			isBossActive_ = true;
-			boss_->Initialize(cameraController->GetCamera(), {10.0f, 2.5f, -40.0f});
-		}
-	}
-
-	if (isBossActive_ && boss_->GetIsAlive()) {
-		boss_->SetCamera(cameraController->GetCamera());
-		boss_->Update(house->GetPosition(), player->GetPosition(), player->GetIsAlive());
-	}
-
-	if (isBossActive_ && !boss_->GetIsAlive()) {
-		goalActive = true;
-	}
-
-	if (goalActive && player->GetIsAlive() && !isTransitionOut) {
+	if (rasen_->IsGoalActive() && player->GetIsAlive() && !isTransitionOut) {
 		nextSceneName = "Result";
 		sceneTransition->Initialize(true);
 		isTransitionOut = true;
@@ -492,7 +241,7 @@ void GameScene::Update() {
 	}
 #endif // _DEBUG
 
-	if (!player->GetIsAlive() || house->GetHP() == 0) {
+	if (!player->GetIsAlive() || rasen_->GetHouse()->GetHP() == 0) {
 		if (!isTransitionOut) {
 			nextSceneName = "GameOver";
 			sceneTransition->Initialize(true);
@@ -501,8 +250,8 @@ void GameScene::Update() {
 	}
 
 	// ===== プレイヤーと敵の当たり判定 =====
-	Boss* activeBoss = (isBossActive_ && boss_->GetIsAlive()) ? boss_.get() : nullptr;
-	collisionManager_.HandleGameSceneCollisions(*player, *enemyManager, *expCubeManager, *house, activeBoss);
+	Boss* activeBoss = (rasen_->IsBossActive() && boss_->GetIsAlive()) ? boss_.get() : nullptr;
+	collisionManager_.HandleGameSceneCollisions(*player, *rasen_->GetEnemyManager(), *rasen_->GetExpCubeManager(), *rasen_->GetHouse(), activeBoss);
 	if (player->ConsumeDamageTrigger()) {
 		cameraController->StartShake(0.75f);
 	}
@@ -542,53 +291,14 @@ void GameScene::Draw() {
 
 	player->Draw();
 
-	enemyManager->Draw();
-	if (isBossActive_) {
-		boss_->Draw();
+	rasen_->Draw(boss_.get());
+	if (rasen_->IsBossActive()) {
 		Object3dCommon::GetInstance()->DrawCommon();
 	}
-	expCubeManager->Draw();
-	house->Draw();
 	particles->Draw();
 
 	SpriteCommon::GetInstance()->DrawCommon();
 	uimanager->Draw();
-	if (isPhaseSpriteActive_ && !isBossActive_) {
-
-		phaseSprites_[currentPhaseSpriteIndex_]->Draw();
-	}
-	if (isBossActive_ && boss_->GetIsAlive()) {
-		bossHpBarBackSprite_->Draw();
-		bossHpBarSprite_->Draw();
-	}
-	if (isWarningActive_) {
-		warningSprite_->Draw();
-	}
-	// =============================
-	// ★ レベルアップ選択画面描画(別スプライト使用版)
-	// =============================
-	if (isLevelSelecting) {
-
-		// 左と右の選択肢
-		int leftID = selectChoices[0];
-		int rightID = selectChoices[1];
-
-		// 表示位置(自由に調整可)
-		Vector2 leftPos = {350, 300};
-		Vector2 rightPos = {750, 300};
-
-		// 左アイコン描画
-		levelupIcons[leftID]->SetPosition(leftPos);
-		levelupIcons[leftID]->SetColor(cursorIndex == 0 ? Vector4(1, 1, 0, 1) : Vector4(1, 1, 1, 1));
-		levelupIcons[leftID]->Update();
-		levelupIcons[leftID]->Draw();
-
-		// 右アイコン描画
-		levelupIcons[rightID]->SetPosition(rightPos);
-		levelupIcons[rightID]->SetColor(cursorIndex == 1 ? Vector4(1, 1, 0, 1) : Vector4(1, 1, 1, 1));
-		levelupIcons[rightID]->Update();
-		levelupIcons[rightID]->Draw();
-	}
 
 	pause->Draw();
 	if (isTransitionIn || isTransitionOut) {
