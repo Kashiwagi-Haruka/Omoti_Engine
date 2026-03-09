@@ -224,7 +224,7 @@
     <ClCompile Include="application\Scene\GameOverScene.cpp">
       <Filter>Application\Scene\GameOverScene</Filter>
     </ClCompile>
-    <ClCompile Include="application\Scene\GameScene.cpp">
+    <ClCompile Include="application\Scene\GameScene\GameScene.cpp">
       <Filter>Application\Scene\GameScene</Filter>
     </ClCompile>
     <ClCompile Include="application\GameTimer\GameTimer.cpp">
@@ -282,6 +282,8 @@
     <ClCompile Include="application\Team\Team.cpp" />
     <ClCompile Include="application\TutorialUI\TutorialUI.cpp" />
     <ClCompile Include="application\UIManager\UIManager.cpp" />
+    <ClCompile Include="application\Scene\GameScene\OpenWorld\OpenWorld.cpp" />
+    <ClCompile Include="application\Scene\GameScene\Rasen\Rasen.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Engine\Texture\RenderTexture2D.h" />
@@ -489,7 +491,7 @@
     <ClInclude Include="application\Scene\GameOverScene.h">
       <Filter>Application\Scene\GameOverScene</Filter>
     </ClInclude>
-    <ClInclude Include="application\Scene\GameScene.h">
+    <ClInclude Include="application\Scene\GameScene\GameScene.h">
       <Filter>Application\Scene\GameScene</Filter>
     </ClInclude>
     <ClInclude Include="application\GameTimer\GameTimer.h">
@@ -551,6 +553,8 @@
     <ClInclude Include="application\Team\Team.h" />
     <ClInclude Include="application\TutorialUI\TutorialUI.h" />
     <ClInclude Include="application\UIManager\UIManager.h" />
+    <ClInclude Include="application\Scene\GameScene\OpenWorld\OpenWorld.h" />
+    <ClInclude Include="application\Scene\GameScene\Rasen\Rasen.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include=".editorconfig" />
