@@ -10,6 +10,7 @@
 #include "Object/Character/Model/CharacterModel.h"
 #include "Object/MapchipField.h"
 #include "Object3d/Object3d.h"
+#include "OpenWorld/OpenWorld.h"
 #include "Particles/Particles.h"
 #include "Pause/Pause.h"
 #include "Rasen/Rasen.h"
@@ -57,8 +58,12 @@ private:
 	CharacterModel characterModel;
 	std::unique_ptr<CharacterDisplay> characterDisplay_;
 
+	enum class PlayAreaMode { kSpiral, kOpenWorld };
+
 	std::unique_ptr<Boss> boss_;
 	std::unique_ptr<Rasen> rasen_;
+	std::unique_ptr<OpenWorld> openWorld_;
+	PlayAreaMode playAreaMode_ = PlayAreaMode::kSpiral;
 
 	DirectionalLight directionalLight_{};
 	std::array<PointLight, kMaxPointLights> pointLights_{};

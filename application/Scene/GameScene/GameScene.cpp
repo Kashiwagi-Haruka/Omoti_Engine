@@ -8,6 +8,7 @@
 #include "Object/ExpCube/ExpCubeManager.h"
 #include "Object/Player/Player.h"
 #include "Object3d/Object3dCommon.h"
+#include "OpenWorld/OpenWorld.h"
 #include "ParticleManager.h"
 #include "Rasen/Rasen.h"
 #include "SceneManager.h"
@@ -25,6 +26,7 @@ GameScene::GameScene() {
 	player = std::make_unique<Player>();
 	boss_ = std::make_unique<Boss>();
 	rasen_ = std::make_unique<Rasen>();
+	openWorld_ = std::make_unique<OpenWorld>();
 
 	field = std::make_unique<MapchipField>();
 	sceneTransition = std::make_unique<SceneTransition>();
@@ -47,6 +49,7 @@ void GameScene::Finalize() {
 	Audio::GetInstance()->SoundUnload(&BGMData);
 
 	rasen_->Finalize();
+	openWorld_->Finalize();
 }
 
 void GameScene::Initialize() {
@@ -72,6 +75,8 @@ void GameScene::Initialize() {
 	uimanager->SetPlayerHP(player->GetHP());
 	uimanager->Initialize();
 	rasen_->Initialize(cameraController->GetCamera());
+	openWorld_->Initialize(cameraController->GetCamera());
+	playAreaMode_ = PlayAreaMode::kSpiral;
 
 	activePointLightCount_ = 3;
 	pointLights_[0].color = {1.0f, 1.0f, 1.0f, 1.0f};
@@ -147,7 +152,8 @@ void GameScene::DebugImGui() {
 			ImGui::TreePop();
 		}
 	}
-	ImGui::End();
+	ImGui::Text("Play Area: %s", playAreaMode_ == PlayAreaMode::kSpiral ? "Spiral" : "OpenWorld");
+	ImGui::Text("Press TAB to switch area mode");
 	rasen_->DebugImGui(boss_.get(), cameraController->GetCamera());
 
 #endif // USE_IMGUI
@@ -159,7 +165,12 @@ void GameScene::Update() {
 		Audio::GetInstance()->SoundPlayWave(BGMData, true);
 		isBGMPlaying = true;
 	}
-	if (!rasen_->IsLevelSelecting() && !isTransitionIn && !isTransitionOut) {
+	if (!isTransitionIn && !isTransitionOut && Input::GetInstance()->TriggerKey(DIK_TAB)) {
+		playAreaMode_ = (playAreaMode_ == PlayAreaMode::kSpiral) ? PlayAreaMode::kOpenWorld : PlayAreaMode::kSpiral;
+		isPause = false;
+	}
+
+	if ((playAreaMode_ != PlayAreaMode::kSpiral || !rasen_->IsLevelSelecting()) && !isTransitionIn && !isTransitionOut) {
 		if (Input::GetInstance()->TriggerKey(DIK_C)) {
 			isCharacterDisplayMode_ = !isCharacterDisplayMode_;
 			if (isCharacterDisplayMode_) {
@@ -222,15 +233,19 @@ void GameScene::Update() {
 	skyDome->Update();
 	field->Update();
 	player->Update();
-	rasen_->Update(cameraController->GetCamera(), player.get(), boss_.get());
-	if (rasen_->IsLevelSelecting()) {
-		return;
-	}
+	if (playAreaMode_ == PlayAreaMode::kSpiral) {
+		rasen_->Update(cameraController->GetCamera(), player.get(), boss_.get());
+		if (rasen_->IsLevelSelecting()) {
+			return;
+		}
 
-	if (rasen_->IsGoalActive() && player->GetIsAlive() && !isTransitionOut) {
-		nextSceneName = "Result";
-		sceneTransition->Initialize(true);
-		isTransitionOut = true;
+		if (rasen_->IsGoalActive() && player->GetIsAlive() && !isTransitionOut) {
+			nextSceneName = "Result";
+			sceneTransition->Initialize(true);
+			isTransitionOut = true;
+		}
+	} else {
+		openWorld_->Update(cameraController->GetCamera(), player.get());
 	}
 
 #ifdef _DEBUG
@@ -241,19 +256,21 @@ void GameScene::Update() {
 	}
 #endif // _DEBUG
 
-	if (!player->GetIsAlive() || rasen_->GetHouse()->GetHP() == 0) {
-		if (!isTransitionOut) {
-			nextSceneName = "GameOver";
-			sceneTransition->Initialize(true);
-			isTransitionOut = true;
+	if (playAreaMode_ == PlayAreaMode::kSpiral) {
+		if (!player->GetIsAlive() || rasen_->GetHouse()->GetHP() == 0) {
+			if (!isTransitionOut) {
+				nextSceneName = "GameOver";
+				sceneTransition->Initialize(true);
+				isTransitionOut = true;
+			}
 		}
-	}
 
-	// ===== プレイヤーと敵の当たり判定 =====
-	Boss* activeBoss = (rasen_->IsBossActive() && boss_->GetIsAlive()) ? boss_.get() : nullptr;
-	collisionManager_.HandleGameSceneCollisions(*player, *rasen_->GetEnemyManager(), *rasen_->GetExpCubeManager(), *rasen_->GetHouse(), activeBoss);
-	if (player->ConsumeDamageTrigger()) {
-		cameraController->StartShake(0.75f);
+		// ===== プレイヤーと敵の当たり判定 =====
+		Boss* activeBoss = (rasen_->IsBossActive() && boss_->GetIsAlive()) ? boss_.get() : nullptr;
+		collisionManager_.HandleGameSceneCollisions(*player, *rasen_->GetEnemyManager(), *rasen_->GetExpCubeManager(), *rasen_->GetHouse(), activeBoss);
+		if (player->ConsumeDamageTrigger()) {
+			cameraController->StartShake(0.75f);
+		}
 	}
 	uimanager->SetPlayerParameters(player->GetParameters());
 	uimanager->SetPlayerHP(player->GetHP());
@@ -291,9 +308,13 @@ void GameScene::Draw() {
 
 	player->Draw();
 
-	rasen_->Draw(boss_.get());
-	if (rasen_->IsBossActive()) {
-		Object3dCommon::GetInstance()->DrawCommon();
+	if (playAreaMode_ == PlayAreaMode::kSpiral) {
+		rasen_->Draw(boss_.get());
+		if (rasen_->IsBossActive()) {
+			Object3dCommon::GetInstance()->DrawCommon();
+		}
+	} else {
+		openWorld_->Draw();
 	}
 	particles->Draw();
 
