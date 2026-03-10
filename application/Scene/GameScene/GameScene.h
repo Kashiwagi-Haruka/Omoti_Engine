@@ -63,7 +63,7 @@ private:
 	std::unique_ptr<Boss> boss_;
 	std::unique_ptr<Rasen> rasen_;
 	std::unique_ptr<OpenWorld> openWorld_;
-	PlayAreaMode playAreaMode_ = PlayAreaMode::kSpiral;
+	PlayAreaMode playAreaMode_ = PlayAreaMode::kOpenWorld;
 
 	DirectionalLight directionalLight_{};
 	std::array<PointLight, kMaxPointLights> pointLights_{};
