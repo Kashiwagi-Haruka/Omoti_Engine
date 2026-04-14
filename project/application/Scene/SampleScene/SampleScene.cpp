@@ -133,8 +133,10 @@ void SampleScene::Initialize() {
 	portalTextureCameraB_->SetTransform(portalTextureCameraBTransform_);
 	portalTextureCameraB_->Update();
 
-	portalMeshA_->Initialize("Resources/TD3_3102/2d/atHome.jpg");
-	portalMeshB_->Initialize("Resources/TD3_3102/2d/atHome.jpg");
+	portalMeshA_->SetTransform(portalATransform_);
+	portalMeshB_->SetTransform(portalBTransform_);
+	portalMeshA_->Initialize("Resources/2d/uvChecker.png");
+	portalMeshB_->Initialize("Resources/2d/uvChecker.png");
 	portalRenderTextureA_.Initialize(WinApp::kClientWidth, WinApp::kClientHeight, DXGI_FORMAT_R8G8B8A8_UNORM_SRGB, {0.05f, 0.05f, 0.08f, 1.0f});
 	portalRenderTextureB_.Initialize(WinApp::kClientWidth, WinApp::kClientHeight, DXGI_FORMAT_R8G8B8A8_UNORM_SRGB, {0.05f, 0.05f, 0.08f, 1.0f});
 	portalMeshA_->SetTextureIndex(portalRenderTextureB_.GetSrvIndex());
@@ -176,8 +178,7 @@ void SampleScene::Initialize() {
     };
 	portalObjectCamera_->SetTransform(portalObjectCameraTransform_);
 	portalObjectCamera_->Update();*/
-	portalMeshA_->SetTransform(portalATransform_);
-	portalMeshB_->SetTransform(portalBTransform_);
+
 	sampleParticleEmitter_ = std::make_unique<ParticleEmitter>("sample");
 	sampleParticleEmitter_->SetTransform(particleTransform_);
 	sampleParticleEmitter_->SetFrequency(0.1f);
