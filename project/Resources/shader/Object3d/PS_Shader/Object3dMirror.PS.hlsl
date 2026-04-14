@@ -11,6 +11,9 @@ struct Material
     int sepiaEnabled;
     float distortionStrength;
     float distortionFalloff;
+    float4 outlineColor;
+    float outlineWidth;
+    float3 outlinePadding;
 };
 struct Camera
 {
@@ -54,7 +57,7 @@ float3 ApplySepia(float3 color)
 }
 
 
-PixelShaderOutput main(VertexShaderOutput input)
+PixelShaderOutput main(Object3dVertexShaderOutput input)
 {
     PixelShaderOutput output;
     float4 transformedUV = mul(float4(input.texcoord, 0.0f, 1.0f), gMaterial.uvTransform);

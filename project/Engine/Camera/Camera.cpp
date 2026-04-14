@@ -1,10 +1,8 @@
 #include "Camera.h"
 #include "Function.h"
-
+#include "Engine/Editor/EditorTool/Hierarchy/Hierarchy.h"
 #include "Engine/Loadfile/JSON/JsonManager.h"
-#ifdef USE_IMGUI
-#include "imgui.h"
-#endif
+#include <cmath>
 namespace {
 // カメラTransformからビュー行列を作成する補助関数
 Matrix4x4 MakeCameraViewMatrix(const Transform& transform) {
@@ -13,6 +11,26 @@ Matrix4x4 MakeCameraViewMatrix(const Transform& transform) {
 	const Matrix4x4 inverseRotateX = Function::MakeRotateXMatrix(-transform.rotate.x);
 	const Matrix4x4 inverseRotateZ = Function::MakeRotateZMatrix(-transform.rotate.z);
 	return Function::Multiply(Function::Multiply(Function::Multiply(inverseTranslate, inverseRotateY), inverseRotateX), inverseRotateZ);
+}
+
+Matrix4x4 MakeCameraViewMatrix(const Matrix4x4& worldMatrix) {
+	Matrix4x4 rotationMatrix = Function::MakeIdentity4x4();
+	for (int row = 0; row < 3; ++row) {
+		const float axisLength = std::sqrt(
+		    worldMatrix.m[row][0] * worldMatrix.m[row][0] +
+		    worldMatrix.m[row][1] * worldMatrix.m[row][1] +
+		    worldMatrix.m[row][2] * worldMatrix.m[row][2]);
+		if (axisLength == 0.0f) {
+			continue;
+		}
+		rotationMatrix.m[row][0] = worldMatrix.m[row][0] / axisLength;
+		rotationMatrix.m[row][1] = worldMatrix.m[row][1] / axisLength;
+		rotationMatrix.m[row][2] = worldMatrix.m[row][2] / axisLength;
+	}
+
+	const Matrix4x4 inverseTranslate = Function::MakeTranslateMatrix(-worldMatrix.m[3][0], -worldMatrix.m[3][1], -worldMatrix.m[3][2]);
+	const Matrix4x4 inverseRotate = Function::Transpose(rotationMatrix);
+	return Function::Multiply(inverseTranslate, inverseRotate);
 }
 } // namespace
 
@@ -31,8 +49,10 @@ Camera::Camera()
 	if (editorId_ == 0) {
 		LoadEditorData();
 	}
+	Hierarchy::GetInstance()->RegisterCamera(this);
 }
 
+Camera::~Camera() { Hierarchy::GetInstance()->UnregisterCamera(this); }
 void Camera::Update() {
 	// 現在のTransformと投影設定をもとに各行列を更新
 	worldMatrix_ = Function::MakeAffineMatrix({1.0f, 1.0f, 1.0f}, transform_.rotate, transform_.translate);
@@ -41,26 +61,24 @@ void Camera::Update() {
 	viewProjectionMatrix_ = Function::Multiply(viewMatrix_, projectionMatrix_);
 }
 
-void Camera::SetViewProjectionMatrix(const Matrix4x4& viewMatrix, const Matrix4x4& projectionMatrix) {
-	// 受け取った行列を採用し、派生行列と位置情報を同期
-	viewMatrix_ = viewMatrix;
-	projectionMatrix_ = projectionMatrix;
+//追加しました。
+void Camera::UpdateViewProjection(const Matrix4x4& worldMatrix) {
+	// 現在のTransformと投影設定をもとに各行列を更新
+	worldMatrix_ = worldMatrix;
+	viewMatrix_ =  MakeCameraViewMatrix(worldMatrix);
+	projectionMatrix_ = Function::MakePerspectiveFovMatrix(fovY, aspectRatio, nearZ, farZ);
 	viewProjectionMatrix_ = Function::Multiply(viewMatrix_, projectionMatrix_);
-	worldMatrix_ = Function::Inverse(viewMatrix_);
-	transform_.translate = {worldMatrix_.m[3][0], worldMatrix_.m[3][1], worldMatrix_.m[3][2]};
 }
 
-void Camera::LoadEditorData() {
+bool Camera::LoadEditorData() {
 	JsonManager* jsonManager = JsonManager::GetInstance();
 	if (!jsonManager->LoadJson("cameraEditor.json")) {
-		editorStatusMessage_ = "Load failed: Resources/JSON/cameraEditor.json";
-		return;
+		return false;
 	}
 
 	const nlohmann::json& root = jsonManager->GetData();
 	if (!root.contains("camera") || !root["camera"].is_object()) {
-		editorStatusMessage_ = "Load failed: invalid camera data";
-		return;
+		return false;
 	}
 
 	const nlohmann::json& cameraJson = root["camera"];
@@ -98,10 +116,11 @@ void Camera::LoadEditorData() {
 		farZ = cameraJson["farZ"].get<float>();
 	}
 
-	editorStatusMessage_ = "Loaded camera editor settings";
+	Update();
+	return true;
 }
 
-void Camera::SaveEditorData() {
+bool Camera::SaveEditorData() const {
 	JsonManager* jsonManager = JsonManager::GetInstance();
 	nlohmann::json root;
 	root["camera"] = {
@@ -115,38 +134,14 @@ void Camera::SaveEditorData() {
 	};
 
 	jsonManager->SetData(root);
-	const bool saved = jsonManager->SaveJson("cameraEditor.json");
-	editorStatusMessage_ = saved ? "Saved: Resources/JSON/cameraEditor.json" : "Save failed: Resources/JSON/cameraEditor.json";
+	return jsonManager->SaveJson("cameraEditor.json");
 }
 
-void Camera::DrawEditorInHierarchy() {
-#ifdef USE_IMGUI
-
-
-	if (ImGui::TreeNode("Camera Transform")) {
-		ImGui::DragFloat3("Scale", &transform_.scale.x, 0.01f);
-		ImGui::DragFloat3("Rotate", &transform_.rotate.x, 0.01f);
-		ImGui::DragFloat3("Translate", &transform_.translate.x, 0.01f);
-		ImGui::TreePop();
-	}
-
-	if (ImGui::TreeNode("Camera Projection")) {
-		ImGui::DragFloat("FovY", &fovY, 0.01f, 0.01f, 3.13f);
-		ImGui::DragFloat("AspectRatio", &aspectRatio, 0.01f, 0.1f, 8.0f);
-		ImGui::DragFloat("NearZ", &nearZ, 0.01f, 0.001f, 1000.0f);
-		ImGui::DragFloat("FarZ", &farZ, 1.0f, 1.0f, 100000.0f);
-		ImGui::TreePop();
-	}
-
-	if (ImGui::Button("Save Camera Editor")) {
-		SaveEditorData();
-	}
-	ImGui::SameLine();
-	if (ImGui::Button("Load Camera Editor")) {
-		LoadEditorData();
-	}
-	if (!editorStatusMessage_.empty()) {
-		ImGui::Text("%s", editorStatusMessage_.c_str());
-	}
-#endif
+void Camera::SetViewProjectionMatrix(const Matrix4x4& viewMatrix, const Matrix4x4& projectionMatrix) {
+	// 受け取った行列を採用し、派生行列と位置情報を同期
+	viewMatrix_ = viewMatrix;
+	projectionMatrix_ = projectionMatrix;
+	viewProjectionMatrix_ = Function::Multiply(viewMatrix_, projectionMatrix_);
+	worldMatrix_ = Function::Inverse(viewMatrix_);
+	transform_.translate = {worldMatrix_.m[3][0], worldMatrix_.m[3][1], worldMatrix_.m[3][2]};
 }

@@ -2,13 +2,13 @@
 
 #include "Animation/Animation.h"
 #include "CameraForGPU.h"
-#include "Light/DirectionalLight.h"
+#include "Light/CommonLight/DirectionalCommonLight.h"
 #include "Matrix4x4.h"
 #include "Model/Model.h"
 #include "Transform.h"
 #include "Vector2.h"
 #include "Vector4.h"
-#include "VertexData.h"
+#include "Data/VertexData.h"
 #include <Windows.h>
 #include <d3d12.h>
 #include <memory>
@@ -20,8 +20,11 @@ struct SkinCluster;
 class Object3d {
 
 	struct alignas(256) TransformationMatrix {
-		Matrix4x4 WVP;                   // 64 バイト
-		Matrix4x4 LightWVP;              // 64 バイト
+		Matrix4x4 WVP; // 64 バイト
+		Matrix4x4 DirectionalLightWVP;
+		Matrix4x4 PointLightWVP;
+		Matrix4x4 SpotLightWVP;
+		Matrix4x4 AreaLightWVP;
 		Matrix4x4 World;                 // 64 バイト
 		Matrix4x4 WorldInverseTranspose; // 64 バイト
 	};
@@ -53,13 +56,9 @@ class Object3d {
 	Vector3 uvRotate_ = {0.0f, 0.0f, 0.0f};
 	Vector3 uvTranslate_ = {0.0f, 0.0f, 0.0f};
 	Vector2 uvAnchor_ = {0.0f, 0.0f};
+	std::string editorId_;
 
 public:
-	Object3d() = default;
-	Object3d(const Object3d&) = delete;
-	Object3d& operator=(const Object3d&) = delete;
-	Object3d(Object3d&&) noexcept = default;
-	Object3d& operator=(Object3d&&) noexcept = default;
 	~Object3d();
 	void Initialize();
 	void Update();
@@ -89,6 +88,8 @@ public:
 	void SetSepiaEnabled(bool enable);
 	void SetDistortionStrength(float strength);
 	void SetDistortionFalloff(float falloff);
+	void SetOutlineColor(const Vector4& color);
+	void SetOutlineWidth(float width);
 	void SetUvTransform(const Matrix4x4& uvTransform);
 	void SetUvTransform(Vector3 scale, Vector3 rotate, Vector3 translate, Vector2 anchor = {0.0f, 0.0f});
 	void SetUvAnchor(Vector2 anchor);
@@ -102,6 +103,8 @@ public:
 	bool IsSepiaEnabled() const;
 	float GetDistortionStrength() const;
 	float GetDistortionFalloff() const;
+	Vector4 GetOutlineColor() const;
+	float GetOutlineWidth() const;
 	Vector2 GetUvAnchor() const { return uvAnchor_; }
 	void SetAnimation(const Animation::AnimationData* animation, bool loop = true) {
 		animation_ = animation;
@@ -114,5 +117,7 @@ public:
 	Vector3 GetRotate() { return transform_.rotate; }
 	Vector3 GetScale() { return transform_.scale; }
 	Transform GetTransform() const { return transform_; }
+	void SetEditorId(const std::string& id) { editorId_ = id; }
+	const std::string& GetEditorId() const { return editorId_; }
 	const Matrix4x4& GetWorldMatrix() const { return worldMatrix; }
 };

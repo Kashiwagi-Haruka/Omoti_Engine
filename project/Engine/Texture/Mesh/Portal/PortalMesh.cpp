@@ -1,42 +1,68 @@
 #include "PortalMesh.h"
 
 #include "Camera.h"
+#include "Engine/Texture/TextureManager.h"
+#include "Engine/base/DirectXCommon.h"
 #include "Function.h"
 #include "Object3d/Object3dCommon.h"
-#include "Engine/Texture/TextureManager.h"
-#include "WinApp.h"
-#include "Engine/base/DirectXCommon.h"
 #include "SrvManager/SrvManager.h"
+#include "WinApp.h"
+#include <array>
+#include <cmath>
 #include <cstring>
+#include <numbers>
 
 void PortalMesh::Initialize(const std::string& texturePath) {
 	textureIndex_ = TextureManager::GetInstance()->GetTextureIndexByfilePath(texturePath);
 	worldMatrix_ = Function::MakeIdentity4x4();
 
-	VertexData vertices[4] = {
-	    {{-0.5f, 0.5f, 0.0f, 1.0f},  {0.0f, 0.0f}, {0.0f, 0.0f, -1.0f}},
-	    {{0.5f, 0.5f, 0.0f, 1.0f},   {1.0f, 0.0f}, {0.0f, 0.0f, -1.0f}},
-	    {{-0.5f, -0.5f, 0.0f, 1.0f}, {0.0f, 1.0f}, {0.0f, 0.0f, -1.0f}},
-	    {{0.5f, -0.5f, 0.0f, 1.0f},  {1.0f, 1.0f}, {0.0f, 0.0f, -1.0f}},
-	};
-	uint32_t indices[6] = {0, 1, 2, 2, 1, 3};
+	constexpr uint32_t kPortalSegments = 32;
+	constexpr uint32_t kPortalVertexCount = kPortalSegments + 1;
+	constexpr uint32_t kPortalIndexCount = kPortalSegments * 3;
+	float kPortalRadius = transform_.scale.x / 2.0f;
 
-	vertexResource_ = Object3dCommon::GetInstance()->CreateBufferResource(sizeof(vertices));
+	std::array<VertexData, kPortalVertexCount> vertices{};
+	std::array<uint32_t, kPortalIndexCount> indices{};
+
+	vertices[0] = {
+	    {0.0f, 0.0f, 0.0f, 1.0f},
+        {0.5f, 0.5f},
+        {0.0f, 0.0f, 1.0f}
+    };
+	for (uint32_t segment = 0; segment < kPortalSegments; ++segment) {
+		const float angle = (2.0f * std::numbers::pi_v<float> * static_cast<float>(segment)) / static_cast<float>(kPortalSegments);
+		const float x = std::cos(angle) * kPortalRadius;
+		const float y = std::sin(angle) * kPortalRadius;
+		vertices[segment + 1] = {
+		    {x, y, 0.0f, 1.0f},
+            {x / (kPortalRadius * 2.0f) + 0.5f, 0.5f - y / (kPortalRadius * 2.0f)},
+            {0.0f, 0.0f, 1.0f}
+        };
+
+		const uint32_t nextSegmentIndex = (segment + 1) % kPortalSegments;
+		const uint32_t indexOffset = segment * 3;
+		indices[indexOffset + 0] = 0;
+		indices[indexOffset + 1] = nextSegmentIndex + 1;
+		indices[indexOffset + 2] = segment + 1;
+	}
+	indexCount_ = kPortalIndexCount;
+
+	vertexResource_ = Object3dCommon::GetInstance()->CreateBufferResource(sizeof(VertexData) * vertices.size());
 	vertexBufferView_.BufferLocation = vertexResource_->GetGPUVirtualAddress();
-	vertexBufferView_.SizeInBytes = sizeof(vertices);
+	vertexBufferView_.SizeInBytes = static_cast<UINT>(sizeof(VertexData) * vertices.size());
 	vertexBufferView_.StrideInBytes = sizeof(VertexData);
 	VertexData* mappedVertices = nullptr;
 	vertexResource_->Map(0, nullptr, reinterpret_cast<void**>(&mappedVertices));
-	std::memcpy(mappedVertices, vertices, sizeof(vertices));
+	std::memcpy(mappedVertices, vertices.data(), sizeof(VertexData) * vertices.size());
 	vertexResource_->Unmap(0, nullptr);
 
-	indexResource_ = Object3dCommon::GetInstance()->CreateBufferResource(sizeof(indices));
+	indexResource_ = Object3dCommon::GetInstance()->CreateBufferResource(sizeof(uint32_t) * indices.size());
 	indexBufferView_.BufferLocation = indexResource_->GetGPUVirtualAddress();
-	indexBufferView_.SizeInBytes = sizeof(indices);
+	indexBufferView_.SizeInBytes = static_cast<UINT>(sizeof(uint32_t) * indices.size());
 	indexBufferView_.Format = DXGI_FORMAT_R32_UINT;
 	uint32_t* mappedIndices = nullptr;
 	indexResource_->Map(0, nullptr, reinterpret_cast<void**>(&mappedIndices));
-	std::memcpy(mappedIndices, indices, sizeof(indices));
+	std::memcpy(mappedIndices, indices.data(), sizeof(uint32_t) * indices.size());
 	indexResource_->Unmap(0, nullptr);
 
 	transformResource_ = Object3dCommon::GetInstance()->CreateBufferResource(sizeof(TransformationMatrix));
@@ -74,7 +100,10 @@ void PortalMesh::Update() {
 	transformResource_->Map(0, nullptr, reinterpret_cast<void**>(&transformationMatrixData_));
 	transformationMatrixData_->WVP = worldViewProjectionMatrix;
 	transformationMatrixData_->World = worldMatrix_;
-	transformationMatrixData_->LightWVP = Function::Multiply(worldMatrix_, Object3dCommon::GetInstance()->GetDirectionalLightViewProjectionMatrix());
+	transformationMatrixData_->DirectionalLightWVP = Function::Multiply(worldMatrix_, Object3dCommon::GetInstance()->GetDirectionalLightViewProjectionMatrix());
+	transformationMatrixData_->PointLightWVP = Function::Multiply(worldMatrix_, Object3dCommon::GetInstance()->GetPointLightViewProjectionMatrix());
+	transformationMatrixData_->SpotLightWVP = Function::Multiply(worldMatrix_, Object3dCommon::GetInstance()->GetSpotLightViewProjectionMatrix());
+	transformationMatrixData_->AreaLightWVP = Function::Multiply(worldMatrix_, Object3dCommon::GetInstance()->GetAreaLightViewProjectionMatrix());
 	transformationMatrixData_->WorldInverseTranspose = Function::Inverse(worldMatrix_);
 	transformResource_->Unmap(0, nullptr);
 
@@ -107,13 +136,17 @@ void PortalMesh::Draw() {
 	Object3dCommon::GetInstance()->GetDxCommon()->GetCommandList()->SetGraphicsRootConstantBufferView(4, objectCameraResource_->GetGPUVirtualAddress());
 	Object3dCommon::GetInstance()->GetDxCommon()->GetCommandList()->SetGraphicsRootConstantBufferView(5, textureCameraResource_->GetGPUVirtualAddress());
 	Object3dCommon::GetInstance()->GetDxCommon()->GetCommandList()->SetGraphicsRootDescriptorTable(2, TextureManager::GetInstance()->GetSrvHandleGPU(textureIndex_));
-	TextureManager::GetInstance()->GetSrvManager()->SetGraphicsRootDescriptorTable(8, Object3dCommon::GetInstance()->GetPointLightSrvIndex());
+	/*TextureManager::GetInstance()->GetSrvManager()->SetGraphicsRootDescriptorTable(8, Object3dCommon::GetInstance()->GetPointLightSrvIndex());
 	TextureManager::GetInstance()->GetSrvManager()->SetGraphicsRootDescriptorTable(9, Object3dCommon::GetInstance()->GetSpotLightSrvIndex());
-	TextureManager::GetInstance()->GetSrvManager()->SetGraphicsRootDescriptorTable(10, Object3dCommon::GetInstance()->GetAreaLightSrvIndex());
+	TextureManager::GetInstance()->GetSrvManager()->SetGraphicsRootDescriptorTable(10, Object3dCommon::GetInstance()->GetAreaLightSrvIndex());*/
 	if (!Object3dCommon::GetInstance()->IsShadowMapPassActive()) {
-		TextureManager::GetInstance()->GetSrvManager()->SetGraphicsRootDescriptorTable(12, Object3dCommon::GetInstance()->GetShadowMapSrvIndex());
+		TextureManager::GetInstance()->GetSrvManager()->SetGraphicsRootDescriptorTable(12, Object3dCommon::GetInstance()->GetDirectionalShadowMapSrvIndex());
+		TextureManager::GetInstance()->GetSrvManager()->SetGraphicsRootDescriptorTable(13, Object3dCommon::GetInstance()->GetPointShadowMapSrvIndex());
+		TextureManager::GetInstance()->GetSrvManager()->SetGraphicsRootDescriptorTable(14, Object3dCommon::GetInstance()->GetSpotShadowMapSrvIndex());
+		TextureManager::GetInstance()->GetSrvManager()->SetGraphicsRootDescriptorTable(15, Object3dCommon::GetInstance()->GetAreaShadowMapSrvIndex());
+	
 	}
-	Object3dCommon::GetInstance()->GetDxCommon()->GetCommandList()->DrawIndexedInstanced(6, 1, 0, 0, 0);
+	Object3dCommon::GetInstance()->GetDxCommon()->GetCommandList()->DrawIndexedInstanced(indexCount_, 1, 0, 0, 0);
 }
 
 void PortalMesh::SetUvTransform(const Matrix4x4& uvTransform) {

@@ -1,12 +1,13 @@
 #define NOMINMAX
 #include "GameBase.h"
-#include "Engine/Editor/Hierarchy.h"
+#include "Engine/Editor/EditorManager/EditorManager.h"
 #include "ImGuiManager.h"
 #include "Input.h"
 #include "Model/ModelManager.h"
 #include "Object3d/Object3dCommon.h"
 #include "ParticleManager.h"
 #include "SpriteCommon.h"
+#include "Engine/ScreenShot/ScreenShot.h"
 #include "SrvManager/SrvManager.h"
 #include "TextureManager.h"
 #include <DbgHelp.h>
@@ -40,7 +41,7 @@ void GameBase::Finalize() {
 
 	ParticleManager::GetInstance()->Finalize();
 	ModelManager::GetInstance()->Finalize();
-	Hierarchy::GetInstance()->Finalize();
+	EditorManager::GetInstance()->Finalize();
 	SpriteCommon::GetInstance()->Finalize();
 	Object3dCommon::GetInstance()->Finalize();
 
@@ -111,7 +112,7 @@ void GameBase::BeginFlame() {
 
 // --- フレーム終了: ImGui 描画 → Present → フェンス同期まで ---
 void GameBase::EndFlame() {
-	Hierarchy::GetInstance()->DrawEditorGridLines();
+	EditorManager::GetInstance()->DrawEditorGridLines();
 	imguiM_->End();
 	dxCommon_->DrawSceneTextureToBackBuffer();
 	imguiM_->Draw(dxCommon_.get());
@@ -124,4 +125,12 @@ ID3D12Device* GameBase::GetD3D12Device() {
 		return nullptr;
 	}
 	return dxCommon_->GetDevice();
+}
+bool GameBase::SaveCurrentFrameScreenShot(const std::string& filePath) {
+	if (!dxCommon_) {
+		return false;
+	}
+
+	dxCommon_->EnsureSceneTextureCopiedToBackBuffer();
+	return ScreenShot::SaveBackBuffer(dxCommon_.get(), filePath);
 }

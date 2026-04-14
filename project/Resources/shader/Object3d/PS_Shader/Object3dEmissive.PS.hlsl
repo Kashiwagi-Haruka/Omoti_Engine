@@ -11,6 +11,9 @@ struct Material
     int sepiaEnabled;
     float distortionStrength;
     float distortionFalloff;
+    float4 outlineColor;
+    float outlineWidth;
+    float3 outlinePadding;
 };
 ConstantBuffer<Material> gMaterial : register(b0);
 struct Camera
@@ -52,7 +55,7 @@ float3 ApplySepia(float3 color)
     sepia.b = dot(color, float3(0.272f, 0.534f, 0.131f));
     return saturate(sepia);
 }
-PixelShaderOutput main(VertexShaderOutput input)
+PixelShaderOutput main(Object3dVertexShaderOutput input)
 {
     PixelShaderOutput output;
 

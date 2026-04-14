@@ -2,10 +2,10 @@
 #pragma once
 
 #include "CameraForGPU.h"
-#include "Material.h"
+#include "Data/Material.h"
 #include "Matrix4x4.h"
 #include "Transform.h"
-#include "VertexData.h"
+#include "Data/VertexData.h"
 
 #include <d3d12.h>
 #include <string>
@@ -29,11 +29,14 @@ public:
 	void SetTextureIndex(uint32_t textureIndex) { textureIndex_ = textureIndex; }
 	void SetObjectCamera(Camera* camera) { objectCamera_ = camera; }
 	void SetTextureCamera(Camera* camera) { textureCamera_ = camera; }
-
+	const Matrix4x4& GetWorldMatrix()const { return worldMatrix_; };
 private:
 	struct alignas(256) TransformationMatrix {
 		Matrix4x4 WVP;
-		Matrix4x4 LightWVP;
+		Matrix4x4 DirectionalLightWVP;
+		Matrix4x4 PointLightWVP;
+		Matrix4x4 SpotLightWVP;
+		Matrix4x4 AreaLightWVP;
 		Matrix4x4 World;
 		Matrix4x4 WorldInverseTranspose;
 	};
@@ -69,6 +72,7 @@ private:
 
 	D3D12_VERTEX_BUFFER_VIEW vertexBufferView_{};
 	D3D12_INDEX_BUFFER_VIEW indexBufferView_{};
+	uint32_t indexCount_ = 0;
 
 	TransformationMatrix* transformationMatrixData_ = nullptr;
 	CameraForGpu* objectCameraData_ = nullptr;

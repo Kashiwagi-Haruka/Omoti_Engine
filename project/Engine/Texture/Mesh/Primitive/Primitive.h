@@ -1,11 +1,11 @@
 #pragma once
 #include "CameraForGPU.h"
 #include "Matrix4x4.h"
-#include "Material.h"
+#include "Data/Material.h"
 #include "Transform.h"
 #include "Vector2.h"
 #include "Vector4.h"
-#include "VertexData.h"
+#include "Data/VertexData.h"
 #include <cstdint>
 #include <d3d12.h>
 #include <string>
@@ -34,8 +34,11 @@ public:
 private:
 	PrimitiveName primitiveName_;
 	struct alignas(256) TransformationMatrix {
-		Matrix4x4 WVP;                   // 64 バイト
-		Matrix4x4 LightWVP;              // 64 バイト
+		Matrix4x4 WVP; // 64 バイト
+		Matrix4x4 DirectionalLightWVP;
+		Matrix4x4 PointLightWVP;
+		Matrix4x4 SpotLightWVP;
+		Matrix4x4 AreaLightWVP;
 		Matrix4x4 World;                 // 64 バイト
 		Matrix4x4 WorldInverseTranspose; // 64 バイト
 	};
@@ -74,6 +77,7 @@ private:
 	Matrix4x4 portalCameraWorld0_{};
 	Matrix4x4 portalCameraWorld1_{};
 	bool usePortalProjection_ = false;
+	std::string editorId_;
 
 public:
 	~Primitive();
@@ -136,6 +140,8 @@ public:
 	void SetSecondaryTextureIndex(uint32_t textureIndex);
 	void ClearSecondaryTextureIndex();
 	void SetEditorRegistrationEnabled(bool enable) { editorRegistrationEnabled_ = enable; }
+	void SetEditorId(const std::string& id) { editorId_ = id; }
+	const std::string& GetEditorId() const { return editorId_; }
 	// ポータル投影 UV 用の 2 つのカメラ ViewProjection を設定
 	void SetPortalProjectionMatrices(const Matrix4x4& textureViewProjection0, const Matrix4x4& textureViewProjection1, const Matrix4x4& portalCameraWorld0, const Matrix4x4& portalCameraWorld1);
 	void SetPortalProjectionEnabled(bool enabled);
@@ -151,7 +157,7 @@ public:
 	float GetDistortionStrength() const;
 	float GetDistortionFalloff() const;
 	Vector2 GetUvAnchor() const { return uvAnchor_; }
-
+	const Matrix4x4& GetWorldMatrix()const { return worldMatrix; };
 private:
 	// Line 描画時に使う始点
 	Vector3 lineStart_ = {0.0f, 0.0f, 0.0f};

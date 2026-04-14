@@ -1,8 +1,8 @@
 #pragma once
-#include "Light/AreaLight.h"
-#include "Light/DirectionalLight.h"
-#include "Light/PointLight.h"
-#include "Light/SpotLight.h"
+#include "Light/CommonLight/AreaCommonLight.h"
+#include "Light/CommonLight/DirectionalCommonLight.h"
+#include "Light/CommonLight/PointCommonLight.h"
+#include "Light/CommonLight/SpotCommonLight.h"
 #include "Matrix4x4.h"
 #include "PSO/CreatePSO.h"
 #include <Windows.h>
@@ -63,41 +63,43 @@ private:
 	std::unique_ptr<CreatePSO> psoSkinningToon_;
 	// ミラー描画用PSO
 	std::unique_ptr<CreatePSO> psoMirror_;
+	// アウトライン描画用PSO
+	std::unique_ptr<CreatePSO> psoOutline_;
 	// ポータル描画用PSO
 	std::unique_ptr<CreatePSO> psoPortal_;
 	// シャドウマップ生成用PSO
 	std::unique_ptr<CreatePSO> psoShadow_;
 
 	// Directional Light（共通）
-	DirectionalLight* directionalLightData_ = nullptr;
+	DirectionalCommonLight* directionalLightData_ = nullptr;
 	// ディレクショナルライト定数バッファ
 	Microsoft::WRL::ComPtr<ID3D12Resource> directionalLightResource_ = nullptr;
 	// ポイントライト配列へのCPU書き込みポインタ
-	PointLight* pointlightData_ = nullptr;
+	PointCommonLight* pointlightData_ = nullptr;
 	// ポイントライト構造化バッファ
 	Microsoft::WRL::ComPtr<ID3D12Resource> pointLightResource_ = nullptr;
 	// ポイントライト数へのCPU書き込みポインタ
-	PointLightCount* pointLightCountData_ = nullptr;
+	PointCommonLightCount* pointLightCountData_ = nullptr;
 	// ポイントライト数の定数バッファ
 	Microsoft::WRL::ComPtr<ID3D12Resource> pointLightCountResource_ = nullptr;
 	// ポイントライト配列のSRVインデックス
 	uint32_t pointLightSrvIndex_ = 0;
 	// スポットライト配列へのCPU書き込みポインタ
-	SpotLight* spotLightData_ = nullptr;
+	SpotCommonLight* spotLightData_ = nullptr;
 	// スポットライト構造化バッファ
 	Microsoft::WRL::ComPtr<ID3D12Resource> spotLightResource_ = nullptr;
 	// スポットライト数へのCPU書き込みポインタ
-	SpotLightCount* spotLightCountData_ = nullptr;
+	SpotCommonLightCount* spotLightCountData_ = nullptr;
 	// スポットライト数の定数バッファ
 	Microsoft::WRL::ComPtr<ID3D12Resource> spotLightCountResource_ = nullptr;
 	// スポットライト配列のSRVインデックス
 	uint32_t spotLightSrvIndex_ = 0;
 	// エリアライト配列へのCPU書き込みポインタ
-	AreaLight* areaLightData_ = nullptr;
+	AreaCommonLight* areaLightData_ = nullptr;
 	// エリアライト構造化バッファ
 	Microsoft::WRL::ComPtr<ID3D12Resource> areaLightResource_ = nullptr;
 	// エリアライト数へのCPU書き込みポインタ
-	AreaLightCount* areaLightCountData_ = nullptr;
+	AreaCommonLightCount* areaLightCountData_ = nullptr;
 	// エリアライト数の定数バッファ
 	Microsoft::WRL::ComPtr<ID3D12Resource> areaLightCountResource_ = nullptr;
 	// エリアライト配列のSRVインデックス
@@ -105,13 +107,22 @@ private:
 	// 環境マップのSRVインデックス
 	uint32_t environmentMapSrvIndex_ = 0;
 	// シャドウマップのSRVインデックス
-	uint32_t shadowMapSrvIndex_ = 0;
+	uint32_t directionalShadowMapSrvIndex_ = 0;
+	uint32_t pointShadowMapSrvIndex_ = 0;
+	uint32_t spotShadowMapSrvIndex_ = 0;
+	uint32_t areaShadowMapSrvIndex_ = 0;
 	// 現在利用中の環境マップパス
 	std::string environmentMapPath_;
 	// シャドウマップ深度テクスチャ
-	Microsoft::WRL::ComPtr<ID3D12Resource> shadowMapResource_ = nullptr;
+	Microsoft::WRL::ComPtr<ID3D12Resource> directionalShadowMapResource_ = nullptr;
+	Microsoft::WRL::ComPtr<ID3D12Resource> pointShadowMapResource_ = nullptr;
+	Microsoft::WRL::ComPtr<ID3D12Resource> spotShadowMapResource_ = nullptr;
+	Microsoft::WRL::ComPtr<ID3D12Resource> areaShadowMapResource_ = nullptr;
 	// シャドウマップ描画用DSVヒープ
-	Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> shadowDsvHeap_ = nullptr;
+	Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> directionalShadowDsvHeap_ = nullptr;
+	Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> pointShadowDsvHeap_ = nullptr;
+	Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> spotShadowDsvHeap_ = nullptr;
+	Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> areaShadowDsvHeap_ = nullptr;
 	// シャドウマップ描画用ビューポート
 	D3D12_VIEWPORT shadowViewport_{};
 	// シャドウマップ描画用シザー矩形
@@ -120,6 +131,10 @@ private:
 	static constexpr uint32_t kShadowMapSize_ = 2048;
 	// シャドウマップパス中かどうかのフラグ
 	bool isShadowMapPassActive_ = false;
+	bool directionalShadowEnabled_ = true;
+	bool pointShadowEnabled_ = false;
+	bool spotShadowEnabled_ = false;
+	bool areaShadowEnabled_ = false;
 	// シャドウ計算用ライト位置
 	Vector3 shadowLightPosition_ = {0.0f, 80.0f, 0.0f};
 	// シャドウ投影用近クリップ距離
@@ -137,21 +152,33 @@ private:
 	// エディタ指定ライトを強制使用するか
 	bool useEditorLights_ = false;
 	// エディタ指定のディレクショナルライト
-	DirectionalLight editorDirectionalLight_ = {
+	DirectionalCommonLight editorDirectionalLight_ = {
 	    {1.0f, 1.0f, 1.0f, 1.0f},
         {0.0f, -1.0f, 0.0f},
-        1.0f
+        1.0f, 1, {0.0f, 0.0f, 0.0f}
     };
+	// CPU側キャッシュのポイントライト配列
+	std::array<PointCommonLight, kMaxPointLights> cachedPointLights_{};
+	// CPU側キャッシュのポイントライト有効数
+	uint32_t cachedPointLightCount_ = 0;
+	// CPU側キャッシュのスポットライト配列
+	std::array<SpotCommonLight, kMaxSpotLights> cachedSpotLights_{};
+	// CPU側キャッシュのスポットライト有効数
+	uint32_t cachedSpotLightCount_ = 0;
+	// CPU側キャッシュのエリアライト配列
+	std::array<AreaCommonLight, kMaxAreaLights> cachedAreaLights_{};
+	// CPU側キャッシュのエリアライト有効数
+	uint32_t cachedAreaLightCount_ = 0;
 	// エディタ指定のポイントライト配列
-	std::array<PointLight, kMaxPointLights> editorPointLights_{};
+	std::array<PointCommonLight, kMaxPointLights> editorPointLights_{};
 	// エディタ指定ポイントライト有効数
 	uint32_t editorPointLightCount_ = 0;
 	// エディタ指定のスポットライト配列
-	std::array<SpotLight, kMaxSpotLights> editorSpotLights_{};
+	std::array<SpotCommonLight, kMaxSpotLights> editorSpotLights_{};
 	// エディタ指定スポットライト有効数
 	uint32_t editorSpotLightCount_ = 0;
 	// エディタ指定のエリアライト配列
-	std::array<AreaLight, kMaxAreaLights> editorAreaLights_{};
+	std::array<AreaCommonLight, kMaxAreaLights> editorAreaLights_{};
 	// エディタ指定エリアライト有効数
 	uint32_t editorAreaLightCount_ = 0;
 	// ルートシグネチャ・DescriptorHeap共通設定
@@ -172,6 +199,7 @@ public:
 	void SetDefaultCamera(Camera* camera) { this->defaultCamera = camera; }
 	// 既定カメラ取得
 	Camera* GetDefaultCamera() const { return defaultCamera; };
+#pragma region DrawCommon
 	// 標準描画設定
 	void DrawCommon();
 	// 指定カメラで標準描画設定
@@ -198,12 +226,17 @@ public:
 	void DrawCommonSkinningToon();
 	// ミラー描画設定
 	void DrawCommonMirror();
+	// アウトライン描画設定
+	void DrawCommonOutline();
 	// ポータル描画設定
 	void DrawCommonPortal();
 	// 指定カメラでポータル描画設定
 	void DrawCommonPortal(Camera* camera);
 	// シャドウマップ描画設定
 	void DrawCommonShadow();
+#pragma endregion
+
+
 	// シャドウマップパス開始
 	void BeginShadowMapPass();
 	// シャドウマップパス終了
@@ -220,6 +253,7 @@ public:
 	ID3D12Resource* GetDirectionalLightResource() const { return directionalLightResource_.Get(); }
 	// ポイントライト数CB取得
 	ID3D12Resource* GetPointLightCountResource() const { return pointLightCountResource_.Get(); }
+	ID3D12Resource* GetShadowMapPassSettingsResource() const { return shadowMapPassSettingsResource_.Get(); }
 	// ポイントライトSRVインデックス取得
 	uint32_t GetPointLightSrvIndex() const { return pointLightSrvIndex_; }
 	// スポットライト数CB取得
@@ -228,12 +262,21 @@ public:
 	uint32_t GetSpotLightSrvIndex() const { return spotLightSrvIndex_; }
 	// エリアライト数CB取得
 	ID3D12Resource* GetAreaLightCountResource() const { return areaLightCountResource_.Get(); }
+	struct ShadowMapPassSettings {
+		int32_t shadowType;
+		float padding[3];
+	};
+	ShadowMapPassSettings* shadowMapPassSettingsData_ = nullptr;
+	Microsoft::WRL::ComPtr<ID3D12Resource> shadowMapPassSettingsResource_ = nullptr;
 	// エリアライトSRVインデックス取得
 	uint32_t GetAreaLightSrvIndex() const { return areaLightSrvIndex_; }
 	// 環境マップSRVインデックス取得
 	uint32_t GetEnvironmentMapSrvIndex() const { return environmentMapSrvIndex_; }
 	// シャドウマップSRVインデックス取得
-	uint32_t GetShadowMapSrvIndex() const { return shadowMapSrvIndex_; }
+	uint32_t GetDirectionalShadowMapSrvIndex() const { return directionalShadowMapSrvIndex_; }
+	uint32_t GetPointShadowMapSrvIndex() const { return pointShadowMapSrvIndex_; }
+	uint32_t GetSpotShadowMapSrvIndex() const { return spotShadowMapSrvIndex_; }
+	uint32_t GetAreaShadowMapSrvIndex() const { return areaShadowMapSrvIndex_; }
 	// シャドウマップパス状態取得
 	bool IsShadowMapPassActive() const { return isShadowMapPassActive_; }
 
@@ -243,23 +286,48 @@ public:
 	void SetEnvironmentMapTextureResource(ID3D12Resource* resource, DXGI_FORMAT format);
 
 	// ディレクショナルライト設定
-	void SetDirectionalLight(DirectionalLight& light);
+	void SetDirectionalLight(DirectionalCommonLight& light);
 	// ポイントライト配列設定
-	void SetPointLights(const PointLight* pointLights, uint32_t count);
+	void SetPointLights(const PointCommonLight* pointLights, uint32_t count);
 	// スポットライト配列設定
-	void SetSpotLights(const SpotLight* spotLights, uint32_t count);
+	void SetSpotLights(const SpotCommonLight* spotLights, uint32_t count);
 	// エリアライト配列設定
-	void SetAreaLights(const AreaLight* areaLights, uint32_t count);
+	void SetAreaLights(const AreaCommonLight* areaLights, uint32_t count);
 	// エディタライト上書き有効化
 	void SetEditorLightOverride(bool enabled) { useEditorLights_ = enabled; }
 	// エディタライト上書き有効状態取得
 	bool IsEditorLightOverrideEnabled() const { return useEditorLights_; }
 	// エディタライト一式を設定
 	void SetEditorLights(
-	    const DirectionalLight& directionalLight, const PointLight* pointLights, uint32_t pointCount, const SpotLight* spotLights, uint32_t spotCount, const AreaLight* areaLights, uint32_t areaCount);
+	    const DirectionalCommonLight& directionalLight, const PointCommonLight* pointLights, uint32_t pointCount, const SpotCommonLight* spotLights, uint32_t spotCount, const AreaCommonLight* areaLights, uint32_t areaCount);
 
 	// ディレクショナルライト視点のViewProjection行列取得
 	Matrix4x4 GetDirectionalLightViewProjectionMatrix() const;
+	Matrix4x4 GetPointLightViewProjectionMatrix() const;
+	Matrix4x4 GetSpotLightViewProjectionMatrix() const;
+	Matrix4x4 GetAreaLightViewProjectionMatrix() const;
+	void SetShadowMapEnabled(bool directional, bool point, bool spot, bool area) {
+		directionalShadowEnabled_ = directional;
+		pointShadowEnabled_ = point;
+		spotShadowEnabled_ = spot;
+		areaShadowEnabled_ = area;
+		shadowMapPassSettingsResource_->Map(0, nullptr, reinterpret_cast<void**>(&shadowMapPassSettingsData_));
+		if (directional) {
+			shadowMapPassSettingsData_->shadowType = 0;
+		} else if (point) {
+			shadowMapPassSettingsData_->shadowType = 1;
+		} else if (spot) {
+			shadowMapPassSettingsData_->shadowType = 2;
+		} else if (area) {
+			shadowMapPassSettingsData_->shadowType = 3;
+		}
+		shadowMapPassSettingsResource_->Unmap(0, nullptr);
+		shadowMapPassSettingsData_ = nullptr;
+	}
+	bool IsDirectionalShadowEnabled() const { return directionalShadowEnabled_; }
+	bool IsPointShadowEnabled() const { return pointShadowEnabled_; }
+	bool IsSpotShadowEnabled() const { return spotShadowEnabled_; }
+	bool IsAreaShadowEnabled() const { return areaShadowEnabled_; }
 
 	// 全画面グレースケールの有効化切り替え
 	void SetFullScreenGrayscaleEnabled(bool enable) { fullScreenGrayscaleEnabled_ = enable; }
