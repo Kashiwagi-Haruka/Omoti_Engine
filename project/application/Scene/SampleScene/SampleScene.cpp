@@ -185,6 +185,16 @@ void SampleScene::Initialize() {
 	sampleParticleEmitter_->SetAcceleration({0.0f, 0.0f, 0.0f});
 	sampleParticleEmitter_->SetAreaMin({-0.5f, -0.5f, -0.5f});
 	sampleParticleEmitter_->SetAreaMax({0.5f, 0.5f, 0.5f});
+
+	const uint32_t sampleFontHandle = FreeTypeManager::CreateFace("Resources/Font/irohakakuC-Regular.ttf", 0);
+	FreeTypeManager::SetPixelSizes(sampleFontHandle, 0, 36);
+	sampleText_.Initialize(sampleFontHandle);
+	sampleText_.SetString(U"Sample Text");
+	sampleText_.SetPosition({640.0f, 60.0f});
+	sampleText_.SetAlign(TextAlign::Center);
+	sampleText_.SetColor({1.0f, 1.0f, 1.0f, 1.0f});
+	sampleText_.UpdateLayout(false);
+
 	planeGltf_->SetTransform(planeGTransform_);
 	animatedCubeAnimation_ = Animation::LoadAnimationData("Resources/3d/AnimatedCube", "AnimatedCube");
 	animatedCubeObj_->SetAnimation(&animatedCubeAnimation_, true);
@@ -655,6 +665,7 @@ void SampleScene::Draw() {
 	DrawSceneGeometry(camera_.get(), true);
 	SpriteCommon::GetInstance()->DrawCommon();
 	uvSprite->Draw();
+	sampleText_.Draw();
 	if (overlayCameraSprite_) {
 		/*overlayCameraSprite_->Draw();*/
 	}
