@@ -52,6 +52,7 @@ SampleScene::SampleScene() {
 	planeGltf_ = std::make_unique<Object3d>();
 	animatedCubeObj_ = std::make_unique<Object3d>();
 	humanObj_ = std::make_unique<Object3d>();
+	sizukuObj_ = std::make_unique<Sizuku>();
 	spherePrimitive_ = std::make_unique<Primitive>();
 	portalMeshA_ = std::make_unique<PortalMesh>();
 	portalMeshB_ = std::make_unique<PortalMesh>();
@@ -74,6 +75,7 @@ SampleScene::SampleScene() {
 	ModelManager::GetInstance()->LoadGltfModel("Resources/3d/AnimatedCube", "AnimatedCube");
 	ModelManager::GetInstance()->LoadGltfModel("Resources/3d/human", "walk");
 	ModelManager::GetInstance()->LoadGltfModel("Resources/3d/human", "sneakWalk");
+	ModelManager::GetInstance()->LoadGltfModel("Resources/3d", "sizuku");
 	ParticleManager::GetInstance()->CreateParticleGroup("sample", "Resources/2d/defaultParticle.png");
 	bgmData_ = Audio::GetInstance()->SoundLoadFile("Resources/audio/BGM/Rendez-vous_2.mp3");
 	Audio::GetInstance()->SetSoundVolume(&bgmData_, 1.0f);
@@ -101,6 +103,9 @@ void SampleScene::Initialize() {
 	humanObj_->Initialize();
 	humanObj_->SetCamera(camera_.get());
 	humanObj_->SetModel("walk");
+	sizukuObj_->Initialize();
+	sizukuObj_->SetCamera(camera_.get());
+	sizukuObj_->SetAnimation("Idle");
 
 	spherePrimitive_->Initialize(Primitive::Sphere, 32);
 	spherePrimitive_->SetCamera(camera_.get());
@@ -164,6 +169,11 @@ void SampleScene::Initialize() {
         .rotate{-std::numbers::pi_v<float> / 2.0f, std::numbers::pi_v<float>, 0.0f  },
         .translate{0.0f,                              1.0f,                      -3.0f }
     };
+	sizukuTransform_ = {
+	    .scale{1.0f, 1.0f, 1.0f},
+	    .rotate{0.0f, std::numbers::pi_v<float>, 0.0f},
+	    .translate{-2.0f, 0.0f, -1.0f}
+	};
 	particleTransform_ = {
 	    .scale{0.1f, 0.1f, 0.1f },
         .rotate{0.0f, 0.0f, 0.0f },
@@ -596,6 +606,9 @@ void SampleScene::Update() {
 	planeGltf_->Update();
 	animatedCubeObj_->Update();
 	humanObj_->Update();
+	sizukuObj_->SetTransform(sizukuTransform_);
+	sizukuObj_->SetCamera(camera_.get());
+	sizukuObj_->Update();
 	ringUvRotation_ -= 0.05f;
 
 	uvSprite->Update();
@@ -633,6 +646,7 @@ void SampleScene::Draw() {
 		fieldObj_->Draw();
 		animatedCubeObj_->Draw();
 		humanObj_->Draw();
+		sizukuObj_->Draw();
 		spherePrimitive_->Draw();
 		object3dCommon->EndShadowMapPass();
 	}
@@ -678,6 +692,7 @@ void SampleScene::SetSceneCameraForDraw(Camera* camera) {
 	planeGltf_->SetCamera(camera);
 	animatedCubeObj_->SetCamera(camera);
 	humanObj_->SetCamera(camera);
+	sizukuObj_->SetCamera(camera);
 	spherePrimitive_->SetCamera(camera);
 }
 
@@ -697,6 +712,7 @@ void SampleScene::DrawSceneGeometryForPortalTexture(Camera* camera) {
 	planeGltf_->SetCamera(camera);
 	animatedCubeObj_->SetCamera(camera);
 	humanObj_->SetCamera(camera);
+	sizukuObj_->SetCamera(camera);
 	spherePrimitive_->SetCamera(camera);
 	ParticleManager::GetInstance()->SetCamera(camera);
 	UpdateSceneCameraMatricesForDraw();
@@ -713,6 +729,7 @@ void SampleScene::DrawSceneGeometryForPortalTexture(Camera* camera) {
 
 	Object3dCommon::GetInstance()->DrawCommonSkinningToon();
 	humanObj_->Draw();
+	sizukuObj_->Draw();
 	Object3dCommon::GetInstance()->DrawCommonWireframeNoDepth();
 }
 
@@ -738,6 +755,7 @@ void SampleScene::DrawSceneGeometry(Camera* camera, bool drawPortals) {
 
 	Object3dCommon::GetInstance()->DrawCommonSkinningToon();
 	humanObj_->Draw();
+	sizukuObj_->Draw();
 }
 
 void SampleScene::Finalize() {
