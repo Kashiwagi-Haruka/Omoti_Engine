@@ -189,7 +189,8 @@ void SampleScene::Initialize() {
 	const uint32_t sampleFontHandle = FreeTypeManager::CreateFace("Resources/Font/irohakakuC-Regular.ttf", 0);
 	FreeTypeManager::SetPixelSizes(sampleFontHandle, 36, 36);
 	sampleText_.Initialize(sampleFontHandle);
-	sampleText_.SetString(U"Sample Text");
+	sampleText_.SetSize({600.0f, 100.0f});
+	sampleText_.SetString(U"SampleText");
 	sampleText_.SetPosition({640.0f, 60.0f});
 	sampleText_.SetAlign(TextAlign::Center);
 	sampleText_.SetColor({1.0f, 1.0f, 1.0f, 1.0f});
