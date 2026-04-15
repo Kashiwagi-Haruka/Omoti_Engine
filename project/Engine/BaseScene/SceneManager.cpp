@@ -1,8 +1,8 @@
 #include "SceneManager.h"
-#include "Color/Color.h"
+#include "Engine/Texture/Data/Color.h"
 #include "Engine/Editor/EditorTool/Hierarchy/Hierarchy.h"
 #include "GameBase.h"
-#include "ScreenSize/ScreenSize.h"
+#include "Engine/base/ScreenSize.h"
 #include "Sprite/SpriteCommon.h"
 #include "TextureManager.h"
 #include <algorithm>

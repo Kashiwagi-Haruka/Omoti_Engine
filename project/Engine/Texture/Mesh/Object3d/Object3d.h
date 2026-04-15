@@ -59,6 +59,11 @@ class Object3d {
 	std::string editorId_;
 
 public:
+	Object3d() = default;
+	Object3d(const Object3d&) = delete;
+	Object3d& operator=(const Object3d&) = delete;
+	Object3d(Object3d&&) noexcept = default;
+	Object3d& operator=(Object3d&&) noexcept = default;
 	~Object3d();
 	void Initialize();
 	void Update();
