@@ -3,9 +3,9 @@
 #include "BaseScene.h"
 #include "CollisionManager/CollisionManager.h"
 #include "GameBase.h"
-#include "Light/DirectionalLight.h"
-#include "Light/PointLight.h"
-#include "Light/SpotLight.h"
+#include "Light/CommonLight/DirectionalCommonLight.h"
+#include "Light/CommonLight/PointCommonLight.h"
+#include "Light/CommonLight/SpotCommonLight.h"
 #include "Object/Character/CharacterDisplay/CharacterDisplay.h"
 #include "Object/Character/Model/CharacterModel.h"
 #include "Object/MapchipField.h"
@@ -65,10 +65,10 @@ private:
 	std::unique_ptr<OpenWorld> openWorld_;
 	PlayAreaMode playAreaMode_ = PlayAreaMode::kOpenWorld;
 
-	DirectionalLight directionalLight_{};
-	std::array<PointLight, kMaxPointLights> pointLights_{};
+	DirectionalCommonLight directionalLight_{};
+	std::array<PointCommonLight, kMaxPointLights> pointLights_{};
 	uint32_t activePointLightCount_ = 0;
-	std::array<SpotLight, kMaxSpotLights> spotLights_{};
+	std::array<SpotCommonLight, kMaxSpotLights> spotLights_{};
 	uint32_t activeSpotLightCount_ = 0;
 
 	bool sceneEndClear = false;

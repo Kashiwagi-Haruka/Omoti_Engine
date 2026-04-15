@@ -1,6 +1,6 @@
 #define NOMINMAX
 #include "ImGuiManager.h"
-#include "Engine/Editor/Hierarchy.h"
+#include "Engine/Editor/EditorManager/EditorManager.h"
 #include <dxgi1_6.h>
 #ifdef USE_IMGUI
 #include "externals/imgui/imgui.h"
@@ -24,6 +24,17 @@ void ImGuiManager::Initialize([[maybe_unused]] WinApp* winApp, [[maybe_unused]] 
 	IMGUI_CHECKVERSION();
 	ImGui::CreateContext();
 	ImGui::StyleColorsDark();
+	ImGuiStyle& style = ImGui::GetStyle();
+	style.Colors[ImGuiCol_FrameBg] = ImVec4(0.02f, 0.02f, 0.02f, 1.0f);
+	style.Colors[ImGuiCol_FrameBgHovered] = ImVec4(0.10f, 0.10f, 0.10f, 1.0f);
+	style.Colors[ImGuiCol_FrameBgActive] = ImVec4(0.20f, 0.20f, 0.20f, 1.0f);
+	ImGuiIO& io = ImGui::GetIO();
+
+	// エディター用フォントを全体に適用（日本語グリフを含む）
+	ImFont* editorFont = io.Fonts->AddFontFromFileTTF("Resources/Editor/rounded-l-mplus-1c-regular.ttf", 18.0f, nullptr, io.Fonts->GetGlyphRangesJapanese());
+	if (editorFont) {
+		io.FontDefault = editorFont;
+	}
 
 	// Win32 backend（先に）
 	ImGui_ImplWin32_Init(winApp->GetHwnd());
@@ -53,7 +64,6 @@ void ImGuiManager::Initialize([[maybe_unused]] WinApp* winApp, [[maybe_unused]] 
 	ImGui_ImplDX12_Init(&init_info);
 
 	// 任意のフラグ（順序はどちらでもOK）
-	ImGuiIO& io = ImGui::GetIO();
 	io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;
 	io.ConfigFlags |= ImGuiConfigFlags_NavEnableGamepad;
 #endif
@@ -95,15 +105,18 @@ void ImGuiManager::Begin() {
 	}
 	ImGui::End();
 #endif
-	Hierarchy* Hierarchy = Hierarchy::GetInstance();
+	EditorManager* editorManager = EditorManager::GetInstance();
 #ifdef USE_IMGUI
-	const bool isEditorLayoutEnabled = Hierarchy->HasRegisteredObjects();
+	const bool isEditorLayoutEnabled = editorManager->HasRegisteredObjects();
 	if (dxCommon_) {
 		dxCommon_->SetEditorLayoutEnabled(isEditorLayoutEnabled);
 	}
 	prevEditorLayoutEnabled_ = isEditorLayoutEnabled;
 #endif
-	Hierarchy->DrawObjectEditors();
+	editorManager->DrawObjectEditors();
+	if (editorManager->HasRegisteredObjects()) {
+		editorManager->DrawAssetWindow();
+	}
 }
 
 void ImGuiManager::End() {

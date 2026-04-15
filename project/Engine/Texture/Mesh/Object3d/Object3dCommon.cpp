@@ -10,6 +10,76 @@
 #include <cmath>
 #include <cstring>
 
+namespace {
+struct ShadowRenderTarget {
+	Microsoft::WRL::ComPtr<ID3D12Resource>* resource;
+	Microsoft::WRL::ComPtr<ID3D12DescriptorHeap>* dsvHeap;
+	uint32_t* srvIndex;
+};
+
+void CreateShadowRenderTarget(DirectXCommon* dxCommon, const D3D12_HEAP_PROPERTIES& heapProps, const D3D12_RESOURCE_DESC& shadowDesc, const D3D12_CLEAR_VALUE& clearValue, ShadowRenderTarget target) {
+	HRESULT hr = dxCommon->GetDevice()->CreateCommittedResource(
+	    &heapProps, D3D12_HEAP_FLAG_NONE, &shadowDesc, D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE, &clearValue, IID_PPV_ARGS(target.resource->ReleaseAndGetAddressOf()));
+	assert(SUCCEEDED(hr));
+	*target.dsvHeap = dxCommon->CreateDescriptorHeap(D3D12_DESCRIPTOR_HEAP_TYPE_DSV, 1, false);
+	D3D12_DEPTH_STENCIL_VIEW_DESC dsvDesc{};
+	dsvDesc.Format = DXGI_FORMAT_D32_FLOAT;
+	dsvDesc.ViewDimension = D3D12_DSV_DIMENSION_TEXTURE2D;
+	dxCommon->GetDevice()->CreateDepthStencilView(target.resource->Get(), &dsvDesc, (*target.dsvHeap)->GetCPUDescriptorHandleForHeapStart());
+	*target.srvIndex = TextureManager::GetInstance()->GetSrvManager()->Allocate();
+	TextureManager::GetInstance()->GetSrvManager()->CreateSRVforTexture2D(*target.srvIndex, target.resource->Get(), DXGI_FORMAT_R32_FLOAT, 1);
+}
+
+void TransitionShadowResource(DirectXCommon* dxCommon, ID3D12Resource* resource, D3D12_RESOURCE_STATES before, D3D12_RESOURCE_STATES after) {
+	if (!resource || before == after) {
+		return;
+	}
+	D3D12_RESOURCE_BARRIER barrier{};
+	barrier.Type = D3D12_RESOURCE_BARRIER_TYPE_TRANSITION;
+	barrier.Transition.pResource = resource;
+	barrier.Transition.StateBefore = before;
+	barrier.Transition.StateAfter = after;
+	barrier.Transition.Subresource = D3D12_RESOURCE_BARRIER_ALL_SUBRESOURCES;
+	dxCommon->GetCommandList()->ResourceBarrier(1, &barrier);
+}
+} // namespace
+namespace {
+enum ShadowMapPassType : int32_t {
+	kShadowMapPassDirectional = 0,
+	kShadowMapPassPoint = 1,
+	kShadowMapPassSpot = 2,
+	kShadowMapPassArea = 3,
+};
+Matrix4x4 MakeLightViewProjection(const Vector3& lightPosition, const Vector3& rawLightDirection, float nearPlane, float farPlane, float fovRadians) {
+	Vector3 lightDirection = Function::Normalize(rawLightDirection);
+	if (Function::Length(lightDirection) < 1.0e-5f) {
+		lightDirection = {0.0f, -1.0f, 0.0f};
+	}
+	const Vector3 up = (std::abs(lightDirection.y) > 0.99f) ? Vector3{0.0f, 0.0f, 1.0f} : Vector3{0.0f, 1.0f, 0.0f};
+	const Vector3 right = Function::Normalize(Function::Cross(up, lightDirection));
+	const Vector3 cameraUp = Function::Cross(lightDirection, right);
+
+	Matrix4x4 view = Function::MakeIdentity4x4();
+	view.m[0][0] = right.x;
+	view.m[1][0] = right.y;
+	view.m[2][0] = right.z;
+	view.m[0][1] = cameraUp.x;
+	view.m[1][1] = cameraUp.y;
+	view.m[2][1] = cameraUp.z;
+	view.m[0][2] = lightDirection.x;
+	view.m[1][2] = lightDirection.y;
+	view.m[2][2] = lightDirection.z;
+	view.m[3][0] = -Function::Dot(lightPosition, right);
+	view.m[3][1] = -Function::Dot(lightPosition, cameraUp);
+	view.m[3][2] = -Function::Dot(lightPosition, lightDirection);
+
+	const float clampedNearPlane = std::max(0.01f, nearPlane);
+	const float clampedFarPlane = std::max(clampedNearPlane + 0.1f, farPlane);
+	const float clampedFov = std::clamp(fovRadians, 0.1f, Function::kPi - 0.1f);
+	Matrix4x4 projection = Function::MakePerspectiveFovMatrix(clampedFov, 1.0f, clampedNearPlane, clampedFarPlane);
+	return Function::Multiply(view, projection);
+}
+}
 std::unique_ptr<Object3dCommon> Object3dCommon::instance = nullptr;
 
 Object3dCommon::Object3dCommon() {}
@@ -65,11 +135,20 @@ void Object3dCommon::Initialize(DirectXCommon* dxCommon) {
 
 	psoSkinningToon_ = std::make_unique<CreatePSO>(dxCommon_, true);
 	psoSkinningToon_->Create(D3D12_CULL_MODE_BACK, true, D3D12_FILL_MODE_SOLID, D3D12_PRIMITIVE_TOPOLOGY_TYPE_TRIANGLE, L"Resources/shader/Object3d/PS_Shader/Object3dToon.PS.hlsl");
+	
+	psoSkinningOutline_ = std::make_unique<CreatePSO>(dxCommon_, true);
+	psoSkinningOutline_->Create(
+	    D3D12_CULL_MODE_BACK, true, D3D12_FILL_MODE_SOLID, D3D12_PRIMITIVE_TOPOLOGY_TYPE_TRIANGLE, L"Resources/shader/Object3d/PS_Shader/Object3dOutline.PS.hlsl",
+	    L"Resources/shader/Object3d/VS_Shader/SkinningObject3dOutline.VS.hlsl");
 
 	SetEnvironmentMapTexture("Resources/3d/skydome.png");
 
 	psoMirror_ = std::make_unique<CreatePSO>(dxCommon_);
 	psoMirror_->Create(D3D12_CULL_MODE_BACK, true, D3D12_FILL_MODE_SOLID, D3D12_PRIMITIVE_TOPOLOGY_TYPE_TRIANGLE, L"Resources/shader/Object3d/PS_Shader/Object3dMirror.PS.hlsl");
+
+	psoOutline_ = std::make_unique<CreatePSO>(dxCommon_);
+	psoOutline_->Create(
+	    D3D12_CULL_MODE_BACK, true, D3D12_FILL_MODE_SOLID, D3D12_PRIMITIVE_TOPOLOGY_TYPE_TRIANGLE, L"Resources/shader/Object3d/PS_Shader/Object3dOutline.PS.hlsl");
 
 	psoPortal_ = std::make_unique<CreatePSO>(dxCommon_);
 	psoPortal_->Create(
@@ -80,7 +159,7 @@ void Object3dCommon::Initialize(DirectXCommon* dxCommon) {
 	psoShadow_->CreateShadow();
 
 	// Directional Light の共通バッファ作成
-	directionalLightResource_ = CreateBufferResource(sizeof(DirectionalLight));
+	directionalLightResource_ = CreateBufferResource(sizeof(DirectionalCommonLight));
 	assert(directionalLightResource_);
 	directionalLightResource_->Map(0, nullptr, reinterpret_cast<void**>(&directionalLightData_));
 	assert(directionalLightData_);
@@ -88,39 +167,53 @@ void Object3dCommon::Initialize(DirectXCommon* dxCommon) {
 	*directionalLightData_ = {
 	    {1.0f, 1.0f, 1.0f, 1.0f},
         {0.0f, -1.0f, 0.0f},
-        1.0f
+        1.0f, 1, {0.0f, 0.0f, 0.0f}
     };
 	directionalLightResource_->Unmap(0, nullptr);
-	pointLightResource_ = CreateBufferResource(sizeof(PointLight) * kMaxPointLights);
+	pointLightResource_ = CreateBufferResource(sizeof(PointCommonLight) * kMaxPointLights);
 	assert(pointLightResource_);
-	pointLightCountResource_ = CreateBufferResource(sizeof(PointLightCount));
+	pointLightCountResource_ = CreateBufferResource(sizeof(PointCommonLightCount));
 	assert(pointLightCountResource_);
 
 	pointLightSrvIndex_ = TextureManager::GetInstance()->GetSrvManager()->Allocate();
-	TextureManager::GetInstance()->GetSrvManager()->CreateSRVforStructuredBuffer(pointLightSrvIndex_, pointLightResource_.Get(), static_cast<UINT>(kMaxPointLights), sizeof(PointLight));
+	TextureManager::GetInstance()->GetSrvManager()->CreateSRVforStructuredBuffer(pointLightSrvIndex_, pointLightResource_.Get(), static_cast<UINT>(kMaxPointLights), sizeof(PointCommonLight));
 
-	spotLightResource_ = CreateBufferResource(sizeof(SpotLight) * kMaxSpotLights);
+	spotLightResource_ = CreateBufferResource(sizeof(SpotCommonLight) * kMaxSpotLights);
 	assert(spotLightResource_);
-	spotLightCountResource_ = CreateBufferResource(sizeof(SpotLightCount));
+	spotLightCountResource_ = CreateBufferResource(sizeof(SpotCommonLightCount));
 	assert(spotLightCountResource_);
 
 	spotLightSrvIndex_ = TextureManager::GetInstance()->GetSrvManager()->Allocate();
-	TextureManager::GetInstance()->GetSrvManager()->CreateSRVforStructuredBuffer(spotLightSrvIndex_, spotLightResource_.Get(), static_cast<UINT>(kMaxSpotLights), sizeof(SpotLight));
+	TextureManager::GetInstance()->GetSrvManager()->CreateSRVforStructuredBuffer(spotLightSrvIndex_, spotLightResource_.Get(), static_cast<UINT>(kMaxSpotLights), sizeof(SpotCommonLight));
 
-	areaLightResource_ = CreateBufferResource(sizeof(AreaLight) * kMaxAreaLights);
+	areaLightResource_ = CreateBufferResource(sizeof(AreaCommonLight) * kMaxAreaLights);
 	assert(areaLightResource_);
-	areaLightCountResource_ = CreateBufferResource(sizeof(AreaLightCount));
+	areaLightCountResource_ = CreateBufferResource(sizeof(AreaCommonLightCount));
 	assert(areaLightCountResource_);
 
 	areaLightSrvIndex_ = TextureManager::GetInstance()->GetSrvManager()->Allocate();
-	TextureManager::GetInstance()->GetSrvManager()->CreateSRVforStructuredBuffer(areaLightSrvIndex_, areaLightResource_.Get(), static_cast<UINT>(kMaxAreaLights), sizeof(AreaLight));
+	TextureManager::GetInstance()->GetSrvManager()->CreateSRVforStructuredBuffer(areaLightSrvIndex_, areaLightResource_.Get(), static_cast<UINT>(kMaxAreaLights), sizeof(AreaCommonLight));
+	
+	shadowMapPassSettingsResource_ = CreateBufferResource(sizeof(ShadowMapPassSettings));
+	assert(shadowMapPassSettingsResource_);
+	shadowMapPassSettingsResource_->Map(0, nullptr, reinterpret_cast<void**>(&shadowMapPassSettingsData_));
+	assert(shadowMapPassSettingsData_);
+	shadowMapPassSettingsData_->shadowType = kShadowMapPassDirectional;
+	std::fill(std::begin(shadowMapPassSettingsData_->padding), std::end(shadowMapPassSettingsData_->padding), 0.0f);
+	shadowMapPassSettingsResource_->Unmap(0, nullptr);
+	shadowMapPassSettingsData_ = nullptr;
+
+	SetPointLights(nullptr, 0);
+	SetSpotLights(nullptr, 0);
+	SetAreaLights(nullptr, 0);
+
 	editorDirectionalLight_ = *directionalLightData_;
 	editorPointLightCount_ = 0;
 	editorSpotLightCount_ = 0;
 	editorAreaLightCount_ = 0;
-	std::fill(editorPointLights_.begin(), editorPointLights_.end(), PointLight{});
-	std::fill(editorSpotLights_.begin(), editorSpotLights_.end(), SpotLight{});
-	std::fill(editorAreaLights_.begin(), editorAreaLights_.end(), AreaLight{});
+	std::fill(editorPointLights_.begin(), editorPointLights_.end(), PointCommonLight{});
+	std::fill(editorSpotLights_.begin(), editorSpotLights_.end(), SpotCommonLight{});
+	std::fill(editorAreaLights_.begin(), editorAreaLights_.end(), AreaCommonLight{});
 	D3D12_HEAP_PROPERTIES heapProps{};
 	heapProps.Type = D3D12_HEAP_TYPE_DEFAULT;
 
@@ -130,7 +223,7 @@ void Object3dCommon::Initialize(DirectXCommon* dxCommon) {
 	shadowDesc.Height = kShadowMapSize_;
 	shadowDesc.DepthOrArraySize = 1;
 	shadowDesc.MipLevels = 1;
-	shadowDesc.Format = DXGI_FORMAT_D32_FLOAT;
+	shadowDesc.Format = DXGI_FORMAT_R32_TYPELESS;
 	shadowDesc.SampleDesc.Count = 1;
 	shadowDesc.Layout = D3D12_TEXTURE_LAYOUT_UNKNOWN;
 	shadowDesc.Flags = D3D12_RESOURCE_FLAG_ALLOW_DEPTH_STENCIL;
@@ -139,18 +232,10 @@ void Object3dCommon::Initialize(DirectXCommon* dxCommon) {
 	clearValue.Format = DXGI_FORMAT_D32_FLOAT;
 	clearValue.DepthStencil.Depth = 1.0f;
 
-	HRESULT shadowHr =
-	    dxCommon_->GetDevice()->CreateCommittedResource(&heapProps, D3D12_HEAP_FLAG_NONE, &shadowDesc, D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE, &clearValue, IID_PPV_ARGS(&shadowMapResource_));
-	assert(SUCCEEDED(shadowHr));
-
-	shadowDsvHeap_ = dxCommon_->CreateDescriptorHeap(D3D12_DESCRIPTOR_HEAP_TYPE_DSV, 1, false);
-	D3D12_DEPTH_STENCIL_VIEW_DESC shadowDsvDesc{};
-	shadowDsvDesc.Format = DXGI_FORMAT_D32_FLOAT;
-	shadowDsvDesc.ViewDimension = D3D12_DSV_DIMENSION_TEXTURE2D;
-	dxCommon_->GetDevice()->CreateDepthStencilView(shadowMapResource_.Get(), &shadowDsvDesc, shadowDsvHeap_->GetCPUDescriptorHandleForHeapStart());
-
-	shadowMapSrvIndex_ = TextureManager::GetInstance()->GetSrvManager()->Allocate();
-	TextureManager::GetInstance()->GetSrvManager()->CreateSRVforTexture2D(shadowMapSrvIndex_, shadowMapResource_.Get(), DXGI_FORMAT_R32_FLOAT, 1);
+	CreateShadowRenderTarget(dxCommon_, heapProps, shadowDesc, clearValue, {&directionalShadowMapResource_, &directionalShadowDsvHeap_, &directionalShadowMapSrvIndex_});
+	CreateShadowRenderTarget(dxCommon_, heapProps, shadowDesc, clearValue, {&pointShadowMapResource_, &pointShadowDsvHeap_, &pointShadowMapSrvIndex_});
+	CreateShadowRenderTarget(dxCommon_, heapProps, shadowDesc, clearValue, {&spotShadowMapResource_, &spotShadowDsvHeap_, &spotShadowMapSrvIndex_});
+	CreateShadowRenderTarget(dxCommon_, heapProps, shadowDesc, clearValue, {&areaShadowMapResource_, &areaShadowDsvHeap_, &areaShadowMapSrvIndex_});
 
 	shadowViewport_.TopLeftX = 0.0f;
 	shadowViewport_.TopLeftY = 0.0f;
@@ -186,6 +271,14 @@ void Object3dCommon::DrawSet(){
 	dxCommon_->GetCommandList()->SetGraphicsRootConstantBufferView(5, Object3dCommon::GetInstance()->GetPointLightCountResource()->GetGPUVirtualAddress());
 	dxCommon_->GetCommandList()->SetGraphicsRootConstantBufferView(6, Object3dCommon::GetInstance()->GetSpotLightCountResource()->GetGPUVirtualAddress());
 	dxCommon_->GetCommandList()->SetGraphicsRootConstantBufferView(7, Object3dCommon::GetInstance()->GetAreaLightCountResource()->GetGPUVirtualAddress());
+	dxCommon_->GetCommandList()->SetGraphicsRootConstantBufferView(16, Object3dCommon::GetInstance()->GetShadowMapPassSettingsResource()->GetGPUVirtualAddress());
+	if (!isShadowMapPassActive_) {
+		TextureManager::GetInstance()->GetSrvManager()->SetGraphicsRootDescriptorTable(12, directionalShadowMapSrvIndex_);
+		TextureManager::GetInstance()->GetSrvManager()->SetGraphicsRootDescriptorTable(13, pointShadowMapSrvIndex_);
+		TextureManager::GetInstance()->GetSrvManager()->SetGraphicsRootDescriptorTable(14, spotShadowMapSrvIndex_);
+		TextureManager::GetInstance()->GetSrvManager()->SetGraphicsRootDescriptorTable(15, areaShadowMapSrvIndex_);
+
+	}
 }
 void Object3dCommon::DrawCommon() {
 
@@ -266,10 +359,24 @@ void Object3dCommon::DrawCommonSkinningToon() {
 	DrawSet();
 	dxCommon_->GetCommandList()->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 }
+void Object3dCommon::DrawCommonSkinningOutline() {
+
+	dxCommon_->GetCommandList()->SetGraphicsRootSignature(psoSkinningOutline_->GetRootSignature().Get());
+	dxCommon_->GetCommandList()->SetPipelineState(psoSkinningOutline_->GetGraphicsPipelineState(blendMode_).Get());
+	DrawSet();
+	dxCommon_->GetCommandList()->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+}
 void Object3dCommon::DrawCommonMirror() {
 
 	dxCommon_->GetCommandList()->SetGraphicsRootSignature(psoMirror_->GetRootSignature().Get());
 	dxCommon_->GetCommandList()->SetPipelineState(psoMirror_->GetGraphicsPipelineState(blendMode_).Get());
+	DrawSet();
+	dxCommon_->GetCommandList()->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+}
+void Object3dCommon::DrawCommonOutline() {
+
+	dxCommon_->GetCommandList()->SetGraphicsRootSignature(psoOutline_->GetRootSignature().Get());
+	dxCommon_->GetCommandList()->SetPipelineState(psoOutline_->GetGraphicsPipelineState(blendMode_).Get());
 	DrawSet();
 	dxCommon_->GetCommandList()->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 }
@@ -296,19 +403,18 @@ void Object3dCommon::DrawCommonShadow() {
 }
 
 void Object3dCommon::BeginShadowMapPass() {
-	if (!shadowMapResource_) {
+	ID3D12Resource* resource = directionalShadowEnabled_ ? directionalShadowMapResource_.Get()
+	                                                     : (pointShadowEnabled_ ? pointShadowMapResource_.Get()
+	                                                                            : (spotShadowEnabled_ ? spotShadowMapResource_.Get() : (areaShadowEnabled_ ? areaShadowMapResource_.Get() : nullptr)));
+	ID3D12DescriptorHeap* dsvHeap =
+	    directionalShadowEnabled_ ? directionalShadowDsvHeap_.Get()
+	                              : (pointShadowEnabled_ ? pointShadowDsvHeap_.Get() : (spotShadowEnabled_ ? spotShadowDsvHeap_.Get() : (areaShadowEnabled_ ? areaShadowDsvHeap_.Get() : nullptr)));
+	if (!resource || !dsvHeap) {
 		return;
 	}
 	isShadowMapPassActive_ = true;
-	D3D12_RESOURCE_BARRIER barrier{};
-	barrier.Type = D3D12_RESOURCE_BARRIER_TYPE_TRANSITION;
-	barrier.Transition.pResource = shadowMapResource_.Get();
-	barrier.Transition.StateBefore = D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE;
-	barrier.Transition.StateAfter = D3D12_RESOURCE_STATE_DEPTH_WRITE;
-	barrier.Transition.Subresource = D3D12_RESOURCE_BARRIER_ALL_SUBRESOURCES;
-	dxCommon_->GetCommandList()->ResourceBarrier(1, &barrier);
-
-	D3D12_CPU_DESCRIPTOR_HANDLE dsvHandle = shadowDsvHeap_->GetCPUDescriptorHandleForHeapStart();
+	TransitionShadowResource(dxCommon_, resource, D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE, D3D12_RESOURCE_STATE_DEPTH_WRITE);
+	D3D12_CPU_DESCRIPTOR_HANDLE dsvHandle = dsvHeap->GetCPUDescriptorHandleForHeapStart();
 	dxCommon_->GetCommandList()->OMSetRenderTargets(0, nullptr, false, &dsvHandle);
 	dxCommon_->GetCommandList()->ClearDepthStencilView(dsvHandle, D3D12_CLEAR_FLAG_DEPTH, 1.0f, 0, 0, nullptr);
 	dxCommon_->GetCommandList()->RSSetViewports(1, &shadowViewport_);
@@ -316,19 +422,18 @@ void Object3dCommon::BeginShadowMapPass() {
 }
 
 void Object3dCommon::EndShadowMapPass() {
-	if (!shadowMapResource_) {
+	ID3D12Resource* resource = directionalShadowEnabled_ ? directionalShadowMapResource_.Get()
+	                                                     : (pointShadowEnabled_ ? pointShadowMapResource_.Get()
+	                                                                            : (spotShadowEnabled_ ? spotShadowMapResource_.Get() : (areaShadowEnabled_ ? areaShadowMapResource_.Get() : nullptr)));
+	if (!resource) {
 		return;
 	}
-	D3D12_RESOURCE_BARRIER barrier{};
-	barrier.Type = D3D12_RESOURCE_BARRIER_TYPE_TRANSITION;
-	barrier.Transition.pResource = shadowMapResource_.Get();
-	barrier.Transition.StateBefore = D3D12_RESOURCE_STATE_DEPTH_WRITE;
-	barrier.Transition.StateAfter = D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE;
-	barrier.Transition.Subresource = D3D12_RESOURCE_BARRIER_ALL_SUBRESOURCES;
-	dxCommon_->GetCommandList()->ResourceBarrier(1, &barrier);
+	TransitionShadowResource(dxCommon_, resource, D3D12_RESOURCE_STATE_DEPTH_WRITE, D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE);
 	isShadowMapPassActive_ = false;
+	TextureManager::GetInstance()->GetSrvManager()->PreDraw();
 }
-void Object3dCommon::SetDirectionalLight(DirectionalLight& light) {
+
+void Object3dCommon::SetDirectionalLight(DirectionalCommonLight& light) {
 	*directionalLightData_ = light;
 	directionalLightData_->direction = Function::Normalize(directionalLightData_->direction);
 }
@@ -360,16 +465,101 @@ Matrix4x4 Object3dCommon::GetDirectionalLightViewProjectionMatrix() const {
 	Matrix4x4 lightProjection = Function::MakeOrthographicMatrix(-shadowOrthoHalfWidth_, shadowOrthoHalfHeight_, shadowOrthoHalfWidth_, -shadowOrthoHalfHeight_, shadowCameraNear_, shadowCameraFar_);
 	return Function::Multiply(lightView, lightProjection);
 }
+Matrix4x4 Object3dCommon::GetPointLightViewProjectionMatrix() const {
+	Vector3 lightPosition = shadowLightPosition_;
+	Vector3 lightDirection = Function::Normalize(-lightPosition);
+	float farPlane = shadowCameraFar_;
+	float fov = Function::kPi * 0.6f;
+
+	const PointCommonLight* selectedLight = nullptr;
+	for (uint32_t i = 0; i < cachedPointLightCount_; ++i) {
+		if (cachedPointLights_[i].shadowEnabled != 0) {
+			selectedLight = &cachedPointLights_[i];
+			break;
+		}
+	}
+	if (!selectedLight && cachedPointLightCount_ > 0) {
+		selectedLight = &cachedPointLights_[0];
+	}
+	if (selectedLight) {
+		lightPosition = selectedLight->position;
+		farPlane = std::max(shadowCameraNear_ + 0.1f, selectedLight->radius);
+		if (Function::Length(selectedLight->position) > 1.0e-4f) {
+			lightDirection = Function::Normalize(-selectedLight->position);
+		} else {
+			lightDirection = {0.0f, -1.0f, 0.0f};
+		}
+	}
+	return MakeLightViewProjection(lightPosition, lightDirection, shadowCameraNear_, farPlane, fov);
+}
+
+Matrix4x4 Object3dCommon::GetSpotLightViewProjectionMatrix() const {
+	Vector3 lightPosition = shadowLightPosition_;
+	Vector3 lightDirection = {0.0f, -1.0f, 0.0f};
+	float fov = 0.9f;
+	float farPlane = shadowCameraFar_;
+
+	const SpotCommonLight* selectedLight = nullptr;
+	for (uint32_t i = 0; i < cachedSpotLightCount_; ++i) {
+		if (cachedSpotLights_[i].shadowEnabled != 0) {
+			selectedLight = &cachedSpotLights_[i];
+			break;
+		}
+	}
+	if (!selectedLight && cachedSpotLightCount_ > 0) {
+		selectedLight = &cachedSpotLights_[0];
+	}
+	if (selectedLight) {
+		lightPosition = selectedLight->position;
+		lightDirection = Function::Normalize(selectedLight->direction);
+		const float outerAngle = std::acos(std::clamp(selectedLight->cosAngle, -1.0f, 1.0f));
+		fov = outerAngle * 2.0f + 0.1f;
+		farPlane = std::max(shadowCameraNear_ + 0.1f, selectedLight->distance);
+	}
+	return MakeLightViewProjection(lightPosition, lightDirection, shadowCameraNear_, farPlane, fov);
+}
+
+Matrix4x4 Object3dCommon::GetAreaLightViewProjectionMatrix() const {
+	Vector3 lightPosition = shadowLightPosition_;
+	Vector3 lightDirection = {0.0f, -1.0f, 0.0f};
+	float fov = Function::kPi * 0.5f;
+	float farPlane = shadowCameraFar_;
+
+	const AreaCommonLight* selectedLight = nullptr;
+	for (uint32_t i = 0; i < cachedAreaLightCount_; ++i) {
+		if (cachedAreaLights_[i].shadowEnabled != 0) {
+			selectedLight = &cachedAreaLights_[i];
+			break;
+		}
+	}
+	if (!selectedLight && cachedAreaLightCount_ > 0) {
+		selectedLight = &cachedAreaLights_[0];
+	}
+	if (selectedLight) {
+		lightPosition = selectedLight->position;
+		lightDirection = -Function::Normalize(selectedLight->normal);
+		const float coverageRadius = std::max(selectedLight->radius, std::max(selectedLight->width, selectedLight->height));
+		fov = std::atan2(std::max(0.5f, coverageRadius), std::max(0.1f, selectedLight->radius)) * 2.0f + 0.1f;
+		farPlane = std::max({shadowCameraNear_ + 0.1f, selectedLight->radius, selectedLight->width, selectedLight->height});
+	}
+	return MakeLightViewProjection(lightPosition, lightDirection, shadowCameraNear_, farPlane, fov);
+}
+
 void Object3dCommon::SetBlendMode(BlendMode blendMode) {
 	blendMode_ = blendMode;
 	dxCommon_->GetCommandList()->SetPipelineState(pso_->GetGraphicsPipelineState(blendMode_).Get());
 }
-void Object3dCommon::SetPointLights(const PointLight* pointLights, uint32_t count) {
+void Object3dCommon::SetPointLights(const PointCommonLight* pointLights, uint32_t count) {
 	uint32_t clampedCount = std::min(count, static_cast<uint32_t>(kMaxPointLights));
-	pointLightResource_->Map(0, nullptr, reinterpret_cast<void**>(&pointlightData_));
-	std::memset(pointlightData_, 0, sizeof(PointLight) * kMaxPointLights);
+	cachedPointLightCount_ = clampedCount;
+	std::fill(cachedPointLights_.begin(), cachedPointLights_.end(), PointCommonLight{});
 	if (pointLights && clampedCount > 0) {
-		std::memcpy(pointlightData_, pointLights, sizeof(PointLight) * clampedCount);
+		std::copy_n(pointLights, clampedCount, cachedPointLights_.begin());
+	}
+	pointLightResource_->Map(0, nullptr, reinterpret_cast<void**>(&pointlightData_));
+	std::memset(pointlightData_, 0, sizeof(PointCommonLight) * kMaxPointLights);
+	if (pointLights && clampedCount > 0) {
+		std::memcpy(pointlightData_, pointLights, sizeof(PointCommonLight) * clampedCount);
 	}
 	pointLightResource_->Unmap(0, nullptr);
 
@@ -377,12 +567,17 @@ void Object3dCommon::SetPointLights(const PointLight* pointLights, uint32_t coun
 	pointLightCountData_->count = clampedCount;
 	pointLightCountResource_->Unmap(0, nullptr);
 }
-void Object3dCommon::SetSpotLights(const SpotLight* spotLights, uint32_t count) {
+void Object3dCommon::SetSpotLights(const SpotCommonLight* spotLights, uint32_t count) {
 	uint32_t clampedCount = std::min(count, static_cast<uint32_t>(kMaxSpotLights));
-	spotLightResource_->Map(0, nullptr, reinterpret_cast<void**>(&spotLightData_));
-	std::memset(spotLightData_, 0, sizeof(SpotLight) * kMaxSpotLights);
+	cachedSpotLightCount_ = clampedCount;
+	std::fill(cachedSpotLights_.begin(), cachedSpotLights_.end(), SpotCommonLight{});
 	if (spotLights && clampedCount > 0) {
-		std::memcpy(spotLightData_, spotLights, sizeof(SpotLight) * clampedCount);
+		std::copy_n(spotLights, clampedCount, cachedSpotLights_.begin());
+	}
+	spotLightResource_->Map(0, nullptr, reinterpret_cast<void**>(&spotLightData_));
+	std::memset(spotLightData_, 0, sizeof(SpotCommonLight) * kMaxSpotLights);
+	if (spotLights && clampedCount > 0) {
+		std::memcpy(spotLightData_, spotLights, sizeof(SpotCommonLight) * clampedCount);
 	}
 	spotLightResource_->Unmap(0, nullptr);
 
@@ -390,12 +585,17 @@ void Object3dCommon::SetSpotLights(const SpotLight* spotLights, uint32_t count) 
 	spotLightCountData_->count = clampedCount;
 	spotLightCountResource_->Unmap(0, nullptr);
 }
-void Object3dCommon::SetAreaLights(const AreaLight* areaLights, uint32_t count) {
+void Object3dCommon::SetAreaLights(const AreaCommonLight* areaLights, uint32_t count) {
 	uint32_t clampedCount = std::min(count, static_cast<uint32_t>(kMaxAreaLights));
-	areaLightResource_->Map(0, nullptr, reinterpret_cast<void**>(&areaLightData_));
-	std::memset(areaLightData_, 0, sizeof(AreaLight) * kMaxAreaLights);
+	cachedAreaLightCount_ = clampedCount;
+	std::fill(cachedAreaLights_.begin(), cachedAreaLights_.end(), AreaCommonLight{});
 	if (areaLights && clampedCount > 0) {
-		std::memcpy(areaLightData_, areaLights, sizeof(AreaLight) * clampedCount);
+		std::copy_n(areaLights, clampedCount, cachedAreaLights_.begin());
+	}
+	areaLightResource_->Map(0, nullptr, reinterpret_cast<void**>(&areaLightData_));
+	std::memset(areaLightData_, 0, sizeof(AreaCommonLight) * kMaxAreaLights);
+	if (areaLights && clampedCount > 0) {
+		std::memcpy(areaLightData_, areaLights, sizeof(AreaCommonLight) * clampedCount);
 	}
 	areaLightResource_->Unmap(0, nullptr);
 
@@ -404,7 +604,7 @@ void Object3dCommon::SetAreaLights(const AreaLight* areaLights, uint32_t count) 
 	areaLightCountResource_->Unmap(0, nullptr);
 }
 void Object3dCommon::SetEditorLights(
-    const DirectionalLight& directionalLight, const PointLight* pointLights, uint32_t pointCount, const SpotLight* spotLights, uint32_t spotCount, const AreaLight* areaLights, uint32_t areaCount) {
+    const DirectionalCommonLight& directionalLight, const PointCommonLight* pointLights, uint32_t pointCount, const SpotCommonLight* spotLights, uint32_t spotCount, const AreaCommonLight* areaLights, uint32_t areaCount) {
 	editorDirectionalLight_ = directionalLight;
 	editorDirectionalLight_.direction = Function::Normalize(editorDirectionalLight_.direction);
 	if (Function::Length(editorDirectionalLight_.direction) < 1.0e-5f) {
@@ -412,19 +612,19 @@ void Object3dCommon::SetEditorLights(
 	}
 
 	editorPointLightCount_ = std::min(pointCount, static_cast<uint32_t>(kMaxPointLights));
-	std::fill(editorPointLights_.begin(), editorPointLights_.end(), PointLight{});
+	std::fill(editorPointLights_.begin(), editorPointLights_.end(), PointCommonLight{});
 	if (pointLights && editorPointLightCount_ > 0) {
 		std::copy_n(pointLights, editorPointLightCount_, editorPointLights_.begin());
 	}
 
 	editorSpotLightCount_ = std::min(spotCount, static_cast<uint32_t>(kMaxSpotLights));
-	std::fill(editorSpotLights_.begin(), editorSpotLights_.end(), SpotLight{});
+	std::fill(editorSpotLights_.begin(), editorSpotLights_.end(), SpotCommonLight{});
 	if (spotLights && editorSpotLightCount_ > 0) {
 		std::copy_n(spotLights, editorSpotLightCount_, editorSpotLights_.begin());
 	}
 
 	editorAreaLightCount_ = std::min(areaCount, static_cast<uint32_t>(kMaxAreaLights));
-	std::fill(editorAreaLights_.begin(), editorAreaLights_.end(), AreaLight{});
+	std::fill(editorAreaLights_.begin(), editorAreaLights_.end(), AreaCommonLight{});
 	if (areaLights && editorAreaLightCount_ > 0) {
 		std::copy_n(areaLights, editorAreaLightCount_, editorAreaLights_.begin());
 	}

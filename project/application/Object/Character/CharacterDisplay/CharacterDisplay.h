@@ -6,7 +6,7 @@
 #include <memory>
 #include "Object/Character/Sizuku/Sizuku.h"
 #include <numbers>
-#include "Light/DirectionalLight.h"
+#include "Light/CommonLight/DirectionalCommonLight.h"
 class CharacterDisplay {
 	std::unique_ptr<Sizuku> sizukuObject_ = nullptr;
 	std::unique_ptr<CharacterDisplaySkyDome> skyDome_ = nullptr;
@@ -23,7 +23,7 @@ class CharacterDisplay {
 	};
 	float rotateSpeed_ = 0.01f;
 	bool isActive_ = true;
-	DirectionalLight directionalLight{.color{1,1,1,},.direction{0,-1,1.0f},.intensity{0.5f}};
+	DirectionalCommonLight directionalLight{.color{1,1,1,},.direction{0,-1,1.0f},.intensity{0.5f}};
 
 public:
 	void Initialize();

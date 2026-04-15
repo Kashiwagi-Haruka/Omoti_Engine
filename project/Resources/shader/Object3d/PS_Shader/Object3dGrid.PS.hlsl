@@ -12,6 +12,9 @@ struct Material
     int sepiaEnabled;
     float distortionStrength;
     float distortionFalloff;
+    float4 outlineColor;
+    float outlineWidth;
+    float3 outlinePadding;
 };
 
 ConstantBuffer<Material> gMaterial : register(b0);
@@ -40,7 +43,7 @@ float4 GetGridLineColor(int lineIndex)
     return float4(1.0f, 1.0f, 1.0f, 1.0f); // others: white
 }
 
-PixelShaderOutput main(VertexShaderOutput input)
+PixelShaderOutput main(Object3dVertexShaderOutput input)
 {
     PixelShaderOutput output;
 

@@ -65,6 +65,7 @@
     <FxCompile Include="Resources\shader\Particle\UpdateParticle.CS.hlsl">
       <Filter>Resources</Filter>
     </FxCompile>
+    <FxCompile Include="Resources\shader\Object3d\VS_Shader\SkinningObject3dOutline.VS.hlsl" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Engine\Texture\RenderTexture2D.cpp" />
@@ -95,17 +96,11 @@
     <ClCompile Include="Engine\Texture\Mesh\Animation\Animation.cpp">
       <Filter>Engine\Animation</Filter>
     </ClCompile>
-    <ClCompile Include="Engine\Editor\EditorGrid.cpp">
-      <Filter>Engine\Editor</Filter>
-    </ClCompile>
     <ClCompile Include="Engine\BaseScene\FrameWork.cpp">
       <Filter>Engine\BaseScene</Filter>
     </ClCompile>
     <ClCompile Include="Engine\base\GameBase.cpp">
       <Filter>Engine\Base</Filter>
-    </ClCompile>
-    <ClCompile Include="Engine\Editor\Hierarchy.cpp">
-      <Filter>Engine\Editor</Filter>
     </ClCompile>
     <ClCompile Include="externals\imgui\imgui.cpp">
       <Filter>Extarnals</Filter>
@@ -130,9 +125,6 @@
     </ClCompile>
     <ClCompile Include="Engine\Log\Logger.cpp">
       <Filter>Engine\Logger</Filter>
-    </ClCompile>
-    <ClCompile Include="Engine\Editor\Inspector.cpp">
-      <Filter>Engine\Editor</Filter>
     </ClCompile>
     <ClCompile Include="Engine\Loadfile\JSON\JsonManager.cpp">
       <Filter>Engine\LoadFile</Filter>
@@ -193,9 +185,6 @@
     </ClCompile>
     <ClCompile Include="Engine\base\WinApp.cpp">
       <Filter>Engine\Base</Filter>
-    </ClCompile>
-    <ClCompile Include="Engine\Editor\ToolBar.cpp">
-      <Filter>Engine\Editor</Filter>
     </ClCompile>
     <ClCompile Include="Engine\Texture\RenderTexture2D.cpp">
       <Filter>Engine\Texture\RenderTexture2D</Filter>
@@ -284,6 +273,21 @@
     <ClCompile Include="application\UIManager\UIManager.cpp" />
     <ClCompile Include="application\Scene\GameScene\OpenWorld\OpenWorld.cpp" />
     <ClCompile Include="application\Scene\GameScene\Rasen\Rasen.cpp" />
+    <ClCompile Include="Engine\ScreenShot\ScreenShot.cpp" />
+    <ClCompile Include="Engine\Editor\EditorManager\EditorManager.cpp" />
+    <ClCompile Include="Engine\Editor\EditorData\Camera\EditorCamera.cpp" />
+    <ClCompile Include="Engine\Editor\EditorData\Audio\EditorAudio.cpp" />
+    <ClCompile Include="Engine\Editor\EditorData\Light\EditorLight.cpp" />
+    <ClCompile Include="Engine\Editor\EditorData\Object3d\EditorObject3d.cpp" />
+    <ClCompile Include="Engine\Editor\EditorData\Primitive\EditorPrimitive.cpp" />
+    <ClCompile Include="Engine\Editor\EditorTool\Asset\EditorAsset.cpp" />
+    <ClCompile Include="Engine\Editor\EditorTool\Grid\EditorGrid.cpp" />
+    <ClCompile Include="Engine\Editor\EditorTool\Hierarchy\Hierarchy.cpp" />
+    <ClCompile Include="Engine\Editor\EditorTool\Inspector\Inspector.cpp" />
+    <ClCompile Include="Engine\Editor\EditorTool\SaveTemplate\SaveTemplate.cpp" />
+    <ClCompile Include="Engine\Editor\EditorTool\ToolBar\ToolBar.cpp" />
+    <ClCompile Include="Engine\Audio\AudioMixer.cpp" />
+    <ClCompile Include="Engine\Texture\Mesh\Object3d\InstancedObject3d\InstancedObject3d.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Engine\Texture\RenderTexture2D.h" />
@@ -308,12 +312,6 @@
     <ClInclude Include="Engine\base\DirectXCommon.h">
       <Filter>Engine\Base</Filter>
     </ClInclude>
-    <ClInclude Include="Engine\Texture\Light\AreaLight.h">
-      <Filter>Engine\Light</Filter>
-    </ClInclude>
-    <ClInclude Include="Engine\Texture\Light\DirectionalLight.h">
-      <Filter>Engine\Light</Filter>
-    </ClInclude>
     <ClInclude Include="Engine\BaseScene\AbstractSceneFactory.h">
       <Filter>Engine\BaseScene</Filter>
     </ClInclude>
@@ -329,17 +327,11 @@
     <ClInclude Include="Engine\Texture\Mesh\Animation\Animation.h">
       <Filter>Engine\Animation</Filter>
     </ClInclude>
-    <ClInclude Include="Engine\Editor\EditorGrid.h">
-      <Filter>Engine\Editor</Filter>
-    </ClInclude>
     <ClInclude Include="Engine\BaseScene\FrameWork.h">
       <Filter>Engine\BaseScene</Filter>
     </ClInclude>
     <ClInclude Include="Engine\base\GameBase.h">
       <Filter>Engine\Base</Filter>
-    </ClInclude>
-    <ClInclude Include="Engine\Editor\Hierarchy.h">
-      <Filter>Engine\Editor</Filter>
     </ClInclude>
     <ClInclude Include="externals\imgui\imconfig.h">
       <Filter>Extarnals</Filter>
@@ -368,9 +360,6 @@
     <ClInclude Include="Engine\Log\Logger.h">
       <Filter>Engine\Logger</Filter>
     </ClInclude>
-    <ClInclude Include="Engine\Editor\Inspector.h">
-      <Filter>Engine\Editor</Filter>
-    </ClInclude>
     <ClInclude Include="Engine\Loadfile\JSON\JsonManager.h">
       <Filter>Engine\LoadFile</Filter>
     </ClInclude>
@@ -395,14 +384,8 @@
     <ClInclude Include="Engine\Texture\Particle\ParticleManager.h">
       <Filter>Engine\Texture\Particle</Filter>
     </ClInclude>
-    <ClInclude Include="Engine\Texture\Light\PointLight.h">
-      <Filter>Engine\Light</Filter>
-    </ClInclude>
     <ClInclude Include="Engine\Texture\PSO\SpriteCreatePSO.h">
       <Filter>Engine\Texture\PSO</Filter>
-    </ClInclude>
-    <ClInclude Include="Engine\Texture\Light\SpotLight.h">
-      <Filter>Engine\Light</Filter>
     </ClInclude>
     <ClInclude Include="Engine\Input\Input.h">
       <Filter>Engine\Input</Filter>
@@ -428,9 +411,6 @@
     <ClInclude Include="Engine\Math\RigidBody.h">
       <Filter>Engine\Math</Filter>
     </ClInclude>
-    <ClInclude Include="Engine\Texture\SkinningData.h">
-      <Filter>Engine\Animation</Filter>
-    </ClInclude>
     <ClInclude Include="Engine\Texture\Mesh\Animation\Skeleton.h">
       <Filter>Engine\Animation</Filter>
     </ClInclude>
@@ -439,9 +419,6 @@
     </ClInclude>
     <ClInclude Include="Engine\base\WinApp.h">
       <Filter>Engine\Base</Filter>
-    </ClInclude>
-    <ClInclude Include="Engine\Editor\ToolBar.h">
-      <Filter>Engine\Editor</Filter>
     </ClInclude>
     <ClInclude Include="Engine\Math\Vector4.h">
       <Filter>Engine\Math</Filter>
@@ -454,12 +431,6 @@
     </ClInclude>
     <ClInclude Include="Engine\Math\Vector2.h">
       <Filter>Engine\Math</Filter>
-    </ClInclude>
-    <ClInclude Include="Engine\Texture\Color.h">
-      <Filter>Engine\Texture</Filter>
-    </ClInclude>
-    <ClInclude Include="Engine\Texture\Material.h">
-      <Filter>Engine\Texture</Filter>
     </ClInclude>
     <ClInclude Include="Engine\Texture\RenderTexture2D.h">
       <Filter>Engine\Texture\RenderTexture2D</Filter>
@@ -478,9 +449,6 @@
     </ClInclude>
     <ClInclude Include="Engine\StringUtillity\StringUtility.h">
       <Filter>Engine\Logger</Filter>
-    </ClInclude>
-    <ClInclude Include="Engine\Texture\VertexData.h">
-      <Filter>Engine\Texture</Filter>
     </ClInclude>
     <ClInclude Include="Engine\Texture\TextureManager.h">
       <Filter>Engine\Texture</Filter>
@@ -555,6 +523,34 @@
     <ClInclude Include="application\UIManager\UIManager.h" />
     <ClInclude Include="application\Scene\GameScene\OpenWorld\OpenWorld.h" />
     <ClInclude Include="application\Scene\GameScene\Rasen\Rasen.h" />
+    <ClInclude Include="Engine\ScreenShot\ScreenShot.h" />
+    <ClInclude Include="Engine\Editor\EditorManager\EditorManager.h" />
+    <ClInclude Include="Engine\Editor\EditorData\Camera\EditorCamera.h" />
+    <ClInclude Include="Engine\Editor\EditorData\Audio\EditorAudio.h" />
+    <ClInclude Include="Engine\Editor\EditorData\Light\EditorLight.h" />
+    <ClInclude Include="Engine\Editor\EditorData\Object3d\EditorObject3d.h" />
+    <ClInclude Include="Engine\Editor\EditorData\Primitive\EditorPrimitive.h" />
+    <ClInclude Include="Engine\Editor\EditorTool\Asset\EditorAsset.h" />
+    <ClInclude Include="Engine\Editor\EditorTool\Grid\EditorGrid.h" />
+    <ClInclude Include="Engine\Editor\EditorTool\Hierarchy\Hierarchy.h" />
+    <ClInclude Include="Engine\Editor\EditorTool\Inspector\Inspector.h" />
+    <ClInclude Include="Engine\Editor\EditorTool\SaveTemplate\SaveTemplate.h" />
+    <ClInclude Include="Engine\Editor\EditorTool\ToolBar\ToolBar.h" />
+    <ClInclude Include="Engine\Audio\AudioMixer.h" />
+    <ClInclude Include="Engine\Texture\Data\Color.h" />
+    <ClInclude Include="Engine\Texture\Data\Material.h" />
+    <ClInclude Include="Engine\Texture\Data\SkinningData.h" />
+    <ClInclude Include="Engine\Texture\Data\VertexData.h" />
+    <ClInclude Include="Engine\Texture\Light\CommonLight\AreaCommonLight.h" />
+    <ClInclude Include="Engine\Texture\Light\CommonLight\DirectionalCommonLight.h" />
+    <ClInclude Include="Engine\Texture\Light\CommonLight\PointCommonLight.h" />
+    <ClInclude Include="Engine\Texture\Light\CommonLight\SpotCommonLight.h" />
+    <ClInclude Include="Engine\Texture\Light\SoloLight\AreaLight.h" />
+    <ClInclude Include="Engine\Texture\Light\SoloLight\DirectionalLight.h" />
+    <ClInclude Include="Engine\Texture\Light\SoloLight\PointLight.h" />
+    <ClInclude Include="Engine\Texture\Light\SoloLight\SpotLight.h" />
+    <ClInclude Include="Engine\Texture\Mesh\Object3d\InstancedObject3d\InstancedObject3d.h" />
+    <ClInclude Include="Engine\base\ScreenSize.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include=".editorconfig" />

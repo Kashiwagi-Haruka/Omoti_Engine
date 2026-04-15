@@ -1,14 +1,15 @@
 #pragma once
+#include "Audio.h"
 #include "Animation/Animation.h"
 #include "Animation/Skeleton.h"
 #include "Animation/SkinCluster.h"
 #include "BaseScene.h"
 #include "Camera.h"
 #include "DebugCamera.h"
-#include "Light/AreaLight.h"
-#include "Light/DirectionalLight.h"
-#include "Light/PointLight.h"
-#include "Light/SpotLight.h"
+#include "Light/CommonLight/AreaCommonLight.h"
+#include "Light/CommonLight/DirectionalCommonLight.h"
+#include "Light/CommonLight/PointCommonLight.h"
+#include "Light/CommonLight/SpotCommonLight.h"
 #include "Object3d/Object3d.h"
 #include "ParticleEmitter.h"
 #include "Portal/PortalMesh.h"
@@ -41,12 +42,17 @@ class SampleScene : public BaseScene {
 	std::unique_ptr<DebugCamera> debugCamera_ = nullptr;
 	bool useDebugCamera_ = false;
 
-	DirectionalLight directionalLight_{};
-	std::array<PointLight, kMaxPointLights> pointLights_{};
+
+	DirectionalCommonLight directionalLight_{};
+	bool directionalShadowEnabled_ = true;
+	bool pointShadowEnabled_ = true;
+	bool spotShadowEnabled_ = true;
+	bool areaShadowEnabled_ = true;
+	std::array<PointCommonLight, kMaxPointLights> pointLights_{};
 	uint32_t activePointLightCount_ = 0;
-	std::array<SpotLight, kMaxSpotLights> spotLights_{};
+	std::array<SpotCommonLight, kMaxSpotLights> spotLights_{};
 	uint32_t activeSpotLightCount_ = 0;
-	std::array<AreaLight, kMaxAreaLights> areaLights_{};
+	std::array<AreaCommonLight, kMaxAreaLights> areaLights_{};
 	uint32_t activeAreaLightCount_ = 0;
 
 	Transform uvBallTransform_{};
@@ -86,6 +92,11 @@ class SampleScene : public BaseScene {
 	float randomNoiseScale_ = 512.0f;
 	int randomNoiseBlendMode_ = 0;
 	float ringUvRotation_ = 0.0f;
+	SoundData bgmData_{};
+	bool isBgmPlaying_ = false;
+
+		Vector4 uvBallOutlineColor_ = {0.0f, 0.0f, 0.0f, 0.0f};
+	float uvBallOutlineWidth_ = 5.0f;
 
 	void SetSceneCameraForDraw(Camera* camera);
 	void UpdateSceneCameraMatricesForDraw();
