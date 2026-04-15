@@ -11,6 +11,7 @@
 #include "Light/CommonLight/PointCommonLight.h"
 #include "Light/CommonLight/SpotCommonLight.h"
 #include "Object3d/Object3d.h"
+#include "Object/Character/Sizuku/Sizuku.h"
 #include "ParticleEmitter.h"
 #include "Portal/PortalMesh.h"
 #include "RenderTexture2D.h"
@@ -31,6 +32,7 @@ class SampleScene : public BaseScene {
 	std::unique_ptr<Object3d> planeGltf_ = nullptr;
 	std::unique_ptr<Object3d> animatedCubeObj_ = nullptr;
 	std::unique_ptr<Object3d> humanObj_ = nullptr;
+	std::unique_ptr<Sizuku> sizukuObj_ = nullptr;
 	std::unique_ptr<Primitive> spherePrimitive_ = nullptr;
 	std::unique_ptr<PortalMesh> portalMeshA_ = nullptr;
 	std::unique_ptr<PortalMesh> portalMeshB_ = nullptr;
@@ -61,6 +63,7 @@ class SampleScene : public BaseScene {
 	Transform planeGTransform_{};
 	Transform animatedCubeTransform_{};
 	Transform humanTransform_{};
+	Transform sizukuTransform_{};
 	Transform ringTransform_{};
 	Transform portalATransform_{};
 	Transform portalBTransform_{};
