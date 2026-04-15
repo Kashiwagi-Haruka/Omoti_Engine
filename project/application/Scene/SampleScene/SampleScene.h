@@ -47,16 +47,7 @@ class SampleScene : public BaseScene {
 
 
 	DirectionalCommonLight directionalLight_{};
-	bool directionalShadowEnabled_ = true;
-	bool pointShadowEnabled_ = true;
-	bool spotShadowEnabled_ = true;
-	bool areaShadowEnabled_ = true;
-	std::array<PointCommonLight, kMaxPointLights> pointLights_{};
-	uint32_t activePointLightCount_ = 0;
-	std::array<SpotCommonLight, kMaxSpotLights> spotLights_{};
-	uint32_t activeSpotLightCount_ = 0;
-	std::array<AreaCommonLight, kMaxAreaLights> areaLights_{};
-	uint32_t activeAreaLightCount_ = 0;
+
 
 	Transform uvBallTransform_{};
 	Transform cameraTransform_{};

@@ -238,13 +238,7 @@ void SampleScene::Initialize() {
 	overlayCameraSprite_->SetRotation(0.0f);
 	overlayCameraSprite_->SetPosition(Vector2(0.0f, 0.0f));
 
-	activePointLightCount_ = 1;
-	pointLights_[0].color = {1.0f, 1.0f, 1.0f, 1.0f};
-	pointLights_[0].position = {-5.0f, 5.0f, 0.0f};
-	pointLights_[0].intensity = 0.0f;
-	pointLights_[0].radius = 10.0f;
-	pointLights_[0].decay = 1.0f;
-	pointLights_[0].shadowEnabled = 1;
+
 
 	/*pointLights_[1].color = {1.0f, 0.0f, 0.0f, 1.0f};
 	pointLights_[1].position = {5.0f, 5.0f, 5.0f};
@@ -258,47 +252,6 @@ void SampleScene::Initialize() {
 	directionalLight_.intensity = 1.0f;
 	directionalLight_.shadowEnabled = 1;
 
-	activeSpotLightCount_ = 2;
-	spotLights_[0].color = {1.0f, 1.0f, 1.0f, 1.0f};
-	spotLights_[0].position = {-1.0f, 5.0f, 0.0f};
-	spotLights_[0].direction = {0.0f, -1.0f, 0.0f};
-	spotLights_[0].intensity = 1.0f;
-	spotLights_[0].distance = 7.0f;
-	spotLights_[0].decay = 2.0f;
-	spotLights_[0].cosAngle = std::cos(std::numbers::pi_v<float> / 3.0f);
-	spotLights_[0].cosFalloffStart = std::cos(std::numbers::pi_v<float> / 4.0f);
-	spotLights_[0].shadowEnabled = 1;
-
-	spotLights_[1].color = {1.0f, 1.0f, 1.0f, 1.0f};
-	spotLights_[1].position = {2.0f, 1.25f, 0.0f};
-	spotLights_[1].direction = {-1.0f, -1.0f, 0.0f};
-	spotLights_[1].intensity = 0.0f;
-	spotLights_[1].distance = 7.0f;
-	spotLights_[1].decay = 2.0f;
-	spotLights_[1].cosAngle = std::cos(std::numbers::pi_v<float> / 3.0f);
-	spotLights_[1].cosFalloffStart = std::cos(std::numbers::pi_v<float> / 4.0f);
-	spotLights_[1].shadowEnabled = 1;
-
-	activeAreaLightCount_ = 2;
-	areaLights_[0].color = {1.0f, 1.0f, 1.0f, 1.0f};
-	areaLights_[0].position = {0.0f, 3.0f, 0.0f};
-	areaLights_[0].normal = {1.0f, -1.0f, 0.0f};
-	areaLights_[0].intensity = 0.0f;
-	areaLights_[0].width = 2.0f;
-	areaLights_[0].height = 2.0f;
-	areaLights_[0].radius = 0.1f;
-	areaLights_[0].decay = 2.0f;
-	areaLights_[0].shadowEnabled = 1;
-
-	areaLights_[1].color = {1.0f, 1.0f, 1.0f, 1.0f};
-	areaLights_[1].position = {-5.0f, 3.0f, 0.0f};
-	areaLights_[1].normal = {1.0f, -1.0f, 0.0f};
-	areaLights_[1].intensity = 0.0f;
-	areaLights_[1].width = 2.0f;
-	areaLights_[1].height = 2.0f;
-	areaLights_[1].radius = 0.1f;
-	areaLights_[1].decay = 2.0f;
-	areaLights_[1].shadowEnabled = 1;
 }
 
 void SampleScene::Update() {
@@ -491,31 +444,7 @@ void SampleScene::Update() {
 		ImGui::Combo("Random Noise Blend", &randomNoiseBlendMode_, noiseBlendModes, IM_ARRAYSIZE(noiseBlendModes));
 	}
 	ImGui::End();
-	if (ImGui::Begin("Sample Lights")) {
-		if (ImGui::TreeNode("Directional")) {
-			ImGui::Checkbox("Shadow##Directional", &directionalShadowEnabled_);
-			ImGui::TreePop();
-		}
-
-		if (ImGui::TreeNode("Point")) {
-			ImGui::Checkbox("Shadow##Point0", &pointShadowEnabled_);
-			ImGui::TextDisabled("Only the first point light has a shadow map.");
-			ImGui::TreePop();
-		}
-
-		if (ImGui::TreeNode("Spot")) {
-			ImGui::Checkbox("Shadow##Spot0", &spotShadowEnabled_);
-			ImGui::TextDisabled("Only the first spot light has a shadow map.");
-			ImGui::TreePop();
-		}
-
-		if (ImGui::TreeNode("Area")) {
-			ImGui::Checkbox("Shadow##Area0", &areaShadowEnabled_);
-			ImGui::TextDisabled("Only the first area light has a shadow map.");
-			ImGui::TreePop();
-		}
-	}
-	ImGui::End();
+	
 	if (ImGui::Begin("Portal")) {
 		ImGui::Text("Portal A object transform");
 		ImGui::DragFloat3("Scale##PortalAScale", &portalATransform_.scale.x, 0.01f, 0.01f, 100.0f);
@@ -545,16 +474,6 @@ void SampleScene::Update() {
 
 
 #endif // USE_IMGUI
-	directionalLight_.shadowEnabled = directionalShadowEnabled_ ? 1 : 0;
-	for (uint32_t i = 0; i < activePointLightCount_; ++i) {
-		pointLights_[i].shadowEnabled = (pointShadowEnabled_ && i == 0) ? 1 : 0;
-	}
-	for (uint32_t i = 0; i < activeSpotLightCount_; ++i) {
-		spotLights_[i].shadowEnabled = (spotShadowEnabled_ && i == 0) ? 1 : 0;
-	}
-	for (uint32_t i = 0; i < activeAreaLightCount_; ++i) {
-		areaLights_[i].shadowEnabled = (areaShadowEnabled_ && i == 0) ? 1 : 0;
-	}
 	if (useDebugCamera_) {
 		debugCamera_->Update();
 		camera_->SetViewProjectionMatrix(debugCamera_->GetViewMatrix(), debugCamera_->GetProjectionMatrix());
@@ -581,10 +500,6 @@ void SampleScene::Update() {
 		sampleParticleEmitter_->Update(particleTransform_);
 	}
 	Object3dCommon::GetInstance()->SetDirectionalLight(directionalLight_);
-	Object3dCommon::GetInstance()->SetPointLights(pointLights_.data(), activePointLightCount_);
-	Object3dCommon::GetInstance()->SetSpotLights(spotLights_.data(), activeSpotLightCount_);
-	Object3dCommon::GetInstance()->SetAreaLights(areaLights_.data(), activeAreaLightCount_);
-	Object3dCommon::GetInstance()->SetShadowMapEnabled(directionalShadowEnabled_, pointShadowEnabled_, spotShadowEnabled_, areaShadowEnabled_);
 	Object3dCommon::GetInstance()->SetFullScreenGrayscaleEnabled(fullScreenGrayscaleEnabled_);
 	Object3dCommon::GetInstance()->SetFullScreenSepiaEnabled(fullScreenSepiaEnabled_);
 	Object3dCommon::GetInstance()->GetDxCommon()->SetVignetteStrength(vignetteStrength_);
@@ -633,24 +548,6 @@ void SampleScene::Update() {
 }
 void SampleScene::Draw() {
 	auto* object3dCommon = Object3dCommon::GetInstance();
-	const bool shadowFlags[4] = {directionalShadowEnabled_, pointShadowEnabled_, spotShadowEnabled_, areaShadowEnabled_};
-	for (int i = 0; i < 4; ++i) {
-		if (!shadowFlags[i]) {
-			continue;
-		}
-		object3dCommon->SetShadowMapEnabled(i == 0, i == 1, i == 2, i == 3);
-		object3dCommon->BeginShadowMapPass();
-		object3dCommon->DrawCommonShadow();
-		uvBallObj_->Draw();
-		planeGltf_->Draw();
-		fieldObj_->Draw();
-		animatedCubeObj_->Draw();
-		humanObj_->Draw();
-		sizukuObj_->Draw();
-		spherePrimitive_->Draw();
-		object3dCommon->EndShadowMapPass();
-	}
-	object3dCommon->SetShadowMapEnabled(directionalShadowEnabled_, pointShadowEnabled_, spotShadowEnabled_, areaShadowEnabled_);
 
 	// ポータルテクスチャ用に別カメラ視点をオフスクリーン描画
 	portalTextureCameraA_->SetTransform(portalTextureCameraATransform_);
