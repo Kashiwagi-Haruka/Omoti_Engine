@@ -15,6 +15,7 @@
 #include "Portal/PortalMesh.h"
 #include "RenderTexture2D.h"
 #include "Sprite/Sprite.h"
+#include "Text/Text.h"
 #include "Transform.h"
 #include <array>
 #include <cstdint>
@@ -77,6 +78,8 @@ class SampleScene : public BaseScene {
 	std::unique_ptr<Skeleton> humanSkeleton_{};
 	SkinCluster humanSkinCluster_{};
 	float humanAnimationTime_ = 0.0f;
+
+	Text sampleText_{};
 
 	Vector4 color = {1.0f, 1.0f, 1.0f, 1.0f};
 	bool enableLighting = true;

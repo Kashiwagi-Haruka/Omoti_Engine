@@ -90,7 +90,7 @@
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <TreatLinkerWarningAsErrors>true</TreatLinkerWarningAsErrors>
-      <AdditionalDependencies>imgui.lib;assimp-vc143-mtd.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>imgui.lib;assimp-vc143-mtd.lib;%(AdditionalDependencies);freetype.lib</AdditionalDependencies>
       <AdditionalLibraryDirectories>$(SolutionDir)..\Generated\outputs\$(Configuration)\imgui\;$(Project Dir)externals\assimp\lib\Debug;$(SolutionDir)..\Generated\outputs\$(Configuration)\freetype\</AdditionalLibraryDirectories>
     </Link>
     <PostBuildEvent>
@@ -118,7 +118,7 @@ copy "$(WindowsSdkDir)\bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)\
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>assimp-vc143-md.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>assimp-vc143-md.lib;%(AdditionalDependencies);freetype.lib</AdditionalDependencies>
       <AdditionalLibraryDirectories>$(SolutionDir)..\Generated\outputs\$(Configuration)\imgui\;$(ProjectDir)externals\assimp\lib\Release;$(SolutionDir)..\Generated\outputs\$(Configuration)\freetype\</AdditionalLibraryDirectories>
     </Link>
     <PostBuildEvent>
@@ -149,7 +149,7 @@ copy "$(WindowsSdkDir)\bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)\
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <LinkTimeCodeGeneration />
-      <AdditionalDependencies>imgui.lib;assimp-vc143-md.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>imgui.lib;assimp-vc143-md.lib;%(AdditionalDependencies);freetype.lib</AdditionalDependencies>
       <AdditionalLibraryDirectories>$(SolutionDir)..\Generated\outputs\$(Configuration)\imgui\;$(ProjectDir)externals\assimp\lib\Release;$(SolutionDir)..\Generated\outputs\$(Configuration)\freetype\</AdditionalLibraryDirectories>
     </Link>
     <PostBuildEvent>

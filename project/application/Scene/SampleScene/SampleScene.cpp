@@ -47,7 +47,6 @@ Transform MakePortalAnchoredTextureCameraTransform(const Transform& portalTransf
 }
 } // namespace
 SampleScene::SampleScene() {
-
 	uvBallObj_ = std::make_unique<Object3d>();
 	fieldObj_ = std::make_unique<Object3d>();
 	planeGltf_ = std::make_unique<Object3d>();
