@@ -288,6 +288,9 @@
     <ClCompile Include="Engine\Editor\EditorTool\ToolBar\ToolBar.cpp" />
     <ClCompile Include="Engine\Audio\AudioMixer.cpp" />
     <ClCompile Include="Engine\Texture\Mesh\Object3d\InstancedObject3d\InstancedObject3d.cpp" />
+    <ClCompile Include="Engine\Texture\Text\FreetypeManager\Font\Font.cpp" />
+    <ClCompile Include="Engine\Texture\Text\Text.cpp" />
+    <ClCompile Include="Engine\Texture\Text\FreetypeManager\FreeTypeManager.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Engine\Texture\RenderTexture2D.h" />
@@ -551,6 +554,9 @@
     <ClInclude Include="Engine\Texture\Light\SoloLight\SpotLight.h" />
     <ClInclude Include="Engine\Texture\Mesh\Object3d\InstancedObject3d\InstancedObject3d.h" />
     <ClInclude Include="Engine\base\ScreenSize.h" />
+    <ClInclude Include="Engine\Texture\Text\FreetypeManager\Font\Font.h" />
+    <ClInclude Include="Engine\Texture\Text\Text.h" />
+    <ClInclude Include="Engine\Texture\Text\FreetypeManager\FreeTypeManager.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include=".editorconfig" />
