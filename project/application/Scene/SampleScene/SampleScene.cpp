@@ -187,7 +187,7 @@ void SampleScene::Initialize() {
 	sampleParticleEmitter_->SetAreaMax({0.5f, 0.5f, 0.5f});
 
 	const uint32_t sampleFontHandle = FreeTypeManager::CreateFace("Resources/Font/irohakakuC-Regular.ttf", 0);
-	FreeTypeManager::SetPixelSizes(sampleFontHandle, 0, 36);
+	FreeTypeManager::SetPixelSizes(sampleFontHandle, 36, 36);
 	sampleText_.Initialize(sampleFontHandle);
 	sampleText_.SetString(U"Sample Text");
 	sampleText_.SetPosition({640.0f, 60.0f});
