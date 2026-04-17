@@ -1,6 +1,7 @@
 #include "Sizuku.h"
 #include "Model/ModelManager.h"
 #include "Object3d/Object3dCommon.h"
+#include "Data/Color.h"
 #include "GameBase.h"
 void Sizuku::Initialize(){
 	Sizuku_ = std::make_unique<Object3d>();
@@ -23,6 +24,8 @@ void Sizuku::Initialize(){
 		}
 	}
 	Sizuku_->SetShininess(20.0f);
+	Sizuku_->SetOutlineWidth(0.5f);
+	Sizuku_->SetOutlineColor(Color::RGBAToVector4(99, 48, 48, 255));
 }
 void Sizuku::SetCamera(Camera* camera) { camera_ = camera; }
 void Sizuku::SetAnimation(std::string Name){ 
