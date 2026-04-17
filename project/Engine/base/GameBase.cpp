@@ -128,6 +128,7 @@ void GameBase::EndFlame() {
 	dxCommon_->DrawSceneTextureToBackBuffer();
 	imguiM_->Draw(dxCommon_.get());
 	dxCommon_->PostDraw();
+	FreeTypeManager::ResetFontUsage();
 }
 
 float GameBase::GetDeltaTime() { return dxCommon_->GetDeltaTime(); }

@@ -23,6 +23,7 @@ SampleScene::SampleScene() {
 	    .rotate{0.0f, 0.0f, 0.0f  },
 	    .translate{0.0f, 5.0f, -10.0f},
 	};
+	
 	camera_->SetTransform(cameraTransform_);
 
 	fieldTransform_ = {
@@ -32,9 +33,9 @@ SampleScene::SampleScene() {
 	};
 
 	sizukuTransform_ = {
-	    .scale{1.0f,  1.0f,                      1.0f },
+	    .scale{0.2f,  0.2f,                      0.2f },
 	    .rotate{0.0f,  std::numbers::pi_v<float>, 0.0f },
-	    .translate{-2.0f, 0.0f,                      -1.0f},
+	    .translate{-2.0f, 2.0f,                      -1.0f},
 	};
 
 	ModelManager::GetInstance()->LoadModel("Resources/3d", "terrain");
@@ -52,6 +53,7 @@ void SampleScene::Initialize() {
 
 	sizukuObj_->Initialize();
 	sizukuObj_->SetCamera(camera_.get());
+
 	sizukuObj_->SetAnimation("Idle");
 	sizukuObj_->SetTransform(sizukuTransform_);
 

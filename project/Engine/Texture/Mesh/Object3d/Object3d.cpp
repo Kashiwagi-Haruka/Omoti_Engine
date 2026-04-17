@@ -146,14 +146,20 @@ void Object3d::UpdateBillboard()
 
 	UpdateCameraMatrices();
 }
-
 void Object3d::UpdateCameraMatrices() {
 	if (camera_) {
 		worldViewProjectionMatrix = Function::Multiply(worldMatrix, Function::Multiply(camera_->GetViewMatrix(), camera_->GetProjectionMatrix()));
 	} else {
 		worldViewProjectionMatrix = worldMatrix;
 	}
-	transformResource_->Map(0, nullptr, reinterpret_cast<void**>(&transformationMatrixData_));
+	if (!transformResource_ || !cameraResource_) {
+		return;
+	}
+	HRESULT hr = transformResource_->Map(0, nullptr, reinterpret_cast<void**>(&transformationMatrixData_));
+	assert(SUCCEEDED(hr));
+	if (FAILED(hr) || !transformationMatrixData_) {
+		return;
+	}
 
 	transformationMatrixData_->WVP = worldViewProjectionMatrix;
 	transformationMatrixData_->World = worldMatrix;
@@ -163,7 +169,11 @@ void Object3d::UpdateCameraMatrices() {
 	transformationMatrixData_->AreaLightWVP = Function::Multiply(worldMatrix, Object3dCommon::GetInstance()->GetAreaLightViewProjectionMatrix());
 	transformationMatrixData_->WorldInverseTranspose = Function::Inverse(worldMatrix);
 	transformResource_->Unmap(0, nullptr);
-	cameraResource_->Map(0, nullptr, reinterpret_cast<void**>(&cameraData_));
+	hr = cameraResource_->Map(0, nullptr, reinterpret_cast<void**>(&cameraData_));
+	assert(SUCCEEDED(hr));
+	if (FAILED(hr) || !cameraData_) {
+		return;
+	}
 	if (camera_) {
 		cameraData_->worldPosition = camera_->GetWorldTranslate();
 
@@ -336,6 +346,8 @@ bool Object3d::IsSepiaEnabled() const {
 void Object3d::CreateResources() {
 	transformResource_ = Object3dCommon::GetInstance()->CreateBufferResource(sizeof(TransformationMatrix));
 	cameraResource_ = Object3dCommon::GetInstance()->CreateBufferResource(sizeof(CameraForGpu));
+	assert(transformResource_);
+	assert(cameraResource_);
 	const size_t alignedMaterialSize = (sizeof(Material) + 0xFF) & ~0xFF;
 	materialResource_ = Object3dCommon::GetInstance()->CreateBufferResource(alignedMaterialSize);
 	materialResource_->Map(0, nullptr, reinterpret_cast<void**>(&materialData_));
