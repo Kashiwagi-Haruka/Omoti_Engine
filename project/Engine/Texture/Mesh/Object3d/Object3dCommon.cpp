@@ -371,7 +371,13 @@ void Object3dCommon::DrawCommonSkinningOutline() {
 	DrawSet();
 	dxCommon_->GetCommandList()->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 }
-void Object3dCommon::DrawCommonSkinningToonOutline() { DrawCommonSkinningOutline(); }
+void Object3dCommon::DrawCommonSkinningToonOutline() {
+	dxCommon_->BeginOutlineRenderTarget();
+	dxCommon_->GetCommandList()->SetGraphicsRootSignature(psoSkinningToonOutline_->GetRootSignature().Get());
+	dxCommon_->GetCommandList()->SetPipelineState(psoSkinningToonOutline_->GetGraphicsPipelineState(blendMode_).Get());
+	DrawSet();
+	dxCommon_->GetCommandList()->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+}
 void Object3dCommon::DrawCommonMirror() {
 
 	dxCommon_->GetCommandList()->SetGraphicsRootSignature(psoMirror_->GetRootSignature().Get());

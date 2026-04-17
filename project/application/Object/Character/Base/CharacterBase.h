@@ -16,4 +16,5 @@ struct Parameters {
 	int Speed;
 	int CriticalRate;
 	int CriticalDamage;
+	int AttributeDamageRate;
 };
