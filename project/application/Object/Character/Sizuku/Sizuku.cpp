@@ -23,7 +23,7 @@ void Sizuku::Initialize(){
 		}
 	}
 	Sizuku_->SetShininess(20.0f);
-	Sizuku_->SetOutlineWidth(0.01f);
+	Sizuku_->SetOutlineWidth(2.0f);
 	Sizuku_->SetOutlineColor({99.0f/255.0f,48.0f/255.0f,48.0f/255.0f,1.0f});
 }
 void Sizuku::SetCamera(Camera* camera) { camera_ = camera; }

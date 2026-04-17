@@ -128,7 +128,7 @@ void SampleScene::Draw() {
 	Object3dCommon::GetInstance()->DrawCommon();
 	fieldObj_->Draw();
 
-	Object3dCommon::GetInstance()->DrawCommonSkinning();
+	Object3dCommon::GetInstance()->DrawCommonSkinningToon();
 	sizukuObj_->Draw();
 
 	Object3dCommon::GetInstance()->DrawCommonSkinningToonOutline();

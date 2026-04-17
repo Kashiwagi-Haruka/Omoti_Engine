@@ -356,7 +356,7 @@ void DirectXCommon::SceneColorResourceCreate() {
 
 	hr_ = device_->CreateCommittedResource(&heapProps, D3D12_HEAP_FLAG_NONE, &textureDesc, D3D12_RESOURCE_STATE_RENDER_TARGET, &clearValue, IID_PPV_ARGS(&sceneColorResource_));
 	assert(SUCCEEDED(hr_));
-	clearValue.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
+	clearValue.Format = DXGI_FORMAT_R8G8B8A8_UNORM_SRGB;
 	clearValue.Color[0] = 0.0f;
 	clearValue.Color[1] = 0.0f;
 	clearValue.Color[2] = 0.0f;
@@ -374,7 +374,7 @@ void DirectXCommon::SceneColorViewCreate() {
 	sceneRtvDesc.ViewDimension = D3D12_RTV_DIMENSION_TEXTURE2D;
 	device_->CreateRenderTargetView(sceneColorResource_.Get(), &sceneRtvDesc, sceneRtvHandle_);
 	D3D12_RENDER_TARGET_VIEW_DESC outlineRtvDesc{};
-	outlineRtvDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
+	outlineRtvDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM_SRGB;
 	outlineRtvDesc.ViewDimension = D3D12_RTV_DIMENSION_TEXTURE2D;
 	device_->CreateRenderTargetView(sceneOutlineResource_.Get(), &outlineRtvDesc, sceneOutlineRtvHandle_);
 
@@ -391,7 +391,7 @@ void DirectXCommon::SceneColorViewCreate() {
 	D3D12_CPU_DESCRIPTOR_HANDLE outlineSrvHandleCPU = sceneSrvHandleCPU_;
 	outlineSrvHandleCPU.ptr += descriptorSizeSRV_;
 	D3D12_SHADER_RESOURCE_VIEW_DESC outlineSrvDesc{};
-	outlineSrvDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
+	outlineSrvDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM_SRGB;
 	outlineSrvDesc.Shader4ComponentMapping = D3D12_DEFAULT_SHADER_4_COMPONENT_MAPPING;
 	outlineSrvDesc.ViewDimension = D3D12_SRV_DIMENSION_TEXTURE2D;
 	outlineSrvDesc.Texture2D.MipLevels = 1;
