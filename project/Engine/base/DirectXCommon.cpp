@@ -356,6 +356,7 @@ void DirectXCommon::SceneColorResourceCreate() {
 
 	hr_ = device_->CreateCommittedResource(&heapProps, D3D12_HEAP_FLAG_NONE, &textureDesc, D3D12_RESOURCE_STATE_RENDER_TARGET, &clearValue, IID_PPV_ARGS(&sceneColorResource_));
 	assert(SUCCEEDED(hr_));
+	clearValue.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
 	clearValue.Color[0] = 0.0f;
 	clearValue.Color[1] = 0.0f;
 	clearValue.Color[2] = 0.0f;
@@ -778,12 +779,18 @@ void DirectXCommon::SetMainRenderTarget() {
 	commandList_->RSSetScissorRects(1, &scissorRect_);
 	float clearColor[] = {0.1f, 0.25f, 0.5f, 1.0f};
 	commandList_->ClearRenderTargetView(sceneRtvHandle_, clearColor, 0, nullptr);
-	float outlineClearColor[] = {0.0f, 0.0f, 0.0f, 0.0f};
-	commandList_->ClearRenderTargetView(sceneOutlineRtvHandle_, outlineClearColor, 0, nullptr);
+	if (sceneOutlineResource_ != nullptr && sceneOutlineRtvHandle_.ptr != 0) {
+		float outlineClearColor[] = {0.0f, 0.0f, 0.0f, 0.0f};
+		commandList_->ClearRenderTargetView(sceneOutlineRtvHandle_, outlineClearColor, 0, nullptr);
+	}
 	commandList_->ClearDepthStencilView(dsvHandle, D3D12_CLEAR_FLAG_DEPTH, 1.0f, 0, 0, nullptr);
 	TextureManager::GetInstance()->GetSrvManager()->PreDraw();
 }
 void DirectXCommon::BeginOutlineRenderTarget() {
+	if (sceneOutlineResource_ == nullptr || sceneOutlineRtvHandle_.ptr == 0) {
+		inOutlineRenderTarget_ = false;
+		return;
+	}
 	D3D12_CPU_DESCRIPTOR_HANDLE dsvHandle = dsvDescriptorHeap_->GetCPUDescriptorHandleForHeapStart();
 	commandList_->OMSetRenderTargets(1, &sceneOutlineRtvHandle_, false, &dsvHandle);
 	commandList_->RSSetViewports(1, &viewport_);
