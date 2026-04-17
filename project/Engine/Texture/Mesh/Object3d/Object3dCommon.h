@@ -232,6 +232,8 @@ public:
 	void DrawCommonSkinningOutline();
 	// スキニング＋トゥーンアウトライン描画設定
 	void DrawCommonSkinningToonOutline();
+	// アウトライン描画ターゲットを通常シーンへ戻す
+	void EndOutlineDraw();
 	// ミラー描画設定
 	void DrawCommonMirror();
 	// アウトライン描画設定

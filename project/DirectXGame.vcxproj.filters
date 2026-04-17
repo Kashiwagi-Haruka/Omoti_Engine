@@ -560,6 +560,7 @@
     <ClInclude Include="Engine\Texture\Text\Text.h" />
     <ClInclude Include="Engine\Texture\Text\FreetypeManager\FreeTypeManager.h" />
     <ClInclude Include="application\Object\Character\Base\CharacterBase.h" />
+    <ClInclude Include="application\Object\Character\Base\Attribute.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include=".editorconfig" />

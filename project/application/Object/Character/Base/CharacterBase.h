@@ -14,4 +14,6 @@ struct Parameters {
 	int Attack;
 	int Defense;
 	int Speed;
+	int CriticalRate;
+	int CriticalDamage;
 };

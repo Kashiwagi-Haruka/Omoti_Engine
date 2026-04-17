@@ -122,14 +122,18 @@ void SampleScene::DebugImgui() {
 }
 
 void SampleScene::Draw() {
-	
+
 	Object3dCommon::GetInstance()->SetDefaultCamera(camera_.get());
 
 	Object3dCommon::GetInstance()->DrawCommon();
 	fieldObj_->Draw();
 
+	Object3dCommon::GetInstance()->DrawCommonSkinning();
+	sizukuObj_->Draw();
+
 	Object3dCommon::GetInstance()->DrawCommonSkinningToonOutline();
 	sizukuObj_->Draw();
+	Object3dCommon::GetInstance()->EndOutlineDraw();
 
 	SpriteCommon::GetInstance()->DrawCommon();
 	sampleText_.Draw();
