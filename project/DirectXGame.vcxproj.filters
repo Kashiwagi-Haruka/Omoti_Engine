@@ -66,8 +66,8 @@
       <Filter>Resources</Filter>
     </FxCompile>
     <FxCompile Include="Resources\shader\Object3d\VS_Shader\SkinningObject3dOutline.VS.hlsl" />
-    <FxCompile Include="Resources\shader\Object3d\VS_Shader\SkininngObject3dToonOutline.VS.hlsl" />
-    <FxCompile Include="Resources\shader\Object3d\PS_Shader\SkininngObject3dToonOutline.PS.hlsl" />
+    <FxCompile Include="Resources\shader\Object3d\VS_Shader\SkinningObject3dToonOutline.VS.hlsl" />
+    <FxCompile Include="Resources\shader\Object3d\PS_Shader\SkinningObject3dToonOutline.PS.hlsl" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Engine\Texture\RenderTexture2D.cpp" />
