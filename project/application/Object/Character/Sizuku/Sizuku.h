@@ -13,11 +13,10 @@ class Sizuku {
 
 	PlayableParameter parameter_;
 
-
 	Matrix4x4 playerWorld;
-	std::unique_ptr<Object3d> Sizuku_;
 	Transform transform_;
 	Camera* camera_;
+	std::unique_ptr<Object3d> Sizuku_;
 	std::unique_ptr<Skeleton> sizukuSkeleton_{};
 	SkinCluster sizukuSkinCluster_{};
 	Animation::AnimationData blendedPoseAnimation_{};

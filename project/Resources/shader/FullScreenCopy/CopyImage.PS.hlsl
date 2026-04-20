@@ -1,13 +1,13 @@
 #include "CopyImage.hlsli"
 
 Texture2D<float4> gTexture : register(t0);
+Texture2D<float4> gOutlineTexture : register(t1);
 SamplerState gSampler : register(s0);
 
 struct PixelShaderOutput
 {
     float4 color : SV_TARGET0;
 };
-
 float rand2dTo1d(float2 value)
 {
     const float2 smallValue = sin(value);
@@ -55,6 +55,9 @@ PixelShaderOutput main(VertexShaderOutput input)
 
         output.color.rgb = saturate(output.color.rgb);
     }
+
+    float4 outlineColor = gOutlineTexture.Sample(gSampler, input.texcoord);
+    output.color.rgb = lerp(output.color.rgb, outlineColor.rgb, saturate(outlineColor.a));
 
     return output;
 }

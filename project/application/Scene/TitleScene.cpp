@@ -69,6 +69,7 @@ void TitleScene::Update() {
 	if (Input::GetInstance()->TriggerKey(DIK_SPACE) && !isTransitionOut) {
 		transition->Initialize(true);
 		isTransitionOut = true;
+
 	}
 
 	if (isTransitionIn || isTransitionOut) {

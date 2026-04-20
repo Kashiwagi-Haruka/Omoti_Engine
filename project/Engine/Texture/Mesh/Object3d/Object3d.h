@@ -37,9 +37,9 @@ class Object3d {
 
 	Camera* camera_;
 
-	TransformationMatrix* transformationMatrixData_;
+	TransformationMatrix* transformationMatrixData_ = nullptr;
 	Microsoft::WRL::ComPtr<ID3D12Resource> transformResource_;
-	CameraForGpu* cameraData_;
+	CameraForGpu* cameraData_ = nullptr;
 	Microsoft::WRL::ComPtr<ID3D12Resource> cameraResource_;
 	Material* materialData_ = nullptr;
 	Microsoft::WRL::ComPtr<ID3D12Resource> materialResource_;

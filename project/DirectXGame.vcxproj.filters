@@ -66,6 +66,8 @@
       <Filter>Resources</Filter>
     </FxCompile>
     <FxCompile Include="Resources\shader\Object3d\VS_Shader\SkinningObject3dOutline.VS.hlsl" />
+    <FxCompile Include="Resources\shader\Object3d\VS_Shader\SkinningObject3dToonOutline.VS.hlsl" />
+    <FxCompile Include="Resources\shader\Object3d\PS_Shader\SkinningObject3dToonOutline.PS.hlsl" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Engine\Texture\RenderTexture2D.cpp" />
@@ -557,6 +559,8 @@
     <ClInclude Include="Engine\Texture\Text\FreetypeManager\Font\Font.h" />
     <ClInclude Include="Engine\Texture\Text\Text.h" />
     <ClInclude Include="Engine\Texture\Text\FreetypeManager\FreeTypeManager.h" />
+    <ClInclude Include="application\Object\Character\Base\CharacterBase.h" />
+    <ClInclude Include="application\Object\Character\Base\Attribute.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include=".editorconfig" />
