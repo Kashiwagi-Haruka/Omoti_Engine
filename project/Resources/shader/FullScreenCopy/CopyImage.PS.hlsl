@@ -8,7 +8,6 @@ struct PixelShaderOutput
 {
     float4 color : SV_TARGET0;
 };
-
 float rand2dTo1d(float2 value)
 {
     const float2 smallValue = sin(value);
