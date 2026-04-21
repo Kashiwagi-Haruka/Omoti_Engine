@@ -294,6 +294,7 @@
     <ClCompile Include="Engine\Texture\Text\FreetypeManager\Font\Font.cpp" />
     <ClCompile Include="Engine\Texture\Text\Text.cpp" />
     <ClCompile Include="Engine\Texture\Text\FreetypeManager\FreeTypeManager.cpp" />
+    <ClCompile Include="Engine\Texture\Mesh\SkyBox\SkyBox.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Engine\Texture\RenderTexture2D.h" />
@@ -562,6 +563,7 @@
     <ClInclude Include="Engine\Texture\Text\FreetypeManager\FreeTypeManager.h" />
     <ClInclude Include="application\Object\Character\Base\CharacterBase.h" />
     <ClInclude Include="application\Object\Character\Base\Attribute.h" />
+    <ClInclude Include="Engine\Texture\Mesh\SkyBox\SkyBox.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include=".editorconfig" />
