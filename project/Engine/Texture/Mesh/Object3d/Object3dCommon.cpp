@@ -146,6 +146,13 @@ void Object3dCommon::Initialize(DirectXCommon* dxCommon) {
 	    D3D12_CULL_MODE_FRONT, true, D3D12_FILL_MODE_SOLID, D3D12_PRIMITIVE_TOPOLOGY_TYPE_TRIANGLE, L"Resources/shader/Object3d/PS_Shader/SkinningObject3dToonOutline.PS.hlsl",
 	    L"Resources/shader/Object3d/VS_Shader/SkinningObject3dToonOutline.VS.hlsl");
 
+	psoMaterialColorSkinning_ = std::make_unique<CreatePSO>(dxCommon_,true);
+	psoMaterialColorSkinning_->Create(
+		D3D12_CULL_MODE_BACK, true, D3D12_FILL_MODE_SOLID, D3D12_PRIMITIVE_TOPOLOGY_TYPE_TRIANGLE, L"Resources/shader/Object3d/PS_Shader/MaterialColorOnlyObject3d.PS.hlsl",
+	    L"Resources/shader/Object3d/VS_Shader/SkinningObject3d.VS.hlsl");
+
+
+
 	SetEnvironmentMapTexture("Resources/3d/skydome.png");
 
 	psoMirror_ = std::make_unique<CreatePSO>(dxCommon_);
@@ -414,7 +421,12 @@ void Object3dCommon::DrawCommonShadow() {
 	DrawSet();
 	dxCommon_->GetCommandList()->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 }
-
+void Object3dCommon::DrawCommonMaterialColorOnlySkinning() { 
+	dxCommon_->GetCommandList()->SetGraphicsRootSignature(psoMaterialColorSkinning_->GetRootSignature().Get()); 
+	dxCommon_->GetCommandList()->SetPipelineState(psoMaterialColorSkinning_->GetGraphicsPipelineState(blendMode_).Get()); 
+	DrawSet(); 
+	dxCommon_->GetCommandList()->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST); 
+}
 void Object3dCommon::BeginShadowMapPass() {
 	ID3D12Resource* resource = directionalShadowEnabled_ ? directionalShadowMapResource_.Get()
 	                                                     : (pointShadowEnabled_ ? pointShadowMapResource_.Get()

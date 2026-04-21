@@ -3,6 +3,7 @@
 #include "Vector2.h"
 #include <array>
 #include <memory>
+#include "Mesh/Object3d/Object3d.h"
 
 class Pause {
 
@@ -14,9 +15,10 @@ public:
 	};
 
 private:
-	std::unique_ptr<Sprite> BG_;
 	std::unique_ptr<Sprite> Select_;
 	std::unique_ptr<Sprite> Button_;
+	std::unique_ptr<Object3d> BackGround_;
+	Object3d* currentCharacterObj_ = nullptr;
 
 	uint32_t BGHandle_;
 	uint32_t SelectHandle_;
@@ -45,5 +47,6 @@ public:
 	void Update(bool isPause);
 	void Draw();
 	bool IsVisible() const { return isActive_ || isStart_ || isEnd_; }
+	void SetCurrentCharacterObj(Object3d* obj) { currentCharacterObj_ = obj; }
 	Action ConsumeAction();
 };

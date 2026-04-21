@@ -128,12 +128,13 @@ void SampleScene::Draw() {
 	Object3dCommon::GetInstance()->DrawCommon();
 	fieldObj_->Draw();
 
-	Object3dCommon::GetInstance()->DrawCommonSkinningToon();
+	/*Object3dCommon::GetInstance()->DrawCommonSkinningToon();*/
+	Object3dCommon::GetInstance()->DrawCommonMaterialColorOnlySkinning();
 	sizukuObj_->Draw();
 
-	Object3dCommon::GetInstance()->DrawCommonSkinningToonOutline();
-	sizukuObj_->Draw();
-	Object3dCommon::GetInstance()->EndOutlineDraw();
+	//Object3dCommon::GetInstance()->DrawCommonSkinningToonOutline();
+	//sizukuObj_->Draw();
+	//Object3dCommon::GetInstance()->EndOutlineDraw();
 
 	SpriteCommon::GetInstance()->DrawCommon();
 	sampleText_.Draw();
