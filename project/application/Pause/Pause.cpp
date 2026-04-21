@@ -9,15 +9,12 @@ constexpr float kHiddenOffsetX = 1280.0f;
 } // namespace
 
 Pause::Pause() {
-	BGHandle_ = TextureManager::GetInstance()->GetTextureIndexByfilePath("Resources/2d/PauseBG.png");
 	SelectHandle_ = TextureManager::GetInstance()->GetTextureIndexByfilePath("Resources/2d/PauseSelect.png");
 	ButtonHandle_ = TextureManager::GetInstance()->GetTextureIndexByfilePath("Resources/2d/PauseButton.png");
 
-	BG_ = std::make_unique<Sprite>();
 	Select_ = std::make_unique<Sprite>();
 	Button_ = std::make_unique<Sprite>();
 
-	BG_->Initialize(BGHandle_);
 	Select_->Initialize(SelectHandle_);
 	Button_->Initialize(ButtonHandle_);
 }
@@ -35,7 +32,6 @@ void Pause::Initialize() {
 	buttonBasePos_[0] = {selectBasePos_.x - 60.0f, selectBasePos_.y + 60.0f};
 	buttonBasePos_[1] = {selectBasePos_.x - 60.0f, selectBasePos_.y + 260.0f};
 
-	BG_->SetScale(bgSize_);
 	Select_->SetScale(selectSize_);
 	Button_->SetScale(buttonSize_);
 }
@@ -108,15 +104,12 @@ void Pause::Update(bool isPause) {
 		}
 	}
 
-	Vector2 bgPos = {bgBasePos_.x + offsetX, bgBasePos_.y};
 	Vector2 selectPos = {selectBasePos_.x + offsetX, selectBasePos_.y};
 	Vector2 buttonPos = {buttonBasePos_[selectIndex_].x + offsetX, buttonBasePos_[selectIndex_].y};
 
-	BG_->SetPosition(bgPos);
 	Select_->SetPosition(selectPos);
 	Button_->SetPosition(buttonPos);
 
-	BG_->Update();
 	Select_->Update();
 	Button_->Update();
 }
@@ -126,8 +119,6 @@ void Pause::Draw() {
 	if (!IsVisible()) {
 		return;
 	}
-
-	BG_->Draw();
 	Select_->Draw();
 	Button_->Draw();
 }
