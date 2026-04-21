@@ -110,6 +110,7 @@ void GameScene::Initialize() {
 	spotLights_[0].cosAngle = std::cos(std::numbers::pi_v<float> / 3.0f);
 	spotLights_[0].cosFalloffStart = std::cos(std::numbers::pi_v<float> / 4.0f);
 	pause->Initialize();
+	pause->SetCurrentCharacterObj(player->GetCharacterObject3d());
 	characterDisplay_->Initialize();
 	characterDisplay_->SetActive(false);
 }
@@ -300,6 +301,13 @@ void GameScene::Update() {
 void GameScene::Draw() {
 	if (isCharacterDisplayMode_) {
 		characterDisplay_->Draw();
+		return;
+	}
+	if (isPause) {
+		pause->Draw();
+		if (isTransitionIn || isTransitionOut) {
+			sceneTransition->Draw();
+		}
 		return;
 	}
 	Object3dCommon::GetInstance()->DrawCommon();

@@ -20,7 +20,7 @@ Pause::Pause() {
 
 	Select_->Initialize(SelectHandle_);
 	Button_->Initialize(ButtonHandle_);
-	BG_->Initialize(Primitive::PrimitiveName::Plane, "Resources/2d/White1x1.png");
+	BG_->Initialize(Primitive::PrimitiveName::Plane, "Resources/2d/white2x2.png");
 }
 
 void Pause::Initialize() {

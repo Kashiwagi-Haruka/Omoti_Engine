@@ -40,4 +40,5 @@ public:
 	void Draw();
 	std::optional<Matrix4x4> GetJointWorldMatrix(const std::string& jointName) const;
 	bool IsAttackAnimationFinished() const { return sizuku_ ? sizuku_->IsAnimationFinished() : false; }
+	Object3d* GetCharacterObject3d() { return sizuku_ ? sizuku_->GetObject3d() : nullptr; }
 };

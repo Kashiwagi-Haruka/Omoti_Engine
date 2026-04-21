@@ -43,6 +43,7 @@ void TutorialScene::Initialize() {
 	field_->Initialize(cameraController_->GetCamera());
 	expCubeManager_->Initialize(cameraController_->GetCamera());
 	pause_->Initialize();
+	pause_->SetCurrentCharacterObj(player_->GetCharacterObject3d());
 	tutorialUI_->Initialize();
 
 	controlSpriteHandle_ = TextureManager::GetInstance()->GetTextureIndexByfilePath("Resources/2d/option.png");
@@ -264,6 +265,10 @@ void TutorialScene::Update() {
 }
 
 void TutorialScene::Draw() {
+	if (isPaused_) {
+		pause_->Draw();
+		return;
+	}
 	Object3dCommon::GetInstance()->DrawCommon();
 	skyDome_->Draw();
 	field_->Draw();

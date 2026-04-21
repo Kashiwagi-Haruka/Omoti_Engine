@@ -33,4 +33,5 @@ class Sizuku {
 	void SetTransform(Transform transform) { transform_ = transform; }
 	std::optional<Matrix4x4> GetJointWorldMatrix(const std::string& jointName) const;
 	bool IsAnimationFinished() const { return animationFinished_; }
+	Object3d* GetObject3d() { return Sizuku_.get(); }
 };
