@@ -69,6 +69,8 @@
     <FxCompile Include="Resources\shader\Object3d\VS_Shader\SkinningObject3dToonOutline.VS.hlsl" />
     <FxCompile Include="Resources\shader\Object3d\PS_Shader\SkinningObject3dToonOutline.PS.hlsl" />
     <FxCompile Include="Resources\shader\Object3d\PS_Shader\MaterialColorOnlyObject3d.PS.hlsl" />
+    <FxCompile Include="Resources\shader\Skybox\Skybox.PS.hlsl" />
+    <FxCompile Include="Resources\shader\Skybox\Skybox.VS.hlsl" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Engine\Texture\RenderTexture2D.cpp" />
@@ -295,6 +297,7 @@
     <ClCompile Include="Engine\Texture\Text\Text.cpp" />
     <ClCompile Include="Engine\Texture\Text\FreetypeManager\FreeTypeManager.cpp" />
     <ClCompile Include="Engine\Texture\Mesh\SkyBox\SkyBox.cpp" />
+    <ClCompile Include="application\PlayCommand\PlayCommand.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Engine\Texture\RenderTexture2D.h" />
@@ -564,6 +567,7 @@
     <ClInclude Include="application\Object\Character\Base\CharacterBase.h" />
     <ClInclude Include="application\Object\Character\Base\Attribute.h" />
     <ClInclude Include="Engine\Texture\Mesh\SkyBox\SkyBox.h" />
+    <ClInclude Include="application\PlayCommand\PlayCommand.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include=".editorconfig" />
@@ -579,6 +583,7 @@
     <None Include="Resources\shader\Sprite\Sprite.hlsli">
       <Filter>Resources</Filter>
     </None>
+    <None Include="Resources\shader\Skybox\Skybox.hlsli" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="externals\imgui\LICENSE.txt" />

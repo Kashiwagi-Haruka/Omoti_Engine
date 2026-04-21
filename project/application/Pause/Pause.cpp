@@ -2,7 +2,8 @@
 #include "Function.h"
 #include "Input.h"
 #include "TextureManager.h"
-
+#include  "Engine/Texture/Sprite/SpriteCommon.h"
+#include  "Engine/Texture/Mesh/Object3d/Object3dCommon.h"
 namespace {
 constexpr float kTransitionSpeed = 0.06f;
 constexpr float kHiddenOffsetX = 1280.0f;
@@ -14,9 +15,12 @@ Pause::Pause() {
 
 	Select_ = std::make_unique<Sprite>();
 	Button_ = std::make_unique<Sprite>();
+	BG_ = std::make_unique<Primitive>();
+
 
 	Select_->Initialize(SelectHandle_);
 	Button_->Initialize(ButtonHandle_);
+	BG_->Initialize(Primitive::PrimitiveName::Plane, "Resources/2d/White1x1.png");
 }
 
 void Pause::Initialize() {
@@ -119,6 +123,13 @@ void Pause::Draw() {
 	if (!IsVisible()) {
 		return;
 	}
+	SpriteCommon::GetInstance()->DrawCommon();
 	Select_->Draw();
 	Button_->Draw();
+	Object3dCommon::GetInstance()->DrawCommon();
+	BG_->Draw();
+	if (currentCharacterObj_) {
+	Object3dCommon::GetInstance()->DrawCommonMaterialColorOnlySkinning();
+	currentCharacterObj_->Draw();
+	}
 }
