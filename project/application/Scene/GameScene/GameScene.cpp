@@ -163,6 +163,15 @@ void GameScene::DebugImGui() {
 
 void GameScene::Update() {
 	GameTimer::GetInstance()->Update();
+	const bool isAltPressed = Input::GetInstance()->PushKey(DIK_LMENU) || Input::GetInstance()->PushKey(DIK_RMENU);
+	const bool isGameplayControlActive = !isPause && !isCharacterDisplayMode_ && !isTransitionIn && !isTransitionOut;
+	if (isGameplayControlActive && isAltPressed) {
+		Input::GetInstance()->SetIsCursorStability(false);
+		Input::GetInstance()->SetIsCursorVisible(true);
+	} else if (isGameplayControlActive) {
+		Input::GetInstance()->SetIsCursorStability(true);
+		Input::GetInstance()->SetIsCursorVisible(false);
+	}
 	if (!isBGMPlaying) {
 		Audio::GetInstance()->SoundPlayWave(BGMData, true);
 		isBGMPlaying = true;

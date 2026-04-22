@@ -38,6 +38,7 @@ private:
 	bool isEnd_ = false;
 
 	Action action_ = Action::kNone;
+	std::unique_ptr<Camera> camera_;
 
 public:
 	Pause();
