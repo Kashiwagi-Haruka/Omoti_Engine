@@ -128,7 +128,7 @@
     <ClCompile Include="externals\imgui\imgui_widgets.cpp">
       <Filter>Extarnals</Filter>
     </ClCompile>
-    <ClCompile Include="Engine\Log\Logger.cpp">
+    <ClCompile Include="Engine\Logger\Logger.cpp">
       <Filter>Engine\Logger</Filter>
     </ClCompile>
     <ClCompile Include="Engine\Loadfile\JSON\JsonManager.cpp">
@@ -367,7 +367,7 @@
     <ClInclude Include="externals\imgui\imstb_textedit.h">
       <Filter>Extarnals</Filter>
     </ClInclude>
-    <ClInclude Include="Engine\Log\Logger.h">
+    <ClInclude Include="Engine\Logger\Logger.h">
       <Filter>Engine\Logger</Filter>
     </ClInclude>
     <ClInclude Include="Engine\Loadfile\JSON\JsonManager.h">

@@ -1,6 +1,6 @@
 #include "SpriteCommon.h"
 #include "DirectXCommon.h"
-#include "Engine/Log/Logger.h"
+#include "Engine/Logger/Logger.h"
 #include <cassert>
 
 std::unique_ptr<SpriteCommon> SpriteCommon::instance_ = nullptr;
