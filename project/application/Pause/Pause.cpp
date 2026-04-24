@@ -1,8 +1,10 @@
 #include "Pause.h"
+#include "Engine/Texture/Mesh/Object3d/Object3dCommon.h"
+#include "Engine/Texture/Sprite/SpriteCommon.h"
 #include "Function.h"
 #include "Input.h"
+#include "Text/FreetypeManager/FreeTypeManager.h"
 #include "TextureManager.h"
-
 namespace {
 constexpr float kTransitionSpeed = 0.06f;
 constexpr float kHiddenOffsetX = 1280.0f;
@@ -14,9 +16,13 @@ Pause::Pause() {
 
 	Select_ = std::make_unique<Sprite>();
 	Button_ = std::make_unique<Sprite>();
+	BG_ = std::make_unique<Primitive>();
+	camera_ = std::make_unique<Camera>();
 
 	Select_->Initialize(SelectHandle_);
 	Button_->Initialize(ButtonHandle_);
+	BG_->Initialize(Primitive::PrimitiveName::Plane, "Resources/2d/white2x2.png");
+	BG_->SetCamera(camera_.get());
 }
 
 void Pause::Initialize() {
@@ -34,6 +40,31 @@ void Pause::Initialize() {
 
 	Select_->SetScale(selectSize_);
 	Button_->SetScale(buttonSize_);
+
+	camera_->SetTransform({
+	    .scale{1.0f, 1.0f, 1.0f },
+	    .rotate{0.0f, 0.0f, 0.0f },
+	    .translate{0.0f, 0.0f, -8.0f},
+	});
+	camera_->Update();
+
+	BG_->SetTransform({
+	    .scale{30.0f, 15.0f, 1.0f},
+	    .rotate{0.0f,  0.0f,  0.0f},
+	    .translate{0.0f,  0.0f,  0.0f},
+	});
+	BG_->SetColor({0.4f, 0.4f, 1.0f, 0.0f});
+	BG_->SetEnableLighting(false);
+
+	pauseFontHandle_ = FreeTypeManager::CreateFace("Resources/Font/irohakakuC-Bold.ttf", 0);
+	FreeTypeManager::SetPixelSizes(pauseFontHandle_, 72, 72);
+	pauseText_.Initialize(pauseFontHandle_);
+	pauseText_.SetSize({1280.0f, 200.0f});
+	pauseText_.SetString(U"ポーズ");
+	pauseText_.SetPosition({640.0f, 90.0f});
+	pauseText_.SetAlign(TextAlign::Center);
+	pauseText_.SetColor({1.0f, 1.0f, 1.0f, 1.0f});
+	pauseText_.UpdateLayout(false);
 }
 
 Pause::Action Pause::ConsumeAction() {
@@ -112,6 +143,8 @@ void Pause::Update(bool isPause) {
 
 	Select_->Update();
 	Button_->Update();
+	BG_->Update();
+	pauseText_.Update(false);
 }
 
 void Pause::Draw() {
@@ -119,6 +152,31 @@ void Pause::Draw() {
 	if (!IsVisible()) {
 		return;
 	}
+	camera_->Update();
+	BG_->SetCamera(camera_.get());
+	
+	Object3dCommon::GetInstance()->SetDefaultCamera(camera_.get());
+	if (currentCharacterObj_) {
+		currentCharacterObj_->SetCamera(camera_.get());
+		currentCharacterObj_->SetTransform ({
+			.scale{2.0f, 2.0f, 2.0f},
+			.rotate{0.0f, 0.2f, 0.0f},
+			.translate{-2.0f, 0.0f, 0.0f},
+		});
+		currentCharacterObj_->SetColor({0.0f, 0.0f, 0.0f, 1.0f});
+		currentCharacterObj_->Update();
+	}
+
+	Object3dCommon::GetInstance()->DrawCommon();
+	BG_->Draw();
+	if (currentCharacterObj_) {
+		Object3dCommon::GetInstance()->DrawCommonMaterialColorOnlySkinning();
+		currentCharacterObj_->Draw();
+	}
+
+	
+	pauseText_.Draw();
+	SpriteCommon::GetInstance()->DrawCommon();
 	Select_->Draw();
 	Button_->Draw();
 }

@@ -186,8 +186,8 @@ copy "$(WindowsSdkDir)\bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)\
     <ClCompile Include="application\Object\Player\Player.cpp" />
     <ClCompile Include="application\Object\Player\PlayerModels.cpp" />
     <ClCompile Include="application\Object\Player\PlayerParameters.cpp" />
-    <ClCompile Include="application\Object\Player\PlayerSword.cpp" />
-    <ClCompile Include="application\Object\Player\playerSwordTrail.cpp" />
+    <ClCompile Include="application\Object\Player\Weapon\PlayerSword.cpp" />
+    <ClCompile Include="application\Object\Player\Weapon\playerSwordTrail.cpp" />
     <ClCompile Include="application\Particles\Particles.cpp" />
     <ClCompile Include="application\Scene\TutorialScene.cpp" />
     <ClCompile Include="application\Team\Team.cpp" />
@@ -283,6 +283,8 @@ copy "$(WindowsSdkDir)\bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)\
     <ClCompile Include="Engine\Texture\Mesh\Portal\PortalMesh.cpp" />
     <ClCompile Include="application\Scene\GameScene\OpenWorld\OpenWorld.cpp" />
     <ClCompile Include="application\Scene\GameScene\Rasen\Rasen.cpp" />
+    <ClCompile Include="Engine\Texture\Mesh\SkyBox\SkyBox.cpp" />
+    <ClCompile Include="application\PlayCommand\PlayCommand.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include=".editorconfig" />
@@ -295,6 +297,11 @@ copy "$(WindowsSdkDir)\bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)\
       </ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
       </ExcludedFromBuild>
+    </None>
+    <None Include="Resources\shader\Skybox\Skybox.hlsli">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Development|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
     </None>
     <None Include="Resources\shader\Sprite\Sprite.hlsli" />
   </ItemGroup>
@@ -329,8 +336,8 @@ copy "$(WindowsSdkDir)\bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)\
     <ClInclude Include="application\Object\Player\Player.h" />
     <ClInclude Include="application\Object\Player\PlayerModels.h" />
     <ClInclude Include="application\Object\Player\PlayerParameters.h" />
-    <ClInclude Include="application\Object\Player\PlayerSword.h" />
-    <ClInclude Include="application\Object\Player\playerSwordTrail.h" />
+    <ClInclude Include="application\Object\Player\Weapon\PlayerSword.h" />
+    <ClInclude Include="application\Object\Player\Weapon\playerSwordTrail.h" />
     <ClInclude Include="application\Particles\Particles.h" />
     <ClInclude Include="application\Scene\TutorialScene.h" />
     <ClInclude Include="application\Team\Team.h" />
@@ -434,6 +441,8 @@ copy "$(WindowsSdkDir)\bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)\
     <ClInclude Include="Engine\Texture\Mesh\Portal\PortalMesh.h" />
     <ClInclude Include="application\Scene\GameScene\OpenWorld\OpenWorld.h" />
     <ClInclude Include="application\Scene\GameScene\Rasen\Rasen.h" />
+    <ClInclude Include="Engine\Texture\Mesh\SkyBox\SkyBox.h" />
+    <ClInclude Include="application\PlayCommand\PlayCommand.h" />
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="Resources\shader\FullScreenCopy\CopyImage.PS.hlsl">
@@ -608,6 +617,22 @@ copy "$(WindowsSdkDir)\bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)\
       <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">4.0</ShaderModel>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Development|x64'">Compute</ShaderType>
       <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Development|x64'">4.0</ShaderModel>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Development|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </FxCompile>
+    <FxCompile Include="Resources\shader\Skybox\Skybox.PS.hlsl">
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Pixel</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Development|x64'">Pixel</ShaderType>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Development|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </FxCompile>
+    <FxCompile Include="Resources\shader\Skybox\Skybox.VS.hlsl">
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Vertex</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Vertex</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Development|x64'">Vertex</ShaderType>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Development|x64'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>

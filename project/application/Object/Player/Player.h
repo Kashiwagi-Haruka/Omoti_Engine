@@ -2,7 +2,7 @@
 #include "Input.h"
 #include "Object3d/Object3d.h"
 #include "PlayerParameters.h"
-#include "PlayerSword.h"
+#include "Weapon/PlayerSword.h"
 #include "Attack/Skill/PlayerSkill.h"
 #include "Transform.h"
 #include "Vector3.h"
@@ -151,4 +151,5 @@ public:
 	PlayerSword* GetSword() { return sword_.get(); }
 	int GetComboStep() const { return comboStep_; }           // コンボ段階取得用
 	bool IsFallingAttack() const { return isFallingAttack_; } // 落下攻撃中か
+	Object3d* GetCharacterObject3d() { return models_ ? models_->GetCharacterObject3d() : nullptr; }
 };

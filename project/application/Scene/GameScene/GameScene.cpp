@@ -110,6 +110,7 @@ void GameScene::Initialize() {
 	spotLights_[0].cosAngle = std::cos(std::numbers::pi_v<float> / 3.0f);
 	spotLights_[0].cosFalloffStart = std::cos(std::numbers::pi_v<float> / 4.0f);
 	pause->Initialize();
+	pause->SetCurrentCharacterObj(player->GetCharacterObject3d());
 	characterDisplay_->Initialize();
 	characterDisplay_->SetActive(false);
 }
@@ -162,6 +163,15 @@ void GameScene::DebugImGui() {
 
 void GameScene::Update() {
 	GameTimer::GetInstance()->Update();
+	const bool isAltPressed = Input::GetInstance()->PushKey(DIK_LMENU) || Input::GetInstance()->PushKey(DIK_RMENU);
+	const bool isGameplayControlActive = !isPause && !isCharacterDisplayMode_ && !isTransitionIn && !isTransitionOut;
+	if (isGameplayControlActive && isAltPressed) {
+		Input::GetInstance()->SetIsCursorStability(false);
+		Input::GetInstance()->SetIsCursorVisible(true);
+	} else if (isGameplayControlActive) {
+		Input::GetInstance()->SetIsCursorStability(true);
+		Input::GetInstance()->SetIsCursorVisible(false);
+	}
 	if (!isBGMPlaying) {
 		Audio::GetInstance()->SoundPlayWave(BGMData, true);
 		isBGMPlaying = true;
@@ -300,6 +310,13 @@ void GameScene::Update() {
 void GameScene::Draw() {
 	if (isCharacterDisplayMode_) {
 		characterDisplay_->Draw();
+		return;
+	}
+	if (isPause) {
+		pause->Draw();
+		if (isTransitionIn || isTransitionOut) {
+			sceneTransition->Draw();
+		}
 		return;
 	}
 	Object3dCommon::GetInstance()->DrawCommon();
