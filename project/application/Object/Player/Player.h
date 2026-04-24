@@ -2,7 +2,7 @@
 #include "Input.h"
 #include "Object3d/Object3d.h"
 #include "PlayerParameters.h"
-#include "PlayerSword.h"
+#include "Weapon/PlayerSword.h"
 #include "Attack/Skill/PlayerSkill.h"
 #include "Transform.h"
 #include "Vector3.h"

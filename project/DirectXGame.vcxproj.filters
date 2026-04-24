@@ -268,8 +268,8 @@
     <ClCompile Include="application\Object\Player\Player.cpp" />
     <ClCompile Include="application\Object\Player\PlayerModels.cpp" />
     <ClCompile Include="application\Object\Player\PlayerParameters.cpp" />
-    <ClCompile Include="application\Object\Player\PlayerSword.cpp" />
-    <ClCompile Include="application\Object\Player\playerSwordTrail.cpp" />
+    <ClCompile Include="application\Object\Player\Weapon\PlayerSword.cpp" />
+    <ClCompile Include="application\Object\Player\Weapon\playerSwordTrail.cpp" />
     <ClCompile Include="application\Object\MapchipField.cpp" />
     <ClCompile Include="application\Particles\Particles.cpp" />
     <ClCompile Include="application\Scene\TutorialScene.cpp" />
@@ -523,8 +523,8 @@
     <ClInclude Include="application\Object\Player\Player.h" />
     <ClInclude Include="application\Object\Player\PlayerModels.h" />
     <ClInclude Include="application\Object\Player\PlayerParameters.h" />
-    <ClInclude Include="application\Object\Player\PlayerSword.h" />
-    <ClInclude Include="application\Object\Player\playerSwordTrail.h" />
+    <ClInclude Include="application\Object\Player\Weapon\PlayerSword.h" />
+    <ClInclude Include="application\Object\Player\Weapon\playerSwordTrail.h" />
     <ClInclude Include="application\Object\MapchipField.h" />
     <ClInclude Include="application\Particles\Particles.h" />
     <ClInclude Include="application\Scene\TutorialScene.h" />
