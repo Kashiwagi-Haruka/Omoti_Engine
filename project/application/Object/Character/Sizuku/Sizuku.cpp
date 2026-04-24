@@ -76,7 +76,6 @@ void Sizuku::Update() {
 
 	Sizuku_->SetWorldMatrix(playerWorld);
 	Sizuku_->SetCamera(camera_);
-	Sizuku_->SetColor({0.0f, 0.0f, 0.0f, 0.0f});
 	Sizuku_->Update();
 }
 void Sizuku::Draw(){

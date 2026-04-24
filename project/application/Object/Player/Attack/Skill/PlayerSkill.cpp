@@ -250,7 +250,7 @@ void PlayerSkill::Draw() {
 
 	if (state == State::damage) {
 		if (skillEmitter_) {
-			skillEmitter_->Draw();
+			/*skillEmitter_->Draw();*/
 		}
 	}
 	Object3dCommon::GetInstance()->DrawCommon();

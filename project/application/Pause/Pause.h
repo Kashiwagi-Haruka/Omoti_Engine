@@ -1,10 +1,12 @@
 #pragma once
+#include "Mesh/Object3d/Object3d.h"
+#include "Mesh/Primitive/Primitive.h"
 #include "Sprite.h"
+#include "Text/Text.h"
 #include "Vector2.h"
 #include <array>
 #include <memory>
-#include "Mesh/Object3d/Object3d.h"
-#include "Mesh/Primitive/Primitive.h"
+#include "Camera.h"
 
 class Pause {
 
@@ -39,7 +41,8 @@ private:
 
 	Action action_ = Action::kNone;
 	std::unique_ptr<Camera> camera_;
-
+	Text pauseText_;
+	uint32_t pauseFontHandle_ = 0;
 public:
 	Pause();
 	void Initialize();
