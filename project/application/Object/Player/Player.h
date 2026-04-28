@@ -9,6 +9,7 @@
 #include <memory>
 #include "Audio.h"
 #include "PlayerModels.h"
+#include "PlayerKey/PlayerKey.h"
 class Camera;
 class PlayerBullet;
 class MapchipField;
@@ -79,7 +80,7 @@ class Player {
 
 	std::unique_ptr<PlayerSword> sword_;
 	std::unique_ptr<PlayerSkill> skill_;
-
+	std::unique_ptr<PlayerKey> key_;
 
 	Camera* camera_;
 

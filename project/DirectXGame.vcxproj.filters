@@ -298,6 +298,8 @@
     <ClCompile Include="Engine\Texture\Text\FreetypeManager\FreeTypeManager.cpp" />
     <ClCompile Include="Engine\Texture\Mesh\SkyBox\SkyBox.cpp" />
     <ClCompile Include="application\PlayCommand\PlayCommand.cpp" />
+    <ClCompile Include="application\Object\Player\PlayerKey\PlayerKey.cpp" />
+    <ClCompile Include="application\Object\Character\CharacterDisplay\CharacterDisplayText.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Engine\Texture\RenderTexture2D.h" />
@@ -568,6 +570,8 @@
     <ClInclude Include="application\Object\Character\Base\Attribute.h" />
     <ClInclude Include="Engine\Texture\Mesh\SkyBox\SkyBox.h" />
     <ClInclude Include="application\PlayCommand\PlayCommand.h" />
+    <ClInclude Include="application\Object\Player\PlayerKey\PlayerKey.h" />
+    <ClInclude Include="application\Object\Character\CharacterDisplay\CharacterDisplayText.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include=".editorconfig" />

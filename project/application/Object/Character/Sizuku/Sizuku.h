@@ -11,6 +11,8 @@ class Sizuku {
 
 	bool isHave_;
 
+	std::string name_ = "Sizuku";
+
 	PlayableParameter parameter_;
 
 	Matrix4x4 playerWorld;

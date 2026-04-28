@@ -193,6 +193,7 @@ copy "$(WindowsSdkDir)\bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)\
     <ClCompile Include="application\Team\Team.cpp" />
     <ClCompile Include="application\TutorialUI\TutorialUI.cpp" />
     <ClCompile Include="application\UIManager\UIManager.cpp" />
+    <ClCompile Include="application\Object\Character\CharacterDisplay\CharacterDisplayText.cpp" />
     <ClCompile Include="Engine\Audio\AudioMixer.cpp" />
     <ClCompile Include="Engine\Editor\EditorData\Audio\EditorAudio.cpp" />
     <ClCompile Include="Engine\Editor\EditorData\Camera\EditorCamera.cpp" />
@@ -285,6 +286,7 @@ copy "$(WindowsSdkDir)\bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)\
     <ClCompile Include="application\Scene\GameScene\Rasen\Rasen.cpp" />
     <ClCompile Include="Engine\Texture\Mesh\SkyBox\SkyBox.cpp" />
     <ClCompile Include="application\PlayCommand\PlayCommand.cpp" />
+    <ClCompile Include="application\Object\Player\PlayerKey\PlayerKey.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include=".editorconfig" />
@@ -343,6 +345,7 @@ copy "$(WindowsSdkDir)\bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)\
     <ClInclude Include="application\Team\Team.h" />
     <ClInclude Include="application\TutorialUI\TutorialUI.h" />
     <ClInclude Include="application\UIManager\UIManager.h" />
+    <ClInclude Include="application\Object\Character\CharacterDisplay\CharacterDisplayText.h" />
     <ClInclude Include="Engine\Audio\AudioMixer.h" />
     <ClInclude Include="Engine\base\ScreenSize.h" />
     <ClInclude Include="Engine\Editor\EditorData\Audio\EditorAudio.h" />
@@ -443,6 +446,7 @@ copy "$(WindowsSdkDir)\bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)\
     <ClInclude Include="application\Scene\GameScene\Rasen\Rasen.h" />
     <ClInclude Include="Engine\Texture\Mesh\SkyBox\SkyBox.h" />
     <ClInclude Include="application\PlayCommand\PlayCommand.h" />
+    <ClInclude Include="application\Object\Player\PlayerKey\PlayerKey.h" />
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="Resources\shader\FullScreenCopy\CopyImage.PS.hlsl">
