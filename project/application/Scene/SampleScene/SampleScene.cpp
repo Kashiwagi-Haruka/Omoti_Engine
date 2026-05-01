@@ -54,6 +54,8 @@ void SampleScene::Initialize() {
 
 	skyBox_->Initialize();
 	skyBox_->SetCamera(camera_.get());
+	skyBox_->SetDDSTexture("Resources/SkyBox/rostock_laage_airport_4k.dds");
+	skyBox_->SetScale({50.0f, 50.0f, 50.0f});
 
 	sizukuObj_->Initialize();
 	sizukuObj_->SetCamera(camera_.get());
@@ -132,8 +134,9 @@ void SampleScene::Draw() {
 
 	Object3dCommon::GetInstance()->SetDefaultCamera(camera_.get());
 
-	Object3dCommon::GetInstance()->DrawCommon();
+	Object3dCommon::GetInstance()->DrawCommonSkybox();
 	skyBox_->Draw();
+	Object3dCommon::GetInstance()->DrawCommon();
 	fieldObj_->Draw();
 
 	/*Object3dCommon::GetInstance()->DrawCommonSkinningToon();*/
