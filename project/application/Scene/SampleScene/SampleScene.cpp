@@ -14,6 +14,7 @@
 
 SampleScene::SampleScene() {
 	fieldObj_ = std::make_unique<Object3d>();
+	skyBox_ = std::make_unique<SkyBox>();
 	sizukuObj_ = std::make_unique<Sizuku>();
 	camera_ = std::make_unique<Camera>();
 	debugCamera_ = std::make_unique<DebugCamera>();
@@ -50,6 +51,9 @@ void SampleScene::Initialize() {
 	fieldObj_->SetCamera(camera_.get());
 	fieldObj_->SetModel("terrain");
 	fieldObj_->SetTransform(fieldTransform_);
+
+	skyBox_->Initialize();
+	skyBox_->SetCamera(camera_.get());
 
 	sizukuObj_->Initialize();
 	sizukuObj_->SetCamera(camera_.get());
@@ -95,6 +99,9 @@ void SampleScene::Update() {
 	fieldObj_->SetTransform(fieldTransform_);
 	fieldObj_->Update();
 
+	skyBox_->SetCamera(camera_.get());
+	skyBox_->Update();
+
 	sizukuObj_->SetCamera(camera_.get());
 	sizukuObj_->SetTransform(sizukuTransform_);
 	sizukuObj_->Update();
@@ -126,6 +133,7 @@ void SampleScene::Draw() {
 	Object3dCommon::GetInstance()->SetDefaultCamera(camera_.get());
 
 	Object3dCommon::GetInstance()->DrawCommon();
+	skyBox_->Draw();
 	fieldObj_->Draw();
 
 	/*Object3dCommon::GetInstance()->DrawCommonSkinningToon();*/

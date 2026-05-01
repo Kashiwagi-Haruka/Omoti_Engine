@@ -6,6 +6,7 @@
 #include "Light/CommonLight/DirectionalCommonLight.h"
 #include "Object/Character/Sizuku/Sizuku.h"
 #include "Object3d/Object3d.h"
+#include "SkyBox/SkyBox.h"
 #include "Text/Text.h"
 #include "Transform.h"
 
@@ -14,6 +15,7 @@
 class SampleScene : public BaseScene {
 private:
 	std::unique_ptr<Object3d> fieldObj_ = nullptr;
+	std::unique_ptr<SkyBox> skyBox_ = nullptr;
 	std::unique_ptr<Sizuku> sizukuObj_ = nullptr;
 	std::unique_ptr<Camera> camera_ = nullptr;
 	std::unique_ptr<DebugCamera> debugCamera_ = nullptr;
