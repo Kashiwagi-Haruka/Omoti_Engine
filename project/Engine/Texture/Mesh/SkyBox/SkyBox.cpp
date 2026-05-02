@@ -20,12 +20,12 @@ SkyBox::~SkyBox() = default;
 void SkyBox::Initialize() {
 	vertices_.resize(24);
 	indices_ = {
-	    0,  1,  2,  2,  1,  3,  // right (inside)
-	    4,  5,  6,  6,  5,  7,  // left
-	    8,  9,  10, 10, 9,  11, // front
-	    12, 13, 14, 14, 13, 15, // back
-	    16, 17, 18, 18, 17, 19, // top
-	    20, 21, 22, 22, 21, 23, // bottom
+	    0,  2,  1,  2,  3,  1,  // right (inside)
+	    4,  6,  5,  6,  7,  5,  // left
+	    8,  10, 9,  10, 11, 9,  // front
+	    12, 14, 13, 14, 15, 13, // back
+	    16, 18, 17, 18, 19, 17, // top
+	    20, 22, 21, 22, 23, 21, // bottom
 	};
 
 	// right
