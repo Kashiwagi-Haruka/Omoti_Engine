@@ -66,7 +66,8 @@ void TextureManager::LoadTextureName(const std::string& filePath) {
 	textureData.filePath = filePath;
 	textureData.metadata = mipImages.GetMetadata();
 	textureData.resource = CreateTextureResource(textureData.metadata);
-	if (isDDS && textureData.metadata.dimension == DirectX::TEX_DIMENSION_TEXTURE2D && textureData.metadata.arraySize == 6) {
+	if (isDDS && textureData.metadata.dimension == DirectX::TEX_DIMENSION_TEXTURE2D && textureData.metadata.arraySize >= 6 && (textureData.metadata.arraySize % 6) == 0 &&
+	    textureData.metadata.depth == 1) {
 		textureData.metadata.miscFlags |= DirectX::TEX_MISC_TEXTURECUBE;
 	}
 	// ★ ここを UploadTextureData に統一
@@ -378,13 +379,18 @@ void TextureManager::RefreshTexture(const std::string& filePath) {
 
 	// ミップマップの作成
 	DirectX::ScratchImage mipImages{};
-	hr = DirectX::GenerateMipMaps(image.GetImages(), image.GetImageCount(), image.GetMetadata(), DirectX::TEX_FILTER_SRGB, 0, mipImages);
-	assert(SUCCEEDED(hr));
+	if (DirectX::IsCompressed(image.GetMetadata().format)) {
+		mipImages = std::move(image);
+	} else {
+		hr = DirectX::GenerateMipMaps(image.GetImages(), image.GetImageCount(), image.GetMetadata(), DirectX::TEX_FILTER_SRGB, 0, mipImages);
+		assert(SUCCEEDED(hr));
+	}
 
 	// 3. 新しいメタデータでリソースを作り直す
 	// (※サイズが変わる可能性があるため、リソース自体は作り直すのが安全です)
 	textureData.metadata = mipImages.GetMetadata();
-	if (isDDS && textureData.metadata.dimension == DirectX::TEX_DIMENSION_TEXTURE2D && textureData.metadata.arraySize == 6) {
+	if (isDDS && textureData.metadata.dimension == DirectX::TEX_DIMENSION_TEXTURE2D && textureData.metadata.arraySize >= 6 && (textureData.metadata.arraySize % 6) == 0 &&
+	    textureData.metadata.depth == 1) {
 		textureData.metadata.miscFlags |= DirectX::TEX_MISC_TEXTURECUBE;
 	}
 	textureData.resource = CreateTextureResource(textureData.metadata);
