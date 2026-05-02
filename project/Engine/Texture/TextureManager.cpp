@@ -304,22 +304,17 @@ void TextureManager::UploadTextureData(ID3D12Resource* texture, const DirectX::S
 	// Meta情報を取得
 	const DirectX::TexMetadata& metadata = mipImages.GetMetadata();
 
-	// 全MipMapについて
-	for (size_t mipLevel = 0; mipLevel < metadata.mipLevels; ++mipLevel) {
-		// MipMapLevelを指定して各Imageを取得
-		const DirectX::Image* img = mipImages.GetImage(mipLevel, 0, 0);
+	for (size_t arrayIndex = 0; arrayIndex < metadata.arraySize; ++arrayIndex) {
+		for (size_t mipLevel = 0; mipLevel < metadata.mipLevels; ++mipLevel) {
+			const DirectX::Image* img = mipImages.GetImage(mipLevel, arrayIndex, 0);
+			assert(img != nullptr);
 
-		// Textureに転送
-		HRESULT hr_ = texture->WriteToSubresource(
-		    UINT(mipLevel),      // 全領域へコピー
-		    nullptr,             // 元データアドレス
-		    img->pixels,         // 1ラインサイズ
-		    UINT(img->rowPitch), // 1枚サイズ
-		    UINT(img->slicePitch));
-		assert(SUCCEEDED(hr_));
+			const UINT subresourceIndex = static_cast<UINT>(mipLevel + arrayIndex * metadata.mipLevels);
+			HRESULT hr_ = texture->WriteToSubresource(subresourceIndex, nullptr, img->pixels, UINT(img->rowPitch), UINT(img->slicePitch));
+			assert(SUCCEEDED(hr_));
+		}
 	}
-}
-// SRV インデックスからテクスチャメタデータを取得する
+} // SRV インデックスからテクスチャメタデータを取得する
 DirectX::TexMetadata& TextureManager::GetMetaData(uint32_t srvIndex) {
 	for (auto& [key, data] : textureDatas) {
 		if (data.srvIndex == srvIndex) {
