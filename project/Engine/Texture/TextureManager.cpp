@@ -66,7 +66,9 @@ void TextureManager::LoadTextureName(const std::string& filePath) {
 	textureData.filePath = filePath;
 	textureData.metadata = mipImages.GetMetadata();
 	textureData.resource = CreateTextureResource(textureData.metadata);
-
+	if (isDDS && textureData.metadata.dimension == DirectX::TEX_DIMENSION_TEXTURE2D && textureData.metadata.arraySize == 6) {
+		textureData.metadata.miscFlags |= DirectX::TEX_MISC_TEXTURECUBE;
+	}
 	// ★ ここを UploadTextureData に統一
 	UploadTextureData(textureData.resource.Get(), mipImages);
 
@@ -363,7 +365,13 @@ void TextureManager::RefreshTexture(const std::string& filePath) {
 	// 2. 新しい画像を読み込む
 	DirectX::ScratchImage image{};
 	std::wstring filePathW = StringUtility::ConvertString_(filePath);
-	HRESULT hr = DirectX::LoadFromWICFile(filePathW.c_str(), DirectX::WIC_FLAGS_FORCE_SRGB, nullptr, image);
+	const bool isDDS = filePathW.size() >= 4 && _wcsicmp(filePathW.c_str() + (filePathW.size() - 4), L".dds") == 0;
+	HRESULT hr = S_FALSE;
+	if (isDDS) {
+		hr = DirectX::LoadFromDDSFile(filePathW.c_str(), DirectX::DDS_FLAGS_NONE, nullptr, image);
+	} else {
+		hr = DirectX::LoadFromWICFile(filePathW.c_str(), DirectX::WIC_FLAGS_FORCE_SRGB, nullptr, image);
+	}
 	if (FAILED(hr)) {
 		return; // ファイルがまだ書き込まれていない等の場合はスキップ
 	}
@@ -376,6 +384,9 @@ void TextureManager::RefreshTexture(const std::string& filePath) {
 	// 3. 新しいメタデータでリソースを作り直す
 	// (※サイズが変わる可能性があるため、リソース自体は作り直すのが安全です)
 	textureData.metadata = mipImages.GetMetadata();
+	if (isDDS && textureData.metadata.dimension == DirectX::TEX_DIMENSION_TEXTURE2D && textureData.metadata.arraySize == 6) {
+		textureData.metadata.miscFlags |= DirectX::TEX_MISC_TEXTURECUBE;
+	}
 	textureData.resource = CreateTextureResource(textureData.metadata);
 
 	// 画像データをアップロード
@@ -385,15 +396,18 @@ void TextureManager::RefreshTexture(const std::string& filePath) {
 	D3D12_SHADER_RESOURCE_VIEW_DESC srvDesc{};
 	srvDesc.Format = textureData.metadata.format;
 	srvDesc.Shader4ComponentMapping = D3D12_DEFAULT_SHADER_4_COMPONENT_MAPPING;
-	srvDesc.ViewDimension = D3D12_SRV_DIMENSION_TEXTURE2D;
-	srvDesc.Texture2D.MipLevels = UINT(textureData.metadata.mipLevels);
+	if (textureData.metadata.IsCubemap()) {
+		srvDesc.ViewDimension = D3D12_SRV_DIMENSION_TEXTURECUBE;
+		srvDesc.TextureCube.MostDetailedMip = 0;
+		srvDesc.TextureCube.MipLevels = UINT(textureData.metadata.mipLevels);
+		srvDesc.TextureCube.ResourceMinLODClamp = 0.0f;
+	} else {
+		srvDesc.ViewDimension = D3D12_SRV_DIMENSION_TEXTURE2D;
+		srvDesc.Texture2D.MipLevels = UINT(textureData.metadata.mipLevels);
+	}
 
 	// 既存のハンドルに対して CreateShaderResourceView を呼ぶことで中身が差し替わる
-	dxCommon_->GetDevice()->CreateShaderResourceView(
-		textureData.resource.Get(),
-		&srvDesc,
-		textureData.srvHandleCPU
-	);
+	dxCommon_->GetDevice()->CreateShaderResourceView(textureData.resource.Get(), &srvDesc, textureData.srvHandleCPU);
 
 	// デバッグログ
 	std::string log = "[TextureManager] Refreshed: " + filePath + " (Index: " + std::to_string(textureData.srvIndex) + ")\n";
