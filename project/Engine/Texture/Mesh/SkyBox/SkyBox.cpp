@@ -94,7 +94,7 @@ void SkyBox::Initialize() {
 	materialData_->uvTransform = Function::MakeIdentity4x4();
 	materialResource_->Unmap(0, nullptr);
 
-	SetDDSTexture("Resources/3d/skydome.png");
+	SetDDSTexture("Resources/SkyBox/rostock_laage_airport_4k.dds");
 }
 
 void SkyBox::SetCamera(Camera* camera) { camera_ = camera; }

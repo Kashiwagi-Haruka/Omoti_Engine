@@ -54,7 +54,6 @@ void SampleScene::Initialize() {
 
 	skyBox_->Initialize();
 	skyBox_->SetCamera(camera_.get());
-	skyBox_->SetDDSTexture("Resources/SkyBox/rostock_laage_airport_4k.dds");
 	skyBox_->SetScale(skyBoxScale_);
 
 	sizukuObj_->Initialize();
