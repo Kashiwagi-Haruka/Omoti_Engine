@@ -26,6 +26,7 @@ private:
 	Transform cameraTransform_{};
 	Transform fieldTransform_{};
 	Transform sizukuTransform_{};
+	Vector3 skyBoxScale_{50.0f, 50.0f, 50.0f};
 	Text sampleText_{};
 
 	void DebugImgui();

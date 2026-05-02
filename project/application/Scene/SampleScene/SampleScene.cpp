@@ -55,7 +55,7 @@ void SampleScene::Initialize() {
 	skyBox_->Initialize();
 	skyBox_->SetCamera(camera_.get());
 	skyBox_->SetDDSTexture("Resources/SkyBox/rostock_laage_airport_4k.dds");
-	skyBox_->SetScale({50.0f, 50.0f, 50.0f});
+	skyBox_->SetScale(skyBoxScale_);
 
 	sizukuObj_->Initialize();
 	sizukuObj_->SetCamera(camera_.get());
@@ -102,6 +102,7 @@ void SampleScene::Update() {
 	fieldObj_->Update();
 
 	skyBox_->SetCamera(camera_.get());
+	skyBox_->SetScale(skyBoxScale_);
 	skyBox_->Update();
 
 	sizukuObj_->SetCamera(camera_.get());
@@ -125,6 +126,9 @@ void SampleScene::DebugImgui() {
 		ImGui::Text("Directional Light");
 		ImGui::DragFloat3("Light Direction", &directionalLight_.direction.x, 0.01f);
 		ImGui::DragFloat("Light Intensity", &directionalLight_.intensity, 0.01f, 0.0f, 10.0f);
+		ImGui::Separator();
+		ImGui::Text("Skybox");
+		ImGui::DragFloat3("Skybox Scale", &skyBoxScale_.x, 0.1f, 1.0f, 500.0f);
 	}
 	ImGui::End();
 #endif // USE_IMGUI
