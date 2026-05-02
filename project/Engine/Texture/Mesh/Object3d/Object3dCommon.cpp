@@ -153,7 +153,7 @@ void Object3dCommon::Initialize(DirectXCommon* dxCommon) {
 
 		psoSkybox_ = std::make_unique<CreatePSO>(dxCommon_);
 	psoSkybox_->Create(
-	        D3D12_CULL_MODE_NONE, true, D3D12_FILL_MODE_SOLID, D3D12_PRIMITIVE_TOPOLOGY_TYPE_TRIANGLE, L"Resources/shader/Skybox/Skybox.PS.hlsl", L"Resources/shader/Skybox/Skybox.VS.hlsl");
+	        D3D12_CULL_MODE_NONE, false, D3D12_FILL_MODE_SOLID, D3D12_PRIMITIVE_TOPOLOGY_TYPE_TRIANGLE, L"Resources/shader/Skybox/Skybox.PS.hlsl", L"Resources/shader/Skybox/Skybox.VS.hlsl");
 
 	SetEnvironmentMapTexture("Resources/3d/skydome.png");
 

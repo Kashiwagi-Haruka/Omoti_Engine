@@ -108,8 +108,9 @@ void SkyBox::SetScale(const Vector3& scale) { transform_.scale = scale; }
 void SkyBox::SetRotation(const Vector3& rotation) { transform_.rotate = rotation; }
 
 void SkyBox::Update() {
-	const Matrix4x4 world = Function::MakeAffineMatrix(transform_.scale, transform_.rotate, transform_.translate);
 	Camera* activeCamera = camera_ ? camera_ : Object3dCommon::GetInstance()->GetDefaultCamera();
+	const Vector3 skyboxTranslate = activeCamera ? activeCamera->GetWorldTranslate() : transform_.translate;
+	const Matrix4x4 world = Function::MakeAffineMatrix(transform_.scale, transform_.rotate, skyboxTranslate);
 	const Matrix4x4 wvp = activeCamera ? Function::Multiply(Function::Multiply(world, activeCamera->GetViewMatrix()), activeCamera->GetProjectionMatrix()) : world;
 
 	transformResource_->Map(0, nullptr, reinterpret_cast<void**>(&transformationMatrixData_));
