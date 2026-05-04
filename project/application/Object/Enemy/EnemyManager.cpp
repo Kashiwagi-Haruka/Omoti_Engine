@@ -165,7 +165,7 @@ void EnemyManager::AddEnemy(Camera* camera, const Vector3& pos) {
 
 	auto damageText = std::make_unique<Damage>();
 	damageText->Initialize(camera);
-	damageTexts.push_back({enemyPtr, std::move(damageText), 0.0f});
+	damageTexts.push_back({enemyPtr, std::move(damageText)});
 }
 void EnemyManager::Update(Camera* camera, const Vector3& housePos, const Vector3& houseScale, const Vector3& playerPos, bool isPlayerAlive) {
 
@@ -215,12 +215,6 @@ void EnemyManager::Update(Camera* camera, const Vector3& housePos, const Vector3
 			Vector3 damagePos = entry.enemy->GetPosition();
 			damagePos.y += 2.0f;
 			entry.damageText->SetPosition(damagePos);
-		}
-		if (entry.timer > 0.0f) {
-			entry.timer -= 1.0f / 60.0f;
-			if (entry.timer <= 0.0f) {
-				entry.damageText->SetVisible(false);
-			}
 		}
 		entry.damageText->Update();
 	}
@@ -275,8 +269,6 @@ void EnemyManager::OnEnemyDamaged(Enemy* enemy, int damage) {
 	for (auto& entry : damageTexts) {
 		if (entry.enemy == enemy) {
 			entry.damageText->SetDamageValue(damage);
-			entry.damageText->SetVisible(true);
-			entry.timer = 0.6f;
 			break;
 		}
 	}

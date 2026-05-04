@@ -23,7 +23,6 @@ private:
 	struct DamageTextEntry {
 		Enemy* enemy;
 		std::unique_ptr<Damage> damageText;
-		float timer = 0.0f;
 	};
 	std::vector<std::unique_ptr<Enemy>> enemies;
 	std::vector<HitEffectEntry> hitEffects;

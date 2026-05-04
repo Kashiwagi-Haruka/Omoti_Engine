@@ -16,9 +16,10 @@ public:
 	void Draw();
 	void SetDamageValue(int damage);
 	void SetPosition(const Vector3& position);
-	void SetVisible(bool visible) { isVisible_ = visible; }
 
 private:
+	static constexpr float kShowDuration_ = 3.0f;
+	static constexpr float kFadeDuration_ = 0.5f;
 	static constexpr int kDigitCount = 8;
 	std::array<std::unique_ptr<Primitive>, kDigitCount> digitPrimitives_{};
 	std::vector<int> digits_{};
@@ -29,5 +30,8 @@ private:
 	};
 	Camera* camera_ = nullptr;
 	bool isVisible_ = false;
+	bool isFading_ = false;
+	float timer_ = 0.0f;
+	float alpha_ = 1.0f;
 	float digitSpacing_ = 0.55f;
 };

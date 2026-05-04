@@ -14,6 +14,8 @@ void Damage::Initialize(Camera* camera) {
 		digitPrimitives_[i]->SetCamera(camera_);
 	}
 	SetDamageValue(0);
+	isVisible_ = false;
+	alpha_ = 0.0f;
 }
 
 void Damage::SetDamageValue(int damage) {
@@ -25,6 +27,11 @@ void Damage::SetDamageValue(int damage) {
 		digits_.push_back(c - '0');
 	}
 	isVisible_ = !digits_.empty();
+	if (isVisible_) {
+		alpha_ = 1.0f;
+		isFading_ = false;
+		timer_ = kShowDuration_;
+	}
 }
 
 void Damage::SetPosition(const Vector3& position) { transform_.translate = position; }
@@ -32,6 +39,22 @@ void Damage::SetPosition(const Vector3& position) { transform_.translate = posit
 void Damage::Update() {
 	if (!isVisible_ || !camera_) {
 		return;
+	}
+
+	if (timer_ > 0.0f) {
+		timer_ -= 1.0f / 60.0f;
+		if (timer_ <= 0.0f) {
+			if (isFading_) {
+				isVisible_ = false;
+				alpha_ = 0.0f;
+				isFading_ = false;
+			} else {
+				isFading_ = true;
+				timer_ = kFadeDuration_;
+			}
+		} else if (isFading_) {
+			alpha_ = std::clamp(timer_ / kFadeDuration_, 0.0f, 1.0f);
+		}
 	}
 
 	Matrix4x4 billboardMatrix = Function::Inverse(camera_->GetViewMatrix());
@@ -44,6 +67,7 @@ void Damage::Update() {
 	for (int i = 0; i < digitCount; ++i) {
 		Primitive* primitive = digitPrimitives_[i].get();
 		primitive->SetCamera(camera_);
+		primitive->SetColor({1.0f, 1.0f, 1.0f, alpha_});
 		primitive->SetUvTransform({0.1f, 1.0f, 1.0f}, {0.0f, 0.0f, 0.0f}, {0.1f * static_cast<float>(digits_[i]), 0.0f, 0.0f});
 
 		Transform digitTransform = transform_;
