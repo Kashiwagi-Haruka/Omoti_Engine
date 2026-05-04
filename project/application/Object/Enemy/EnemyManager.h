@@ -1,8 +1,9 @@
 #pragma once
 #include "Enemy.h"
+#include "EnemyHitEffect.h"
+#include "Object/Damage/Damage.h"
 #include <memory>
 #include <vector>
-#include "EnemyHitEffect.h"
 class EnemyManager {
 
 public:
@@ -19,8 +20,14 @@ private:
 		Enemy* enemy;
 		std::unique_ptr<EnemyHitEffect> effect;
 	};
+	struct DamageTextEntry {
+		Enemy* enemy;
+		std::unique_ptr<Damage> damageText;
+		float timer = 0.0f;
+	};
 	std::vector<std::unique_ptr<Enemy>> enemies;
 	std::vector<HitEffectEntry> hitEffects;
+	std::vector<DamageTextEntry> damageTexts;
 	Camera* camera_ = nullptr;
 
 	// ウェーブシステム
@@ -36,12 +43,12 @@ public:
 	EnemyManager() {}
 	~EnemyManager() = default;
 
-		void Initialize(Camera* camera);
+	void Initialize(Camera* camera);
 	void AddEnemy(Camera* camera, const Vector3& pos);
 	void Update(Camera* camera, const Vector3& housePos, const Vector3& houseScale, const Vector3& playerPos, bool isPlayerAlive);
 	void Draw();
 	void Clear();
-	void OnEnemyDamaged(Enemy* enemy);
+	void OnEnemyDamaged(Enemy* enemy, int damage = 1);
 	// ウェーブシステム関連
 	void StartNextWave();     // 次のウェーブを開始
 	void SpawnWaveEnemies();  // ウェーブに応じた敵を生成

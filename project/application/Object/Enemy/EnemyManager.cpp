@@ -10,6 +10,7 @@ constexpr int kFinalWave = 5;
 void EnemyManager::Clear() {
 	enemies.clear(); // unique_ptr が自動削除
 	hitEffects.clear();
+	damageTexts.clear();
 }
 
 void EnemyManager::Initialize(Camera* camera) {
@@ -161,6 +162,10 @@ void EnemyManager::AddEnemy(Camera* camera, const Vector3& pos) {
 	hitEffect->SetCamera(camera);
 	hitEffect->Initialize();
 	hitEffects.push_back({enemyPtr, std::move(hitEffect)});
+
+	auto damageText = std::make_unique<Damage>();
+	damageText->Initialize(camera);
+	damageTexts.push_back({enemyPtr, std::move(damageText), 0.0f});
 }
 void EnemyManager::Update(Camera* camera, const Vector3& housePos, const Vector3& houseScale, const Vector3& playerPos, bool isPlayerAlive) {
 
@@ -204,6 +209,21 @@ void EnemyManager::Update(Camera* camera, const Vector3& housePos, const Vector3
 		}
 		entry.effect->Update();
 	}
+
+	for (auto& entry : damageTexts) {
+		if (entry.enemy) {
+			Vector3 damagePos = entry.enemy->GetPosition();
+			damagePos.y += 2.0f;
+			entry.damageText->SetPosition(damagePos);
+		}
+		if (entry.timer > 0.0f) {
+			entry.timer -= 1.0f / 60.0f;
+			if (entry.timer <= 0.0f) {
+				entry.damageText->SetVisible(false);
+			}
+		}
+		entry.damageText->Update();
+	}
 }
 
 void EnemyManager::CheckWaveComplete() {
@@ -238,13 +258,25 @@ void EnemyManager::Draw() {
 	for (auto& entry : hitEffects) {
 		entry.effect->Draw();
 	}
+	for (auto& entry : damageTexts) {
+		entry.damageText->Draw();
+	}
 	Object3dCommon::GetInstance()->DrawCommon();
 }
 
-void EnemyManager::OnEnemyDamaged(Enemy* enemy) {
+void EnemyManager::OnEnemyDamaged(Enemy* enemy, int damage) {
 	for (auto& entry : hitEffects) {
 		if (entry.enemy == enemy) {
 			entry.effect->Activate(enemy->GetPosition());
+			break;
+		}
+	}
+
+	for (auto& entry : damageTexts) {
+		if (entry.enemy == enemy) {
+			entry.damageText->SetDamageValue(damage);
+			entry.damageText->SetVisible(true);
+			entry.timer = 0.6f;
 			break;
 		}
 	}
