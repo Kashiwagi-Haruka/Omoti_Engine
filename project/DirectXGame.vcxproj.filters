@@ -300,6 +300,7 @@
     <ClCompile Include="application\PlayCommand\PlayCommand.cpp" />
     <ClCompile Include="application\Object\Player\PlayerKey\PlayerKey.cpp" />
     <ClCompile Include="application\Object\Character\CharacterDisplay\CharacterDisplayText.cpp" />
+    <ClCompile Include="application\Object\Damage\Damage.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Engine\Texture\RenderTexture2D.h" />
@@ -572,6 +573,7 @@
     <ClInclude Include="application\PlayCommand\PlayCommand.h" />
     <ClInclude Include="application\Object\Player\PlayerKey\PlayerKey.h" />
     <ClInclude Include="application\Object\Character\CharacterDisplay\CharacterDisplayText.h" />
+    <ClInclude Include="application\Object\Damage\Damage.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include=".editorconfig" />
