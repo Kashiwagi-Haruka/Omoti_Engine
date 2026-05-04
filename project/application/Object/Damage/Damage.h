@@ -18,7 +18,7 @@ public:
 	void SetPosition(const Vector3& position);
 
 private:
-	static constexpr float kShowDuration_ = 3.0f;
+	static constexpr float kShowDuration_ = 1.0f;
 	static constexpr float kFadeDuration_ = 0.5f;
 	static constexpr int kDigitCount = 8;
 	std::array<std::unique_ptr<Primitive>, kDigitCount> digitPrimitives_{};
