@@ -25,8 +25,8 @@ void Team::Initialize() {
 		icon->Initialize(ownedCharacterIconHandles_[i]);
 		icon->SetScale(iconSize_);
 		icon->SetColor({1.0f, 1.0f, 1.0f, 1.0f});
-		const float x = inventoryPanelPos_.x + 22.0f;
-		const float y = inventoryPanelPos_.y + 24.0f + (iconSize_.y + 18.0f) * static_cast<float>(i);
+		const float x = inventoryPanelPos_.x + 22.0f + (iconSize_.x + 18.0f) * static_cast<float>(i);
+		const float y = inventoryPanelPos_.y + 24.0f;
 		inventoryIconPositions_[i] = {x, y};
 		icon->SetPosition(inventoryIconPositions_[i]);
 		icon->Update();
@@ -193,6 +193,15 @@ void Team::Draw() {
 }
 
 void Team::DrawInGameMemberList() {
+	int occupiedMemberCount = 0;
+	for (int i = 0; i < kMaxMembersCount; ++i) {
+		if (occupiedSlots_[i]) {
+			++occupiedMemberCount;
+		}
+	}
+	if (occupiedMemberCount < 2) {
+		return;
+	}
 	int otherMemberCount = 0;
 	for (int i = 0; i < kMaxMembersCount; ++i) {
 		if (!occupiedSlots_[i] || i == activeSlotIndex_) {
