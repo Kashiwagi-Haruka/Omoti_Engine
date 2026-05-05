@@ -17,6 +17,7 @@ public:
 
 	bool GetHasMember(int slotIndex) const;
 	int GetActiveSlot() const { return activeSlotIndex_; }
+	bool ConsumeCharacterSwitchTriggered();
 
 private:
 	static constexpr int kMaxMembersCount = 4;
@@ -56,6 +57,7 @@ private:
 	int hoveredInventoryIndex_ = -1;
 	bool isCandidateSelected_ = false;
 	int activeSlotIndex_ = 0;
+	bool characterSwitchTriggered_ = false;
 	uint32_t hudFontHandle_ = 0;
 
 	const std::u32string& GetCharacterNameByIndex(int characterIndex) const;

@@ -106,6 +106,9 @@ void Team::Initialize() {
 void Team::Update(bool isPartyOpen) {
 	for (int i = 0; i < kMaxMembersCount; ++i) {
 		if (Input::GetInstance()->TriggerKey(static_cast<BYTE>(DIK_1 + i)) && occupiedSlots_[i]) {
+			if (activeSlotIndex_ != i) {
+				characterSwitchTriggered_ = true;
+			}
 			activeSlotIndex_ = i;
 		}
 	}
@@ -261,4 +264,9 @@ const std::u32string& Team::GetCharacterNameByIndex(int characterIndex) const {
 		return kEmptyName;
 	}
 	return kCharacterNames[characterIndex];
+}
+bool Team::ConsumeCharacterSwitchTriggered() {
+	const bool triggered = characterSwitchTriggered_;
+	characterSwitchTriggered_ = false;
+	return triggered;
 }

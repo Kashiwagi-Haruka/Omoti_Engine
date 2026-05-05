@@ -4,6 +4,7 @@
 class Particles {
 
 	std::unique_ptr<ParticleEmitter> particleArrow = nullptr;
+	std::unique_ptr<ParticleEmitter> particleSwitch = nullptr;
 
 	Vector3 playerPos_;
 	Vector3 cameraPos_;
@@ -21,5 +22,6 @@ public:
 	void SetCameraPos(Vector3 cameraPos);
 	void SetGoalPos(Vector3 goalPos);
 	void EditSingleEmitter(ParticleEmitter* e);
+	void EmitPlayerSwitchEffect(const Vector3& playerPos);
 	bool Isgoal(bool isgoal);
 };
