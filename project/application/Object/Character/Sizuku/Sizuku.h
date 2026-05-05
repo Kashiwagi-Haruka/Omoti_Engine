@@ -1,13 +1,14 @@
 #pragma once
-#include "Object/Playable/PlayableParameter.h"
-#include <string>
-#include "Function.h"
-#include <memory>
-#include "Camera.h"
 #include "Animation/AnimationManager.h"
 #include "Animation/SkinCluster.h"
+#include "Camera.h"
+#include "Function.h"
+#include "Object/Character/Base/CharacterBase.h"
+#include "Object/Playable/PlayableParameter.h"
 #include "Object3d/Object3d.h"
-class Sizuku {
+#include <memory>
+#include <string>
+class Sizuku : public CharacterBase {
 
 	bool isHave_;
 
@@ -16,7 +17,6 @@ class Sizuku {
 	PlayableParameter parameter_;
 
 	Matrix4x4 playerWorld;
-	Transform transform_;
 	Camera* camera_;
 	std::unique_ptr<Object3d> Sizuku_;
 	std::unique_ptr<Skeleton> sizukuSkeleton_{};
@@ -26,7 +26,8 @@ class Sizuku {
 	const float kAnimationBlendDuration_ = 0.3f;
 	bool animationFinished_ = false;
 	std::string desiredAnimationName = "Idle";
-	public:
+
+public:
 	void Initialize();
 	void SetAnimation(std::string Name);
 	void Update();

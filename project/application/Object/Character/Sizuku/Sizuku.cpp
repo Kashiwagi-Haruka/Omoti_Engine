@@ -3,6 +3,7 @@
 #include "Object3d/Object3dCommon.h"
 #include "GameBase.h"
 void Sizuku::Initialize(){
+	SetAttribute(Attribute::Ice);
 	Sizuku_ = std::make_unique<Object3d>();
 
 	Sizuku_->SetModel("sizuku");

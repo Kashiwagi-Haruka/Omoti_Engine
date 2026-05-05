@@ -1,13 +1,18 @@
 #pragma once
+#include "Attribute.h"
 #include "Engine/math/Transform.h"
 class CharacterBase {
 
+protected:
 	Transform transform_;
+	Attribute attribute_ = Attribute::None;
 
-	public:
+public:
 	CharacterBase() = default;
+	virtual ~CharacterBase() = default;
 
-
+	void SetAttribute(Attribute attribute) { attribute_ = attribute; }
+	Attribute GetAttribute() const { return attribute_; }
 };
 struct Parameters {
 	int HP;
