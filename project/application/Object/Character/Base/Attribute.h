@@ -5,5 +5,4 @@ enum class Attribute {
 	Ice,
 	Wind,
 	Thunder,
-
-};
+	Imaginary, Quantum };
