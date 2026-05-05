@@ -363,7 +363,7 @@ void GameScene::Draw() {
 
 	SpriteCommon::GetInstance()->DrawCommon();
 	uimanager->Draw();
-
+	team_->DrawInGameMemberList();
 	pause->Draw();
 	if (isTransitionIn || isTransitionOut) {
 		sceneTransition->Draw();

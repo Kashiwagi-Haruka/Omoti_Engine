@@ -2,13 +2,15 @@
 #include "Input.h"
 #include "Object/Character/Mei/Mei.h"
 #include "Object/Character/Sizuku/Sizuku.h"
+#include "Text/FreeTypeManager/FreeTypeManager.h"
 #include "TextureManager.h"
 
 void Team::Initialize() {
 	whiteTextureHandle_ = TextureManager::GetInstance()->GetTextureIndexByfilePath("Resources/2d/white2x2.png");
 	const uint32_t sizukuIconHandle = TextureManager::GetInstance()->GetTextureIndexByfilePath("Resources/2d/Character/Icon/Sizuku.png");
 	const uint32_t meiIconHandle = TextureManager::GetInstance()->GetTextureIndexByfilePath("Resources/2d/Character/Icon/Mei.png");
-	;
+	hudFontHandle_ = FreeTypeManager::CreateFace("Resources/Font/irohakakuC-Bold.ttf", 0);
+	FreeTypeManager::SetPixelSizes(hudFontHandle_, 28, 28);
 
 	ownedCharacters_.clear();
 	ownedCharacterIconHandles_.clear();
@@ -28,62 +30,22 @@ void Team::Initialize() {
 		teamMemberIcons_[i]->SetScale(iconSize_);
 		teamMemberIcons_[i]->SetColor({1.0f, 1.0f, 1.0f, 1.0f});
 
+		inGameMemberIcons_[i] = std::make_unique<Sprite>();
+		inGameMemberIcons_[i]->Initialize(sizukuIconHandle);
+		inGameMemberIcons_[i]->SetScale({56.0f, 56.0f});
+		inGameMemberIcons_[i]->SetColor({1.0f, 1.0f, 1.0f, 1.0f});
+
+		inGameMemberNameTexts_[i].Initialize(hudFontHandle_);
+		inGameMemberNameTexts_[i].SetSize({180.0f, 40.0f});
+		inGameMemberNameTexts_[i].SetAlign(TextAlign::Left);
+		inGameMemberNameTexts_[i].SetColor({1.0f, 1.0f, 1.0f, 1.0f});
+		inGameMemberNameTexts_[i].SetString(U"");
+		inGameMemberNameTexts_[i].UpdateLayout(false);
+
 		slotPositions_[i] = {40.0f + (slotSize_.x + 18.0f) * i, 40.0f};
 		teamSlotSprites_[i]->SetPosition(slotPositions_[i]);
 		teamSlotSprites_[i]->Update();
 		teamMemberCharacterIndices_[i] = -1;
-	}
-
-	inventoryBg_ = std::make_unique<Sprite>();
-	inventoryBg_->Initialize(whiteTextureHandle_);
-	inventoryBg_->SetPosition(inventoryPanelPos_);
-	inventoryBg_->SetScale(inventoryPanelSize_);
-	inventoryBg_->SetColor({0.08f, 0.08f, 0.1f, 0.92f});
-	inventoryBg_->Update();
-
-	inventoryIcons_.clear();
-	for (size_t i = 0; i < ownedCharacterIconHandles_.size(); ++i) {
-		inventoryIconPositions_[i] = {120.0f + 100.0f * static_cast<float>(i), 240.0f};
-		auto icon = std::make_unique<Sprite>();
-		icon->Initialize(ownedCharacterIconHandles_[i]);
-		icon->SetScale(iconSize_);
-		icon->SetPosition(inventoryIconPositions_[i]);
-		icon->Update();
-		inventoryIcons_.push_back(std::move(icon));
-	}
-
-	confirmButton_ = std::make_unique<Sprite>();
-	confirmButton_->Initialize(whiteTextureHandle_);
-	confirmButton_->SetPosition(confirmPos_);
-	confirmButton_->SetScale(confirmSize_);
-	confirmButton_->SetColor({0.2f, 0.55f, 0.9f, 0.95f});
-	confirmButton_->Update();
-
-	candidatePreview_ = std::make_unique<Sprite>();
-	candidatePreview_->Initialize(sizukuIconHandle);
-	candidatePreview_->SetPosition(previewPos_);
-	candidatePreview_->SetScale(previewSize_);
-	candidatePreview_->Update();
-
-	inventorySelectionMarker_ = std::make_unique<Sprite>();
-	inventorySelectionMarker_->Initialize(whiteTextureHandle_);
-	inventorySelectionMarker_->SetScale({iconSize_.x + 10.0f, iconSize_.y + 10.0f});
-	inventorySelectionMarker_->SetColor({1.0f, 0.9f, 0.2f, 0.85f});
-	inventorySelectionMarker_->Update();
-
-	occupiedSlots_.fill(false);
-	selectedSlotIndex_ = 0;
-	selectedInventoryIndex_ = 0;
-	hoveredInventoryIndex_ = -1;
-
-	isCandidateSelected_ = true;
-	activeSlotIndex_ = 0;
-
-	// 初期チーム: Sizuku, Mei
-	for (int i = 0; i < 2; ++i) {
-		occupiedSlots_[i] = true;
-		teamMemberCharacterIndices_[i] = i;
-		teamMemberIcons_[i]->Initialize(ownedCharacterIconHandles_[i]);
 	}
 }
 
@@ -188,6 +150,38 @@ void Team::Draw() {
 	confirmButton_->Draw();
 }
 
+void Team::DrawInGameMemberList() {
+	int otherMemberCount = 0;
+	for (int i = 0; i < kMaxMembersCount; ++i) {
+		if (!occupiedSlots_[i] || i == activeSlotIndex_) {
+			continue;
+		}
+
+		const int characterIndex = teamMemberCharacterIndices_[i];
+		if (characterIndex < 0 || characterIndex >= static_cast<int>(ownedCharacterIconHandles_.size())) {
+			continue;
+		}
+
+		const float baseX = 1224.0f;
+		const float baseY = 250.0f;
+		const float spacingY = 76.0f;
+		const float y = baseY + spacingY * static_cast<float>(otherMemberCount);
+
+		inGameMemberIcons_[i]->Initialize(ownedCharacterIconHandles_[characterIndex]);
+		inGameMemberIcons_[i]->SetPosition({baseX, y});
+		inGameMemberIcons_[i]->Update();
+		inGameMemberIcons_[i]->Draw();
+
+		inGameMemberNameTexts_[i].SetString(GetCharacterNameByIndex(characterIndex));
+		inGameMemberNameTexts_[i].SetPosition({baseX - 180.0f, y + 10.0f});
+		inGameMemberNameTexts_[i].UpdateLayout(false);
+		inGameMemberNameTexts_[i].Update(false);
+		inGameMemberNameTexts_[i].Draw();
+
+		++otherMemberCount;
+	}
+}
+
 bool Team::GetHasMember(int slotIndex) const {
 	if (slotIndex < 0 || slotIndex >= kMaxMembersCount) {
 		return false;
@@ -196,3 +190,12 @@ bool Team::GetHasMember(int slotIndex) const {
 }
 
 bool Team::IsInsideRect(const Vector2& point, const Vector2& pos, const Vector2& size) const { return point.x >= pos.x && point.x <= pos.x + size.x && point.y >= pos.y && point.y <= pos.y + size.y; }
+
+const std::u32string& Team::GetCharacterNameByIndex(int characterIndex) const {
+	static const std::u32string kEmptyName = U"";
+	static const std::array<std::u32string, 2> kCharacterNames = {U"Sizuku", U"Mei"};
+	if (characterIndex < 0 || characterIndex >= static_cast<int>(kCharacterNames.size())) {
+		return kEmptyName;
+	}
+	return kCharacterNames[characterIndex];
+}

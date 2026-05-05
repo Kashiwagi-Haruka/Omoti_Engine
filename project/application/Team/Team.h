@@ -1,6 +1,7 @@
 #pragma once
 #include "Object/Character/Base/CharacterBase.h"
 #include "Sprite.h"
+#include "Text/Text.h"
 #include "Vector2.h"
 #include <array>
 #include <memory>
@@ -12,6 +13,7 @@ public:
 	void Initialize();
 	void Update(bool isPartyOpen);
 	void Draw();
+	void DrawInGameMemberList();
 
 	bool GetHasMember(int slotIndex) const;
 	int GetActiveSlot() const { return activeSlotIndex_; }
@@ -28,6 +30,8 @@ private:
 
 	std::array<std::unique_ptr<Sprite>, kMaxMembersCount> teamSlotSprites_{};
 	std::array<std::unique_ptr<Sprite>, kMaxMembersCount> teamMemberIcons_{};
+	std::array<std::unique_ptr<Sprite>, kMaxMembersCount> inGameMemberIcons_{};
+	std::array<Text, kMaxMembersCount> inGameMemberNameTexts_{};
 	std::array<int, kMaxMembersCount> teamMemberCharacterIndices_{};
 	std::array<bool, kMaxMembersCount> occupiedSlots_{};
 	std::array<Vector2, kMaxMembersCount> slotPositions_{};
@@ -52,4 +56,7 @@ private:
 	int hoveredInventoryIndex_ = -1;
 	bool isCandidateSelected_ = false;
 	int activeSlotIndex_ = 0;
+	uint32_t hudFontHandle_ = 0;
+
+	const std::u32string& GetCharacterNameByIndex(int characterIndex) const;
 };
