@@ -89,6 +89,18 @@ void Team::Initialize() {
 		teamSlotSprites_[i]->Update();
 		teamMemberCharacterIndices_[i] = -1;
 	}
+	// 初期チーム編成(操作キャラ+控えメンバー)
+	if (!ownedCharacterIconHandles_.empty()) {
+		occupiedSlots_[0] = true;
+		teamMemberCharacterIndices_[0] = 0;
+		teamMemberIcons_[0]->Initialize(ownedCharacterIconHandles_[0]);
+	}
+	if (ownedCharacterIconHandles_.size() >= 2) {
+		occupiedSlots_[1] = true;
+		teamMemberCharacterIndices_[1] = 1;
+		teamMemberIcons_[1]->Initialize(ownedCharacterIconHandles_[1]);
+	}
+	activeSlotIndex_ = 0;
 }
 
 void Team::Update(bool isPartyOpen) {
@@ -224,7 +236,7 @@ void Team::DrawInGameMemberList() {
 		inGameMemberIcons_[i]->Draw();
 
 		inGameMemberNameTexts_[i].SetString(GetCharacterNameByIndex(characterIndex));
-		inGameMemberNameTexts_[i].SetPosition({baseX - 180.0f, y + 10.0f});
+		inGameMemberNameTexts_[i].SetPosition({baseX + 62.0f, y + 8.0f});
 		inGameMemberNameTexts_[i].UpdateLayout(false);
 		inGameMemberNameTexts_[i].Update(false);
 		inGameMemberNameTexts_[i].Draw();
