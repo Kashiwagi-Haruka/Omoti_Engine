@@ -36,6 +36,7 @@ private:
 	std::unique_ptr<Sprite> inventoryBg_;
 	std::unique_ptr<Sprite> confirmButton_;
 	std::unique_ptr<Sprite> candidatePreview_;
+	std::unique_ptr<Sprite> inventorySelectionMarker_;
 
 	Vector2 slotSize_{80.0f, 80.0f};
 	Vector2 inventoryPanelPos_{70.0f, 170.0f};
@@ -47,6 +48,8 @@ private:
 	Vector2 previewSize_{128.0f, 128.0f};
 
 	int selectedSlotIndex_ = -1;
+	int selectedInventoryIndex_ = 0;
+	int hoveredInventoryIndex_ = -1;
 	bool isCandidateSelected_ = false;
 	int activeSlotIndex_ = 0;
 };
