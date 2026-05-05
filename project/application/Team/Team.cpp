@@ -19,6 +19,48 @@ void Team::Initialize() {
 	ownedCharacters_.push_back(std::make_unique<Mei>());
 	ownedCharacterIconHandles_.push_back(meiIconHandle);
 
+	inventoryIcons_.clear();
+	for (size_t i = 0; i < ownedCharacterIconHandles_.size(); ++i) {
+		auto icon = std::make_unique<Sprite>();
+		icon->Initialize(ownedCharacterIconHandles_[i]);
+		icon->SetScale(iconSize_);
+		icon->SetColor({1.0f, 1.0f, 1.0f, 1.0f});
+		const float x = inventoryPanelPos_.x + 22.0f;
+		const float y = inventoryPanelPos_.y + 24.0f + (iconSize_.y + 18.0f) * static_cast<float>(i);
+		inventoryIconPositions_[i] = {x, y};
+		icon->SetPosition(inventoryIconPositions_[i]);
+		icon->Update();
+		inventoryIcons_.push_back(std::move(icon));
+	}
+
+	inventoryBg_ = std::make_unique<Sprite>();
+	inventoryBg_->Initialize(whiteTextureHandle_);
+	inventoryBg_->SetPosition(inventoryPanelPos_);
+	inventoryBg_->SetScale(inventoryPanelSize_);
+	inventoryBg_->SetColor({0.08f, 0.08f, 0.12f, 0.92f});
+	inventoryBg_->Update();
+
+	confirmButton_ = std::make_unique<Sprite>();
+	confirmButton_->Initialize(whiteTextureHandle_);
+	confirmButton_->SetPosition(confirmPos_);
+	confirmButton_->SetScale(confirmSize_);
+	confirmButton_->SetColor({0.2f, 0.55f, 0.9f, 0.95f});
+	confirmButton_->Update();
+
+	candidatePreview_ = std::make_unique<Sprite>();
+	candidatePreview_->Initialize(ownedCharacterIconHandles_[selectedInventoryIndex_]);
+	candidatePreview_->SetPosition(previewPos_);
+	candidatePreview_->SetScale(previewSize_);
+	candidatePreview_->SetColor({1.0f, 1.0f, 1.0f, 0.95f});
+	candidatePreview_->Update();
+
+	inventorySelectionMarker_ = std::make_unique<Sprite>();
+	inventorySelectionMarker_->Initialize(whiteTextureHandle_);
+	inventorySelectionMarker_->SetScale({iconSize_.x + 10.0f, iconSize_.y + 10.0f});
+	inventorySelectionMarker_->SetColor({1.0f, 0.85f, 0.2f, 0.35f});
+	inventorySelectionMarker_->SetPosition({inventoryIconPositions_[selectedInventoryIndex_].x - 5.0f, inventoryIconPositions_[selectedInventoryIndex_].y - 5.0f});
+	inventorySelectionMarker_->Update();
+
 	for (int i = 0; i < kMaxMembersCount; ++i) {
 		teamSlotSprites_[i] = std::make_unique<Sprite>();
 		teamSlotSprites_[i]->Initialize(whiteTextureHandle_);
