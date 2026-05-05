@@ -14,7 +14,7 @@ public:
 	void SetAttribute(Attribute attribute) { attribute_ = attribute; }
 	Attribute GetAttribute() const { return attribute_; }
 };
-struct Parameters {
+struct Parameter {
 	int HP;
 	int Attack;
 	int Defense;
