@@ -1,8 +1,11 @@
 #pragma once
+#include "Object/Character/Base/CharacterBase.h"
 #include "Sprite.h"
 #include "Vector2.h"
 #include <array>
 #include <memory>
+#include <string>
+#include <vector>
 
 class Team {
 public:
@@ -20,15 +23,17 @@ private:
 	bool IsInsideRect(const Vector2& point, const Vector2& pos, const Vector2& size) const;
 
 	uint32_t whiteTextureHandle_ = 0;
-	uint32_t iconTextureHandle_ = 0;
+	std::vector<uint32_t> ownedCharacterIconHandles_{};
+	std::vector<std::unique_ptr<CharacterBase>> ownedCharacters_{};
 
 	std::array<std::unique_ptr<Sprite>, kMaxMembersCount> teamSlotSprites_{};
 	std::array<std::unique_ptr<Sprite>, kMaxMembersCount> teamMemberIcons_{};
+	std::array<int, kMaxMembersCount> teamMemberCharacterIndices_{};
 	std::array<bool, kMaxMembersCount> occupiedSlots_{};
 	std::array<Vector2, kMaxMembersCount> slotPositions_{};
 	std::array<Vector2, kMaxMembersCount> inventoryIconPositions_{};
+	std::vector<std::unique_ptr<Sprite>> inventoryIcons_{};
 	std::unique_ptr<Sprite> inventoryBg_;
-	std::unique_ptr<Sprite> inventoryIcon_;
 	std::unique_ptr<Sprite> confirmButton_;
 	std::unique_ptr<Sprite> candidatePreview_;
 
