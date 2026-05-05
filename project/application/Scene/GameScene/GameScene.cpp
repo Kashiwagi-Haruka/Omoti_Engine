@@ -40,6 +40,7 @@ GameScene::GameScene() {
 	Input::GetInstance()->SetIsCursorStability(true);
 	Input::GetInstance()->SetIsCursorVisible(false);
 	characterDisplay_ = std::make_unique<CharacterDisplay>();
+	team_ = std::make_unique<Team>();
 }
 
 GameScene::~GameScene() {}
@@ -58,6 +59,7 @@ void GameScene::Initialize() {
 	sceneEndOver = false;
 	isBGMPlaying = false;
 	isCharacterDisplayMode_ = false;
+	isPartyMode_ = false;
 	cameraController->Initialize();
 
 	Object3dCommon::GetInstance()->SetDefaultCamera(cameraController->GetCamera());
@@ -113,6 +115,7 @@ void GameScene::Initialize() {
 	pause->SetCurrentCharacterObj(player->GetCharacterObject3d());
 	characterDisplay_->Initialize();
 	characterDisplay_->SetActive(false);
+	team_->Initialize();
 }
 
 void GameScene::DebugImGui() {
@@ -193,13 +196,25 @@ void GameScene::Update() {
 		}
 
 		if (!isCharacterDisplayMode_) {
-			bool togglePause = Input::GetInstance()->TriggerKey(DIK_ESCAPE) || Input::GetInstance()->TriggerButton(Input::PadButton::kButtonStart);
-			if (togglePause) {
-				isPause = !isPause;
+			if (Input::GetInstance()->TriggerKey(DIK_L)) {
+				isPartyMode_ = !isPartyMode_;
+				isPause = false;
+				if (isPartyMode_) {
+					Input::GetInstance()->SetIsCursorStability(false);
+					Input::GetInstance()->SetIsCursorVisible(true);
+				}
+			}
+
+			if (!isPartyMode_) {
+				bool togglePause = Input::GetInstance()->TriggerKey(DIK_ESCAPE) || Input::GetInstance()->TriggerButton(Input::PadButton::kButtonStart);
+				if (togglePause) {
+					isPause = !isPause;
+				}
 			}
 		}
 	}
 	DebugImGui();
+	team_->Update(isPartyMode_);
 	pause->Update(isPause);
 	Pause::Action pauseAction = pause->ConsumeAction();
 	if (pauseAction == Pause::Action::kResume) {
@@ -215,6 +230,9 @@ void GameScene::Update() {
 	}
 
 	if (isPause && !isTransitionOut) {
+		return;
+	}
+	if (isPartyMode_ && !isTransitionOut) {
 		return;
 	}
 	if (isCharacterDisplayMode_ && !isTransitionOut) {
@@ -313,6 +331,14 @@ void GameScene::Draw() {
 	}
 	if (isPause) {
 		pause->Draw();
+		if (isTransitionIn || isTransitionOut) {
+			sceneTransition->Draw();
+		}
+		return;
+	}
+	if (isPartyMode_) {
+		SpriteCommon::GetInstance()->DrawCommon();
+		team_->Draw();
 		if (isTransitionIn || isTransitionOut) {
 			sceneTransition->Draw();
 		}
