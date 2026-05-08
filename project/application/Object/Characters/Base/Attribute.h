@@ -5,4 +5,7 @@ enum class Attribute {
 	Ice,
 	Wind,
 	Thunder,
-	Imaginary, Quantum };
+	Imaginary, 
+	Quantum ,
+	MAXATTRIBUTE,
+};

@@ -177,8 +177,6 @@ copy "$(WindowsSdkDir)\bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)\
     <ClCompile Include="application\Object\House\House.cpp" />
     <ClCompile Include="application\Object\House\HouseHP.cpp" />
     <ClCompile Include="application\Object\MapchipField.cpp" />
-    <ClCompile Include="application\Object\Playable\Model\PlayableModel.cpp" />
-    <ClCompile Include="application\Object\Playable\Playable.cpp" />
     <ClCompile Include="application\Object\Player\Attack\PlayerAttack.cpp" />
     <ClCompile Include="application\Object\Player\Attack\PlayerFallAttack.cpp" />
     <ClCompile Include="application\Object\Player\Attack\Skill\PlayerSkill.cpp" />
@@ -195,6 +193,7 @@ copy "$(WindowsSdkDir)\bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)\
     <ClCompile Include="application\UIManager\UIManager.cpp" />
     <ClCompile Include="application\Object\Characters\CharacterDisplay\CharacterDisplayText.cpp" />
     <ClCompile Include="application\Object\Damage\Damage.cpp" />
+    <ClCompile Include="application\Object\Characters\Character\Arte\Arte.cpp" />
     <ClCompile Include="Engine\Audio\AudioMixer.cpp" />
     <ClCompile Include="Engine\Editor\EditorData\Audio\EditorAudio.cpp" />
     <ClCompile Include="Engine\Editor\EditorData\Camera\EditorCamera.cpp" />
@@ -208,6 +207,7 @@ copy "$(WindowsSdkDir)\bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)\
     <ClCompile Include="Engine\Editor\EditorTool\Inspector\Inspector.cpp" />
     <ClCompile Include="Engine\Editor\EditorTool\SaveTemplate\SaveTemplate.cpp" />
     <ClCompile Include="Engine\Editor\EditorTool\ToolBar\ToolBar.cpp" />
+    <ClCompile Include="Engine\Loadfile\TXT\TxtManager.cpp" />
     <ClCompile Include="Engine\ScreenShot\ScreenShot.cpp" />
     <ClCompile Include="Engine\Texture\Mesh\Animation\AnimationManager.cpp" />
     <ClCompile Include="Engine\Texture\Mesh\Animation\Animation.cpp" />
@@ -289,6 +289,7 @@ copy "$(WindowsSdkDir)\bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)\
     <ClCompile Include="application\PlayCommand\PlayCommand.cpp" />
     <ClCompile Include="application\Object\Player\PlayerKey\PlayerKey.cpp" />
     <ClCompile Include="application\Object\Characters\Character\Mei\Mei.cpp" />
+    <ClCompile Include="application\Object\Characters\Character\Yuzuki\Yuzuki.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include=".editorconfig" />
@@ -316,6 +317,7 @@ copy "$(WindowsSdkDir)\bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)\
     <ClInclude Include="application\Object\Boss\Boss.h" />
     <ClInclude Include="application\Object\Characters\Base\Attribute.h" />
     <ClInclude Include="application\Object\Characters\Base\CharacterBase.h" />
+    <ClInclude Include="application\Object\Characters\Base\CharacterParameters.h" />
     <ClInclude Include="application\Object\Characters\CharacterDisplay\CharacterDisplay.h" />
     <ClInclude Include="application\Object\Characters\CharacterDisplay\CharacterDisplaySkyDome.h" />
     <ClInclude Include="application\Object\Characters\Model\CharacterModel.h" />
@@ -330,9 +332,6 @@ copy "$(WindowsSdkDir)\bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)\
     <ClInclude Include="application\Object\House\House.h" />
     <ClInclude Include="application\Object\House\HouseHP.h" />
     <ClInclude Include="application\Object\MapchipField.h" />
-    <ClInclude Include="application\Object\Playable\Model\PlayableModel.h" />
-    <ClInclude Include="application\Object\Playable\Playable.h" />
-    <ClInclude Include="application\Object\Playable\PlayableParameter.h" />
     <ClInclude Include="application\Object\Player\Attack\PlayerAttack.h" />
     <ClInclude Include="application\Object\Player\Attack\PlayerFallAttack.h" />
     <ClInclude Include="application\Object\Player\Attack\Skill\PlayerSkill.h" />
@@ -350,6 +349,7 @@ copy "$(WindowsSdkDir)\bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)\
     <ClInclude Include="application\UIManager\UIManager.h" />
     <ClInclude Include="application\Object\Characters\CharacterDisplay\CharacterDisplayText.h" />
     <ClInclude Include="application\Object\Damage\Damage.h" />
+    <ClInclude Include="application\Object\Characters\Character\Arte\Arte.h" />
     <ClInclude Include="Engine\Audio\AudioMixer.h" />
     <ClInclude Include="Engine\base\ScreenSize.h" />
     <ClInclude Include="Engine\Editor\EditorData\Audio\EditorAudio.h" />
@@ -364,6 +364,7 @@ copy "$(WindowsSdkDir)\bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)\
     <ClInclude Include="Engine\Editor\EditorTool\Inspector\Inspector.h" />
     <ClInclude Include="Engine\Editor\EditorTool\SaveTemplate\SaveTemplate.h" />
     <ClInclude Include="Engine\Editor\EditorTool\ToolBar\ToolBar.h" />
+    <ClInclude Include="Engine\Loadfile\TXT\TxtManager.h" />
     <ClInclude Include="Engine\math\QuaternionTransform.h" />
     <ClInclude Include="Engine\ScreenShot\ScreenShot.h" />
     <ClInclude Include="Engine\Texture\Data\Color.h" />
@@ -452,6 +453,7 @@ copy "$(WindowsSdkDir)\bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)\
     <ClInclude Include="application\PlayCommand\PlayCommand.h" />
     <ClInclude Include="application\Object\Player\PlayerKey\PlayerKey.h" />
     <ClInclude Include="application\Object\Characters\Character\Mei\Mei.h" />
+    <ClInclude Include="application\Object\Characters\Character\Yuzuki\Yuzuki.h" />
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="Resources\shader\FullScreenCopy\CopyImage.PS.hlsl">
