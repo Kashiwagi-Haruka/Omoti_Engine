@@ -246,10 +246,10 @@
     <ClCompile Include="application\CollisionManager\CollisionManager.cpp" />
     <ClCompile Include="application\Object\Background\SkyDome.cpp" />
     <ClCompile Include="application\Object\Boss\Boss.cpp" />
-    <ClCompile Include="application\Object\Character\CharacterDisplay\CharacterDisplay.cpp" />
-    <ClCompile Include="application\Object\Character\CharacterDisplay\CharacterDisplaySkyDome.cpp" />
-    <ClCompile Include="application\Object\Character\Model\CharacterModel.cpp" />
-    <ClCompile Include="application\Object\Character\Sizuku\Sizuku.cpp" />
+    <ClCompile Include="application\Object\Characters\CharacterDisplay\CharacterDisplay.cpp" />
+    <ClCompile Include="application\Object\Characters\CharacterDisplay\CharacterDisplaySkyDome.cpp" />
+    <ClCompile Include="application\Object\Characters\Model\CharacterModel.cpp" />
+    <ClCompile Include="application\Object\Characters\Character\Sizuku\Sizuku.cpp" />
     <ClCompile Include="application\Object\Enemy\Enemy.cpp" />
     <ClCompile Include="application\Object\Enemy\EnemyAttack.cpp" />
     <ClCompile Include="application\Object\Enemy\EnemyHitEffect.cpp" />
@@ -299,9 +299,9 @@
     <ClCompile Include="Engine\Texture\Mesh\SkyBox\SkyBox.cpp" />
     <ClCompile Include="application\PlayCommand\PlayCommand.cpp" />
     <ClCompile Include="application\Object\Player\PlayerKey\PlayerKey.cpp" />
-    <ClCompile Include="application\Object\Character\CharacterDisplay\CharacterDisplayText.cpp" />
+    <ClCompile Include="application\Object\Characters\CharacterDisplay\CharacterDisplayText.cpp" />
     <ClCompile Include="application\Object\Damage\Damage.cpp" />
-    <ClCompile Include="application\Object\Character\Mei\Mei.cpp" />
+    <ClCompile Include="application\Object\Characters\Character\Mei\Mei.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Engine\Texture\RenderTexture2D.h" />
@@ -504,10 +504,10 @@
     <ClInclude Include="application\CollisionManager\CollisionManager.h" />
     <ClInclude Include="application\Object\Background\SkyDome.h" />
     <ClInclude Include="application\Object\Boss\Boss.h" />
-    <ClInclude Include="application\Object\Character\CharacterDisplay\CharacterDisplay.h" />
-    <ClInclude Include="application\Object\Character\CharacterDisplay\CharacterDisplaySkyDome.h" />
-    <ClInclude Include="application\Object\Character\Model\CharacterModel.h" />
-    <ClInclude Include="application\Object\Character\Sizuku\Sizuku.h" />
+    <ClInclude Include="application\Object\Characters\CharacterDisplay\CharacterDisplay.h" />
+    <ClInclude Include="application\Object\Characters\CharacterDisplay\CharacterDisplaySkyDome.h" />
+    <ClInclude Include="application\Object\Characters\Model\CharacterModel.h" />
+    <ClInclude Include="application\Object\Characters\Character\Sizuku\Sizuku.h" />
     <ClInclude Include="application\Object\Enemy\Enemy.h" />
     <ClInclude Include="application\Object\Enemy\EnemyAttack.h" />
     <ClInclude Include="application\Object\Enemy\EnemyHitEffect.h" />
@@ -568,14 +568,15 @@
     <ClInclude Include="Engine\Texture\Text\FreetypeManager\Font\Font.h" />
     <ClInclude Include="Engine\Texture\Text\Text.h" />
     <ClInclude Include="Engine\Texture\Text\FreetypeManager\FreeTypeManager.h" />
-    <ClInclude Include="application\Object\Character\Base\CharacterBase.h" />
-    <ClInclude Include="application\Object\Character\Base\Attribute.h" />
+    <ClInclude Include="application\Object\Characters\Base\CharacterBase.h" />
+    <ClInclude Include="application\Object\Characters\Base\Attribute.h" />
     <ClInclude Include="Engine\Texture\Mesh\SkyBox\SkyBox.h" />
     <ClInclude Include="application\PlayCommand\PlayCommand.h" />
     <ClInclude Include="application\Object\Player\PlayerKey\PlayerKey.h" />
-    <ClInclude Include="application\Object\Character\CharacterDisplay\CharacterDisplayText.h" />
+    <ClInclude Include="application\Object\Characters\CharacterDisplay\CharacterDisplayText.h" />
     <ClInclude Include="application\Object\Damage\Damage.h" />
-    <ClInclude Include="application\Object\Character\Mei\Mei.h" />
+    <ClInclude Include="application\Object\Characters\Character\Mei\Mei.h" />
+    <ClInclude Include="application\Object\Characters\Base\WeaponTypes.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include=".editorconfig" />

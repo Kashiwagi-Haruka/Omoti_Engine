@@ -4,7 +4,7 @@
 #include "Camera.h"
 #include "DebugCamera.h"
 #include "Light/CommonLight/DirectionalCommonLight.h"
-#include "Object/Character/Sizuku/Sizuku.h"
+#include "Object/Characters/Character/Sizuku/Sizuku.h"
 #include "Object3d/Object3d.h"
 #include "SkyBox/SkyBox.h"
 #include "Text/Text.h"

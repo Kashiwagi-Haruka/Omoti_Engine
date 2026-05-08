@@ -163,10 +163,10 @@ copy "$(WindowsSdkDir)\bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)\
     <ClCompile Include="application\CollisionManager\CollisionManager.cpp" />
     <ClCompile Include="application\Object\Background\SkyDome.cpp" />
     <ClCompile Include="application\Object\Boss\Boss.cpp" />
-    <ClCompile Include="application\Object\Character\CharacterDisplay\CharacterDisplay.cpp" />
-    <ClCompile Include="application\Object\Character\CharacterDisplay\CharacterDisplaySkyDome.cpp" />
-    <ClCompile Include="application\Object\Character\Model\CharacterModel.cpp" />
-    <ClCompile Include="application\Object\Character\Sizuku\Sizuku.cpp" />
+    <ClCompile Include="application\Object\Characters\CharacterDisplay\CharacterDisplay.cpp" />
+    <ClCompile Include="application\Object\Characters\CharacterDisplay\CharacterDisplaySkyDome.cpp" />
+    <ClCompile Include="application\Object\Characters\Model\CharacterModel.cpp" />
+    <ClCompile Include="application\Object\Characters\Character\Sizuku\Sizuku.cpp" />
     <ClCompile Include="application\Object\Enemy\Enemy.cpp" />
     <ClCompile Include="application\Object\Enemy\EnemyAttack.cpp" />
     <ClCompile Include="application\Object\Enemy\EnemyHitEffect.cpp" />
@@ -193,7 +193,7 @@ copy "$(WindowsSdkDir)\bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)\
     <ClCompile Include="application\Team\Team.cpp" />
     <ClCompile Include="application\TutorialUI\TutorialUI.cpp" />
     <ClCompile Include="application\UIManager\UIManager.cpp" />
-    <ClCompile Include="application\Object\Character\CharacterDisplay\CharacterDisplayText.cpp" />
+    <ClCompile Include="application\Object\Characters\CharacterDisplay\CharacterDisplayText.cpp" />
     <ClCompile Include="application\Object\Damage\Damage.cpp" />
     <ClCompile Include="Engine\Audio\AudioMixer.cpp" />
     <ClCompile Include="Engine\Editor\EditorData\Audio\EditorAudio.cpp" />
@@ -288,7 +288,7 @@ copy "$(WindowsSdkDir)\bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)\
     <ClCompile Include="Engine\Texture\Mesh\SkyBox\SkyBox.cpp" />
     <ClCompile Include="application\PlayCommand\PlayCommand.cpp" />
     <ClCompile Include="application\Object\Player\PlayerKey\PlayerKey.cpp" />
-    <ClCompile Include="application\Object\Character\Mei\Mei.cpp" />
+    <ClCompile Include="application\Object\Characters\Character\Mei\Mei.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include=".editorconfig" />
@@ -314,12 +314,12 @@ copy "$(WindowsSdkDir)\bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)\
     <ClInclude Include="application\CollisionManager\CollisionManager.h" />
     <ClInclude Include="application\Object\Background\SkyDome.h" />
     <ClInclude Include="application\Object\Boss\Boss.h" />
-    <ClInclude Include="application\Object\Character\Base\Attribute.h" />
-    <ClInclude Include="application\Object\Character\Base\CharacterBase.h" />
-    <ClInclude Include="application\Object\Character\CharacterDisplay\CharacterDisplay.h" />
-    <ClInclude Include="application\Object\Character\CharacterDisplay\CharacterDisplaySkyDome.h" />
-    <ClInclude Include="application\Object\Character\Model\CharacterModel.h" />
-    <ClInclude Include="application\Object\Character\Sizuku\Sizuku.h" />
+    <ClInclude Include="application\Object\Characters\Base\Attribute.h" />
+    <ClInclude Include="application\Object\Characters\Base\CharacterBase.h" />
+    <ClInclude Include="application\Object\Characters\CharacterDisplay\CharacterDisplay.h" />
+    <ClInclude Include="application\Object\Characters\CharacterDisplay\CharacterDisplaySkyDome.h" />
+    <ClInclude Include="application\Object\Characters\Model\CharacterModel.h" />
+    <ClInclude Include="application\Object\Characters\Character\Sizuku\Sizuku.h" />
     <ClInclude Include="application\Object\Enemy\Enemy.h" />
     <ClInclude Include="application\Object\Enemy\EnemyAttack.h" />
     <ClInclude Include="application\Object\Enemy\EnemyHitEffect.h" />
@@ -342,12 +342,13 @@ copy "$(WindowsSdkDir)\bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)\
     <ClInclude Include="application\Object\Player\PlayerParameters.h" />
     <ClInclude Include="application\Object\Player\Weapon\PlayerSword.h" />
     <ClInclude Include="application\Object\Player\Weapon\playerSwordTrail.h" />
+    <ClInclude Include="application\Object\Characters\Base\WeaponTypes.h" />
     <ClInclude Include="application\Particles\Particles.h" />
     <ClInclude Include="application\Scene\TutorialScene.h" />
     <ClInclude Include="application\Team\Team.h" />
     <ClInclude Include="application\TutorialUI\TutorialUI.h" />
     <ClInclude Include="application\UIManager\UIManager.h" />
-    <ClInclude Include="application\Object\Character\CharacterDisplay\CharacterDisplayText.h" />
+    <ClInclude Include="application\Object\Characters\CharacterDisplay\CharacterDisplayText.h" />
     <ClInclude Include="application\Object\Damage\Damage.h" />
     <ClInclude Include="Engine\Audio\AudioMixer.h" />
     <ClInclude Include="Engine\base\ScreenSize.h" />
@@ -450,7 +451,7 @@ copy "$(WindowsSdkDir)\bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)\
     <ClInclude Include="Engine\Texture\Mesh\SkyBox\SkyBox.h" />
     <ClInclude Include="application\PlayCommand\PlayCommand.h" />
     <ClInclude Include="application\Object\Player\PlayerKey\PlayerKey.h" />
-    <ClInclude Include="application\Object\Character\Mei\Mei.h" />
+    <ClInclude Include="application\Object\Characters\Character\Mei\Mei.h" />
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="Resources\shader\FullScreenCopy\CopyImage.PS.hlsl">

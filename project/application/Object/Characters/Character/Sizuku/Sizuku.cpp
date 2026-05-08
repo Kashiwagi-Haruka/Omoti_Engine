@@ -4,6 +4,7 @@
 #include "GameBase.h"
 void Sizuku::Initialize(){
 	SetAttribute(Attribute::Ice);
+	SetWeaponTypes(WeaponTypes::SWORD);
 	Sizuku_ = std::make_unique<Object3d>();
 
 	Sizuku_->SetModel("sizuku");

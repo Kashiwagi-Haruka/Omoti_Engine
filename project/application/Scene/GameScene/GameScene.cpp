@@ -215,6 +215,9 @@ void GameScene::Update() {
 	}
 	DebugImGui();
 	team_->Update(isPartyMode_);
+	if (team_->ConsumeCharacterSwitchTriggered()) {
+		particles->EmitPlayerSwitchEffect(player->GetPosition());
+	}
 	pause->Update(isPause);
 	Pause::Action pauseAction = pause->ConsumeAction();
 	if (pauseAction == Pause::Action::kResume) {

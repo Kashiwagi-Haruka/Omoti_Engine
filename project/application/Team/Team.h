@@ -1,5 +1,5 @@
 #pragma once
-#include "Object/Character/Base/CharacterBase.h"
+#include "Object/Characters/Base/CharacterBase.h"
 #include "Sprite.h"
 #include "Text/Text.h"
 #include "Vector2.h"

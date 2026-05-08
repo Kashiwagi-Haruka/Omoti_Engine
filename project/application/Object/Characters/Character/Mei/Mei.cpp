@@ -6,7 +6,7 @@
 
 void Mei::Initialize() {
 	SetAttribute(Attribute::Fire);
-
+	SetWeaponTypes(WeaponTypes::SPEAR);
 	mei_ = std::make_unique<Object3d>();
 	mei_->SetModel("sizuku");
 	mei_->Initialize();
