@@ -71,7 +71,7 @@ void SaveJson(const std::string& path, const json& j) {
 }
 
 void SaveCharacterTuningJson(const std::string& characterName, const CharacterTuningData& data) {
-	const std::string directory = "Resources/3d/" + characterName;
+	const std::string directory = "Resources/JSON/Character/" + characterName;
 	std::filesystem::create_directories(directory);
 
 	SaveJson(

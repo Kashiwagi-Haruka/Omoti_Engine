@@ -114,6 +114,8 @@ void Pause::Update(bool isPause) {
 		}
 	} else if (isActive_) {
 		offsetX = 0.0f;
+		Input::GetInstance()->SetIsCursorStability(false);
+		Input::GetInstance()->SetIsCursorVisible(true);
 	}
 
 	if (isActive_) {
