@@ -4,7 +4,6 @@
 #include "Camera.h"
 #include "Function.h"
 #include "Object/Characters/Base/CharacterBase.h"
-#include "Object/Playable/PlayableParameter.h"
 #include "Object3d/Object3d.h"
 #include <memory>
 #include <string>
@@ -13,8 +12,6 @@ class Sizuku : public CharacterBase {
 	bool isHave_;
 
 	std::string name_ = "Sizuku";
-
-	PlayableParameter parameter_;
 
 	Matrix4x4 playerWorld;
 	Camera* camera_;

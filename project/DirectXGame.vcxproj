@@ -163,6 +163,7 @@ copy "$(WindowsSdkDir)\bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)\
     <ClCompile Include="application\CollisionManager\CollisionManager.cpp" />
     <ClCompile Include="application\Object\Background\SkyDome.cpp" />
     <ClCompile Include="application\Object\Boss\Boss.cpp" />
+    <ClCompile Include="application\Object\Characters\Base\Equipment.h" />
     <ClCompile Include="application\Object\Characters\CharacterDisplay\CharacterDisplay.cpp" />
     <ClCompile Include="application\Object\Characters\CharacterDisplay\CharacterDisplaySkyDome.cpp" />
     <ClCompile Include="application\Object\Characters\Model\CharacterModel.cpp" />
