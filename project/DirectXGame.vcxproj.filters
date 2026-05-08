@@ -303,6 +303,7 @@
     <ClCompile Include="application\Object\Characters\Character\Arte\Arte.cpp" />
     <ClCompile Include="Engine\Loadfile\TXT\TxtManager.cpp" />
     <ClCompile Include="application\Object\Characters\Character\Yuzuki\Yuzuki.cpp" />
+    <ClCompile Include="application\Object\Player\Weapon\PlayerWeapon.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Engine\Texture\RenderTexture2D.h" />
@@ -579,6 +580,7 @@
     <ClInclude Include="Engine\Loadfile\TXT\TxtManager.h" />
     <ClInclude Include="application\Object\Characters\Character\Yuzuki\Yuzuki.h" />
     <ClInclude Include="application\Object\Characters\Base\CharacterParameters.h" />
+    <ClInclude Include="application\Object\Player\Weapon\PlayerWeapon.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include=".editorconfig" />

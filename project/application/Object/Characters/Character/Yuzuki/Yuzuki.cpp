@@ -5,8 +5,8 @@
 #include "Object3d/Object3dCommon.h"
 
 void Yuzuki::Initialize() {
-	SetAttribute(Attribute::None);
-	SetWeaponTypes(WeaponTypes::NONE);
+	SetAttribute(Attribute::Thunder);
+	SetWeaponTypes(WeaponTypes::GUN);
 	yuzuki_ = std::make_unique<Object3d>();
 	yuzuki_->SetModel("sizuku");
 	yuzuki_->Initialize();

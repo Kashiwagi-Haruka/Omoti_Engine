@@ -3,12 +3,14 @@
 #include "Attribute.h"
 struct BaseParameter {
 	float HP;
-	float Attuck;
+	float Attack;
 	float Deffence;
 };
 struct Parameter {
 	int level;
-	BaseParameter base;
+	float HP;
+	float Attack;
+	float Deffence;
 	float Speed;
 	float CriticalRate;
 	float CriticalDamage;

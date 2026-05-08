@@ -5,8 +5,8 @@
 #include "Object3d/Object3dCommon.h"
 
 void Arte::Initialize() {
-	SetAttribute(Attribute::None);
-	SetWeaponTypes(WeaponTypes::NONE);
+	SetAttribute(Attribute::Wind);
+	SetWeaponTypes(WeaponTypes::BOW);
 	arte_ = std::make_unique<Object3d>();
 	arte_->SetModel("sizuku");
 	arte_->Initialize();
