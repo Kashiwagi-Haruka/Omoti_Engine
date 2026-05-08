@@ -7,6 +7,7 @@ struct BaseParameter {
 	float Deffence;
 };
 struct Parameter {
+	int level;
 	BaseParameter base;
 	float Speed;
 	float CriticalRate;
