@@ -251,6 +251,7 @@ void GameScene::DebugImGui() {
 				ImGui::DragFloat("Current Base Deffence", &tuningDatas[i].currentBase.Deffence, 0.1f, 0.0f, 9999.0f);
 
 				auto drawParameterEditor = [](const char* label, Parameter& p) {
+					ImGui::PushID(label);
 					ImGui::SeparatorText(label);
 					ImGui::DragInt("Level", &p.level, 1.0f, 1, 999);
 					ImGui::DragFloat("HP", &p.HP, 1.0f, 1.0f, 99999.0f);
@@ -259,6 +260,7 @@ void GameScene::DebugImGui() {
 					ImGui::DragFloat("Speed", &p.Speed, 0.01f, 0.0f, 100.0f);
 					ImGui::DragFloat("CriticalRate", &p.CriticalRate, 0.001f, 0.0f, 1.0f);
 					ImGui::DragFloat("CriticalDamage", &p.CriticalDamage, 0.01f, 1.0f, 10.0f);
+					ImGui::PopID();
 				};
 
 				drawParameterEditor("LV1 Parameter", tuningDatas[i].lv1Parameter);
