@@ -1,0 +1,34 @@
+{
+  "base": {
+    "Attack": 40.0,
+    "Deffence": 60.0,
+    "HP": 250.0
+  },
+  "parameter": {
+    "Attack": 40.0,
+    "AttributeDamageRate": [
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0
+    ],
+    "AttributeResistanceRate": [
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0
+    ],
+    "CriticalDamage": 0.5,
+    "CriticalRate": 0.05000000074505806,
+    "Deffence": 60.0,
+    "HP": 250.0,
+    "Level": 1,
+    "Speed": 1.0
+  }
+}

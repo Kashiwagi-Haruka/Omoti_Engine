@@ -6,8 +6,8 @@
 #include "Light/CommonLight/DirectionalCommonLight.h"
 #include "Light/CommonLight/PointCommonLight.h"
 #include "Light/CommonLight/SpotCommonLight.h"
-#include "Object/Character/CharacterDisplay/CharacterDisplay.h"
-#include "Object/Character/Model/CharacterModel.h"
+#include "Object/Characters/CharacterDisplay/CharacterDisplay.h"
+#include "Object/Characters/Model/CharacterModel.h"
 #include "Object/MapchipField.h"
 #include "Object3d/Object3d.h"
 #include "OpenWorld/OpenWorld.h"
@@ -16,6 +16,7 @@
 #include "Rasen/Rasen.h"
 #include "SceneTransition/SceneTransition.h"
 #include "Sprite.h"
+#include "Team/Team.h"
 #include "UIManager/UIManager.h"
 #include "Vector2.h"
 #include <array>
@@ -52,11 +53,13 @@ private:
 	bool isBGMPlaying = false;
 	bool isPause = false;
 	bool isCharacterDisplayMode_ = false;
+	bool isPartyMode_ = false;
 
 	SoundData BGMData;
 
 	CharacterModel characterModel;
 	std::unique_ptr<CharacterDisplay> characterDisplay_;
+	std::unique_ptr<Team> team_;
 
 	enum class PlayAreaMode { kSpiral, kOpenWorld };
 

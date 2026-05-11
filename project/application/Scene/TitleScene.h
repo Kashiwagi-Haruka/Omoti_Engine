@@ -1,7 +1,7 @@
 #pragma once
 #include "Audio.h"
 #include "BaseScene.h"
-#include "Object/Character/Model/CharacterModel.h"
+#include "Object/Characters/Model/CharacterModel.h"
 #include "SceneTransition/SceneTransition.h"
 #include "Sprite.h"
 #include <memory>

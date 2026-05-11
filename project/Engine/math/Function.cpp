@@ -264,7 +264,12 @@ Matrix4x4 MakeAffineMatrix(Vector3 scale, Vector4 rotate, Vector3 translate) {
 	Matrix4x4 scaleRotateMatrix = Multiply(scaleMatrix, rotateMatrix);
 	return Multiply(scaleRotateMatrix, MakeTranslateMatrix(translate));
 }
-
+// 子Transformに親Transformを適用した行列を返す
+Matrix4x4 MakeParentAffineMatrix(const Transform& child, const Transform& parent) {
+	const Matrix4x4 childMatrix = MakeAffineMatrix(child.scale, child.rotate, child.translate);
+	const Matrix4x4 parentMatrix = MakeAffineMatrix(parent.scale, parent.rotate, parent.translate);
+	return Multiply(childMatrix, parentMatrix);
+}
 // ベクトルを行列で変換する
 Vector3 TransformVM(const Vector3& vector, const Matrix4x4& matrix4x4) {
 	Vector3 result;

@@ -11,18 +11,32 @@ Particles::Particles() {
 	ParticleManager::GetInstance()->CreateParticleGroup("screenEffect", "Resources/2d/defaultParticle.png");
 	ParticleManager::GetInstance()->CreateParticleGroup("Arrow", "Resources/2d/ArrowParticle.png");
 	ParticleManager::GetInstance()->CreateParticleGroup("skill", "Resources/2d/ArrowParticle.png");
+	ParticleManager::GetInstance()->CreateParticleGroup("playerSwitch", "Resources/2d/defaultParticle.png");
 
 	particleArrow = std::make_unique<ParticleEmitter>("Arrow");
-	particleArrow->SetTransform(Transform{
-	    {1,  1, 1 },
-	    {0,  0, 0 },
-	    {25, 0, 25},
-	});
+	particleArrow->SetTransform(
+	    Transform{
+	        {1,  1, 1 },
+	        {0,  0, 0 },
+	        {25, 0, 25},
+    });
 	particleArrow->SetFrequency(1.0f);
 	particleArrow->SetCount(5);
 	particleArrow->SetAcceleration(Vector3{0, 0, 0});
 	particleArrow->SetAreaMin(Vector3{-1, -1, -1});
 	particleArrow->SetAreaMax(Vector3{1, 1, 1});
+	particleSwitch = std::make_unique<ParticleEmitter>("playerSwitch");
+	particleSwitch->SetTransform(
+	    Transform{
+	        {0.3f, 0.3f, 0.3f},
+            {0,    0,    0   },
+            {0,    0,    0   }
+    });
+	particleSwitch->SetFrequency(0.0f);
+	particleSwitch->SetCount(18);
+	particleSwitch->SetAcceleration(Vector3{0, 0.02f, 0});
+	particleSwitch->SetAreaMin(Vector3{-0.35f, -0.2f, -0.35f});
+	particleSwitch->SetAreaMax(Vector3{0.35f, 0.4f, 0.35f});
 	isgoal = false;
 }
 
@@ -44,6 +58,9 @@ void Particles::Draw() {
 
 	if (particleArrow) {
 		particleArrow->Draw();
+	}
+	if (particleSwitch) {
+		particleSwitch->Draw();
 	}
 }
 void Particles::SetPlayerPos(Vector3 playerPos) { playerPos_ = playerPos; }
@@ -122,4 +139,14 @@ void Particles::EditSingleEmitter(ParticleEmitter* e) {
 
 	ImGui::PopID();
 #endif // USE_IMGUI
+}
+void Particles::EmitPlayerSwitchEffect(const Vector3& playerPos) {
+	if (!particleSwitch) {
+		return;
+	}
+
+	Transform switchTransform = particleSwitch->GetTransformRef();
+	switchTransform.translate = {playerPos.x * kParticlePosScale, (playerPos.y - 0.9f) * kParticlePosScale, playerPos.z};
+	particleSwitch->SetTransform(switchTransform);
+	particleSwitch->Emit();
 }

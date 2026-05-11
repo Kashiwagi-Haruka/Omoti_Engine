@@ -3,6 +3,7 @@
 #include "Vector2.h"
 #include "Vector3.h"
 #include "Vector4.h"
+#include "Transform.h"
 #include <cstdint>
 #include <numbers>
 
@@ -80,6 +81,8 @@ Vector4 ConjugateQuaternion(const Vector4& q);
 Vector4 MakeQuaternionFromAxisAngle(const Vector3& axis, float radian);
 // クォータニオンでベクトルを回転する
 Vector3 RotateVectorByQuaternion(const Vector3& v, const Vector4& q);
+// 子Transformに親Transformを適用した行列を返す
+Matrix4x4 MakeParentAffineMatrix(const Transform& child, const Transform& parent);
 
 } // namespace Function
 // Vector3同士の加算

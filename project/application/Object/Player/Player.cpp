@@ -20,6 +20,7 @@ Player::Player() {
 
 	sword_ = std::make_unique<PlayerSword>();
 	skill_ = std::make_unique<PlayerSkill>();
+	key_ = std::make_unique<PlayerKey>();
 
 	attackSE = Audio::GetInstance()->SoundLoadFile("Resources/audio/SE/normalAttack.mp3");
 	attackEndSE = Audio::GetInstance()->SoundLoadFile("Resources/audio/SE/endAttack.mp3");
@@ -47,6 +48,8 @@ void Player::Initialize(Camera* camera) {
 	sword_->SetCamera(camera_);
 	skill_->Initialize();
 	skill_->SetCamera(camera_);
+	key_->Initialize();
+	key_->SetCamera(camera_);
 	isAlive = true;
 	parameters_ = SetInit();
 	models_->SetCamera(camera_);
@@ -484,6 +487,13 @@ void Player::Update() {
 	sword_->SetPlayerYaw(transform_.rotate.y);
 	sword_->Update(transform_, swordJointMatrix);
 	
+	key_->SetCamera(camera_);
+	key_->SetPlayerTransform(transform_);
+	if (isSkillAttack) {
+		key_->StartAnimation();
+	}
+	key_->Update();
+
 	if (isSkillAttack) {
 	skill_->SetCamera(camera_);
 	skill_->Update();
@@ -499,23 +509,23 @@ void Player::Update() {
 
 #ifdef USE_IMGUI
 
-	if (ImGui::Begin("Player")) {
+	//if (ImGui::Begin("Player")) {
 
-		ImGui::DragInt("HP", &hp_);
-		ImGui::DragFloat3("plPos", &transform_.translate.x);
-		ImGui::DragFloat3("plRot", &transform_.rotate.x);
-		ImGui::DragFloat("rotateSpeed", &rotateTimer, 0.01f, 0.0f, 1.0f);
-		ImGui::DragFloat("comboWindow", &comboWindow_, 0.01f, 0.1f, 2.0f);
-		ImGui::DragFloat("heavyAttackThreshold", &heavyAttackThreshold_, 0.01f, 0.1f, 2.0f);
-		ImGui::Text("LMB = FIRE , WASD = MOVE , SPACE = JUMP");
-		ImGui::Text("isDash: %d", isDash);
-		ImGui::Text("Combo Step: %d / 4", comboStep_);
-		ImGui::Text("Combo Timer: %.2f", comboTimer_);
-		ImGui::Text("Can Combo: %s", canCombo_ ? "YES" : "NO");
-		ImGui::Text("Hold Timer: %.2f", attackHoldTimer_);
-		ImGui::Text("Falling Attack: %s", isFallingAttack_ ? "YES" : "NO");
-	}
-	ImGui::End();
+	//	ImGui::DragInt("HP", &hp_);
+	//	ImGui::DragFloat3("plPos", &transform_.translate.x);
+	//	ImGui::DragFloat3("plRot", &transform_.rotate.x);
+	//	ImGui::DragFloat("rotateSpeed", &rotateTimer, 0.01f, 0.0f, 1.0f);
+	//	ImGui::DragFloat("comboWindow", &comboWindow_, 0.01f, 0.1f, 2.0f);
+	//	ImGui::DragFloat("heavyAttackThreshold", &heavyAttackThreshold_, 0.01f, 0.1f, 2.0f);
+	//	ImGui::Text("LMB = FIRE , WASD = MOVE , SPACE = JUMP");
+	//	ImGui::Text("isDash: %d", isDash);
+	//	ImGui::Text("Combo Step: %d / 4", comboStep_);
+	//	ImGui::Text("Combo Timer: %.2f", comboTimer_);
+	//	ImGui::Text("Can Combo: %s", canCombo_ ? "YES" : "NO");
+	//	ImGui::Text("Hold Timer: %.2f", attackHoldTimer_);
+	//	ImGui::Text("Falling Attack: %s", isFallingAttack_ ? "YES" : "NO");
+	//}
+	//ImGui::End();
 
 #endif //
 
@@ -551,4 +561,5 @@ void Player::Draw() {
 	if (isSpecialAttack) {
 	
 	}
+	key_->Draw();
 }

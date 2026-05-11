@@ -14,6 +14,7 @@
 
 SampleScene::SampleScene() {
 	fieldObj_ = std::make_unique<Object3d>();
+	skyBox_ = std::make_unique<SkyBox>();
 	sizukuObj_ = std::make_unique<Sizuku>();
 	camera_ = std::make_unique<Camera>();
 	debugCamera_ = std::make_unique<DebugCamera>();
@@ -50,6 +51,10 @@ void SampleScene::Initialize() {
 	fieldObj_->SetCamera(camera_.get());
 	fieldObj_->SetModel("terrain");
 	fieldObj_->SetTransform(fieldTransform_);
+
+	skyBox_->Initialize();
+	skyBox_->SetCamera(camera_.get());
+	skyBox_->SetScale(skyBoxScale_);
 
 	sizukuObj_->Initialize();
 	sizukuObj_->SetCamera(camera_.get());
@@ -95,6 +100,10 @@ void SampleScene::Update() {
 	fieldObj_->SetTransform(fieldTransform_);
 	fieldObj_->Update();
 
+	skyBox_->SetCamera(camera_.get());
+	skyBox_->SetScale(skyBoxScale_);
+	skyBox_->Update();
+
 	sizukuObj_->SetCamera(camera_.get());
 	sizukuObj_->SetTransform(sizukuTransform_);
 	sizukuObj_->Update();
@@ -116,6 +125,9 @@ void SampleScene::DebugImgui() {
 		ImGui::Text("Directional Light");
 		ImGui::DragFloat3("Light Direction", &directionalLight_.direction.x, 0.01f);
 		ImGui::DragFloat("Light Intensity", &directionalLight_.intensity, 0.01f, 0.0f, 10.0f);
+		ImGui::Separator();
+		ImGui::Text("Skybox");
+		ImGui::DragFloat3("Skybox Scale", &skyBoxScale_.x, 0.1f, 1.0f, 500.0f);
 	}
 	ImGui::End();
 #endif // USE_IMGUI
@@ -125,6 +137,8 @@ void SampleScene::Draw() {
 
 	Object3dCommon::GetInstance()->SetDefaultCamera(camera_.get());
 
+	Object3dCommon::GetInstance()->DrawCommonSkybox();
+	skyBox_->Draw();
 	Object3dCommon::GetInstance()->DrawCommon();
 	fieldObj_->Draw();
 

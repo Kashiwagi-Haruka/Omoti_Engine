@@ -3,6 +3,7 @@ class PlayCommand {
 
 	enum Command{
 		DESIDE,//決定
+		CANCEL,//キャンセル
 		JUMP,   // ジャンプ
 		DASH,   // ダッシュ
 		NORMAL_ATTACK, // 通常攻撃
