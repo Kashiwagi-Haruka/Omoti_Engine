@@ -130,7 +130,6 @@ float ComputeMicroShadow(float3 normal, float3 toLight, float3 toEye)
     // シャドウマップ以外の陰りはハーフランバートで制御する。
     // ※toEyeはインターフェース維持のため受け取る。
     float NdotL = saturate(dot(normal, toLight));
-    (void) toEye;
     return pow(saturate(NdotL * 0.5f + 0.5f), 2.0f);
 }
 
@@ -183,6 +182,7 @@ float ComputeShadowVisibility(Texture2D<float> shadowMap, float4 shadowPosition)
 PixelShaderOutput main(Object3dVertexShaderOutput input)
 {
     PixelShaderOutput output;
+    float pi = 3.14159265f;
     float4 transformedUV = mul(float4(input.texcoord, 0.0f, 1.0f), gMaterial.uvTransform);
     float2 distortionCenter = float2(0.5f, 0.5f);
     float2 offsetFromCenter = transformedUV.xy - distortionCenter;

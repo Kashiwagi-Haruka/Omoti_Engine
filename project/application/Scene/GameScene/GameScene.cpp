@@ -89,7 +89,7 @@ void SaveCharacterTuningJson(const std::string& characterName, const CharacterTu
 } // namespace
 
 GameScene::GameScene() {
-	Object3dCommon::GetInstance()->SetEnvironmentMapTexture("Resources/SkyBox/sky.dds");
+	Object3dCommon::GetInstance()->SetEnvironmentMapTexture("Resources/Skybox/rostock_laage_airport_4k.dds");
 	characterModel.LoadModel();
 	cameraController = std::make_unique<CameraController>();
 	particles = std::make_unique<Particles>();

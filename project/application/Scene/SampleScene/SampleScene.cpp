@@ -46,11 +46,12 @@ SampleScene::SampleScene() {
 void SampleScene::Initialize() {
 	debugCamera_->Initialize();
 	debugCamera_->SetTranslation(cameraTransform_.translate);
-
+	Object3dCommon::GetInstance()->SetEnvironmentMapTexture("Resources/Skybox/rostock_laage_airport_4k.dds");
 	fieldObj_->Initialize();
 	fieldObj_->SetCamera(camera_.get());
 	fieldObj_->SetModel("terrain");
 	fieldObj_->SetTransform(fieldTransform_);
+	fieldObj_->SetEnvironmentCoefficient(0.9f);
 
 	skyBox_->Initialize();
 	skyBox_->SetCamera(camera_.get());
