@@ -9,6 +9,7 @@ MapchipField::MapchipField() {
 
 	// モデル読み込み（map.obj）
 	ModelManager::GetInstance()->LoadModel("Resources/3d", "map");
+	
 	fieldObj = std::make_unique<Object3d>();
 }
 
@@ -19,7 +20,7 @@ void MapchipField::Initialize(Camera* camera) {
 	camera_ = camera;
 
 	transform_ = {
-	    .scale{50.0f,  10.0f, 50.0f },
+	    .scale{100.0f,  10.0f, 100.0f },
         .rotate{0.0f,    0.0f,  0.0f   },
         .translate{0.0f, -9.5f, 0.0f}
     };
@@ -28,7 +29,7 @@ void MapchipField::Initialize(Camera* camera) {
 	fieldObj->SetModel("map");
 	fieldObj->SetCamera(camera_);
 	fieldObj->SetTransform(transform_);
-	fieldObj->SetEnvironmentCoefficient(1.0f);
+	fieldObj->SetEnvironmentCoefficient(0.5f);
 }
 void MapchipField::LoadFromCSV(const std::string& filename) {
 	CSVManager::GetInstance()->LoadCSV(filename);
@@ -47,7 +48,9 @@ void MapchipField::LoadFromCSV(const std::string& filename) {
 
 void MapchipField::Update() { fieldObj->Update(); }
 
-void MapchipField::Draw() { fieldObj->Draw(); }
+void MapchipField::Draw() { 	
+	fieldObj->Draw(); 
+}
 
 bool MapchipField::IsWall(int x, int y) const {
 	if (x < 0 || y < 0 || x >= kWidth || y >= kHeight)
