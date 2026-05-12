@@ -2,7 +2,7 @@
 #include "CameraController/CameraController.h"
 #include "GameTimer/GameTimer.h"
 #include "Model/ModelManager.h"
-#include "Object/Background/SkyDome.h"
+#include "Object/Background/Sky.h"
 #include "Object/Boss/Boss.h"
 #include "Object/Characters/Base/CharacterParameters.h"
 #include "Object/Enemy/EnemyManager.h"
@@ -89,10 +89,11 @@ void SaveCharacterTuningJson(const std::string& characterName, const CharacterTu
 } // namespace
 
 GameScene::GameScene() {
+	Object3dCommon::GetInstance()->SetEnvironmentMapTexture("Resources/SkyBox/sky.dds");
 	characterModel.LoadModel();
 	cameraController = std::make_unique<CameraController>();
 	particles = std::make_unique<Particles>();
-	skyDome = std::make_unique<SkyDome>();
+	skyDome = std::make_unique<Sky>();
 	player = std::make_unique<Player>();
 	boss_ = std::make_unique<Boss>();
 	rasen_ = std::make_unique<Rasen>();

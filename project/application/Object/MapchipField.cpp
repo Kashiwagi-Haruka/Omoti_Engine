@@ -28,6 +28,7 @@ void MapchipField::Initialize(Camera* camera) {
 	fieldObj->SetModel("map");
 	fieldObj->SetCamera(camera_);
 	fieldObj->SetTransform(transform_);
+	fieldObj->SetEnvironmentCoefficient(1.0f);
 }
 void MapchipField::LoadFromCSV(const std::string& filename) {
 	CSVManager::GetInstance()->LoadCSV(filename);

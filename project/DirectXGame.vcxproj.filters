@@ -244,7 +244,7 @@
     </ClCompile>
     <ClCompile Include="application\CameraController\CameraController.cpp" />
     <ClCompile Include="application\CollisionManager\CollisionManager.cpp" />
-    <ClCompile Include="application\Object\Background\SkyDome.cpp" />
+    <ClCompile Include="application\Object\Background\Sky.cpp" />
     <ClCompile Include="application\Object\Boss\Boss.cpp" />
     <ClCompile Include="application\Object\Characters\CharacterDisplay\CharacterDisplay.cpp" />
     <ClCompile Include="application\Object\Characters\CharacterDisplay\CharacterDisplaySkyDome.cpp" />
@@ -505,7 +505,7 @@
     </ClInclude>
     <ClInclude Include="application\CameraController\CameraController.h" />
     <ClInclude Include="application\CollisionManager\CollisionManager.h" />
-    <ClInclude Include="application\Object\Background\SkyDome.h" />
+    <ClInclude Include="application\Object\Background\Sky.h" />
     <ClInclude Include="application\Object\Boss\Boss.h" />
     <ClInclude Include="application\Object\Characters\CharacterDisplay\CharacterDisplay.h" />
     <ClInclude Include="application\Object\Characters\CharacterDisplay\CharacterDisplaySkyDome.h" />

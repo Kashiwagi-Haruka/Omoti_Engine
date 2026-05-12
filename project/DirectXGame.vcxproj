@@ -161,7 +161,7 @@ copy "$(WindowsSdkDir)\bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)\
   <ItemGroup>
     <ClCompile Include="application\CameraController\CameraController.cpp" />
     <ClCompile Include="application\CollisionManager\CollisionManager.cpp" />
-    <ClCompile Include="application\Object\Background\SkyDome.cpp" />
+    <ClCompile Include="application\Object\Background\Sky.cpp" />
     <ClCompile Include="application\Object\Boss\Boss.cpp" />
     <ClCompile Include="application\Object\Characters\Base\Equipment.h" />
     <ClCompile Include="application\Object\Characters\CharacterDisplay\CharacterDisplay.cpp" />
@@ -315,7 +315,7 @@ copy "$(WindowsSdkDir)\bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)\
   <ItemGroup>
     <ClInclude Include="application\CameraController\CameraController.h" />
     <ClInclude Include="application\CollisionManager\CollisionManager.h" />
-    <ClInclude Include="application\Object\Background\SkyDome.h" />
+    <ClInclude Include="application\Object\Background\Sky.h" />
     <ClInclude Include="application\Object\Boss\Boss.h" />
     <ClInclude Include="application\Object\Characters\Base\Attribute.h" />
     <ClInclude Include="application\Object\Characters\Base\CharacterBase.h" />
