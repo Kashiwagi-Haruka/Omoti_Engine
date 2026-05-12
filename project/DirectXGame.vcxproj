@@ -319,7 +319,7 @@ copy "$(WindowsSdkDir)\bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)\
     <ClInclude Include="application\Object\Boss\Boss.h" />
     <ClInclude Include="application\Object\Characters\Base\Attribute.h" />
     <ClInclude Include="application\Object\Characters\Playable\Base\PlayableBase.h" />
-    <ClInclude Include="application\Object\Characters\Playable\Base\CharacterParameters.h" />
+    <ClInclude Include="application\Object\Characters\Base\CharacterParameters.h" />
     <ClInclude Include="application\Object\Characters\CharacterDisplay\CharacterDisplay.h" />
     <ClInclude Include="application\Object\Characters\CharacterDisplay\CharacterDisplaySkyDome.h" />
     <ClInclude Include="application\Object\Characters\Model\CharacterModel.h" />

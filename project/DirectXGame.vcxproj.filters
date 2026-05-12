@@ -580,7 +580,7 @@
     <ClInclude Include="application\Object\Characters\Playable\Individual\Arte\Arte.h" />
     <ClInclude Include="Engine\Loadfile\TXT\TxtManager.h" />
     <ClInclude Include="application\Object\Characters\Playable\Individual\Yuzuki\Yuzuki.h" />
-    <ClInclude Include="application\Object\Characters\Playable\Base\CharacterParameters.h" />
+    <ClInclude Include="application\Object\Characters\Base\CharacterParameters.h" />
     <ClInclude Include="application\Object\Player\Weapon\PlayerWeapon.h" />
     <ClInclude Include="application\Object\Characters\Enemy\BaseEnemy.h" />
   </ItemGroup>

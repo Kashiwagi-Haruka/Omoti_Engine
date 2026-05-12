@@ -4,7 +4,7 @@
 #include "Model/ModelManager.h"
 #include "Object/Background/Sky.h"
 #include "Object/Boss/Boss.h"
-#include "Object/Characters/Playable/Base/CharacterParameters.h"
+#include "Object/Characters/Base/CharacterParameters.h"
 #include "Object/Characters/Enemy/EnemyManager.h"
 #include "Object/ExpCube/ExpCubeManager.h"
 #include "Object/Player/Player.h"

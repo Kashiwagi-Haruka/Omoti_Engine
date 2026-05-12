@@ -2,7 +2,7 @@
 #include "Object/Characters/Base/Attribute.h"
 #include "Object/Characters/Playable/Base/WeaponTypes.h"
 #include "Engine/math/Transform.h"
-#include "CharacterParameters.h"
+#include "Object/Characters/Base/CharacterParameters.h"
 
 class PlayableBase {
 
