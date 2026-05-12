@@ -272,7 +272,9 @@ void Object3dCommon::SetEnvironmentMapTextureResource(ID3D12Resource* resource, 
 		return;
 	}
 	environmentMapSrvIndex_ = TextureManager::GetInstance()->GetSrvManager()->Allocate();
-	TextureManager::GetInstance()->GetSrvManager()->CreateSRVforTexture2D(environmentMapSrvIndex_, resource, format, 1);
+	const D3D12_RESOURCE_DESC resourceDesc = resource->GetDesc();
+	const UINT mipLevels = resourceDesc.MipLevels > 0 ? static_cast<UINT>(resourceDesc.MipLevels) : 1;
+	TextureManager::GetInstance()->GetSrvManager()->CreateSRVforTextureCube(environmentMapSrvIndex_, resource, format, mipLevels);
 }
 void Object3dCommon::DrawSet(){
 	if (useEditorLights_) {
