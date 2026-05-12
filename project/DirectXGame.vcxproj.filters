@@ -305,6 +305,7 @@
     <ClCompile Include="application\Object\Characters\Playable\Individual\Yuzuki\Yuzuki.cpp" />
     <ClCompile Include="application\Object\Player\Weapon\PlayerWeapon.cpp" />
     <ClCompile Include="application\Object\Characters\Playable\Base\Equipment.h" />
+    <ClCompile Include="application\Object\Characters\Enemy\Adhesion\Adhesion.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Engine\Texture\RenderTexture2D.h" />
@@ -583,6 +584,7 @@
     <ClInclude Include="application\Object\Characters\Base\CharacterParameters.h" />
     <ClInclude Include="application\Object\Player\Weapon\PlayerWeapon.h" />
     <ClInclude Include="application\Object\Characters\Enemy\BaseEnemy.h" />
+    <ClInclude Include="application\Object\Characters\Enemy\Adhesion\Adhesion.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include=".editorconfig" />

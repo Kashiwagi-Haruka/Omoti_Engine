@@ -159,6 +159,7 @@ copy "$(WindowsSdkDir)\bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)\
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="application\Object\Characters\Enemy\Adhesion\Adhesion.cpp" />
     <ClCompile Include="application\CameraController\CameraController.cpp" />
     <ClCompile Include="application\CollisionManager\CollisionManager.cpp" />
     <ClCompile Include="application\Object\Background\Sky.cpp" />
@@ -313,6 +314,7 @@ copy "$(WindowsSdkDir)\bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)\
     <None Include="Resources\shader\Sprite\Sprite.hlsli" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="application\Object\Characters\Enemy\Adhesion\Adhesion.h" />
     <ClInclude Include="application\CameraController\CameraController.h" />
     <ClInclude Include="application\CollisionManager\CollisionManager.h" />
     <ClInclude Include="application\Object\Background\Sky.h" />
