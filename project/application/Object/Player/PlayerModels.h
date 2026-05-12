@@ -5,7 +5,7 @@
 #include <optional>
 #include <vector>
 #include "Function.h"
-#include "Object/Characters/Character/Sizuku/Sizuku.h"
+#include "Object/Characters/Playable/Individual/Sizuku/Sizuku.h"
 class PlayerModels {
 
 public:

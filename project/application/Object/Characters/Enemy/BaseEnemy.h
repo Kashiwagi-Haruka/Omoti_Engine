@@ -1,13 +1,16 @@
 #pragma once
+#include "Characters/Base/Attribute.h"
 #include <array>
-#include "Attribute.h"
-struct BaseParameter {
-	float HP;
-	float Attack;
-	float Deffence;
+class BaseEnemy {
+
+	int AttributeAttachmentStatus; // 属性付着状態
+
+
+
+
+
 };
-struct Parameter {
-	int level;
+struct EnemyParameter {
 	float HP;
 	float Attack;
 	float Deffence;

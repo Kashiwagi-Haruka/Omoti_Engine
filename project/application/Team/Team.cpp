@@ -1,7 +1,7 @@
 #include "Team.h"
 #include "Input.h"
-#include "Object/Characters/Character/Mei/Mei.h"
-#include "Object/Characters/Character/Sizuku/Sizuku.h"
+#include "Object/Characters/Playable/Individual/Mei/Mei.h"
+#include "Object/Characters/Playable/Individual/Sizuku/Sizuku.h"
 #include "Text/FreeTypeManager/FreeTypeManager.h"
 #include "TextureManager.h"
 

@@ -163,16 +163,16 @@ copy "$(WindowsSdkDir)\bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)\
     <ClCompile Include="application\CollisionManager\CollisionManager.cpp" />
     <ClCompile Include="application\Object\Background\Sky.cpp" />
     <ClCompile Include="application\Object\Boss\Boss.cpp" />
-    <ClCompile Include="application\Object\Characters\Base\Equipment.h" />
+    <ClCompile Include="application\Object\Characters\Playable\Base\Equipment.h" />
     <ClCompile Include="application\Object\Characters\CharacterDisplay\CharacterDisplay.cpp" />
     <ClCompile Include="application\Object\Characters\CharacterDisplay\CharacterDisplaySkyDome.cpp" />
     <ClCompile Include="application\Object\Characters\Model\CharacterModel.cpp" />
-    <ClCompile Include="application\Object\Characters\Character\Sizuku\Sizuku.cpp" />
-    <ClCompile Include="application\Object\Enemy\Enemy.cpp" />
-    <ClCompile Include="application\Object\Enemy\EnemyAttack.cpp" />
-    <ClCompile Include="application\Object\Enemy\EnemyHitEffect.cpp" />
-    <ClCompile Include="application\Object\Enemy\EnemyManager.cpp" />
-    <ClCompile Include="application\Object\Enemy\EnemyStun.cpp" />
+    <ClCompile Include="application\Object\Characters\Playable\Individual\Sizuku\Sizuku.cpp" />
+    <ClCompile Include="application\Object\Characters\Enemy\Enemy.cpp" />
+    <ClCompile Include="application\Object\Characters\Enemy\EnemyAttack.cpp" />
+    <ClCompile Include="application\Object\Characters\Enemy\EnemyHitEffect.cpp" />
+    <ClCompile Include="application\Object\Characters\Enemy\EnemyManager.cpp" />
+    <ClCompile Include="application\Object\Characters\Enemy\EnemyStun.cpp" />
     <ClCompile Include="application\Object\ExpCube\ExpCube.cpp" />
     <ClCompile Include="application\Object\ExpCube\ExpCubeManager.cpp" />
     <ClCompile Include="application\Object\House\House.cpp" />
@@ -194,7 +194,7 @@ copy "$(WindowsSdkDir)\bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)\
     <ClCompile Include="application\UIManager\UIManager.cpp" />
     <ClCompile Include="application\Object\Characters\CharacterDisplay\CharacterDisplayText.cpp" />
     <ClCompile Include="application\Object\Damage\Damage.cpp" />
-    <ClCompile Include="application\Object\Characters\Character\Arte\Arte.cpp" />
+    <ClCompile Include="application\Object\Characters\Playable\Individual\Arte\Arte.cpp" />
     <ClCompile Include="Engine\Audio\AudioMixer.cpp" />
     <ClCompile Include="Engine\Editor\EditorData\Audio\EditorAudio.cpp" />
     <ClCompile Include="Engine\Editor\EditorData\Camera\EditorCamera.cpp" />
@@ -289,8 +289,8 @@ copy "$(WindowsSdkDir)\bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)\
     <ClCompile Include="Engine\Texture\Mesh\SkyBox\SkyBox.cpp" />
     <ClCompile Include="application\PlayCommand\PlayCommand.cpp" />
     <ClCompile Include="application\Object\Player\PlayerKey\PlayerKey.cpp" />
-    <ClCompile Include="application\Object\Characters\Character\Mei\Mei.cpp" />
-    <ClCompile Include="application\Object\Characters\Character\Yuzuki\Yuzuki.cpp" />
+    <ClCompile Include="application\Object\Characters\Playable\Individual\Mei\Mei.cpp" />
+    <ClCompile Include="application\Object\Characters\Playable\Individual\Yuzuki\Yuzuki.cpp" />
     <ClCompile Include="application\Object\Player\Weapon\PlayerWeapon.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -318,17 +318,18 @@ copy "$(WindowsSdkDir)\bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)\
     <ClInclude Include="application\Object\Background\Sky.h" />
     <ClInclude Include="application\Object\Boss\Boss.h" />
     <ClInclude Include="application\Object\Characters\Base\Attribute.h" />
-    <ClInclude Include="application\Object\Characters\Base\CharacterBase.h" />
-    <ClInclude Include="application\Object\Characters\Base\CharacterParameters.h" />
+    <ClInclude Include="application\Object\Characters\Playable\Base\PlayableBase.h" />
+    <ClInclude Include="application\Object\Characters\Playable\Base\CharacterParameters.h" />
     <ClInclude Include="application\Object\Characters\CharacterDisplay\CharacterDisplay.h" />
     <ClInclude Include="application\Object\Characters\CharacterDisplay\CharacterDisplaySkyDome.h" />
     <ClInclude Include="application\Object\Characters\Model\CharacterModel.h" />
-    <ClInclude Include="application\Object\Characters\Character\Sizuku\Sizuku.h" />
-    <ClInclude Include="application\Object\Enemy\Enemy.h" />
-    <ClInclude Include="application\Object\Enemy\EnemyAttack.h" />
-    <ClInclude Include="application\Object\Enemy\EnemyHitEffect.h" />
-    <ClInclude Include="application\Object\Enemy\EnemyManager.h" />
-    <ClInclude Include="application\Object\Enemy\EnemyStun.h" />
+    <ClInclude Include="application\Object\Characters\Playable\Individual\Sizuku\Sizuku.h" />
+    <ClInclude Include="application\Object\Characters\Enemy\BaseEnemy.h" />
+    <ClInclude Include="application\Object\Characters\Enemy\Enemy.h" />
+    <ClInclude Include="application\Object\Characters\Enemy\EnemyAttack.h" />
+    <ClInclude Include="application\Object\Characters\Enemy\EnemyHitEffect.h" />
+    <ClInclude Include="application\Object\Characters\Enemy\EnemyManager.h" />
+    <ClInclude Include="application\Object\Characters\Enemy\EnemyStun.h" />
     <ClInclude Include="application\Object\ExpCube\ExpCube.h" />
     <ClInclude Include="application\Object\ExpCube\ExpCubeManager.h" />
     <ClInclude Include="application\Object\House\House.h" />
@@ -343,7 +344,7 @@ copy "$(WindowsSdkDir)\bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)\
     <ClInclude Include="application\Object\Player\PlayerParameters.h" />
     <ClInclude Include="application\Object\Player\Weapon\PlayerSword.h" />
     <ClInclude Include="application\Object\Player\Weapon\playerSwordTrail.h" />
-    <ClInclude Include="application\Object\Characters\Base\WeaponTypes.h" />
+    <ClInclude Include="application\Object\Characters\Playable\Base\WeaponTypes.h" />
     <ClInclude Include="application\Particles\Particles.h" />
     <ClInclude Include="application\Scene\TutorialScene.h" />
     <ClInclude Include="application\Team\Team.h" />
@@ -351,7 +352,7 @@ copy "$(WindowsSdkDir)\bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)\
     <ClInclude Include="application\UIManager\UIManager.h" />
     <ClInclude Include="application\Object\Characters\CharacterDisplay\CharacterDisplayText.h" />
     <ClInclude Include="application\Object\Damage\Damage.h" />
-    <ClInclude Include="application\Object\Characters\Character\Arte\Arte.h" />
+    <ClInclude Include="application\Object\Characters\Playable\Individual\Arte\Arte.h" />
     <ClInclude Include="Engine\Audio\AudioMixer.h" />
     <ClInclude Include="Engine\base\ScreenSize.h" />
     <ClInclude Include="Engine\Editor\EditorData\Audio\EditorAudio.h" />
@@ -454,8 +455,8 @@ copy "$(WindowsSdkDir)\bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)\
     <ClInclude Include="Engine\Texture\Mesh\SkyBox\SkyBox.h" />
     <ClInclude Include="application\PlayCommand\PlayCommand.h" />
     <ClInclude Include="application\Object\Player\PlayerKey\PlayerKey.h" />
-    <ClInclude Include="application\Object\Characters\Character\Mei\Mei.h" />
-    <ClInclude Include="application\Object\Characters\Character\Yuzuki\Yuzuki.h" />
+    <ClInclude Include="application\Object\Characters\Playable\Individual\Mei\Mei.h" />
+    <ClInclude Include="application\Object\Characters\Playable\Individual\Yuzuki\Yuzuki.h" />
     <ClInclude Include="application\Object\Player\Weapon\PlayerWeapon.h" />
   </ItemGroup>
   <ItemGroup>

@@ -96,7 +96,7 @@ StructuredBuffer<SpotLight> gSpotLights : register(t2);
 StructuredBuffer<PointLight> gPointLights : register(t1);
 StructuredBuffer<AreaLight> gAreaLights : register(t3);
 Texture2D<float4> gTexture : register(t0);
-Texture2D<float4> gEnvironmentTexture : register(t4);
+TextureCube<float4> gEnvironmentTexture : register(t4);
 SamplerState gSampler : register(s0);
 
 struct PixelShaderOutput
@@ -121,7 +121,6 @@ float ComputeToonShadowMask(float NdotL)
 PixelShaderOutput main(Object3dVertexShaderOutput input)
 {
     PixelShaderOutput output;
-    const float pi = 3.14159265f;
 
     float4 transformedUV = mul(float4(input.texcoord, 0.0f, 1.0f), gMaterial.uvTransform);
     float4 textureColor = gTexture.Sample(gSampler, transformedUV.xy);
@@ -186,10 +185,7 @@ PixelShaderOutput main(Object3dVertexShaderOutput input)
 
         float3 viewDirection = normalize(input.worldPosition - gCamera.worldPosition);
         float3 reflectedDirection = reflect(viewDirection, N);
-        float2 environmentUV = float2(
-            atan2(reflectedDirection.z, reflectedDirection.x) / (2.0f * pi) + 0.5f,
-            asin(reflectedDirection.y) / pi + 0.5f);
-        float3 environmentColor = gEnvironmentTexture.Sample(gSampler, environmentUV).rgb;
+        float3 environmentColor = gEnvironmentTexture.Sample(gSampler, reflectedDirection).rgb;
 
         float3 litColor = finalColor * shadeIntensity;
         litColor += environmentColor * gMaterial.environmentCoefficient;

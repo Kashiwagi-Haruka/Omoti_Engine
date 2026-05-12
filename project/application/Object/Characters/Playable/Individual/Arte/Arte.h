@@ -4,17 +4,17 @@
 #include "Animation/SkinCluster.h"
 #include "Camera.h"
 #include "Function.h"
-#include "Object/Characters/Base/CharacterBase.h"
+	#include "Object/Characters/Playable/Base/PlayableBase.h"
 #include "Object3d/Object3d.h"
 
 #include <memory>
 #include <optional>
 #include <string>
 
-class Yuzuki : public CharacterBase {
-	std::unique_ptr<Object3d> yuzuki_;
-	std::unique_ptr<Skeleton> yuzukiSkeleton_{};
-	SkinCluster yuzukiSkinCluster_{};
+class Arte : public PlayableBase {
+	std::unique_ptr<Object3d> arte_;
+	std::unique_ptr<Skeleton> arteSkeleton_{};
+	SkinCluster arteSkinCluster_{};
 	Animation::AnimationData blendedPoseAnimation_{};
 	Matrix4x4 worldMatrix_{};
 	Camera* camera_ = nullptr;
@@ -33,5 +33,5 @@ public:
 	void SetTransform(Transform transform) { transform_ = transform; }
 	std::optional<Matrix4x4> GetJointWorldMatrix(const std::string& jointName) const;
 	bool IsAnimationFinished() const { return animationFinished_; }
-	Object3d* GetObject3d() { return yuzuki_.get(); }
+	Object3d* GetObject3d() { return arte_.get(); }
 };

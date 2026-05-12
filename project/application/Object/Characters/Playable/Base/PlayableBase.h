@@ -1,10 +1,10 @@
 #pragma once
-#include "Attribute.h"
-#include "WeaponTypes.h"
+#include "Object/Characters/Base/Attribute.h"
+#include "Object/Characters/Playable/Base/WeaponTypes.h"
 #include "Engine/math/Transform.h"
 #include "CharacterParameters.h"
 
-class CharacterBase {
+class PlayableBase {
 
 protected:
 	Transform transform_;
@@ -15,8 +15,8 @@ protected:
 	bool isHaveCharacter_;
 
 public:
-	CharacterBase() = default;
-	virtual ~CharacterBase() = default;
+	PlayableBase() = default;
+	virtual ~PlayableBase() = default;
 
 	void SetAttribute(Attribute attribute) { attribute_ = attribute; }
 	Attribute GetAttribute() const { return attribute_; }

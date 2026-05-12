@@ -2,7 +2,7 @@
 #include "CollisionManager.h"
 #include "Function.h"
 #include "Object/Boss/Boss.h"
-#include "Object/Enemy/EnemyManager.h"
+#include "Object/Characters/Enemy/EnemyManager.h"
 #include "Object/ExpCube/ExpCubeManager.h"
 #include "Object/House/House.h"
 #include "Object/Player/Player.h"
