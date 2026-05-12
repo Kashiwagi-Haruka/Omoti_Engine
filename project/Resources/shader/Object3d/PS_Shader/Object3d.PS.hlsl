@@ -297,8 +297,8 @@ PixelShaderOutput main(Object3dVertexShaderOutput input)
             areaLightSpecular += areaLight.color.rgb * intensity *
                 specularPowA * attenuationFactor * areaShadow * (areaLight.shadowEnabled != 0 ? areaShadowVisibility : 1.0f);
         }
-        float3 viewDirection = normalize(input.worldPosition - gCamera.worldPosition);
-        float3 reflectedDirection = reflect(viewDirection, normalize(input.normal));
+        float3 cameraToPosition = normalize(input.worldPosition - gCamera.worldPosition);
+        float3 reflectedDirection = reflect(cameraToPosition, normalize(input.normal));
         float3 environmentColor = gEnvironmentTexture.Sample(gSampler, reflectedDirection).rgb;
 
         output.color.rgb = diffuse + specular + diffuseP + specularP + spotLightDiffuse + spotLightSpecular + areaLightDiffuse + areaLightSpecular;
