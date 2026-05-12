@@ -14,7 +14,7 @@ class PlayerKey {
 
 	Camera* camera_;
 
-	std::unique_ptr<Object3d> keyObj_;
+	/*std::unique_ptr<Object3d> keyObj_;*/
 	std::unique_ptr<Primitive> keyHoleObj_;
 	std::unique_ptr<Primitive> planeObj_;
 

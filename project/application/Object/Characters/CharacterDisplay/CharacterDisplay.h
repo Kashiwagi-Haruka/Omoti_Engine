@@ -4,7 +4,7 @@
 #include "Transform.h"
 #include "CharacterDisplaySkyDome.h"
 #include <memory>
-#include "Object/Characters/Character/Sizuku/Sizuku.h"
+#include "Object/Characters/Playable/Individual/Sizuku/Sizuku.h"
 #include <numbers>
 #include "Light/CommonLight/DirectionalCommonLight.h"
 class CharacterDisplay {

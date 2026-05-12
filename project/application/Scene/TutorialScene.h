@@ -8,7 +8,7 @@
 class CameraController;
 class MapchipField;
 class Player;
-class SkyDome;
+class Sky;
 class Sprite;
 class Pause;
 class TutorialUI;
@@ -34,7 +34,7 @@ private:
 	static constexpr float kLookActionDuration = 2.0f;
 
 	std::unique_ptr<CameraController> cameraController_;
-	std::unique_ptr<SkyDome> skyDome_;
+	std::unique_ptr<Sky> skyDome_;
 	std::unique_ptr<Player> player_;
 	std::unique_ptr<MapchipField> field_;
 	std::unique_ptr<ExpCubeManager> expCubeManager_;

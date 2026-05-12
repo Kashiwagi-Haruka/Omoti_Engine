@@ -2,10 +2,10 @@
 #include "CameraController/CameraController.h"
 #include "GameTimer/GameTimer.h"
 #include "Model/ModelManager.h"
-#include "Object/Background/SkyDome.h"
+#include "Object/Background/Sky.h"
 #include "Object/Boss/Boss.h"
 #include "Object/Characters/Base/CharacterParameters.h"
-#include "Object/Enemy/EnemyManager.h"
+#include "Object/Characters/Enemy/EnemyManager.h"
 #include "Object/ExpCube/ExpCubeManager.h"
 #include "Object/Player/Player.h"
 #include "Object3d/Object3dCommon.h"
@@ -89,10 +89,11 @@ void SaveCharacterTuningJson(const std::string& characterName, const CharacterTu
 } // namespace
 
 GameScene::GameScene() {
+	Object3dCommon::GetInstance()->SetEnvironmentMapTexture("Resources/Skybox/sky.dds");
 	characterModel.LoadModel();
 	cameraController = std::make_unique<CameraController>();
 	particles = std::make_unique<Particles>();
-	skyDome = std::make_unique<SkyDome>();
+	skyDome = std::make_unique<Sky>();
 	player = std::make_unique<Player>();
 	boss_ = std::make_unique<Boss>();
 	rasen_ = std::make_unique<Rasen>();
@@ -469,7 +470,7 @@ void GameScene::Draw() {
 	}
 	Object3dCommon::GetInstance()->DrawCommon();
 	skyDome->Draw();
-	Object3dCommon::GetInstance()->DrawCommonMirror();
+	Object3dCommon::GetInstance()->DrawCommon();
 	field->Draw();
 
 	player->Draw();

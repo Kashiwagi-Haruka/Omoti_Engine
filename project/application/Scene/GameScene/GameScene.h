@@ -25,7 +25,7 @@
 #include <string>
 class Player;
 class CameraController;
-class SkyDome;
+class Sky;
 class Boss;
 
 class GameScene : public BaseScene {
@@ -40,7 +40,7 @@ private:
 	std::unique_ptr<UIManager> uimanager;
 	std::unique_ptr<SceneTransition> sceneTransition;
 	std::unique_ptr<Player> player;
-	std::unique_ptr<SkyDome> skyDome;
+	std::unique_ptr<Sky> skyDome;
 	std::unique_ptr<CameraController> cameraController;
 	std::unique_ptr<MapchipField> field;
 	std::unique_ptr<Pause> pause;

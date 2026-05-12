@@ -1,22 +1,22 @@
 #pragma once
 #include "Input.h"
-#include "Object3d/Object3d.h"
+#include "Engine/Texture/Mesh/SkyBox/SkyBox.h"
 #include "Transform.h"
 #include <memory>
 
 class GameBase;
 class Camera;
 
-class SkyDome {
+class Sky {
 
 private:
 	Transform transform_;
-	std::unique_ptr<Object3d> skyDomeObject_ = nullptr;
+	std::unique_ptr<SkyBox> skyBox_ = nullptr;
 	Camera* camera_;
 
 public:
-	SkyDome();
-	~SkyDome() = default;
+	Sky();
+	~Sky() = default;
 	void Initialize(Camera* camera);
 	void Update();
 	void Draw();

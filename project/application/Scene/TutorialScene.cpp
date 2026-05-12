@@ -2,7 +2,7 @@
 #include "TutorialScene.h"
 #include "CameraController/CameraController.h"
 #include "Input.h"
-#include "Object/Background/SkyDome.h"
+#include "Object/Background/Sky.h"
 #include "Object/Characters/Model/CharacterModel.h"
 #include "Object/ExpCube/ExpCubeManager.h"
 #include "Object/MapchipField.h"
@@ -28,7 +28,7 @@ void TutorialScene::Initialize() {
 	CharacterModel characterModel;
 	characterModel.LoadModel();
 	cameraController_ = std::make_unique<CameraController>();
-	skyDome_ = std::make_unique<SkyDome>();
+	skyDome_ = std::make_unique<Sky>();
 	player_ = std::make_unique<Player>();
 	field_ = std::make_unique<MapchipField>();
 	pause_ = std::make_unique<Pause>();

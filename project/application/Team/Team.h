@@ -1,5 +1,5 @@
 #pragma once
-#include "Object/Characters/Base/CharacterBase.h"
+#include "Object/Characters/Playable/Base/PlayableBase.h"
 #include "Sprite.h"
 #include "Text/Text.h"
 #include "Vector2.h"
@@ -27,7 +27,7 @@ private:
 
 	uint32_t whiteTextureHandle_ = 0;
 	std::vector<uint32_t> ownedCharacterIconHandles_{};
-	std::vector<std::unique_ptr<CharacterBase>> ownedCharacters_{};
+	std::vector<std::unique_ptr<PlayableBase>> ownedCharacters_{};
 
 	std::array<std::unique_ptr<Sprite>, kMaxMembersCount> teamSlotSprites_{};
 	std::array<std::unique_ptr<Sprite>, kMaxMembersCount> teamMemberIcons_{};

@@ -155,7 +155,7 @@ void Object3dCommon::Initialize(DirectXCommon* dxCommon) {
 	psoSkybox_->Create(
 	        D3D12_CULL_MODE_FRONT, false, D3D12_FILL_MODE_SOLID, D3D12_PRIMITIVE_TOPOLOGY_TYPE_TRIANGLE, L"Resources/shader/Skybox/Skybox.PS.hlsl", L"Resources/shader/Skybox/Skybox.VS.hlsl");
 
-	SetEnvironmentMapTexture("Resources/3d/skydome.png");
+	SetEnvironmentMapTexture("Resources/SkyBox/sky.dds");
 
 	psoMirror_ = std::make_unique<CreatePSO>(dxCommon_);
 	psoMirror_->Create(D3D12_CULL_MODE_BACK, true, D3D12_FILL_MODE_SOLID, D3D12_PRIMITIVE_TOPOLOGY_TYPE_TRIANGLE, L"Resources/shader/Object3d/PS_Shader/Object3dMirror.PS.hlsl");
@@ -272,7 +272,9 @@ void Object3dCommon::SetEnvironmentMapTextureResource(ID3D12Resource* resource, 
 		return;
 	}
 	environmentMapSrvIndex_ = TextureManager::GetInstance()->GetSrvManager()->Allocate();
-	TextureManager::GetInstance()->GetSrvManager()->CreateSRVforTexture2D(environmentMapSrvIndex_, resource, format, 1);
+	const D3D12_RESOURCE_DESC resourceDesc = resource->GetDesc();
+	const UINT mipLevels = resourceDesc.MipLevels > 0 ? static_cast<UINT>(resourceDesc.MipLevels) : 1;
+	TextureManager::GetInstance()->GetSrvManager()->CreateSRVforTextureCube(environmentMapSrvIndex_, resource, format, mipLevels);
 }
 void Object3dCommon::DrawSet(){
 	if (useEditorLights_) {

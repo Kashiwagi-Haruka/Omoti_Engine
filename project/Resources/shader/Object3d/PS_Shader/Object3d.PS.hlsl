@@ -93,7 +93,7 @@ StructuredBuffer<SpotLight> gSpotLights : register(t2);
 StructuredBuffer<PointLight> gPointLights : register(t1);
 StructuredBuffer<AreaLight> gAreaLights : register(t3);
 Texture2D<float4> gTexture : register(t0);
-Texture2D<float4> gEnvironmentTexture : register(t4);
+TextureCube<float4> gEnvironmentTexture : register(t4);
 Texture2D<float> gDirectionalShadowMap : register(t5);
 Texture2D<float> gPointShadowMap : register(t6);
 Texture2D<float> gSpotShadowMap : register(t7);
@@ -130,7 +130,6 @@ float ComputeMicroShadow(float3 normal, float3 toLight, float3 toEye)
     // シャドウマップ以外の陰りはハーフランバートで制御する。
     // ※toEyeはインターフェース維持のため受け取る。
     float NdotL = saturate(dot(normal, toLight));
-    (void) toEye;
     return pow(saturate(NdotL * 0.5f + 0.5f), 2.0f);
 }
 
@@ -183,7 +182,7 @@ float ComputeShadowVisibility(Texture2D<float> shadowMap, float4 shadowPosition)
 PixelShaderOutput main(Object3dVertexShaderOutput input)
 {
     PixelShaderOutput output;
-    const float pi = 3.14159265f;
+    float pi = 3.14159265f;
     float4 transformedUV = mul(float4(input.texcoord, 0.0f, 1.0f), gMaterial.uvTransform);
     float2 distortionCenter = float2(0.5f, 0.5f);
     float2 offsetFromCenter = transformedUV.xy - distortionCenter;
@@ -298,11 +297,9 @@ PixelShaderOutput main(Object3dVertexShaderOutput input)
             areaLightSpecular += areaLight.color.rgb * intensity *
                 specularPowA * attenuationFactor * areaShadow * (areaLight.shadowEnabled != 0 ? areaShadowVisibility : 1.0f);
         }
-        float3 viewDirection = normalize(input.worldPosition - gCamera.worldPosition);
-        float3 reflectedDirection = reflect(viewDirection, normalize(input.normal));
-        float2 environmentUV = float2(atan2(reflectedDirection.z, reflectedDirection.x) / (2.0f * pi) + 0.5f,
-            asin(reflectedDirection.y) / pi + 0.5f);
-        float3 environmentColor = gEnvironmentTexture.Sample(gSampler, environmentUV).rgb;
+        float3 cameraToPosition = normalize(input.worldPosition - gCamera.worldPosition);
+        float3 reflectedDirection = reflect(cameraToPosition, normalize(input.normal));
+        float3 environmentColor = gEnvironmentTexture.Sample(gSampler, reflectedDirection).rgb;
 
         output.color.rgb = diffuse + specular + diffuseP + specularP + spotLightDiffuse + spotLightSpecular + areaLightDiffuse + areaLightSpecular;
         output.color.rgb += environmentColor * gMaterial.environmentCoefficient;

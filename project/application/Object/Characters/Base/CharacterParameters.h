@@ -1,6 +1,6 @@
 #pragma once
 #include <array>
-#include "Attribute.h"
+#include "Object/Characters/Base/Attribute.h"
 struct BaseParameter {
 	float HP;
 	float Attack;
