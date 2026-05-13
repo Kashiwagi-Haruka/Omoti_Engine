@@ -9,7 +9,6 @@ class Adhesion {
 	std::unique_ptr<Primitive> AttributePlane_;
 	uint32_t attributeBitMask_ = 0;
 	Attribute currentAttribute_ = Attribute::None;
-
 	uint32_t ResolveTextureIndex(Attribute attribute) const;
 	void RefreshAttributeTexture();
 

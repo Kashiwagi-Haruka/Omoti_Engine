@@ -1,7 +1,11 @@
+#define NOMINMAX
 #include "Adhesion.h"
 #include "Camera.h"
 #include "TextureManager.h"
-
+#include "Engine/base/GameBase.h"
+namespace {
+	const float kAppearanceDuration = 0.5f; // 出現アニメーションの継続時間
+}
 Adhesion::Adhesion() {
 	preAttributePlane_ = std::make_unique<Primitive>();
 	AttributePlane_ = std::make_unique<Primitive>();
@@ -52,6 +56,7 @@ void Adhesion::RefreshAttributeTexture() {
 		return;
 	}
 	AttributePlane_->SetTextureIndex(ResolveTextureIndex(currentAttribute_));
+	AttributePlane_->SetColor({1.0f, 1.0f, 1.0f, 0.0f});
 }
 
 void Adhesion::SetTransform(const Transform& transform) {
@@ -74,6 +79,12 @@ void Adhesion::AddAttribute(Attribute attribute) {
 void Adhesion::Update() {
 	if (attributeBitMask_ == 0) {
 		return;
+	}
+	float alpha = AttributePlane_->GetColor().w;
+	if (alpha < 1.0f) {
+		alpha += GameBase::GetInstance()->GetDeltaTime()/kAppearanceDuration;
+		alpha = std::min(alpha, 1.0f);
+		AttributePlane_->SetColor({1.0f, 1.0f, 1.0f, alpha});
 	}
 	AttributePlane_->Update();
 }
