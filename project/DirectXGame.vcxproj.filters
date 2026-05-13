@@ -306,6 +306,7 @@
     <ClCompile Include="application\Object\Characters\Playable\Base\Equipment.h" />
     <ClCompile Include="application\Object\Characters\Enemy\Adhesion\Adhesion.cpp" />
     <ClCompile Include="Engine\Texture\Data\Color.cpp" />
+    <ClCompile Include="application\Object\Characters\Playable\PlayableManager.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Engine\Texture\RenderTexture2D.h" />
@@ -584,6 +585,7 @@
     <ClInclude Include="application\Object\Player\Weapon\PlayerWeapon.h" />
     <ClInclude Include="application\Object\Characters\Enemy\BaseEnemy.h" />
     <ClInclude Include="application\Object\Characters\Enemy\Adhesion\Adhesion.h" />
+    <ClInclude Include="application\Object\Characters\Playable\PlayableManager.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include=".editorconfig" />

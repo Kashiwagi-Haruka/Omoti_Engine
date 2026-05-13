@@ -293,6 +293,7 @@ copy "$(WindowsSdkDir)\bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)\
     <ClCompile Include="application\Object\Characters\Playable\Individual\Mei\Mei.cpp" />
     <ClCompile Include="application\Object\Characters\Playable\Individual\Yuzuki\Yuzuki.cpp" />
     <ClCompile Include="application\Object\Player\Weapon\PlayerWeapon.cpp" />
+    <ClCompile Include="application\Object\Characters\Playable\PlayableManager.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include=".editorconfig" />
@@ -459,6 +460,7 @@ copy "$(WindowsSdkDir)\bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)\
     <ClInclude Include="application\Object\Characters\Playable\Individual\Mei\Mei.h" />
     <ClInclude Include="application\Object\Characters\Playable\Individual\Yuzuki\Yuzuki.h" />
     <ClInclude Include="application\Object\Player\Weapon\PlayerWeapon.h" />
+    <ClInclude Include="application\Object\Characters\Playable\PlayableManager.h" />
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="Resources\shader\FullScreenCopy\CopyImage.PS.hlsl">

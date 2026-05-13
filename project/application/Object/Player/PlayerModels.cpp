@@ -142,6 +142,24 @@ void PlayerModels::Draw() {
 	default:
 		break;
 	}
+	Object3dCommon::GetInstance()->DrawCommonSkinningToonOutline();
+	switch (currentCharacterType_) {
+	case CharacterType::Sizuku:
+		sizuku_->Draw();
+		break;
+	case CharacterType::Mei:
+		mei_->Draw();
+		break;
+	case CharacterType::Yuzuki:
+		yuzuki_->Draw();
+		break;
+	case CharacterType::Arte:
+		arte_->Draw();
+		break;
+	default:
+		break;
+	}
+	Object3dCommon::GetInstance()->EndOutlineDraw();
 }
 std::optional<Matrix4x4> PlayerModels::GetJointWorldMatrix(const std::string& jointName) const {
 	switch (currentCharacterType_) {
