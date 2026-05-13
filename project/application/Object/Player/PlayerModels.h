@@ -2,14 +2,10 @@
 #include "Camera.h"
 #include "Function.h"
 #include "Object/Characters/Playable/Base/PlayableBase.h"
-#include "Object/Characters/Playable/Individual/Arte/Arte.h"
-#include "Object/Characters/Playable/Individual/Mei/Mei.h"
-#include "Object/Characters/Playable/Individual/Sizuku/Sizuku.h"
-#include "Object/Characters/Playable/Individual/Yuzuki/Yuzuki.h"
+#include "Object/Characters/Playable/PlayableManager.h"
 #include "Transform.h"
-#include <memory>
 #include <optional>
-#include <vector>
+#include <string>
 class PlayerModels {
 
 public:
@@ -25,24 +21,14 @@ public:
 		damage,
 
 	};
-	enum class CharacterType {
-		Sizuku,
-		Mei,
-		Yuzuki,
-		Arte,
-	};
 
 private:
 	StateM state_;
 	Camera* camera_;
 	Transform player_;
 	bool animationFinished_;
-	std::unique_ptr<Sizuku> sizuku_;
-	std::unique_ptr<Mei> mei_;
-	std::unique_ptr<Yuzuki> yuzuki_;
-	std::unique_ptr<Arte> arte_;
+	PlayableManager playableManager_;
 	PlayableBase* currentCharacter_ = nullptr;
-	CharacterType currentCharacterType_ = CharacterType::Sizuku;
 
 public:
 	PlayerModels();
@@ -50,7 +36,7 @@ public:
 	void SetCamera(Camera* camera) { camera_ = camera; };
 	void SetPlayerTransform(Transform player) { player_ = player; };
 	void SetStateM(StateM state) { state_ = state; }
-	void SetCharacterType(CharacterType characterType);
+	void SetCharacterType(const std::string& characterName);
 	void Initialize();
 	void Update();
 	void Draw();

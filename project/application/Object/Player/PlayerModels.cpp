@@ -10,37 +10,16 @@
 PlayerModels::PlayerModels() : state_(StateM::idle) {};
 PlayerModels::~PlayerModels() {};
 
-void PlayerModels::SetCharacterType(CharacterType characterType) {
-	currentCharacterType_ = characterType;
-	switch (currentCharacterType_) {
-	case CharacterType::Sizuku:
-		currentCharacter_ = sizuku_.get();
-		break;
-	case CharacterType::Mei:
-		currentCharacter_ = mei_.get();
-		break;
-	case CharacterType::Yuzuki:
-		currentCharacter_ = yuzuki_.get();
-		break;
-	case CharacterType::Arte:
-		currentCharacter_ = arte_.get();
-		break;
-	default:
-		currentCharacter_ = sizuku_.get();
-		break;
+void PlayerModels::SetCharacterType(const std::string& characterName) {
+	if (!playableManager_.ChangePlayable(characterName)) {
+		playableManager_.ChangePlayable("Sizuku");
 	}
+	currentCharacter_ = playableManager_.GetCurrentPlayable();
 }
 
 void PlayerModels::Initialize() {
-	sizuku_ = std::make_unique<Sizuku>();
-	mei_ = std::make_unique<Mei>();
-	yuzuki_ = std::make_unique<Yuzuki>();
-	arte_ = std::make_unique<Arte>();
-	sizuku_->Initialize();
-	mei_->Initialize();
-	yuzuki_->Initialize();
-	arte_->Initialize();
-	SetCharacterType(CharacterType::Sizuku);
+	playableManager_.Initialize();
+	currentCharacter_ = playableManager_.GetCurrentPlayable();
 }
 
 void PlayerModels::Update() {
@@ -82,30 +61,9 @@ void PlayerModels::Update() {
 		break;
 	}
 
-	switch (currentCharacterType_) {
-	case CharacterType::Sizuku:
-		sizuku_->SetAnimation(animationName);
-		sizuku_->SetCamera(camera_);
-		sizuku_->Update();
-		break;
-	case CharacterType::Mei:
-		mei_->SetAnimation(animationName);
-		mei_->SetCamera(camera_);
-		mei_->Update();
-		break;
-	case CharacterType::Yuzuki:
-		yuzuki_->SetAnimation(animationName);
-		yuzuki_->SetCamera(camera_);
-		yuzuki_->Update();
-		break;
-	case CharacterType::Arte:
-		arte_->SetAnimation(animationName);
-		arte_->SetCamera(camera_);
-		arte_->Update();
-		break;
-	default:
-		break;
-	}
+	currentCharacter_->SetAnimation(animationName);
+	currentCharacter_->SetCamera(camera_);
+	currentCharacter_->Update();
 
 #ifdef USE_IMGUI
 	if (!ImGui::Begin("Player Parts Adjust")) {
@@ -126,82 +84,18 @@ void PlayerModels::Update() {
 void PlayerModels::Draw() {
 
 	Object3dCommon::GetInstance()->DrawCommonSkinningToon();
-	switch (currentCharacterType_) {
-	case CharacterType::Sizuku:
-		sizuku_->Draw();
-		break;
-	case CharacterType::Mei:
-		mei_->Draw();
-		break;
-	case CharacterType::Yuzuki:
-		yuzuki_->Draw();
-		break;
-	case CharacterType::Arte:
-		arte_->Draw();
-		break;
-	default:
-		break;
-	}
+	currentCharacter_->Draw();
 	Object3dCommon::GetInstance()->DrawCommonSkinningToonOutline();
-	switch (currentCharacterType_) {
-	case CharacterType::Sizuku:
-		sizuku_->Draw();
-		break;
-	case CharacterType::Mei:
-		mei_->Draw();
-		break;
-	case CharacterType::Yuzuki:
-		yuzuki_->Draw();
-		break;
-	case CharacterType::Arte:
-		arte_->Draw();
-		break;
-	default:
-		break;
-	}
+	currentCharacter_->Draw();
 	Object3dCommon::GetInstance()->EndOutlineDraw();
 }
 std::optional<Matrix4x4> PlayerModels::GetJointWorldMatrix(const std::string& jointName) const {
-	switch (currentCharacterType_) {
-	case CharacterType::Sizuku:
-		return sizuku_->GetJointWorldMatrix(jointName);
-	case CharacterType::Mei:
-		return mei_->GetJointWorldMatrix(jointName);
-	case CharacterType::Yuzuki:
-		return yuzuki_->GetJointWorldMatrix(jointName);
-	case CharacterType::Arte:
-		return arte_->GetJointWorldMatrix(jointName);
-	default:
+	if (!currentCharacter_) {
 		return std::nullopt;
 	}
+	return currentCharacter_->GetJointWorldMatrix(jointName);
 }
 
-bool PlayerModels::IsAttackAnimationFinished() const {
-	switch (currentCharacterType_) {
-	case CharacterType::Sizuku:
-		return sizuku_ ? sizuku_->IsAnimationFinished() : false;
-	case CharacterType::Mei:
-		return mei_ ? mei_->IsAnimationFinished() : false;
-	case CharacterType::Yuzuki:
-		return yuzuki_ ? yuzuki_->IsAnimationFinished() : false;
-	case CharacterType::Arte:
-		return arte_ ? arte_->IsAnimationFinished() : false;
-	default:
-		return false;
-	}
-}
+bool PlayerModels::IsAttackAnimationFinished() const { return currentCharacter_ ? currentCharacter_->IsAnimationFinished() : false; }
 
-Object3d* PlayerModels::GetCharacterObject3d() {
-	switch (currentCharacterType_) {
-	case CharacterType::Sizuku:
-		return sizuku_ ? sizuku_->GetObject3d() : nullptr;
-	case CharacterType::Mei:
-		return mei_ ? mei_->GetObject3d() : nullptr;
-	case CharacterType::Yuzuki:
-		return yuzuki_ ? yuzuki_->GetObject3d() : nullptr;
-	case CharacterType::Arte:
-		return arte_ ? arte_->GetObject3d() : nullptr;
-	default:
-		return nullptr;
-	}
-}
+Object3d* PlayerModels::GetCharacterObject3d() { return currentCharacter_ ? currentCharacter_->GetObject3d() : nullptr; }
