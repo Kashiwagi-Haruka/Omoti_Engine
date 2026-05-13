@@ -335,6 +335,10 @@ void GameScene::Update() {
 	}
 	DebugImGui();
 	team_->Update(isPartyMode_);
+	if (team_->ConsumeCharacterSwitchTriggered()) {
+		player->SetCharacterType(team_->GetActiveCharacterName());
+		pause->SetCurrentCharacterObj(player->GetCharacterObject3d());
+	}
 	pause->Update(isPause);
 	Pause::Action pauseAction = pause->ConsumeAction();
 	if (pauseAction == Pause::Action::kResume) {

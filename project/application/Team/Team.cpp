@@ -270,3 +270,14 @@ bool Team::ConsumeCharacterSwitchTriggered() {
 	characterSwitchTriggered_ = false;
 	return triggered;
 }
+std::string Team::GetActiveCharacterName() const {
+	if (activeSlotIndex_ < 0 || activeSlotIndex_ >= kMaxMembersCount) {
+		return "Sizuku";
+	}
+	const int characterIndex = teamMemberCharacterIndices_[activeSlotIndex_];
+	static const std::array<std::string, 2> kCharacterNames = {"Sizuku", "Mei"};
+	if (characterIndex < 0 || characterIndex >= static_cast<int>(kCharacterNames.size())) {
+		return "Sizuku";
+	}
+	return kCharacterNames[characterIndex];
+}

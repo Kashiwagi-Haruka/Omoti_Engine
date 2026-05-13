@@ -153,4 +153,5 @@ public:
 	int GetComboStep() const { return comboStep_; }           // コンボ段階取得用
 	bool IsFallingAttack() const { return isFallingAttack_; } // 落下攻撃中か
 	Object3d* GetCharacterObject3d() { return models_ ? models_->GetCharacterObject3d() : nullptr; }
+	void SetCharacterType(const std::string& characterName);
 };

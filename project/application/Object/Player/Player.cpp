@@ -79,6 +79,11 @@ void Player::Initialize(Camera* camera) {
 	isSkillAttack = false;
 	isSpecialAttack = false;
 }
+void Player::SetCharacterType(const std::string& characterName) {
+	if (models_) {
+		models_->SetCharacterType(characterName);
+	}
+}
 
 void Player::Move() {
 

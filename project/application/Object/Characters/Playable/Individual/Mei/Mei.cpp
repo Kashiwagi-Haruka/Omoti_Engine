@@ -64,6 +64,7 @@ void Mei::Update() {
 	mei_->SetWorldMatrix(worldMatrix_);
 	mei_->SetCamera(camera_);
 	mei_->SetColor({1.0f, 1.0f, 1.0f, 1.0f});
+	mei_->SetColor(Color::RGBAToVector4(255, 106, 145, 255));
 	mei_->Update();
 }
 
