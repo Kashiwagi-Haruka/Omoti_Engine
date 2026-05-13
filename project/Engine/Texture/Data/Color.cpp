@@ -16,7 +16,7 @@ Vector4 ColorCodeToVector4(uint32_t color) {
 	return {r, g, b, a};
 }
 // HSV(0-360, 0-100, 0-100) + Alpha(0-100) を Vector4(RGBA) に変換する
-Vector4 HSVIntToVector4(int h, int s, int v, int a = 100) {
+Vector4 HSVIntToVector4(int h, int s, int v, int a) {
 	h = h % 360;
 	if (h < 0)
 		h += 360;

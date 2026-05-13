@@ -269,7 +269,6 @@
     <ClCompile Include="application\Object\Player\Weapon\PlayerSword.cpp" />
     <ClCompile Include="application\Object\Player\Weapon\playerSwordTrail.cpp" />
     <ClCompile Include="application\Object\MapchipField.cpp" />
-    <ClCompile Include="application\Particles\Particles.cpp" />
     <ClCompile Include="application\Scene\TutorialScene.cpp" />
     <ClCompile Include="application\Team\Team.cpp" />
     <ClCompile Include="application\TutorialUI\TutorialUI.cpp" />
@@ -532,7 +531,6 @@
     <ClInclude Include="application\Object\Player\Weapon\PlayerSword.h" />
     <ClInclude Include="application\Object\Player\Weapon\playerSwordTrail.h" />
     <ClInclude Include="application\Object\MapchipField.h" />
-    <ClInclude Include="application\Particles\Particles.h" />
     <ClInclude Include="application\Scene\TutorialScene.h" />
     <ClInclude Include="application\Team\Team.h" />
     <ClInclude Include="application\TutorialUI\TutorialUI.h" />

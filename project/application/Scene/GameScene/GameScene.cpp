@@ -92,7 +92,6 @@ GameScene::GameScene() {
 	Object3dCommon::GetInstance()->SetEnvironmentMapTexture("Resources/Skybox/sky.dds");
 	characterModel.LoadModel();
 	cameraController = std::make_unique<CameraController>();
-	particles = std::make_unique<Particles>();
 	skyDome = std::make_unique<Sky>();
 	player = std::make_unique<Player>();
 	boss_ = std::make_unique<Boss>();
@@ -336,9 +335,6 @@ void GameScene::Update() {
 	}
 	DebugImGui();
 	team_->Update(isPartyMode_);
-	if (team_->ConsumeCharacterSwitchTriggered()) {
-		particles->EmitPlayerSwitchEffect(player->GetPosition());
-	}
 	pause->Update(isPause);
 	Pause::Action pauseAction = pause->ConsumeAction();
 	if (pauseAction == Pause::Action::kResume) {
@@ -429,10 +425,6 @@ void GameScene::Update() {
 
 	uimanager->Update();
 
-	particles->SetCameraPos(cameraController->GetCamera()->GetTranslate());
-	particles->SetPlayerPos(player->GetPosition());
-	particles->Update();
-
 	cameraController->SetPlayerPos(player->GetPosition());
 
 	cameraController->Update();
@@ -483,7 +475,6 @@ void GameScene::Draw() {
 	} else {
 		openWorld_->Draw();
 	}
-	particles->Draw();
 
 	SpriteCommon::GetInstance()->DrawCommon();
 	uimanager->Draw();

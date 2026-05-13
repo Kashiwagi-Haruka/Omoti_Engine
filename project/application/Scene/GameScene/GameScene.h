@@ -11,7 +11,6 @@
 #include "Object/MapchipField.h"
 #include "Object3d/Object3d.h"
 #include "OpenWorld/OpenWorld.h"
-#include "Particles/Particles.h"
 #include "Pause/Pause.h"
 #include "Rasen/Rasen.h"
 #include "SceneTransition/SceneTransition.h"
@@ -36,7 +35,7 @@ private:
 	bool IsKeyboard = true;
 
 	uint32_t color;
-	std::unique_ptr<Particles> particles;
+	
 	std::unique_ptr<UIManager> uimanager;
 	std::unique_ptr<SceneTransition> sceneTransition;
 	std::unique_ptr<Player> player;
