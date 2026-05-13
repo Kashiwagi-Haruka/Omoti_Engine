@@ -10,8 +10,13 @@ class Adhesion {
 	std::unique_ptr<Primitive> AttributeReactionPlane_;
 	uint32_t attributeBitMask_ = 0;
 	Attribute currentAttribute_ = Attribute::None;
+	bool isComparisonDisplayActive_ = false;
+	float comparisonDisplayTimer_ = 0.0f;
+	Transform baseTransform_{};
+	bool hasBaseTransform_ = false;
 	uint32_t ResolveTextureIndex(Attribute attribute) const;
 	void RefreshAttributeTexture();
+	void RefreshComparisonTransform();
 
 public:
 	Adhesion();

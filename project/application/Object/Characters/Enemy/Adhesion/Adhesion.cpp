@@ -5,6 +5,7 @@
 #include "Engine/base/GameBase.h"
 namespace {
 	const float kAppearanceDuration = 0.5f; // 出現アニメーションの継続時間
+const float kComparisonDisplayDuration = 1.0f; // 属性比較表示の継続時間
 }
 Adhesion::Adhesion() {
 	preAttributePlane_ = std::make_unique<Primitive>();
@@ -63,7 +64,32 @@ void Adhesion::RefreshAttributeTexture() {
 	AttributePlane_->SetColor({1.0f, 1.0f, 1.0f, 0.0f});
 }
 
+void Adhesion::RefreshComparisonTransform() {
+	if (!hasBaseTransform_) {
+		return;
+	}
+
+	Transform leftTransform = baseTransform_;
+	leftTransform.translate.x -= 0.5f;
+	leftTransform.translate.y += 1.75f;
+	leftTransform.scale = {0.6f, 0.6f, 0.6f};
+	preAttributePlane_->SetTransform(leftTransform);
+
+	Transform rightTransform = baseTransform_;
+	rightTransform.translate.x += 0.5f;
+	rightTransform.translate.y += 1.75f;
+	rightTransform.scale = {0.6f, 0.6f, 0.6f};
+	AttributePlane_->SetTransform(rightTransform);
+}
+
 void Adhesion::SetTransform(const Transform& transform) {
+	baseTransform_ = transform;
+	hasBaseTransform_ = true;
+	if (isComparisonDisplayActive_) {
+		RefreshComparisonTransform();
+		return;
+	}
+
 	Transform uiTransform = transform;
 	uiTransform.translate.y += 1.75f;
 	uiTransform.scale = {0.8f, 0.8f, 0.8f};
@@ -75,8 +101,24 @@ void Adhesion::AddAttribute(Attribute attribute) {
 		return;
 	}
 	const uint32_t bit = (1u << static_cast<uint32_t>(attribute));
+	const Attribute previousAttribute = currentAttribute_;
+	const bool hadPreviousAttribute = (previousAttribute != Attribute::None) && (previousAttribute != attribute);
 	attributeBitMask_ |= bit;
 	currentAttribute_ = attribute;
+
+	if (hadPreviousAttribute) {
+		preAttributePlane_->SetTextureIndex(ResolveTextureIndex(previousAttribute));
+		preAttributePlane_->SetColor({1.0f, 1.0f, 1.0f, 1.0f});
+		AttributePlane_->SetTextureIndex(ResolveTextureIndex(currentAttribute_));
+		AttributePlane_->SetColor({1.0f, 1.0f, 1.0f, 1.0f});
+		isComparisonDisplayActive_ = true;
+		comparisonDisplayTimer_ = kComparisonDisplayDuration;
+		RefreshComparisonTransform();
+		return;
+	}
+
+	isComparisonDisplayActive_ = false;
+	comparisonDisplayTimer_ = 0.0f;
 	RefreshAttributeTexture();
 }
 
@@ -84,9 +126,21 @@ void Adhesion::Update() {
 	if (attributeBitMask_ == 0) {
 		return;
 	}
+
+	if (isComparisonDisplayActive_) {
+		comparisonDisplayTimer_ -= GameBase::GetInstance()->GetDeltaTime();
+		preAttributePlane_->Update();
+		AttributePlane_->Update();
+		if (comparisonDisplayTimer_ <= 0.0f) {
+			isComparisonDisplayActive_ = false;
+			attributeBitMask_ = 0;
+		}
+		return;
+	}
+
 	float alpha = AttributePlane_->GetColor().w;
 	if (alpha < 1.0f) {
-		alpha += GameBase::GetInstance()->GetDeltaTime()/kAppearanceDuration;
+		alpha += GameBase::GetInstance()->GetDeltaTime() / kAppearanceDuration;
 		alpha = std::min(alpha, 1.0f);
 		AttributePlane_->SetColor({1.0f, 1.0f, 1.0f, alpha});
 	}
@@ -95,6 +149,11 @@ void Adhesion::Update() {
 
 void Adhesion::Draw() {
 	if (attributeBitMask_ == 0) {
+		return;
+	}
+	if (isComparisonDisplayActive_) {
+		preAttributePlane_->Draw();
+		AttributePlane_->Draw();
 		return;
 	}
 	AttributePlane_->Draw();
