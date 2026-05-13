@@ -42,7 +42,7 @@ void CameraController::Update() {
 		orbitPitch_ = minPitch;
 	}
 
-	const float distance = 10.0f;
+	const float distance = 5.0f;
 	Vector3 orbitDir = {sinf(orbitYaw_) * cosf(orbitPitch_), -sinf(orbitPitch_), cosf(orbitYaw_) * cosf(orbitPitch_)};
 
 	transform_.translate = playerPos - orbitDir * distance;
