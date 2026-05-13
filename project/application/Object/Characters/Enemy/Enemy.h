@@ -1,4 +1,5 @@
 #pragma once
+#include "Adhesion/Adhesion.h"
 #include "EnemyAttack.h"
 #include "EnemyStun.h"
 #include "Primitive/Primitive.h"
@@ -36,6 +37,7 @@ class Enemy {
 	std::unique_ptr<Object3d> object_;
 	std::unique_ptr<EnemyStun> enemyStun;
 	std::unique_ptr<EnemyAttack> enemyAttack_;
+	std::unique_ptr<Adhesion> adhesion_;
 
 	Camera* camera_ = nullptr;
 	float playerChaseRange_ = 8.0f;
@@ -85,4 +87,5 @@ public:
 	void SetLastSkillDamageId(int skillDamageId) { lastSkillDamageId_ = skillDamageId; }
 	bool IsAttacking() const { return enemyAttack_ && enemyAttack_->IsAttacking(); }
 	bool IsStunned() const { return isStun_; }
+	void AddAdhesionAttribute(Attribute attribute);
 };

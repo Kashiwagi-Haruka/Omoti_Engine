@@ -2,6 +2,7 @@
 
 #include "GameBase.h"
 #include "Model/ModelManager.h"
+#include "Engine/Texture/Data/Color.h"
 #include "Object3d/Object3dCommon.h"
 
 void Mei::Initialize() {
@@ -26,6 +27,7 @@ void Mei::Initialize() {
 	}
 
 	mei_->SetShininess(20.0f);
+	mei_->SetColor(Color::RGBAToVector4(255,106,145,255));
 	mei_->SetOutlineWidth(2.0f);
 	mei_->SetOutlineColor({99.0f / 255.0f, 48.0f / 255.0f, 48.0f / 255.0f, 1.0f});
 }
