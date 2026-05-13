@@ -9,6 +9,7 @@ namespace {
 Adhesion::Adhesion() {
 	preAttributePlane_ = std::make_unique<Primitive>();
 	AttributePlane_ = std::make_unique<Primitive>();
+
 }
 
 Adhesion::~Adhesion() = default;
