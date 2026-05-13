@@ -9,7 +9,7 @@ namespace {
 Adhesion::Adhesion() {
 	preAttributePlane_ = std::make_unique<Primitive>();
 	AttributePlane_ = std::make_unique<Primitive>();
-
+	AttributeReactionPlane_ = std::make_unique<Primitive>();
 }
 
 Adhesion::~Adhesion() = default;
@@ -21,6 +21,9 @@ void Adhesion::Initialize() {
 	AttributePlane_->Initialize(Primitive::PrimitiveName::Plane, "Resources/2d/Attribute/Fire.png");
 	AttributePlane_->SetColor({1.0f, 1.0f, 1.0f, 1.0f});
 	AttributePlane_->SetEnableLighting(false);
+	AttributeReactionPlane_->Initialize(Primitive::PrimitiveName::Plane, "Resources/2d/Attribute/AttributeReaction/fireReaction.png");
+	AttributeReactionPlane_->SetColor({1.0f, 1.0f, 1.0f, 1.0f});
+	AttributeReactionPlane_->SetEnableLighting(false);
 }
 
 uint32_t Adhesion::ResolveTextureIndex(Attribute attribute) const {
