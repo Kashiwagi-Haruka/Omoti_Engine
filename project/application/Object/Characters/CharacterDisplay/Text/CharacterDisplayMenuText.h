@@ -1,2 +1,20 @@
 #pragma once
-class CharacterDisplayMenuText {};
+class CharacterDisplayMenuText {
+
+
+
+
+public:
+	void Initialize();
+	void Update();
+	void Draw();
+
+
+
+
+
+
+
+
+
+};
