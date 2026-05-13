@@ -43,4 +43,5 @@ public:
 	std::optional<Matrix4x4> GetJointWorldMatrix(const std::string& jointName) const;
 	bool IsAttackAnimationFinished() const;
 	Object3d* GetCharacterObject3d();
+	Attribute GetCurrentAttribute() const;
 };

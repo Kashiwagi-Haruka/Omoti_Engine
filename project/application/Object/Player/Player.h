@@ -4,6 +4,7 @@
 #include "PlayerParameters.h"
 #include "Weapon/PlayerSword.h"
 #include "Attack/Skill/PlayerSkill.h"
+#include "Object/Characters/Base/Attribute.h"
 #include "Transform.h"
 #include "Vector3.h"
 #include <memory>
@@ -154,4 +155,5 @@ public:
 	bool IsFallingAttack() const { return isFallingAttack_; } // 落下攻撃中か
 	Object3d* GetCharacterObject3d() { return models_ ? models_->GetCharacterObject3d() : nullptr; }
 	void SetCharacterType(const std::string& characterName);
+	Attribute GetCurrentAttribute() const;
 };

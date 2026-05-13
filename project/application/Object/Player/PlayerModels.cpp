@@ -99,3 +99,5 @@ std::optional<Matrix4x4> PlayerModels::GetJointWorldMatrix(const std::string& jo
 bool PlayerModels::IsAttackAnimationFinished() const { return currentCharacter_ ? currentCharacter_->IsAnimationFinished() : false; }
 
 Object3d* PlayerModels::GetCharacterObject3d() { return currentCharacter_ ? currentCharacter_->GetObject3d() : nullptr; }
+
+Attribute PlayerModels::GetCurrentAttribute() const { return currentCharacter_ ? currentCharacter_->GetAttribute() : Attribute::None; }

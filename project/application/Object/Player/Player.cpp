@@ -84,7 +84,7 @@ void Player::SetCharacterType(const std::string& characterName) {
 		models_->SetCharacterType(characterName);
 	}
 }
-
+Attribute Player::GetCurrentAttribute() const { return models_ ? models_->GetCurrentAttribute() : Attribute::None; }
 void Player::Move() {
 
 	// ★ 落下攻撃中は移動できない

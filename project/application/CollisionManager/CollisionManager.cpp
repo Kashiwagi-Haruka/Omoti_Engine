@@ -52,15 +52,16 @@ void CollisionManager::HandleGameSceneCollisions(Player& player, EnemyManager& e
 			enemyAabb = MakeAabb(enemyPos, enemy->GetScale());
 		}
 
+		const Attribute playerAttackAttribute = player.GetCurrentAttribute();
+
 		if (player.GetIsAlive() && player.GetSword()->IsAttacking()) {
-			constexpr Attribute kPlayerAttackAttribute = Attribute::Ice;
 			Vector3 swordPos = player.GetSword()->GetPosition();
 			float swordHit = player.GetSword()->GetHitSize();
 			AABB swordAabb = MakeAabb(swordPos, {swordHit, swordHit, swordHit});
 			bool hitSword = RigidBody::isCollision(swordAabb, enemyAabb);
 			if (hitSword && enemy->CanTakeDamage()) {
 				enemy->SetHPSubtract(1);
-				enemy->AddAdhesionAttribute(kPlayerAttackAttribute);
+				enemy->AddAdhesionAttribute(playerAttackAttribute);
 				enemy->TriggerDamageInvincibility();
 				enemyManager.OnEnemyDamaged(enemy.get());
 				tryEnemyFlinch(enemy.get());
@@ -71,13 +72,12 @@ void CollisionManager::HandleGameSceneCollisions(Player& player, EnemyManager& e
 		}
 
 		if (player.GetIsAlive() && player.GetSkill() && player.GetSkill()->IsDamaging()) {
-			constexpr Attribute kSkillAttackAttribute = Attribute::Ice;
 			AABB skillAabb = MakeAabb(player.GetSkill()->GetDamagePosition(), player.GetSkill()->GetDamageScale());
 			bool hitSkill = RigidBody::isCollision(skillAabb, enemyAabb);
 			int skillDamageId = player.GetSkill()->GetSkillDamageId();
 			if (hitSkill && enemy->GetLastSkillDamageId() != skillDamageId) {
 				enemy->SetHPSubtract(1);
-				enemy->AddAdhesionAttribute(kSkillAttackAttribute);
+				enemy->AddAdhesionAttribute(playerAttackAttribute);
 				enemy->SetLastSkillDamageId(skillDamageId);
 				enemyManager.OnEnemyDamaged(enemy.get());
 				tryEnemyFlinch(enemy.get());
@@ -101,6 +101,7 @@ if (player.GetIsAlive() && player.GetSkill() && player.GetSkill()->IsSpecialDama
 			if (hitSpecial) {
 				if (enemy->CanTakeDamage()) {
 					enemy->SetHPSubtract(1);
+					enemy->AddAdhesionAttribute(playerAttackAttribute);
 					enemy->TriggerDamageInvincibility();
 					enemyManager.OnEnemyDamaged(enemy.get());
 					tryEnemyFlinch(enemy.get());
