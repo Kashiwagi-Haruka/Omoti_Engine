@@ -4,6 +4,7 @@
 #include <imgui.h>
 #include <random>
 #include "Function.h"
+PlayerCamera::PlayerCamera() {}
 PlayerCamera::~PlayerCamera() {}
 void PlayerCamera::Initialize() {
 

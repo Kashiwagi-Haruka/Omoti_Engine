@@ -28,4 +28,5 @@ public:
 		transform_.translate.z = translate.z;
 	}
 	void StartShake(float durationSeconds = 1.0f);
+	void SetCameraMode(CameraMode mode) { cameraMode_ = mode; }
 };

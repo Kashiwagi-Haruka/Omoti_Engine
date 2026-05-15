@@ -9,7 +9,6 @@
 
 class PlayerAttack {
 
-	bool isAttacking_ = false; // 攻撃中フラグ
 	bool isfalling;
 	bool isJump;
 	enum class AttackState {
@@ -77,10 +76,16 @@ public:
 	bool isSpecialAttacking() const { return isSpecialAttack; } // 必殺技攻撃中かどうかを返す関数
 	bool IsCanMove() const { return canMove_; }       // プレイヤーが移動できるかどうかを返す関数
 	
+	
 	void SetIsFallingAttack(bool isFalling) { isFallingAttack_ = isFalling; }
 	void SetAttacking(bool isAttacking) { isAttacking_ = isAttacking; }
 	void SetCamera(Camera* camera) { camera_ = camera; }
 	void SetTransform(const Transform& transform) { playerTransform_ = transform; }
 	void SetModels(PlayerModels* models) { models_ = models; }
+
+	int GetComboStep() const { return comboStep_; }
+	PlayerSword* GetSword() { return sword_.get(); }
+	PlayerSkill* GetSkill() { return skill_.get(); }
+	Vector3 GetSkillDamagePosition() const { return skill_->GetDamagePosition(); }
 
 };

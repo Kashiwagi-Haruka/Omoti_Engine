@@ -15,6 +15,7 @@ class PlayerCamera {
 	float shakeAmplitude_ = 0.6f;
 
 public:
+	PlayerCamera();
 	~PlayerCamera();
 	void Initialize();
 	void Update();

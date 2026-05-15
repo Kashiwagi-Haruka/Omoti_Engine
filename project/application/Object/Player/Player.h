@@ -76,16 +76,15 @@ public:
 	void Draw();
 	void Jump();
 	void Falling();
-	PlayerSkill* GetSkill() { return skill_.get(); }
+	PlayerSkill* GetSkill() { return attack_->GetSkill(); }
 
 	void SetCamera(Camera* camera) { camera_ = camera; }
 	void SetMap(MapchipField* map) { map_ = map; }
 	Vector3 GetPosition() { return transform_.translate; }
 	Vector3 GetVelocity() { return velocity_; }
-	Vector3 GetBulletPosition();
 	bool GetIsAlive() { return isAlive; }
-	bool GetIsSkillAttack() { return isSkillAttack; }
-	Vector3 GetSkillPosition() { return skill_->GetDamagePosition(); }
+	bool GetIsSkillAttack() { return attack_->isSkillAttacking(); }
+	Vector3 GetSkillPosition() { return attack_->GetSkillDamagePosition(); }
 	Parameters GetParameters() { return parameters_; }
 	void SetParameters(const Parameters& p) { parameters_ = p; }
 	Vector3 GetRotate() { return transform_.rotate; }
@@ -111,9 +110,9 @@ public:
 	void IsLevelUp(bool lv) { isLevelUP = lv; }
 	bool GetLv() { return isLevelUP; }
 	void EXPMath();
-	PlayerSword* GetSword() { return sword_.get(); }
-	int GetComboStep() const { return comboStep_; }           // コンボ段階取得用
-	bool IsFallingAttack() const { return isFallingAttack_; } // 落下攻撃中か
+	PlayerSword* GetSword() { return attack_->GetSword(); }
+	int GetComboStep() const { return attack_->GetComboStep(); }           // コンボ段階取得用
+	bool IsFallingAttack() const { return attack_->IsFallingAttacking(); } // 落下攻撃中か
 	Object3d* GetCharacterObject3d() { return models_ ? models_->GetCharacterObject3d() : nullptr; }
 	void SetCharacterType(const std::string& characterName);
 	Attribute GetCurrentAttribute() const;
