@@ -1,7 +1,9 @@
 #pragma once
 #include "Transform.h"
 #include <memory>
+
 class Camera;
+
 class LockOnCamera {
 
 	Transform transform_{};
@@ -25,8 +27,4 @@ public:
 	Transform GetTransform() { return transform_; }
 	void SetTransform(Transform transform) { transform_ = transform; }
 	void SetPlayerPos(const Vector3& pos) { playerPos = pos; }
-	void SetTranslate(const Vector3& translate) {
-		transform_.translate.x = translate.x;
-		transform_.translate.z = translate.z;
-	}
 };
