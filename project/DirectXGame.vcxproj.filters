@@ -311,6 +311,8 @@
     <ClCompile Include="application\CameraController\PlayerCamera\PlayerCamera.cpp" />
     <ClCompile Include="application\CameraController\NormalAttackCamera\NormalAttackCamera.cpp" />
     <ClCompile Include="application\CameraController\LockOnCamera\LockOnCamera.cpp" />
+    <ClCompile Include="application\Object\Characters\Playable\Individual\Sizuku\SizukuSkill.cpp" />
+    <ClCompile Include="application\Object\Damage\DamageMath.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Engine\Texture\RenderTexture2D.h" />
@@ -594,6 +596,8 @@
     <ClInclude Include="application\CameraController\PlayerCamera\PlayerCamera.h" />
     <ClInclude Include="application\CameraController\NormalAttackCamera\NormalAttackCamera.h" />
     <ClInclude Include="application\CameraController\LockOnCamera\LockOnCamera.h" />
+    <ClInclude Include="application\Object\Characters\Playable\Individual\Sizuku\SizukuSkill.h" />
+    <ClInclude Include="application\Object\Damage\DamageMath.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include=".editorconfig" />

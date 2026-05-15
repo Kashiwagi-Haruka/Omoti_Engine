@@ -197,6 +197,7 @@ copy "$(WindowsSdkDir)\bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)\
     <ClCompile Include="application\Object\Damage\Damage.cpp" />
     <ClCompile Include="application\Object\Characters\Playable\Individual\Arte\Arte.cpp" />
     <ClCompile Include="application\Object\Characters\CharacterDisplay\Text\CharacterDisplayMenuText.cpp" />
+    <ClCompile Include="application\Object\Damage\DamageMath.cpp" />
     <ClCompile Include="Engine\Audio\AudioMixer.cpp" />
     <ClCompile Include="Engine\Editor\EditorData\Audio\EditorAudio.cpp" />
     <ClCompile Include="Engine\Editor\EditorData\Camera\EditorCamera.cpp" />
@@ -298,6 +299,7 @@ copy "$(WindowsSdkDir)\bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)\
     <ClCompile Include="application\Object\Characters\Playable\PlayableManager.cpp" />
     <ClCompile Include="application\CameraController\PlayerCamera\PlayerCamera.cpp" />
     <ClCompile Include="application\CameraController\NormalAttackCamera\NormalAttackCamera.cpp" />
+    <ClCompile Include="application\Object\Characters\Playable\Individual\Sizuku\SizukuSkill.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include=".editorconfig" />
@@ -361,6 +363,7 @@ copy "$(WindowsSdkDir)\bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)\
     <ClInclude Include="application\Object\Damage\Damage.h" />
     <ClInclude Include="application\Object\Characters\Playable\Individual\Arte\Arte.h" />
     <ClInclude Include="application\Object\Characters\CharacterDisplay\Text\CharacterDisplayMenuText.h" />
+    <ClInclude Include="application\Object\Damage\DamageMath.h" />
     <ClInclude Include="Engine\Audio\AudioMixer.h" />
     <ClInclude Include="Engine\base\ScreenSize.h" />
     <ClInclude Include="Engine\Editor\EditorData\Audio\EditorAudio.h" />
@@ -469,6 +472,7 @@ copy "$(WindowsSdkDir)\bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)\
     <ClInclude Include="application\Object\Characters\Playable\PlayableManager.h" />
     <ClInclude Include="application\CameraController\PlayerCamera\PlayerCamera.h" />
     <ClInclude Include="application\CameraController\NormalAttackCamera\NormalAttackCamera.h" />
+    <ClInclude Include="application\Object\Characters\Playable\Individual\Sizuku\SizukuSkill.h" />
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="Resources\shader\FullScreenCopy\CopyImage.PS.hlsl">
