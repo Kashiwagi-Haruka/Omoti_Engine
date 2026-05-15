@@ -1,24 +1,25 @@
 #pragma once
+#include "Transform.h"
 #include <memory>
-#include "PlayerCamera/PlayerCamera.h"
 class Camera;
-class CameraController {
+class PlayerCamera {
 
-	enum class CameraMode {
-		kPlayerCamera,
-		kLockOnCamera,
-		kNormalAttackCamera 
-	};
-	CameraMode cameraMode_ = CameraMode::kPlayerCamera;
-	std::unique_ptr<PlayerCamera> playerCamera_;
-
-	Vector3 playerPos = {0.0f, 0.0f, 0.0f};
 	Transform transform_{};
-	Camera* camera_ = nullptr;
+	std::unique_ptr<Camera> camera_;
+	float mouseSensitivity_ = 0.002f;
+	Vector3 playerPos = {0.0f, 0.0f, 0.0f};
+	float orbitYaw_ = 0.0f;
+	float orbitPitch_ = 0.15f;
+	float shakeTimer_ = 0.0f;
+	float shakeDuration_ = 0.0f;
+	float shakeAmplitude_ = 0.6f;
 
 public:
+	~PlayerCamera();
 	void Initialize();
 	void Update();
+	void StartShake(float durationSeconds = 1.0f);
+
 	Camera* GetCamera();
 	Transform GetTransform() { return transform_; }
 	void SetTransform(Transform transform) { transform_ = transform; }
@@ -27,5 +28,4 @@ public:
 		transform_.translate.x = translate.x;
 		transform_.translate.z = translate.z;
 	}
-	void StartShake(float durationSeconds = 1.0f);
 };

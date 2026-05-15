@@ -295,6 +295,9 @@ copy "$(WindowsSdkDir)\bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)\
     <ClCompile Include="application\Object\Characters\Playable\Individual\Yuzuki\Yuzuki.cpp" />
     <ClCompile Include="application\Object\Player\Weapon\PlayerWeapon.cpp" />
     <ClCompile Include="application\Object\Characters\Playable\PlayableManager.cpp" />
+    <ClCompile Include="application\CameraController\PlayerCamera\PlayerCamera.cpp" />
+    <ClCompile Include="application\CameraController\NormalAttackCamera\NormalAttackCamera.cpp" />
+    <ClCompile Include="application\CameraController\LockOnCamera\LockOnCamera.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include=".editorconfig" />
@@ -463,6 +466,9 @@ copy "$(WindowsSdkDir)\bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)\
     <ClInclude Include="application\Object\Characters\Playable\Individual\Yuzuki\Yuzuki.h" />
     <ClInclude Include="application\Object\Player\Weapon\PlayerWeapon.h" />
     <ClInclude Include="application\Object\Characters\Playable\PlayableManager.h" />
+    <ClInclude Include="application\CameraController\PlayerCamera\PlayerCamera.h" />
+    <ClInclude Include="application\CameraController\NormalAttackCamera\NormalAttackCamera.h" />
+    <ClInclude Include="application\CameraController\LockOnCamera\LockOnCamera.h" />
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="Resources\shader\FullScreenCopy\CopyImage.PS.hlsl">

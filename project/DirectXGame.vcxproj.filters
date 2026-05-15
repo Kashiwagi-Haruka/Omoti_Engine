@@ -308,6 +308,9 @@
     <ClCompile Include="Engine\Texture\Data\Color.cpp" />
     <ClCompile Include="application\Object\Characters\Playable\PlayableManager.cpp" />
     <ClCompile Include="application\Object\Characters\CharacterDisplay\Text\CharacterDisplayMenuText.cpp" />
+    <ClCompile Include="application\CameraController\PlayerCamera\PlayerCamera.cpp" />
+    <ClCompile Include="application\CameraController\NormalAttackCamera\NormalAttackCamera.cpp" />
+    <ClCompile Include="application\CameraController\LockOnCamera\LockOnCamera.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Engine\Texture\RenderTexture2D.h" />
@@ -588,6 +591,9 @@
     <ClInclude Include="application\Object\Characters\Enemy\Adhesion\Adhesion.h" />
     <ClInclude Include="application\Object\Characters\Playable\PlayableManager.h" />
     <ClInclude Include="application\Object\Characters\CharacterDisplay\Text\CharacterDisplayMenuText.h" />
+    <ClInclude Include="application\CameraController\PlayerCamera\PlayerCamera.h" />
+    <ClInclude Include="application\CameraController\NormalAttackCamera\NormalAttackCamera.h" />
+    <ClInclude Include="application\CameraController\LockOnCamera\LockOnCamera.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include=".editorconfig" />
