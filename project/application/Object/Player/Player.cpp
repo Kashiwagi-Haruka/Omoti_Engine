@@ -256,6 +256,7 @@ void Player::Falling() {
 }
 
 void Player::Update() {
+	attack_->Update();
 	Move();
 	Jump();
 	Falling();
