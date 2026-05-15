@@ -12,12 +12,16 @@ class CameraController {
 		kNormalAttackCamera 
 	};
 	CameraMode cameraMode_ = CameraMode::kPlayerCamera;
+	CameraMode preCameraMode_ = CameraMode::kPlayerCamera;
 	std::unique_ptr<PlayerCamera> playerCamera_;
 	std::unique_ptr<LockOnCamera> lockOnCamera_;
 
 	Vector3 playerPos = {0.0f, 0.0f, 0.0f};
 	Transform transform_{};
 	Camera* camera_ = nullptr;
+
+	bool isCameraSwitching_ = false;
+	float cameraSwitchTimer_ = 0.0f;
 
 public:
 	void Initialize();
