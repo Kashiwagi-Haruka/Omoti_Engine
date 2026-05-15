@@ -426,11 +426,9 @@ void GameScene::Update() {
 	}
 	uimanager->SetPlayerParameters(player->GetParameters());
 	uimanager->SetPlayerHP(player->GetHP());
-
 	uimanager->Update();
 
 	cameraController->SetPlayerPos(player->GetPosition());
-
 	cameraController->Update();
 
 	if (isTransitionIn || isTransitionOut) {
