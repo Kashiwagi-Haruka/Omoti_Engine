@@ -11,6 +11,7 @@
 #include "Audio.h"
 #include "PlayerModels.h"
 #include "PlayerKey/PlayerKey.h"
+#include "Attack/PlayerAttack.h"
 class Camera;
 class PlayerBullet;
 class MapchipField;
@@ -26,22 +27,11 @@ class Player {
 
 	};
 	State state_;
-	enum class AttackState {
-		kNone,          // 攻撃していない
-		kWeakAttack1,   // 弱攻撃1
-		kWeakAttack2,   // 弱攻撃2
-		kWeakAttack3,   // 弱攻撃3
-		kWeakAttack4,   // 弱攻撃4
-		kStrongAttack,  // 重撃
-		kSkillAttack,   // スキル技
-		kSpecialAttack, // 必殺技
-		kFallingAttack  // 落下攻撃
-	};
-	AttackState attackState_;
+
 
 	Parameters parameters_;
 	std::unique_ptr<PlayerModels> models_;
-
+	std::unique_ptr<PlayerAttack> attack_;
 	struct Select {};
 
 	float jumpTimer = 0.0f;
@@ -52,23 +42,6 @@ class Player {
 	float invincibleTimer_ = 0.0f;
 	bool damageTrigger_ = false;
 
-
-	// コンボ攻撃用
-	int comboStep_ = 0;        // 現在のコンボ段階 (0〜4)
-	float comboTimer_ = 0.0f;  // コンボ受付タイマー
-	float comboWindow_ = 0.8f; // コンボ受付時間（秒）
-	bool isAttacking_ = false; // 攻撃中フラグ
-	bool canCombo_ = false;    // 次のコンボ入力可能フラグ
-
-	// 重撃・落下攻撃用
-	float attackHoldTimer_ = 0.0f;      // 長押し時間
-	float heavyAttackThreshold_ = 0.3f; // 重撃判定時間（秒）
-	bool isFallingAttack_ = false;      // 落下攻撃中フラグ
-
-	//スキル攻撃用
-	bool isSkillAttack = false;
-	bool isSpecialAttack = false;
-
 	bool isDash = false;
 	bool isJump = false;
 	bool isfalling = false;
@@ -77,11 +50,6 @@ class Player {
 	Vector3 bulletVelocity_;
 
 	Transform transform_;
-
-
-	std::unique_ptr<PlayerSword> sword_;
-	std::unique_ptr<PlayerSkill> skill_;
-	std::unique_ptr<PlayerKey> key_;
 
 	Camera* camera_;
 
@@ -93,13 +61,7 @@ class Player {
 
 	bool usedAirAttack = false;
 
-	//SE
-	bool isAttackSE = false;
-	bool isAttackEndSE = false;
 
-	SoundData attackSE;
-	SoundData attackEndSE;
-	SoundData skillAttackSE;
 
 	Vector3 movementLimitCenter_{0.0f,2.5f,0.0f};
 	float movementLimitRadius_ = 50.0f;
@@ -115,7 +77,6 @@ public:
 	void Jump();
 	void Falling();
 	PlayerSkill* GetSkill() { return skill_.get(); }
-
 
 	void SetCamera(Camera* camera) { camera_ = camera; }
 	void SetMap(MapchipField* map) { map_ = map; }
