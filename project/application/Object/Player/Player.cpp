@@ -47,7 +47,11 @@ void Player::Initialize(Camera* camera) {
 	isLevelUP = false;
 	rotateTimer = 0.1f;
 	damageTrigger_ = false;
-
+	attack_ = std::make_unique<PlayerAttack>();
+	attack_->SetCamera(camera_);
+	attack_->SetTransform(transform_);
+	attack_->SetModels(models_.get());
+	attack_->Initialize();
 
 }
 void Player::SetCharacterType(const std::string& characterName) {
@@ -251,14 +255,7 @@ void Player::Falling() {
 	}
 }
 
-void Player::Attack() {
-
-
-}
-
 void Player::Update() {
-
-	Attack();
 	Move();
 	Jump();
 	Falling();
@@ -294,13 +291,9 @@ void Player::Update() {
 		}
 	}
 
-
 	models_->SetCamera(camera_);
 	models_->SetPlayerTransform(transform_);
 	models_->Update();
-
-	
-
 
 #ifdef USE_IMGUI
 
@@ -346,7 +339,5 @@ void Player::Draw() {
 
 	models_->Draw();
 	Object3dCommon::GetInstance()->DrawCommon();
-
-	
 	attack_->Draw();
 }

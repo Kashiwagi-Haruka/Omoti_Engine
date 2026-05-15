@@ -241,12 +241,8 @@ void PlayerAttack::EndAttack() {
 }
 void PlayerAttack::Draw() {
 	// 攻撃の描画処理をここに記述
-	if (isFallingAttack_) {
-	}
 	if (isSkillAttack) {
 		skill_->Draw();
-	}
-	if (isSpecialAttack) {
 	}
 	key_->Draw();
 	sword_->Draw();

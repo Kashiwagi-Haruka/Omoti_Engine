@@ -71,7 +71,6 @@ public:
 	~Player();
 	void Initialize(Camera* camera);
 	void Move();
-	void Attack();
 	void Update();
 	void Draw();
 	void Jump();
