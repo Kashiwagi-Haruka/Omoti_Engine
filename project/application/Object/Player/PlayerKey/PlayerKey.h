@@ -16,12 +16,12 @@ class PlayerKey {
 
 	/*std::unique_ptr<Object3d> keyObj_;*/
 	std::unique_ptr<Primitive> keyHoleObj_;
-	std::unique_ptr<Primitive> planeObj_;
+	std::unique_ptr<Primitive> planeCircleObj_;
 
 	Transform playerTransform_;
 	Transform keyTransform_;
 	Transform keyHoleTransform_;
-	Transform planeTransform_;
+	Transform planeCircleTransform_;
 
 	float planeRotateVelocity_ = 0.0f;
 

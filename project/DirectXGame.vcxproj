@@ -159,6 +159,8 @@ copy "$(WindowsSdkDir)\bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)\
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="application\CameraController\LockOnCamera\LockOnCamera.cpp" />
+    <ClCompile Include="application\Object\Characters\Enemy\Adhesion\Adhesion.cpp" />
     <ClCompile Include="application\CameraController\CameraController.cpp" />
     <ClCompile Include="application\CollisionManager\CollisionManager.cpp" />
     <ClCompile Include="application\Object\Background\Sky.cpp" />
@@ -187,14 +189,15 @@ copy "$(WindowsSdkDir)\bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)\
     <ClCompile Include="application\Object\Player\PlayerParameters.cpp" />
     <ClCompile Include="application\Object\Player\Weapon\PlayerSword.cpp" />
     <ClCompile Include="application\Object\Player\Weapon\playerSwordTrail.cpp" />
-    <ClCompile Include="application\Particles\Particles.cpp" />
     <ClCompile Include="application\Scene\TutorialScene.cpp" />
     <ClCompile Include="application\Team\Team.cpp" />
     <ClCompile Include="application\TutorialUI\TutorialUI.cpp" />
     <ClCompile Include="application\UIManager\UIManager.cpp" />
-    <ClCompile Include="application\Object\Characters\CharacterDisplay\CharacterDisplayText.cpp" />
+    <ClCompile Include="application\Object\Characters\CharacterDisplay\Text\CharacterDisplayText.cpp" />
     <ClCompile Include="application\Object\Damage\Damage.cpp" />
     <ClCompile Include="application\Object\Characters\Playable\Individual\Arte\Arte.cpp" />
+    <ClCompile Include="application\Object\Characters\CharacterDisplay\Text\CharacterDisplayMenuText.cpp" />
+    <ClCompile Include="application\Object\Damage\DamageMath.cpp" />
     <ClCompile Include="Engine\Audio\AudioMixer.cpp" />
     <ClCompile Include="Engine\Editor\EditorData\Audio\EditorAudio.cpp" />
     <ClCompile Include="Engine\Editor\EditorData\Camera\EditorCamera.cpp" />
@@ -210,6 +213,7 @@ copy "$(WindowsSdkDir)\bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)\
     <ClCompile Include="Engine\Editor\EditorTool\ToolBar\ToolBar.cpp" />
     <ClCompile Include="Engine\Loadfile\TXT\TxtManager.cpp" />
     <ClCompile Include="Engine\ScreenShot\ScreenShot.cpp" />
+    <ClCompile Include="Engine\Texture\Data\Color.cpp" />
     <ClCompile Include="Engine\Texture\Mesh\Animation\AnimationManager.cpp" />
     <ClCompile Include="Engine\Texture\Mesh\Animation\Animation.cpp" />
     <ClCompile Include="Engine\Texture\Mesh\Object3d\InstancedObject3d\InstancedObject3d.cpp" />
@@ -292,6 +296,10 @@ copy "$(WindowsSdkDir)\bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)\
     <ClCompile Include="application\Object\Characters\Playable\Individual\Mei\Mei.cpp" />
     <ClCompile Include="application\Object\Characters\Playable\Individual\Yuzuki\Yuzuki.cpp" />
     <ClCompile Include="application\Object\Player\Weapon\PlayerWeapon.cpp" />
+    <ClCompile Include="application\Object\Characters\Playable\PlayableManager.cpp" />
+    <ClCompile Include="application\CameraController\PlayerCamera\PlayerCamera.cpp" />
+    <ClCompile Include="application\CameraController\NormalAttackCamera\NormalAttackCamera.cpp" />
+    <ClCompile Include="application\Object\Characters\Playable\Individual\Sizuku\SizukuSkill.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include=".editorconfig" />
@@ -313,6 +321,8 @@ copy "$(WindowsSdkDir)\bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)\
     <None Include="Resources\shader\Sprite\Sprite.hlsli" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="application\CameraController\LockOnCamera\LockOnCamera.h" />
+    <ClInclude Include="application\Object\Characters\Enemy\Adhesion\Adhesion.h" />
     <ClInclude Include="application\CameraController\CameraController.h" />
     <ClInclude Include="application\CollisionManager\CollisionManager.h" />
     <ClInclude Include="application\Object\Background\Sky.h" />
@@ -345,14 +355,15 @@ copy "$(WindowsSdkDir)\bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)\
     <ClInclude Include="application\Object\Player\Weapon\PlayerSword.h" />
     <ClInclude Include="application\Object\Player\Weapon\playerSwordTrail.h" />
     <ClInclude Include="application\Object\Characters\Playable\Base\WeaponTypes.h" />
-    <ClInclude Include="application\Particles\Particles.h" />
     <ClInclude Include="application\Scene\TutorialScene.h" />
     <ClInclude Include="application\Team\Team.h" />
     <ClInclude Include="application\TutorialUI\TutorialUI.h" />
     <ClInclude Include="application\UIManager\UIManager.h" />
-    <ClInclude Include="application\Object\Characters\CharacterDisplay\CharacterDisplayText.h" />
+    <ClInclude Include="application\Object\Characters\CharacterDisplay\Text\CharacterDisplayText.h" />
     <ClInclude Include="application\Object\Damage\Damage.h" />
     <ClInclude Include="application\Object\Characters\Playable\Individual\Arte\Arte.h" />
+    <ClInclude Include="application\Object\Characters\CharacterDisplay\Text\CharacterDisplayMenuText.h" />
+    <ClInclude Include="application\Object\Damage\DamageMath.h" />
     <ClInclude Include="Engine\Audio\AudioMixer.h" />
     <ClInclude Include="Engine\base\ScreenSize.h" />
     <ClInclude Include="Engine\Editor\EditorData\Audio\EditorAudio.h" />
@@ -458,6 +469,10 @@ copy "$(WindowsSdkDir)\bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)\
     <ClInclude Include="application\Object\Characters\Playable\Individual\Mei\Mei.h" />
     <ClInclude Include="application\Object\Characters\Playable\Individual\Yuzuki\Yuzuki.h" />
     <ClInclude Include="application\Object\Player\Weapon\PlayerWeapon.h" />
+    <ClInclude Include="application\Object\Characters\Playable\PlayableManager.h" />
+    <ClInclude Include="application\CameraController\PlayerCamera\PlayerCamera.h" />
+    <ClInclude Include="application\CameraController\NormalAttackCamera\NormalAttackCamera.h" />
+    <ClInclude Include="application\Object\Characters\Playable\Individual\Sizuku\SizukuSkill.h" />
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="Resources\shader\FullScreenCopy\CopyImage.PS.hlsl">

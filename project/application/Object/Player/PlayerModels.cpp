@@ -10,48 +10,60 @@
 PlayerModels::PlayerModels() : state_(StateM::idle) {};
 PlayerModels::~PlayerModels() {};
 
-void PlayerModels::Initialize() { 
-	sizuku_ = std::make_unique<Sizuku>();
-	sizuku_->Initialize();
+void PlayerModels::SetCharacterType(const std::string& characterName) {
+	if (!playableManager_.ChangePlayable(characterName)) {
+		playableManager_.ChangePlayable("Sizuku");
+	}
+	currentCharacter_ = playableManager_.GetCurrentPlayable();
+}
+
+void PlayerModels::Initialize() {
+	playableManager_.Initialize();
+	currentCharacter_ = playableManager_.GetCurrentPlayable();
 }
 
 void PlayerModels::Update() {
-	sizuku_->SetTransform(player_);
+	if (!currentCharacter_) {
+		return;
+	}
+
+	currentCharacter_->SetTransform(player_);
+	std::string animationName = "Idle";
 	switch (state_) {
 	case PlayerModels::idle:
-		sizuku_->SetAnimation("Idle");
+		animationName = "Idle";
 		break;
 	case PlayerModels::walk:
-		sizuku_->SetAnimation("Walk");
+		animationName = "Walk";
 		break;
 	case PlayerModels::attack1:
-		sizuku_->SetAnimation("Attack1");
+		animationName = "Attack1";
 		break;
 	case PlayerModels::attack2:
-		sizuku_->SetAnimation("Attack2");
+		animationName = "Attack2";
 		break;
 	case PlayerModels::attack3:
-		sizuku_->SetAnimation("Attack3");
+		animationName = "Attack3";
 		break;
 	case PlayerModels::attack4:
-		sizuku_->SetAnimation("Attack4");
+		animationName = "Attack4";
 		break;
 	case PlayerModels::fallingAttack:
-		sizuku_->SetAnimation("FallAttack");
+		animationName = "FallAttack";
 		break;
 	case PlayerModels::skillAttack:
-		sizuku_->SetAnimation("SkillAttack");
+		animationName = "SkillAttack";
 		break;
 	case PlayerModels::damage:
-		sizuku_->SetAnimation("damage");
+		animationName = "damage";
 		break;
 	default:
 		break;
 	}
-	
-	sizuku_->SetCamera(camera_);
 
-	sizuku_->Update();
+	currentCharacter_->SetAnimation(animationName);
+	currentCharacter_->SetCamera(camera_);
+	currentCharacter_->Update();
 
 #ifdef USE_IMGUI
 	if (!ImGui::Begin("Player Parts Adjust")) {
@@ -71,12 +83,21 @@ void PlayerModels::Update() {
 
 void PlayerModels::Draw() {
 
-
 	Object3dCommon::GetInstance()->DrawCommonSkinningToon();
-	sizuku_->Draw();
-
+	currentCharacter_->Draw();
+	Object3dCommon::GetInstance()->DrawCommonSkinningToonOutline();
+	currentCharacter_->Draw();
+	Object3dCommon::GetInstance()->EndOutlineDraw();
 }
 std::optional<Matrix4x4> PlayerModels::GetJointWorldMatrix(const std::string& jointName) const {
-
-	return sizuku_->GetJointWorldMatrix(jointName);
+	if (!currentCharacter_) {
+		return std::nullopt;
+	}
+	return currentCharacter_->GetJointWorldMatrix(jointName);
 }
+
+bool PlayerModels::IsAttackAnimationFinished() const { return currentCharacter_ ? currentCharacter_->IsAnimationFinished() : false; }
+
+Object3d* PlayerModels::GetCharacterObject3d() { return currentCharacter_ ? currentCharacter_->GetObject3d() : nullptr; }
+
+Attribute PlayerModels::GetCurrentAttribute() const { return currentCharacter_ ? currentCharacter_->GetAttribute() : Attribute::None; }

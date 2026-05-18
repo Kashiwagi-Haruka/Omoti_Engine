@@ -18,11 +18,13 @@ public:
 	bool GetHasMember(int slotIndex) const;
 	int GetActiveSlot() const { return activeSlotIndex_; }
 	bool ConsumeCharacterSwitchTriggered();
+	std::string GetActiveCharacterName() const;
 
 private:
 	static constexpr int kMaxMembersCount = 4;
 
 	void UpdatePartyUI();
+	
 	bool IsInsideRect(const Vector2& point, const Vector2& pos, const Vector2& size) const;
 
 	uint32_t whiteTextureHandle_ = 0;

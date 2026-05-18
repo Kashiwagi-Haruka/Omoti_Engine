@@ -1,11 +1,11 @@
 #pragma once
 #include "Camera.h"
-#include "Transform.h"
-#include <memory>
-#include <optional>
-#include <vector>
 #include "Function.h"
-#include "Object/Characters/Playable/Individual/Sizuku/Sizuku.h"
+#include "Object/Characters/Playable/Base/PlayableBase.h"
+#include "Object/Characters/Playable/PlayableManager.h"
+#include "Transform.h"
+#include <optional>
+#include <string>
 class PlayerModels {
 
 public:
@@ -27,7 +27,8 @@ private:
 	Camera* camera_;
 	Transform player_;
 	bool animationFinished_;
-	std::unique_ptr<Sizuku> sizuku_;
+	PlayableManager playableManager_;
+	PlayableBase* currentCharacter_ = nullptr;
 
 public:
 	PlayerModels();
@@ -35,10 +36,12 @@ public:
 	void SetCamera(Camera* camera) { camera_ = camera; };
 	void SetPlayerTransform(Transform player) { player_ = player; };
 	void SetStateM(StateM state) { state_ = state; }
+	void SetCharacterType(const std::string& characterName);
 	void Initialize();
 	void Update();
 	void Draw();
 	std::optional<Matrix4x4> GetJointWorldMatrix(const std::string& jointName) const;
-	bool IsAttackAnimationFinished() const { return sizuku_ ? sizuku_->IsAnimationFinished() : false; }
-	Object3d* GetCharacterObject3d() { return sizuku_ ? sizuku_->GetObject3d() : nullptr; }
+	bool IsAttackAnimationFinished() const;
+	Object3d* GetCharacterObject3d();
+	Attribute GetCurrentAttribute() const;
 };

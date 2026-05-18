@@ -13,7 +13,7 @@ const float planeRotateMaxVelocity = 5.0f;
 PlayerKey::PlayerKey() {
 	/*keyObj_ = std::make_unique<Object3d>();*/
 	keyHoleObj_ = std::make_unique<Primitive>();
-	planeObj_ = std::make_unique<Primitive>();
+	planeCircleObj_ = std::make_unique<Primitive>();
 	/*ModelManager::GetInstance()->LoadModel("Resources/3d", "cube");*/
 }
 PlayerKey::~PlayerKey() = default;
@@ -30,7 +30,7 @@ void PlayerKey::Initialize() {
 		  .rotate = {0.0f, 0.0f, 0.0f},
 		  .translate = {0.0f, 0.0f, -1.0f}
     };
-	planeTransform_ = {.scale = {0.1f, 0.1f, 1.0f},
+	planeCircleTransform_ = {.scale = {0.1f, 0.1f, 1.0f},
 		  .rotate = {0.0f, 0.0f, 0.0f},
 		  .translate = {0.0f, 0.0f, -1.0f}
     };
@@ -39,7 +39,7 @@ void PlayerKey::Initialize() {
 	//keyObj_->SetModel("cube");
 
 	keyHoleObj_->Initialize(Primitive::Plane);
-	planeObj_->Initialize(Primitive::Plane);
+	planeCircleObj_->Initialize(Primitive::Plane, "Resources/2d/KeyCircle.png");
 
 
 }
@@ -55,7 +55,7 @@ void PlayerKey::Update() {
 	case PlayerKey::KeyAnimation::Start:
 		planeRotateVelocity_ += planeRotateAcceleration;
 		planeRotateVelocity_ = std::min(planeRotateVelocity_, planeRotateMaxVelocity);
-		planeTransform_.rotate.z += planeRotateVelocity_;
+		planeCircleTransform_.rotate.z += planeRotateVelocity_;
 
 
 		if (planeRotateVelocity_ >= planeRotateMaxVelocity) {
@@ -76,14 +76,14 @@ void PlayerKey::Update() {
 
 	Matrix4x4 keyWorldMatrix = Function::MakeParentAffineMatrix(keyTransform_,playerTransform_);
 	Matrix4x4 keyHoleWorldMatrix = Function::MakeParentAffineMatrix(keyHoleTransform_, playerTransform_);
-	Matrix4x4 planeWorldMatrix = Function::MakeParentAffineMatrix(planeTransform_, playerTransform_);
+	Matrix4x4 planeWorldMatrix = Function::MakeParentAffineMatrix(planeCircleTransform_, playerTransform_);
 	/*keyObj_->SetWorldMatrix(keyWorldMatrix);*/
 	keyHoleObj_->SetWorldMatrix(keyHoleWorldMatrix);
-	planeObj_->SetWorldMatrix(planeWorldMatrix);
+	planeCircleObj_->SetWorldMatrix(planeWorldMatrix);
 
 	/*keyObj_->Update();*/
 	keyHoleObj_->Update();
-	planeObj_->Update();
+	planeCircleObj_->Update();
 }
 
 void PlayerKey::Draw() {
@@ -92,5 +92,5 @@ void PlayerKey::Draw() {
 	/*keyObj_->Draw();*/
 	Object3dCommon::GetInstance()->DrawCommonNoCull();
 	keyHoleObj_->Draw();
-	planeObj_->Draw();
+	planeCircleObj_->Draw();
 }

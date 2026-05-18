@@ -4,12 +4,14 @@
 #include "PlayerParameters.h"
 #include "Weapon/PlayerSword.h"
 #include "Attack/Skill/PlayerSkill.h"
+#include "Object/Characters/Base/Attribute.h"
 #include "Transform.h"
 #include "Vector3.h"
 #include <memory>
 #include "Audio.h"
 #include "PlayerModels.h"
 #include "PlayerKey/PlayerKey.h"
+#include "Attack/PlayerAttack.h"
 class Camera;
 class PlayerBullet;
 class MapchipField;
@@ -25,22 +27,11 @@ class Player {
 
 	};
 	State state_;
-	enum class AttackState {
-		kNone,          // 攻撃していない
-		kWeakAttack1,   // 弱攻撃1
-		kWeakAttack2,   // 弱攻撃2
-		kWeakAttack3,   // 弱攻撃3
-		kWeakAttack4,   // 弱攻撃4
-		kStrongAttack,  // 重撃
-		kSkillAttack,   // スキル技
-		kSpecialAttack, // 必殺技
-		kFallingAttack  // 落下攻撃
-	};
-	AttackState attackState_;
+
 
 	Parameters parameters_;
 	std::unique_ptr<PlayerModels> models_;
-
+	std::unique_ptr<PlayerAttack> attack_;
 	struct Select {};
 
 	float jumpTimer = 0.0f;
@@ -51,23 +42,6 @@ class Player {
 	float invincibleTimer_ = 0.0f;
 	bool damageTrigger_ = false;
 
-
-	// コンボ攻撃用
-	int comboStep_ = 0;        // 現在のコンボ段階 (0〜4)
-	float comboTimer_ = 0.0f;  // コンボ受付タイマー
-	float comboWindow_ = 0.8f; // コンボ受付時間（秒）
-	bool isAttacking_ = false; // 攻撃中フラグ
-	bool canCombo_ = false;    // 次のコンボ入力可能フラグ
-
-	// 重撃・落下攻撃用
-	float attackHoldTimer_ = 0.0f;      // 長押し時間
-	float heavyAttackThreshold_ = 0.3f; // 重撃判定時間（秒）
-	bool isFallingAttack_ = false;      // 落下攻撃中フラグ
-
-	//スキル攻撃用
-	bool isSkillAttack = false;
-	bool isSpecialAttack = false;
-
 	bool isDash = false;
 	bool isJump = false;
 	bool isfalling = false;
@@ -76,11 +50,6 @@ class Player {
 	Vector3 bulletVelocity_;
 
 	Transform transform_;
-
-
-	std::unique_ptr<PlayerSword> sword_;
-	std::unique_ptr<PlayerSkill> skill_;
-	std::unique_ptr<PlayerKey> key_;
 
 	Camera* camera_;
 
@@ -92,13 +61,7 @@ class Player {
 
 	bool usedAirAttack = false;
 
-	//SE
-	bool isAttackSE = false;
-	bool isAttackEndSE = false;
 
-	SoundData attackSE;
-	SoundData attackEndSE;
-	SoundData skillAttackSE;
 
 	Vector3 movementLimitCenter_{0.0f,2.5f,0.0f};
 	float movementLimitRadius_ = 50.0f;
@@ -108,22 +71,19 @@ public:
 	~Player();
 	void Initialize(Camera* camera);
 	void Move();
-	void Attack();
 	void Update();
 	void Draw();
 	void Jump();
 	void Falling();
-	PlayerSkill* GetSkill() { return skill_.get(); }
-
+	PlayerSkill* GetSkill() { return attack_->GetSkill(); }
 
 	void SetCamera(Camera* camera) { camera_ = camera; }
 	void SetMap(MapchipField* map) { map_ = map; }
 	Vector3 GetPosition() { return transform_.translate; }
 	Vector3 GetVelocity() { return velocity_; }
-	Vector3 GetBulletPosition();
 	bool GetIsAlive() { return isAlive; }
-	bool GetIsSkillAttack() { return isSkillAttack; }
-	Vector3 GetSkillPosition() { return skill_->GetDamagePosition(); }
+	bool GetIsSkillAttack() { return attack_->isSkillAttacking(); }
+	Vector3 GetSkillPosition() { return attack_->GetSkillDamagePosition(); }
 	Parameters GetParameters() { return parameters_; }
 	void SetParameters(const Parameters& p) { parameters_ = p; }
 	Vector3 GetRotate() { return transform_.rotate; }
@@ -149,8 +109,10 @@ public:
 	void IsLevelUp(bool lv) { isLevelUP = lv; }
 	bool GetLv() { return isLevelUP; }
 	void EXPMath();
-	PlayerSword* GetSword() { return sword_.get(); }
-	int GetComboStep() const { return comboStep_; }           // コンボ段階取得用
-	bool IsFallingAttack() const { return isFallingAttack_; } // 落下攻撃中か
+	PlayerSword* GetSword() { return attack_->GetSword(); }
+	int GetComboStep() const { return attack_->GetComboStep(); }           // コンボ段階取得用
+	bool IsFallingAttack() const { return attack_->IsFallingAttacking(); } // 落下攻撃中か
 	Object3d* GetCharacterObject3d() { return models_ ? models_->GetCharacterObject3d() : nullptr; }
+	void SetCharacterType(const std::string& characterName);
+	Attribute GetCurrentAttribute() const;
 };

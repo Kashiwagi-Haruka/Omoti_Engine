@@ -1,32 +1,35 @@
 #pragma once
-#include "Transform.h"
 #include <memory>
+
 class Camera;
+class PlayerCamera;
+class LockOnCamera;
 class CameraController {
 
-	Transform transform_{};
-	std::unique_ptr<Camera> camera_;
-	float mouseSensitivity_ = 0.002f;
+	enum class CameraMode {
+		kPlayerCamera,
+		kLockOnCamera,
+		kNormalAttackCamera 
+	};
+	CameraMode cameraMode_ = CameraMode::kPlayerCamera;
+	CameraMode preCameraMode_ = CameraMode::kPlayerCamera;
+	std::unique_ptr<PlayerCamera> playerCamera_;
+	std::unique_ptr<LockOnCamera> lockOnCamera_;
+
 	Vector3 playerPos = {0.0f, 0.0f, 0.0f};
-	float orbitYaw_ = 0.0f;
-	float orbitPitch_ = 0.15f;
-	float shakeTimer_ = 0.0f;
-	float shakeDuration_ = 0.0f;
-	float shakeAmplitude_ = 0.6f;
+	Transform transform_{};
+	Camera* camera_ = nullptr;
+
+	bool isCameraSwitching_ = false;
+	float cameraSwitchTimer_ = 0.0f;
 
 public:
-	~CameraController();
 	void Initialize();
 	void Update();
-	void SpecialAttackUpdate();
-	void StartShake(float durationSeconds = 1.0f);
-
 	Camera* GetCamera();
 	Transform GetTransform() { return transform_; }
 	void SetTransform(Transform transform) { transform_ = transform; }
 	void SetPlayerPos(const Vector3& pos) { playerPos = pos; }
-	void SetTranslate(const Vector3& translate) {
-		transform_.translate.x = translate.x;
-		transform_.translate.z = translate.z;
-	}
+	void StartShake(float durationSeconds = 1.0f);
+	void SetCameraMode(CameraMode mode) { cameraMode_ = mode; }
 };

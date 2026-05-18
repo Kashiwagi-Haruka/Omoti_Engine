@@ -17,11 +17,12 @@ Enemy::Enemy() {
 
 	object_ = std::make_unique<Object3d>();
 	enemyStun = std::make_unique<EnemyStun>();
+	adhesion_ = std::make_unique<Adhesion>();
 }
 void Enemy::Initialize(Camera* camera, Vector3 translates) {
 	isAlive = true;
 	isStun_ = false;
-	HP = 3;
+	HP = 10;
 	stunTime = 0;
 	attackTimer_ = 0.0f;
 	damageInvincibleTimer_ = 0.0f;
@@ -44,9 +45,9 @@ void Enemy::Initialize(Camera* camera, Vector3 translates) {
 	enemyStun->Initialize();
 	enemyAttack_ = std::make_unique<EnemyAttack>();
 	enemyAttack_->Initialize(camera_);
+	adhesion_->Initialize();
 	object_->SetColor(kDefaultColor);
 }
-
 void Enemy::Update(const Vector3& housePos, const Vector3& houseScale, const Vector3& playerPos, bool isPlayerAlive) {
 	const float deltaTime = 1.0f / 60.0f;
 	if (isDying_) {
@@ -114,6 +115,10 @@ void Enemy::Update(const Vector3& housePos, const Vector3& houseScale, const Vec
 	object_->SetCamera(camera_);
 	object_->SetTransform(transform_);
 	object_->Update();
+	if (adhesion_) {
+		adhesion_->SetTransform(transform_);
+		adhesion_->Update();
+	}
 
 	// 攻撃開始条件
 	bool inAttackRange = false;
@@ -151,7 +156,6 @@ void Enemy::Stun() {
 		StartDeathAnimation();
 	}
 }
-
 void Enemy::Draw() {
 	// 敵の描画処理
 	object_->Draw();
@@ -162,6 +166,9 @@ void Enemy::Draw() {
 
 	if (!isDying_ && isStun_) {
 		enemyStun->Draw();
+	}
+	if (!isDying_ && adhesion_) {
+		adhesion_->Draw();
 	}
 }
 void Enemy::StartDeathAnimation() {
@@ -202,4 +209,10 @@ bool Enemy::ConsumeAttackHit() {
 		return false;
 	}
 	return enemyAttack_->ConsumeHit();
+}
+
+void Enemy::AddAdhesionAttribute(Attribute attribute) {
+	if (adhesion_) {
+		adhesion_->AddAttribute(attribute);
+	}
 }

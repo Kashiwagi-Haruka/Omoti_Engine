@@ -2,6 +2,7 @@
 
 #include "GameBase.h"
 #include "Model/ModelManager.h"
+#include "Engine/Texture/Data/Color.h"
 #include "Object3d/Object3dCommon.h"
 
 void Yuzuki::Initialize() {
@@ -24,7 +25,7 @@ void Yuzuki::Initialize() {
 			yuzuki_->SetSkinCluster(&yuzukiSkinCluster_);
 		}
 	}
-
+	yuzuki_->SetColor(Color::RGBAToVector4(207, 156, 236, 255));
 	yuzuki_->SetShininess(20.0f);
 	yuzuki_->SetOutlineWidth(2.0f);
 	yuzuki_->SetOutlineColor({99.0f / 255.0f, 48.0f / 255.0f, 48.0f / 255.0f, 1.0f});

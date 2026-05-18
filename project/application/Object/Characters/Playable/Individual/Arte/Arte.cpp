@@ -2,6 +2,7 @@
 
 #include "GameBase.h"
 #include "Model/ModelManager.h"
+#include "Engine/Texture/Data/Color.h"
 #include "Object3d/Object3dCommon.h"
 
 void Arte::Initialize() {
@@ -24,7 +25,7 @@ void Arte::Initialize() {
 			arte_->SetSkinCluster(&arteSkinCluster_);
 		}
 	}
-
+	arte_->SetColor(Color::RGBAToVector4(93, 236, 203, 255));
 	arte_->SetShininess(20.0f);
 	arte_->SetOutlineWidth(2.0f);
 	arte_->SetOutlineColor({99.0f / 255.0f, 48.0f / 255.0f, 48.0f / 255.0f, 1.0f});
