@@ -1,7 +1,6 @@
 import bpy
 import math
 
-# ブレンダーに登録するアドオン情報
 bl_info = {
     "name": "レベルエディタ",
     "author": "Taro Kamata",
@@ -27,7 +26,6 @@ class MYADDON_OT_stretch_vertex(bpy.types.Operator):
     def execute(self, context):
         bpy.data.objects["Cube"].data.vertices[0].co.x += 1.0
         print("頂点を伸ばしました。")
-
         return {'FINISHED'}
 
 
@@ -41,7 +39,23 @@ class MYADDON_OT_create_ico_sphere(bpy.types.Operator):
     def execute(self, context):
         bpy.ops.mesh.primitive_ico_sphere_add()
         print("ICO球を生成しました。")
+        return {'FINISHED'}
 
+
+# オペレーター：file_nameカスタムプロパティ追加
+class MYADDON_OT_add_filename(bpy.types.Operator):
+    bl_idname = "myaddon.myaddon_ot_add_filename"
+    bl_label = "FileName 追加"
+    bl_description = "['file_name']カスタムプロパティを追加します"
+    bl_options = {'REGISTER', 'UNDO'}
+
+    def execute(self, context):
+        if context.object is None:
+            self.report({'WARNING'}, "オブジェクトが選択されていません")
+            return {'CANCELLED'}
+
+        context.object["file_name"] = ""
+        print("file_name を追加しました。")
         return {'FINISHED'}
 
 
@@ -52,41 +66,76 @@ class MYADDON_OT_export_scene(bpy.types.Operator):
     bl_description = "シーン情報をExportします"
     bl_options = {'REGISTER', 'UNDO'}
 
+    def write_and_print(self, file, text):
+        print(text)
+        file.write(text)
+        file.write("\n")
+
+    def parse_scene_recursive(self, file, obj, level):
+        indent = ''
+        for i in range(level):
+            indent += '\t'
+
+        self.write_and_print(file, indent + obj.type)
+
+        trans, rot, scale = obj.matrix_local.decompose()
+        rot = rot.to_euler()
+
+        rot.x = math.degrees(rot.x)
+        rot.y = math.degrees(rot.y)
+        rot.z = math.degrees(rot.z)
+
+        self.write_and_print(file, indent + "T %f %f %f" % (trans.x, trans.y, trans.z))
+        self.write_and_print(file, indent + "R %f %f %f" % (rot.x, rot.y, rot.z))
+        self.write_and_print(file, indent + "S %f %f %f" % (scale.x, scale.y, scale.z))
+
+        if "file_name" in obj:
+            self.write_and_print(file, indent + "N %s" % obj["file_name"])
+
+        self.write_and_print(file, indent + "END")
+        self.write_and_print(file, "")
+
+        for child in obj.children:
+            self.parse_scene_recursive(file, child, level + 1)
+
     def execute(self, context):
         print("シーン情報をExportします")
 
-        # シーン内の全オブジェクトについて
-        for obj in bpy.context.scene.objects:
-            print(obj.type + " - " + obj.name)
+        filepath = bpy.data.filepath
+        if filepath == "":
+            self.report({'WARNING'}, "先にBlenderファイルを保存してください")
+            return {'CANCELLED'}
 
-            # ローカルトランスフォーム行列から平行移動、回転、スケーリングを抽出
-            # 型は Vector, Quaternion, Vector
-            trans, rot, scale = obj.matrix_local.decompose()
+        export_filepath = filepath.replace(".blend", ".txt")
 
-            # 回転を Quaternion から Euler（3軸での回転角）に変換
-            rot = rot.to_euler()
+        with open(export_filepath, "w", encoding="utf-8") as file:
+            for obj in bpy.context.scene.objects:
+                if obj.parent:
+                    continue
 
-            # ラジアンから度数法に変換
-            rot.x = math.degrees(rot.x)
-            rot.y = math.degrees(rot.y)
-            rot.z = math.degrees(rot.z)
-
-            # トランスフォーム情報を表示
-            print("Trans(%f,%f,%f)" % (trans.x, trans.y, trans.z))
-            print("Rot(%f,%f,%f)" % (rot.x, rot.y, rot.z))
-            print("Scale(%f,%f,%f)" % (scale.x, scale.y, scale.z))
-
-            # 親オブジェクトの名前を表示
-            if obj.parent:
-                print("Parent:" + obj.parent.name)
-
-            # 次のオブジェクトとの区切り用の空行
-            print()
+                self.parse_scene_recursive(file, obj, 0)
 
         print("シーン情報をExportしました")
         self.report({'INFO'}, "シーン情報をExportしました")
-
         return {'FINISHED'}
+
+
+# オブジェクトのファイルネームパネル
+class OBJECT_PT_file_name(bpy.types.Panel):
+    bl_idname = "OBJECT_PT_file_name"
+    bl_label = "FileName"
+    bl_space_type = "PROPERTIES"
+    bl_region_type = "WINDOW"
+    bl_context = "object"
+
+    def draw(self, context):
+        if context.object is None:
+            return
+
+        if "file_name" in context.object:
+            self.layout.prop(context.object, '["file_name"]', text=self.bl_label)
+        else:
+            self.layout.operator(MYADDON_OT_add_filename.bl_idname)
 
 
 # トップバーの拡張メニュー
@@ -128,6 +177,8 @@ classes = (
     MYADDON_OT_stretch_vertex,
     MYADDON_OT_create_ico_sphere,
     MYADDON_OT_export_scene,
+    MYADDON_OT_add_filename,
+    OBJECT_PT_file_name,
     TOPBAR_MT_my_menu,
 )
 
