@@ -16,7 +16,7 @@
 #include "SceneTransition/SceneTransition.h"
 #include "Sprite.h"
 #include "Team/Team.h"
-#include "UIManager/UIManager.h"
+#include "UI/UIManager/UIManager.h"
 #include "Vector2.h"
 #include <array>
 #include <cstdint>
@@ -75,6 +75,8 @@ private:
 
 	bool sceneEndClear = false;
 	bool sceneEndOver = false;
+	float damageGrayscaleTimer_ = 0.0f;
+	static constexpr float kDamageGrayscaleDuration_ = 0.5f;
 
 public:
 	GameScene();

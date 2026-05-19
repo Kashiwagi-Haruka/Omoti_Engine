@@ -272,7 +272,7 @@
     <ClCompile Include="application\Scene\TutorialScene.cpp" />
     <ClCompile Include="application\Team\Team.cpp" />
     <ClCompile Include="application\TutorialUI\TutorialUI.cpp" />
-    <ClCompile Include="application\UIManager\UIManager.cpp" />
+    <ClCompile Include="application\UI\UIManager\UIManager.cpp" />
     <ClCompile Include="application\Scene\GameScene\OpenWorld\OpenWorld.cpp" />
     <ClCompile Include="application\Scene\GameScene\Rasen\Rasen.cpp" />
     <ClCompile Include="Engine\ScreenShot\ScreenShot.cpp" />
@@ -313,6 +313,7 @@
     <ClCompile Include="application\CameraController\LockOnCamera\LockOnCamera.cpp" />
     <ClCompile Include="application\Object\Characters\Playable\Individual\Sizuku\SizukuSkill.cpp" />
     <ClCompile Include="application\Object\Damage\DamageMath.cpp" />
+    <ClCompile Include="application\UI\HPBar\HPBarUI.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Engine\Texture\RenderTexture2D.h" />
@@ -541,7 +542,7 @@
     <ClInclude Include="application\Scene\TutorialScene.h" />
     <ClInclude Include="application\Team\Team.h" />
     <ClInclude Include="application\TutorialUI\TutorialUI.h" />
-    <ClInclude Include="application\UIManager\UIManager.h" />
+    <ClInclude Include="application\UI\UIManager\UIManager.h" />
     <ClInclude Include="application\Scene\GameScene\OpenWorld\OpenWorld.h" />
     <ClInclude Include="application\Scene\GameScene\Rasen\Rasen.h" />
     <ClInclude Include="Engine\ScreenShot\ScreenShot.h" />
@@ -598,6 +599,7 @@
     <ClInclude Include="application\CameraController\LockOnCamera\LockOnCamera.h" />
     <ClInclude Include="application\Object\Characters\Playable\Individual\Sizuku\SizukuSkill.h" />
     <ClInclude Include="application\Object\Damage\DamageMath.h" />
+    <ClInclude Include="application\UI\HPBar\HPBarUI.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include=".editorconfig" />

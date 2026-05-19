@@ -3,6 +3,7 @@
 #include "Vector2.h"
 #include <cstdint>
 #include <memory>
+#include "UI/HPBar/HPBarUI.h"
 class Sprite;
 class GameBase;
 class UIManager {
@@ -37,12 +38,6 @@ class UIManager {
 		Vector2 translate = {0, 0};
 	};
 
-	// プレイヤーHPバー用スプライト。
-	SpriteData playerHpSPData;
-	// プレイヤーHPフレーム用スプライト。
-	SpriteData playerHPFlameSPData;
-	// プレイヤーHPラベル用スプライト。
-	SpriteData playerHPStringSPData;
 	// 操作方法表示用スプライト。
 	SpriteData HowtoOperateSPData;
 	// レベルラベル用スプライト。
@@ -77,16 +72,7 @@ class UIManager {
 	// 家HPラベル用スプライト。
 	SpriteData houseHpStringSPData;
 
-	// 現在のプレイヤーHP。
-	int playerHP;
-	// プレイヤーHP最大値。
-	int playerHPMax;
-	// HPバー最大サイズ。
-	Vector2 playerHPMaxSize = {400, 100};
-	// HPバーの現在表示幅。
-	float playerHPWidth = 1200.0f;
-	// HPバーの最大表示幅。
-	float playerHPWidthMax = 1200.0f;
+
 	// EXPバー最大サイズ。
 	Vector2 expBarMaxSize = {300, 40};
 	// 数字テクスチャの1桁あたりサイズ。
@@ -101,6 +87,8 @@ class UIManager {
 	int houseHpDigitStartIndex = 0;
 	// プレイヤーパラメータの保持領域。
 	Parameters parameters_;
+
+	std::unique_ptr<HPBarUI> hpBarUI_;
 
 public:
 	// 生成時にUIリソースを読み込む。

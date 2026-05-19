@@ -13,11 +13,7 @@ UIManager::UIManager() {
 	//      テクスチャ読み込み
 	// ===========================
 
-	playerHpSPData.handle = TextureManager::GetInstance()->GetTextureIndexByfilePath("Resources/2d/playerHP.png");
-
-	playerHPFlameSPData.handle = TextureManager::GetInstance()->GetTextureIndexByfilePath("Resources/2d/playerHPFlame.png");
-
-	playerHPStringSPData.handle = TextureManager::GetInstance()->GetTextureIndexByfilePath("Resources/2d/playerHPString.png");
+	hpBarUI_ = std::make_unique<HPBarUI>();
 
 	// WASD / SPACE / ATTACK
 	HowtoOperateSPData.handle = TextureManager::GetInstance()->GetTextureIndexByfilePath("Resources/2d/option.png");
@@ -54,9 +50,7 @@ UIManager::UIManager() {
 	//      Sprite の生成
 	// ===========================
 
-	playerHpSPData.sprite = std::make_unique<Sprite>();
-	playerHPFlameSPData.sprite = std::make_unique<Sprite>();
-	playerHPStringSPData.sprite = std::make_unique<Sprite>();
+
 
 	HowtoOperateSPData.sprite = std::make_unique<Sprite>();
 
@@ -88,31 +82,7 @@ UIManager::~UIManager() {}
 
 void UIManager::Initialize() {
 
-	// ------------------ HP Bar ------------------
-	playerHpSPData.sprite->Initialize(playerHpSPData.handle);
-	playerHpSPData.size = playerHPMaxSize;
-	// ★ アンカーポイントを左端に設定（左端固定）
-	playerHpSPData.sprite->SetAnchorPoint({0.0f, 0.0f});
-	playerHpSPData.sprite->SetScale(playerHpSPData.size);
-	// ★ 左端の位置を固定
-	playerHpSPData.translate = {640 - playerHPMaxSize.x / 2, 500};
-	playerHpSPData.sprite->SetPosition(playerHpSPData.translate);
-
-	// ------------------ HP Flame ------------------
-	playerHPFlameSPData.sprite->Initialize(playerHPFlameSPData.handle);
-	playerHPFlameSPData.size = playerHPMaxSize;
-	playerHPFlameSPData.translate = {640, 500};
-	playerHPFlameSPData.sprite->SetAnchorPoint({0.5f, 0.0f});
-	playerHPFlameSPData.sprite->SetPosition(playerHPFlameSPData.translate);
-	playerHPFlameSPData.sprite->SetScale(playerHPFlameSPData.size);
-
-	// ------------------ HP Label ------------------
-
-	playerHPStringSPData.sprite->Initialize(playerHPStringSPData.handle);
-	playerHPStringSPData.sprite->SetAnchorPoint({1.0f, 0.5f});
-	playerHPStringSPData.sprite->SetScale({160, 160});
-	playerHPStringSPData.translate = {playerHpSPData.translate.x - 10.0f, playerHpSPData.translate.y + playerHPMaxSize.y * 0.5f};
-	playerHPStringSPData.sprite->SetPosition(playerHPStringSPData.translate);
+	hpBarUI_->Initialize();
 
 	// ------------------ WASD / SPACE / ATTACK ------------------
 
@@ -188,34 +158,13 @@ void UIManager::Initialize() {
 	expBarBackSPData.sprite->SetScale(expBarBackSPData.size);
 	expBarBackSPData.translate = expBarSPData.translate;
 	expBarBackSPData.sprite->SetPosition(expBarBackSPData.translate);
+
+
 }
 
 void UIManager::Update() {
 
-	// ---- HP (左端固定、右端から減る) ----
-	if (playerHPMax > 0) {
-		// HP比率を計算
-		float hpRatio = (float)playerHP / (float)playerHPMax;
-
-		// スケールを更新（HPに応じて幅を変更）
-		playerHpSPData.size.x = playerHPMaxSize.x * hpRatio;
-		playerHpSPData.sprite->SetScale(playerHpSPData.size);
-
-		// テクスチャ範囲を更新（左端0から、HP比率分だけ表示）
-		playerHPWidth = playerHPWidthMax * hpRatio;
-		playerHpSPData.sprite->SetTextureRange({0, 0}, {playerHPWidth, 300});
-
-		// ★ 左端の位置は常に固定（ずれない）
-		playerHpSPData.translate = {640 - playerHPMaxSize.x / 2, 500};
-		playerHpSPData.sprite->SetPosition(playerHpSPData.translate);
-	}
-
-	// 各スプライト Update
-	playerHpSPData.sprite->Update();
-	playerHPFlameSPData.sprite->Update();
-	playerHPStringSPData.translate = {playerHpSPData.translate.x - 10.0f, playerHpSPData.translate.y + playerHPMaxSize.y * 0.5f};
-	playerHPStringSPData.sprite->SetPosition(playerHPStringSPData.translate);
-	playerHPStringSPData.sprite->Update();
+	hpBarUI_->Update();
 
 	HowtoOperateSPData.sprite->Update();
 
@@ -310,11 +259,8 @@ void UIManager::Update() {
 void UIManager::Draw() {
 
 	SpriteCommon::GetInstance()->DrawCommon();
-
-	playerHpSPData.sprite->Draw();
-	playerHPFlameSPData.sprite->Draw();
-	playerHPStringSPData.sprite->Draw();
-
+	hpBarUI_->Draw();
+	SpriteCommon::GetInstance()->DrawCommon();
 	HowtoOperateSPData.sprite->Draw();
 
 	LevelSPData.sprite->Draw();
@@ -358,6 +304,6 @@ void UIManager::Draw() {
 	houseHpStringSPData.sprite->Draw();
 }
 
-void UIManager::SetPlayerHP(int HP) { playerHP = HP; }
-void UIManager::SetPlayerHPMax(int HPMax) { playerHPMax = HPMax; }
+void UIManager::SetPlayerHP(int HP) { hpBarUI_->SetPlayerHP(HP); }
+void UIManager::SetPlayerHPMax(int HPMax) { hpBarUI_->SetPlayerHPMax(HPMax); }
 void UIManager::SetPlayerParameters(Parameters parameters) { parameters_ = parameters; }

@@ -422,8 +422,16 @@ void GameScene::Update() {
 		collisionManager_.HandleGameSceneCollisions(*player, *rasen_->GetEnemyManager(), *rasen_->GetExpCubeManager(), *rasen_->GetHouse(), activeBoss);
 		if (player->ConsumeDamageTrigger()) {
 			cameraController->StartShake(0.75f);
+			damageGrayscaleTimer_ = kDamageGrayscaleDuration_;
 		}
 	}
+	if (damageGrayscaleTimer_ > 0.0f) {
+		damageGrayscaleTimer_ -= GameBase::GetInstance()->GetDeltaTime();
+		if (damageGrayscaleTimer_ < 0.0f) {
+			damageGrayscaleTimer_ = 0.0f;
+		}
+	}
+	Object3dCommon::GetInstance()->SetFullScreenGrayscaleEnabled(damageGrayscaleTimer_ > 0.0f);
 	uimanager->SetPlayerParameters(player->GetParameters());
 	uimanager->SetPlayerHP(player->GetHP());
 	uimanager->Update();
