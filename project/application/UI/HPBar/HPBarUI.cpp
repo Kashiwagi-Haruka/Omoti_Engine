@@ -1,6 +1,7 @@
 #include "HPBarUI.h"
 #include "TextureManager.h"
 #include "Text/FreeTypeManager/FreeTypeManager.h"
+#include "Sprite/SpriteCommon.h"
 HPBarUI::HPBarUI() {
 	playerHpSPData.handle = TextureManager::GetInstance()->GetTextureIndexByfilePath("Resources/2d/playerHP.png");
 
@@ -17,10 +18,10 @@ void HPBarUI::Initialize() {
 	// ------------------ HP Bar ------------------
 	playerHpSPData.sprite->Initialize(playerHpSPData.handle);
 	playerHpSPData.size = playerHPMaxSize;
-	// ★ アンカーポイントを左端に設定（左端固定）
+	// アンカーポイントを左端に設定（左端固定）
 	playerHpSPData.sprite->SetAnchorPoint({0.0f, 0.0f});
 	playerHpSPData.sprite->SetScale(playerHpSPData.size);
-	// ★ 左端の位置を固定
+	// 左端の位置を固定
 	playerHpSPData.translate = {640 - playerHPMaxSize.x / 2, 500};
 	playerHpSPData.sprite->SetPosition(playerHpSPData.translate);
 
@@ -41,10 +42,10 @@ void HPBarUI::Initialize() {
 	playerHPStringSPData.sprite->SetPosition(playerHPStringSPData.translate);
 
 	uint32_t fontHandle_ = FreeTypeManager::CreateFace("Resources/Font/irohakakuC-Medium.ttf", 0);
-	FreeTypeManager::SetPixelSizes(fontHandle_, 24, 24);
+	FreeTypeManager::SetPixelSizes(fontHandle_, 64, 64);
 	playerHpText.Initialize(fontHandle_);
 	playerHpText.SetString(U"0/0");
-	playerHpText.SetPosition({640, 240});
+	playerHpText.SetPosition({playerHPFlameSPData.translate});
 	playerHpText.SetColor({1, 1, 1, 1});
 	playerHpText.SetAlign(TextAlign::Center);
 	playerHpText.SetBlendMode(BlendMode::kBlendModeAlpha);
@@ -75,10 +76,11 @@ void HPBarUI::Update() {
 	playerHPStringSPData.translate = {playerHpSPData.translate.x - 10.0f, playerHpSPData.translate.y + playerHPMaxSize.y * 0.5f};
 	playerHPStringSPData.sprite->SetPosition(playerHPStringSPData.translate);
 	playerHPStringSPData.sprite->Update();
+	playerHpText.UpdateLayout();
 }
 void HPBarUI::Draw() {
-	playerHpSPData.sprite->Draw();
-	playerHPFlameSPData.sprite->Draw();
-	playerHPStringSPData.sprite->Draw();
+	//playerHpSPData.sprite->Draw();
+	//playerHPFlameSPData.sprite->Draw();
+	//playerHPStringSPData.sprite->Draw();
 	playerHpText.Draw();
 }
