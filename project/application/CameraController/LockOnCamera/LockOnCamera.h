@@ -15,6 +15,8 @@ class LockOnCamera {
 	float shakeTimer_ = 0.0f;
 	float shakeDuration_ = 0.0f;
 	float shakeAmplitude_ = 0.6f;
+	bool hasTarget_ = false;
+	Vector3 targetPos_ = {0.0f, 0.0f, 0.0f};
 
 public:
 	LockOnCamera();
@@ -27,4 +29,9 @@ public:
 	Transform GetTransform() { return transform_; }
 	void SetTransform(Transform transform) { transform_ = transform; }
 	void SetPlayerPos(const Vector3& pos) { playerPos = pos; }
+	void SetTargetPos(const Vector3& pos) {
+		targetPos_ = pos;
+		hasTarget_ = true;
+	}
+	void ClearTarget() { hasTarget_ = false; }
 };

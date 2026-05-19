@@ -9,11 +9,7 @@ class Camera;
 
 class CameraController {
 
-	enum class CameraMode {
-		kPlayerCamera,
-		kLockOnCamera,
-		kNormalAttackCamera 
-	};
+	enum class CameraMode { kPlayerCamera, kLockOnCamera, kNormalAttackCamera };
 	CameraMode cameraMode_ = CameraMode::kPlayerCamera;
 	CameraMode preCameraMode_ = CameraMode::kPlayerCamera;
 	std::unique_ptr<PlayerCamera> playerCamera_;
@@ -25,6 +21,7 @@ class CameraController {
 
 	bool isCameraSwitching_ = false;
 	float cameraSwitchTimer_ = 0.0f;
+	float autoLockOnTimer_ = 0.0f;
 
 public:
 	void Initialize();
@@ -35,4 +32,5 @@ public:
 	void SetPlayerPos(const Vector3& pos) { playerPos = pos; }
 	void StartShake(float durationSeconds = 1.0f);
 	void SetCameraMode(CameraMode mode) { cameraMode_ = mode; }
+	void SetLockOnTarget(const Vector3& targetPos, float durationSeconds = 1.0f);
 };

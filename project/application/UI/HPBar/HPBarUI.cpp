@@ -44,11 +44,10 @@ void HPBarUI::Initialize() {
 	uint32_t fontHandle_ = FreeTypeManager::CreateFace("Resources/Font/irohakakuC-Medium.ttf", 0);
 	FreeTypeManager::SetPixelSizes(fontHandle_, 64, 64);
 	playerHpText.Initialize(fontHandle_);
-	playerHpText.SetString(U"0/0");
+	playerHpText.SetString(U"HP:0/0");
 	playerHpText.SetPosition({playerHPFlameSPData.translate});
 	playerHpText.SetColor({1, 1, 1, 1});
 	playerHpText.SetAlign(TextAlign::Center);
-	playerHpText.SetBlendMode(BlendMode::kBlendModeAlpha);
 	playerHpText.UpdateLayout();
 }
 void HPBarUI::Update() {

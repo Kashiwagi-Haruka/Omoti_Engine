@@ -18,7 +18,8 @@ AABB MakeAabb(const Vector3& center, const Vector3& halfSize) {
 }
 } // namespace
 
-void CollisionManager::HandleGameSceneCollisions(Player& player, EnemyManager& enemyManager, ExpCubeManager& expCubeManager, House& house, Boss* boss) {
+bool CollisionManager::HandleGameSceneCollisions(Player& player, EnemyManager& enemyManager, ExpCubeManager& expCubeManager, House& house, Boss* boss, Vector3* outHitEnemyPos) {
+	bool didHitEnemy = false;
 	AABB playerAabb = MakeAabb(player.GetPosition(), player.GetScale());
 	AABB houseAabb = MakeAabb(house.GetPosition(), house.GetScale());
 	auto tryEnemyFlinch = [](Enemy* target) {
@@ -60,6 +61,10 @@ void CollisionManager::HandleGameSceneCollisions(Player& player, EnemyManager& e
 			AABB swordAabb = MakeAabb(swordPos, {swordHit, swordHit, swordHit});
 			bool hitSword = RigidBody::isCollision(swordAabb, enemyAabb);
 			if (hitSword && enemy->CanTakeDamage()) {
+				didHitEnemy = true;
+				if (outHitEnemyPos) {
+					*outHitEnemyPos = enemy->GetPosition();
+				}
 				enemy->SetHPSubtract(1);
 				enemy->AddAdhesionAttribute(playerAttackAttribute);
 				enemy->TriggerDamageInvincibility();
@@ -76,6 +81,10 @@ void CollisionManager::HandleGameSceneCollisions(Player& player, EnemyManager& e
 			bool hitSkill = RigidBody::isCollision(skillAabb, enemyAabb);
 			int skillDamageId = player.GetSkill()->GetSkillDamageId();
 			if (hitSkill && enemy->GetLastSkillDamageId() != skillDamageId) {
+				didHitEnemy = true;
+				if (outHitEnemyPos) {
+					*outHitEnemyPos = enemy->GetPosition();
+				}
 				enemy->SetHPSubtract(1);
 				enemy->AddAdhesionAttribute(playerAttackAttribute);
 				enemy->SetLastSkillDamageId(skillDamageId);
@@ -87,8 +96,7 @@ void CollisionManager::HandleGameSceneCollisions(Player& player, EnemyManager& e
 			}
 		}
 
-
-if (player.GetIsAlive() && player.GetSkill() && player.GetSkill()->IsSpecialDamaging()) {
+		if (player.GetIsAlive() && player.GetSkill() && player.GetSkill()->IsSpecialDamaging()) {
 			bool hitSpecial = false;
 			for (const auto& specialTransform : player.GetSkill()->GetSpecialIceFlowerTransforms()) {
 				AABB specialAabb = MakeAabb(specialTransform.translate, specialTransform.scale);
@@ -100,6 +108,10 @@ if (player.GetIsAlive() && player.GetSkill() && player.GetSkill()->IsSpecialDama
 
 			if (hitSpecial) {
 				if (enemy->CanTakeDamage()) {
+					didHitEnemy = true;
+					if (outHitEnemyPos) {
+						*outHitEnemyPos = enemy->GetPosition();
+					}
 					enemy->SetHPSubtract(1);
 					enemy->AddAdhesionAttribute(playerAttackAttribute);
 					enemy->TriggerDamageInvincibility();
@@ -204,4 +216,5 @@ if (player.GetIsAlive() && player.GetSkill() && player.GetSkill()->IsSpecialDama
 			}
 		}
 	}
+	return didHitEnemy;
 }
