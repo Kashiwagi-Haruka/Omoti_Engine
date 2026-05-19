@@ -2,6 +2,7 @@
 #include "TextureManager.h"
 #include "Text/FreeTypeManager/FreeTypeManager.h"
 #include "Sprite/SpriteCommon.h"
+#include <string>
 HPBarUI::HPBarUI() {
 	playerHpSPData.handle = TextureManager::GetInstance()->GetTextureIndexByfilePath("Resources/2d/playerHP.png");
 
@@ -75,7 +76,8 @@ void HPBarUI::Update() {
 	playerHPStringSPData.translate = {playerHpSPData.translate.x - 10.0f, playerHpSPData.translate.y + playerHPMaxSize.y * 0.5f};
 	playerHPStringSPData.sprite->SetPosition(playerHPStringSPData.translate);
 	playerHPStringSPData.sprite->Update();
-	playerHpText.UpdateLayout();
+	playerHpText.SetString(U"HP:" + std::to_u32string(playerHP) + U"/" + std::to_u32string(playerHPMax));
+	playerHpText.Update();
 }
 void HPBarUI::Draw() {
 	//playerHpSPData.sprite->Draw();

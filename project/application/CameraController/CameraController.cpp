@@ -37,7 +37,10 @@ void CameraController::Update() {
 
 		break;
 	case CameraController::CameraMode::kLockOnCamera:
+		playerCamera_->SetPlayerPos(playerPos);
+		playerCamera_->Update();
 		lockOnCamera_->SetPlayerPos(playerPos);
+		lockOnCamera_->SetFollowPosition(playerCamera_->GetTransform().translate);
 		lockOnCamera_->Update();
 		camera_ = lockOnCamera_->GetCamera();
 		break;

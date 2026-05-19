@@ -54,6 +54,9 @@ void LockOnCamera::Update() {
 	Vector3 orbitDir = {sinf(orbitYaw_) * cosf(orbitPitch_), -sinf(orbitPitch_), cosf(orbitYaw_) * cosf(orbitPitch_)};
 
 	transform_.translate = playerPos - orbitDir * distance;
+	if (hasFollowPosition_) {
+		transform_.translate = followPosition_;
+	}
 	transform_.rotate = {orbitPitch_, orbitYaw_, 0.0f};
 
 	if (shakeTimer_ > 0.0f) {

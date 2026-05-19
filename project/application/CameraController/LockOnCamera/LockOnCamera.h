@@ -17,6 +17,8 @@ class LockOnCamera {
 	float shakeAmplitude_ = 0.6f;
 	bool hasTarget_ = false;
 	Vector3 targetPos_ = {0.0f, 0.0f, 0.0f};
+	bool hasFollowPosition_ = false;
+	Vector3 followPosition_ = {0.0f, 0.0f, 0.0f};
 
 public:
 	LockOnCamera();
@@ -34,4 +36,9 @@ public:
 		hasTarget_ = true;
 	}
 	void ClearTarget() { hasTarget_ = false; }
+	void SetFollowPosition(const Vector3& pos) {
+		followPosition_ = pos;
+		hasFollowPosition_ = true;
+	}
+	void ClearFollowPosition() { hasFollowPosition_ = false; }
 };
