@@ -1,9 +1,12 @@
 #pragma once
 #include <memory>
+#include "Vector3.h"
+#include "Transform.h"
+#include "LockOnCamera/LockOnCamera.h"
+#include "PlayerCamera/PlayerCamera.h"
 
 class Camera;
-class PlayerCamera;
-class LockOnCamera;
+
 class CameraController {
 
 	enum class CameraMode {
