@@ -76,7 +76,13 @@ void HPBarUI::Update() {
 	playerHPStringSPData.translate = {playerHpSPData.translate.x - 10.0f, playerHpSPData.translate.y + playerHPMaxSize.y * 0.5f};
 	playerHPStringSPData.sprite->SetPosition(playerHPStringSPData.translate);
 	playerHPStringSPData.sprite->Update();
-	playerHpText.SetString(U"HP:" + std::to_u32string(playerHP) + U"/" + std::to_u32string(playerHPMax));
+	std::u32string hpText = U"HP:";
+	const std::string currentHPText = std::to_string(playerHP);
+	hpText.append(currentHPText.begin(), currentHPText.end());
+	hpText += U"/";
+	const std::string maxHPText = std::to_string(playerHPMax);
+	hpText.append(maxHPText.begin(), maxHPText.end());
+	playerHpText.SetString(hpText);
 	playerHpText.Update();
 }
 void HPBarUI::Draw() {
