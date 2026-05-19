@@ -1,7 +1,7 @@
 #include "CameraController.h"
 #include "Camera.h"
-#include "PlayerCamera/PlayerCamera.h"
-#include "LockOnCamera/LockOnCamera.h"
+
+
 #include "Function.h"
 void CameraController::Initialize() {
 	playerCamera_ = std::make_unique<PlayerCamera>();
