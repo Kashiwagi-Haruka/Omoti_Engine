@@ -336,7 +336,6 @@ copy "$(WindowsSdkDir)\bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)\
     <ClInclude Include="application\Object\Characters\CharacterDisplay\CharacterDisplay.h" />
     <ClInclude Include="application\Object\Characters\CharacterDisplay\CharacterDisplaySkyDome.h" />
     <ClInclude Include="application\Object\Characters\Model\CharacterModel.h" />
-    <ClInclude Include="application\Object\Characters\Playable\Base\SpecialAttackBase.h" />
     <ClInclude Include="application\Object\Characters\Playable\Individual\Sizuku\Sizuku.h" />
     <ClInclude Include="application\Object\Characters\Enemy\BaseEnemy.h" />
     <ClInclude Include="application\Object\Characters\Enemy\Enemy.h" />

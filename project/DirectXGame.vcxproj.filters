@@ -604,7 +604,6 @@
     <ClInclude Include="application\UI\HPBar\HPBarUI.h" />
     <ClInclude Include="application\UI\AttackOperation\AttackOperation.h" />
     <ClInclude Include="application\Object\Characters\Playable\Individual\Sizuku\SizukuSpecial.h" />
-    <ClInclude Include="application\Object\Characters\Playable\Base\SpecialAttackBase.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include=".editorconfig" />

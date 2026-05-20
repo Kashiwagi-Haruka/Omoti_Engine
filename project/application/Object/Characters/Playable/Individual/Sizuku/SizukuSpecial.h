@@ -1,12 +1,11 @@
 #pragma once
 #include "Engine/Texture/Mesh/Primitive/Primitive.h"
 #include "Engine/Texture/Mesh/Object3d/Object3d.h"
-#include "Object/Characters/Playable/Base/SpecialAttackBase.h"
 #include "Transform.h"
 #include <vector>
 #include <memory>
 class Camera;
-class SizukuSpecial : public SpecialAttackBase {
+class SizukuSpecial{
 
 	bool isStarted_ = false; // 開始フラグ
 	float duration_ = 0;     // 継続時間
