@@ -1,18 +1,17 @@
 #pragma once
 class PlayCommand {
 
-	enum Command{
-		DESIDE,//決定
-		CANCEL,//キャンセル
-		JUMP,   // ジャンプ
-		DASH,   // ダッシュ
-		NORMAL_ATTACK, // 通常攻撃
-		SKILL_ATTACK,  // スキル攻撃
-		SPECIAL_ATTACK, // 必殺技
-	};
-
-	bool GetInput(Command& command);
-
+	bool GetMOVE_FRONT(); // 前移動
+	bool GetMOVE_BACK();  // 後移動
+	bool GetMOVE_LEFT();  // 左移動
+	bool GetMOVE_RIGHT(); // 右移動
+	bool GetJUMP();       // ジャンプ
+	bool GetDASH();       // ダッシュ
+	bool GetNORMAL_ATTACK(); // 通常攻撃
+	bool GetSKILL_ATTACK();  // スキル攻撃
+	bool GetSPECIAL_ATTACK(); // 必殺攻撃
+	bool GetDESIDE();         // 決定
+	bool GetESCAPE();         // キャンセル
 
 
 };
