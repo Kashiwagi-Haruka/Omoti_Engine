@@ -49,14 +49,16 @@ void LockOnCamera::Update() {
 	if (orbitPitch_ < minPitch) {
 		orbitPitch_ = minPitch;
 	}
-
+	if (hasFollowPosition_) {
+		Vector3 toFollow = followPosition_ - playerPos;
+		if (Function::LengthSquared(toFollow) > 0.0001f) {
+			orbitYaw_ = std::atan2f(toFollow.x, toFollow.z);
+		}
+	}
 	const float distance = 5.0f;
 	Vector3 orbitDir = {sinf(orbitYaw_) * cosf(orbitPitch_), -sinf(orbitPitch_), cosf(orbitYaw_) * cosf(orbitPitch_)};
 
 	transform_.translate = playerPos - orbitDir * distance;
-	if (hasFollowPosition_) {
-
-	}
 	transform_.rotate = {orbitPitch_, orbitYaw_, 0.0f};
 
 	if (shakeTimer_ > 0.0f) {
