@@ -302,6 +302,7 @@ copy "$(WindowsSdkDir)\bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)\
     <ClCompile Include="application\CameraController\NormalAttackCamera\NormalAttackCamera.cpp" />
     <ClCompile Include="application\Object\Characters\Playable\Individual\Sizuku\SizukuSkill.cpp" />
     <ClCompile Include="application\UI\HPBar\HPBarUI.cpp" />
+    <ClCompile Include="application\Object\Characters\Playable\Individual\Sizuku\SizukuSpecial.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include=".editorconfig" />
@@ -335,6 +336,7 @@ copy "$(WindowsSdkDir)\bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)\
     <ClInclude Include="application\Object\Characters\CharacterDisplay\CharacterDisplay.h" />
     <ClInclude Include="application\Object\Characters\CharacterDisplay\CharacterDisplaySkyDome.h" />
     <ClInclude Include="application\Object\Characters\Model\CharacterModel.h" />
+    <ClInclude Include="application\Object\Characters\Playable\Base\SpecialAttackBase.h" />
     <ClInclude Include="application\Object\Characters\Playable\Individual\Sizuku\Sizuku.h" />
     <ClInclude Include="application\Object\Characters\Enemy\BaseEnemy.h" />
     <ClInclude Include="application\Object\Characters\Enemy\Enemy.h" />
@@ -477,6 +479,7 @@ copy "$(WindowsSdkDir)\bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)\
     <ClInclude Include="application\CameraController\NormalAttackCamera\NormalAttackCamera.h" />
     <ClInclude Include="application\Object\Characters\Playable\Individual\Sizuku\SizukuSkill.h" />
     <ClInclude Include="application\UI\HPBar\HPBarUI.h" />
+    <ClInclude Include="application\Object\Characters\Playable\Individual\Sizuku\SizukuSpecial.h" />
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="Resources\shader\FullScreenCopy\CopyImage.PS.hlsl">

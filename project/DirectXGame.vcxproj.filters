@@ -315,6 +315,7 @@
     <ClCompile Include="application\Object\Damage\DamageMath.cpp" />
     <ClCompile Include="application\UI\HPBar\HPBarUI.cpp" />
     <ClCompile Include="application\UI\AttackOperation\AttackOperation.cpp" />
+    <ClCompile Include="application\Object\Characters\Playable\Individual\Sizuku\SizukuSpecial.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Engine\Texture\RenderTexture2D.h" />
@@ -602,6 +603,8 @@
     <ClInclude Include="application\Object\Damage\DamageMath.h" />
     <ClInclude Include="application\UI\HPBar\HPBarUI.h" />
     <ClInclude Include="application\UI\AttackOperation\AttackOperation.h" />
+    <ClInclude Include="application\Object\Characters\Playable\Individual\Sizuku\SizukuSpecial.h" />
+    <ClInclude Include="application\Object\Characters\Playable\Base\SpecialAttackBase.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include=".editorconfig" />
