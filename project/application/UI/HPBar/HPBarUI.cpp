@@ -43,13 +43,13 @@ void HPBarUI::Initialize() {
 	playerHPStringSPData.sprite->SetPosition(playerHPStringSPData.translate);
 
 	uint32_t fontHandle_ = FreeTypeManager::CreateFace("Resources/Font/irohakakuC-Medium.ttf", 0);
-	FreeTypeManager::SetPixelSizes(fontHandle_, 64, 64);
+	FreeTypeManager::SetPixelSizes(fontHandle_, 32, 32);
 	playerHpText.Initialize(fontHandle_);
-	playerHpText.SetString(U"HP:0/0");
-	playerHpText.SetPosition({playerHPFlameSPData.translate});
-	playerHpText.SetColor({1, 1, 1, 1});
+	playerHpText.SetString(U"HP");
+	playerHpText.SetPosition({playerHPFlameSPData.translate.x,playerHPFlameSPData.translate.y+playerHPFlameSPData.size.y * 0.5f});
+	playerHpText.SetColor({0.5f, 0.8f, 0.8f, 1});
 	playerHpText.SetAlign(TextAlign::Center);
-	playerHpText.UpdateLayout();
+	playerHpText.UpdateLayout(false);
 }
 void HPBarUI::Update() {
 	// ---- HP (左端固定、右端から減る) ----
@@ -83,11 +83,12 @@ void HPBarUI::Update() {
 	const std::string maxHPText = std::to_string(playerHPMax);
 	hpText.append(maxHPText.begin(), maxHPText.end());
 	playerHpText.SetString(hpText);
-	playerHpText.Update();
+	playerHpText.UpdateLayout(false);
 }
 void HPBarUI::Draw() {
-	//playerHpSPData.sprite->Draw();
-	//playerHPFlameSPData.sprite->Draw();
-	//playerHPStringSPData.sprite->Draw();
+	playerHpSPData.sprite->Draw();
+	playerHPFlameSPData.sprite->Draw();
+	/*playerHPStringSPData.sprite->Draw();*/
+	SpriteCommon::GetInstance()->DrawCommon();
 	playerHpText.Draw();
 }
