@@ -8,11 +8,9 @@ HPBarUI::HPBarUI() {
 
 	playerHPFlameSPData.handle = TextureManager::GetInstance()->GetTextureIndexByfilePath("Resources/2d/playerHPFlame.png");
 
-	playerHPStringSPData.handle = TextureManager::GetInstance()->GetTextureIndexByfilePath("Resources/2d/playerHPString.png");
 
 	playerHpSPData.sprite = std::make_unique<Sprite>();
 	playerHPFlameSPData.sprite = std::make_unique<Sprite>();
-	playerHPStringSPData.sprite = std::make_unique<Sprite>();
 }
 void HPBarUI::Initialize() {
 
@@ -35,12 +33,6 @@ void HPBarUI::Initialize() {
 	playerHPFlameSPData.sprite->SetScale(playerHPFlameSPData.size);
 
 	// ------------------ HP Label ------------------
-
-	playerHPStringSPData.sprite->Initialize(playerHPStringSPData.handle);
-	playerHPStringSPData.sprite->SetAnchorPoint({1.0f, 0.5f});
-	playerHPStringSPData.sprite->SetScale({160, 160});
-	playerHPStringSPData.translate = {playerHpSPData.translate.x - 10.0f, playerHpSPData.translate.y + playerHPMaxSize.y * 0.5f};
-	playerHPStringSPData.sprite->SetPosition(playerHPStringSPData.translate);
 
 	uint32_t fontHandle_ = FreeTypeManager::CreateFace("Resources/Font/irohakakuC-Medium.ttf", 0);
 	FreeTypeManager::SetPixelSizes(fontHandle_, 32, 32);
@@ -73,9 +65,6 @@ void HPBarUI::Update() {
 	// 各スプライト Update
 	playerHpSPData.sprite->Update();
 	playerHPFlameSPData.sprite->Update();
-	playerHPStringSPData.translate = {playerHpSPData.translate.x - 10.0f, playerHpSPData.translate.y + playerHPMaxSize.y * 0.5f};
-	playerHPStringSPData.sprite->SetPosition(playerHPStringSPData.translate);
-	playerHPStringSPData.sprite->Update();
 	std::u32string hpText = U"HP:";
 	const std::string currentHPText = std::to_string(playerHP);
 	hpText.append(currentHPText.begin(), currentHPText.end());
@@ -88,7 +77,5 @@ void HPBarUI::Update() {
 void HPBarUI::Draw() {
 	playerHpSPData.sprite->Draw();
 	playerHPFlameSPData.sprite->Draw();
-	/*playerHPStringSPData.sprite->Draw();*/
-	SpriteCommon::GetInstance()->DrawCommon();
 	playerHpText.Draw();
 }

@@ -26,8 +26,6 @@ class HPBarUI {
 	SpriteData playerHpSPData;
 	// プレイヤーHPフレーム用スプライト。
 	SpriteData playerHPFlameSPData;
-	// プレイヤーHPラベル用スプライト。
-	SpriteData playerHPStringSPData;
 
 		// 現在のプレイヤーHP。
 	int playerHP=1;
