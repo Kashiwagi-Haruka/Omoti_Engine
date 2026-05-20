@@ -38,8 +38,8 @@ void LockOnCamera::Update() {
 			orbitYaw_ = std::atan2f(toTarget.x, toTarget.z);
 		}
 	}
-	orbitYaw_ += mouseMove.x * mouseSensitivity_;
-	orbitPitch_ += mouseMove.y * mouseSensitivity_;
+	//orbitYaw_ += mouseMove.x * mouseSensitivity_;
+	//orbitPitch_ += mouseMove.y * mouseSensitivity_;
 
 	const float maxPitch = 1.2f;
 	const float minPitch = -1.2f;
@@ -55,7 +55,7 @@ void LockOnCamera::Update() {
 
 	transform_.translate = playerPos - orbitDir * distance;
 	if (hasFollowPosition_) {
-		transform_.translate = followPosition_;
+
 	}
 	transform_.rotate = {orbitPitch_, orbitYaw_, 0.0f};
 
