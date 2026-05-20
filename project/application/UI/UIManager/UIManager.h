@@ -4,6 +4,7 @@
 #include <cstdint>
 #include <memory>
 #include "UI/HPBar/HPBarUI.h"
+#include "UI/AttackOperation/AttackOperation.h"
 class Sprite;
 class GameBase;
 class UIManager {
@@ -54,8 +55,6 @@ class UIManager {
 	SpriteData SpeedUpSPData;
 	// 矢数アップ表示用スプライト。
 	SpriteData AllowUpSPData;
-	// スキルアイコン表示用スプライト。
-	SpriteData SkillIconSPData;
 
 	// スラッシュ表示用スプライト（未使用含む）。
 	SpriteData SlashSPData[2];
@@ -89,6 +88,7 @@ class UIManager {
 	Parameters parameters_;
 
 	std::unique_ptr<HPBarUI> hpBarUI_;
+	std::unique_ptr<AttackOperation> attackOperationUI_;
 
 public:
 	// 生成時にUIリソースを読み込む。

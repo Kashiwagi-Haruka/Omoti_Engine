@@ -4,7 +4,6 @@
 #include "Object/House/HouseHP.h"
 #include "Sprite.h"
 #include "Sprite/SpriteCommon.h"
-#include "TextureManager.h"
 #include <algorithm>
 
 UIManager::UIManager() {
@@ -14,6 +13,8 @@ UIManager::UIManager() {
 	// ===========================
 
 	hpBarUI_ = std::make_unique<HPBarUI>();
+
+	attackOperationUI_ = std::make_unique<AttackOperation>();
 
 	// WASD / SPACE / ATTACK
 	HowtoOperateSPData.handle = TextureManager::GetInstance()->GetTextureIndexByfilePath("Resources/2d/option.png");
@@ -37,7 +38,7 @@ UIManager::UIManager() {
 	SpeedUpSPData.handle = TextureManager::GetInstance()->GetTextureIndexByfilePath("Resources/2d/SpeedUp.png");
 
 	AllowUpSPData.handle = TextureManager::GetInstance()->GetTextureIndexByfilePath("Resources/2d/ArrowUp.png");
-	SkillIconSPData.handle = TextureManager::GetInstance()->GetTextureIndexByfilePath("Resources/2d/skill.png");
+
 	SlashSPData[0].handle = TextureManager::GetInstance()->GetTextureIndexByfilePath("Resources/2d/Slash.png");
 
 	EXPSPData.handle = TextureManager::GetInstance()->GetTextureIndexByfilePath("Resources/2d/Exp.png");
@@ -49,8 +50,6 @@ UIManager::UIManager() {
 	// ===========================
 	//      Sprite の生成
 	// ===========================
-
-
 
 	HowtoOperateSPData.sprite = std::make_unique<Sprite>();
 
@@ -68,7 +67,6 @@ UIManager::UIManager() {
 	HealthUpSPData.sprite = std::make_unique<Sprite>();
 	SpeedUpSPData.sprite = std::make_unique<Sprite>();
 	AllowUpSPData.sprite = std::make_unique<Sprite>();
-	SkillIconSPData.sprite = std::make_unique<Sprite>();
 	expBarSPData.sprite = std::make_unique<Sprite>();
 	expBarBackSPData.sprite = std::make_unique<Sprite>();
 	houseHpPercentSPData.sprite = std::make_unique<Sprite>();
@@ -83,6 +81,8 @@ UIManager::~UIManager() {}
 void UIManager::Initialize() {
 
 	hpBarUI_->Initialize();
+
+	attackOperationUI_->Initialize();
 
 	// ------------------ WASD / SPACE / ATTACK ------------------
 
@@ -125,10 +125,6 @@ void UIManager::Initialize() {
 	AllowUpSPData.sprite->Initialize(AllowUpSPData.handle);
 	AllowUpSPData.sprite->SetScale({48, 48});
 
-	SkillIconSPData.sprite->Initialize(SkillIconSPData.handle);
-	SkillIconSPData.sprite->SetAnchorPoint({1.0f, 1.0f});
-	SkillIconSPData.sprite->SetScale({64, 64});
-
 	houseHpPercentSPData.sprite->Initialize(houseHpPercentSPData.handle);
 	houseHpPercentSPData.sprite->SetTextureRange({houseHpNumbersTextureSize.x * 10.0f, 0}, houseHpNumbersTextureSize);
 	houseHpPercentSPData.sprite->SetScale({32, 32});
@@ -166,6 +162,8 @@ void UIManager::Update() {
 
 	hpBarUI_->Update();
 
+	attackOperationUI_->Update();
+
 	HowtoOperateSPData.sprite->Update();
 
 	LevelSPData.sprite->Update();
@@ -182,9 +180,7 @@ void UIManager::Update() {
 	AllowUpSPData.translate = {10, SpeedUpSPData.translate.y + 70};
 	AllowUpSPData.sprite->SetPosition(AllowUpSPData.translate);
 	AllowUpSPData.sprite->Update();
-	SkillIconSPData.translate = {1260, 700};
-	SkillIconSPData.sprite->SetPosition(SkillIconSPData.translate);
-	SkillIconSPData.sprite->Update();
+
 	// ===========================
 	//     EXPバー表示
 	// ===========================
@@ -261,6 +257,7 @@ void UIManager::Draw() {
 	SpriteCommon::GetInstance()->DrawCommon();
 	hpBarUI_->Draw();
 	SpriteCommon::GetInstance()->DrawCommon();
+	attackOperationUI_->Draw();
 	HowtoOperateSPData.sprite->Draw();
 
 	LevelSPData.sprite->Draw();
@@ -269,7 +266,7 @@ void UIManager::Draw() {
 	HealthUpSPData.sprite->Draw();
 	SpeedUpSPData.sprite->Draw();
 	AllowUpSPData.sprite->Draw();
-	SkillIconSPData.sprite->Draw();
+
 	expBarBackSPData.sprite->Draw();
 	expBarSPData.sprite->Draw();
 	if (parameters_.Level < parameters_.MaxLevel) {
