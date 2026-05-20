@@ -3,7 +3,7 @@
 #include "Sprite/Sprite.h"
 AttackOperation::AttackOperation() {
 	// スキルアイコンのテクスチャハンドルを取得
-	SkillIconSPData.handle = TextureManager::GetInstance()->GetTextureIndexByfilePath("Resources/2d/skill.png");
+	SkillIconSPData.handle = TextureManager::GetInstance()->GetTextureIndexByfilePath("Resources/2d/AttackOperation/skill.png");
 	SkillIconSPData.sprite = std::make_unique<Sprite>();
 }
 void AttackOperation::Initialize() {
