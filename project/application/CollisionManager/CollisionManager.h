@@ -1,4 +1,5 @@
 #pragma once
+#include "Vector3.h"
 
 class EnemyManager;
 class ExpCubeManager;
@@ -8,5 +9,5 @@ class Boss;
 
 class CollisionManager {
 public:
-	void HandleGameSceneCollisions(Player& player, EnemyManager& enemyManager, ExpCubeManager& expCubeManager, House& house, Boss* boss);
+	bool HandleGameSceneCollisions(Player& player, EnemyManager& enemyManager, ExpCubeManager& expCubeManager, House& house, Boss* boss, Vector3* outHitEnemyPos = nullptr);
 };

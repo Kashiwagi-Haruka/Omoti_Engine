@@ -26,13 +26,11 @@ class HPBarUI {
 	SpriteData playerHpSPData;
 	// プレイヤーHPフレーム用スプライト。
 	SpriteData playerHPFlameSPData;
-	// プレイヤーHPラベル用スプライト。
-	SpriteData playerHPStringSPData;
 
 		// 現在のプレイヤーHP。
-	int playerHP;
+	int playerHP=1;
 	// プレイヤーHP最大値。
-	int playerHPMax;
+	int playerHPMax=1;
 	// HPバー最大サイズ。
 	Vector2 playerHPMaxSize = {400, 100};
 	// HPバーの現在表示幅。

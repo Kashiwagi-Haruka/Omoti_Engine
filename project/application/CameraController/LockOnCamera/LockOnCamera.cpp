@@ -1,9 +1,10 @@
 #include "LockOnCamera.h"
 #include "Camera.h"
+#include "Function.h"
 #include "Input.h"
+#include <cmath>
 #include <imgui.h>
 #include <random>
-#include "Function.h"
 LockOnCamera::LockOnCamera() {}
 LockOnCamera::~LockOnCamera() {}
 void LockOnCamera::Initialize() {
@@ -31,6 +32,12 @@ void LockOnCamera::Update() {
 
 #endif
 	const Vector2 mouseMove = Input::GetInstance()->GetMouseMove();
+	if (hasTarget_) {
+		Vector3 toTarget = targetPos_ - playerPos;
+		if (Function::LengthSquared(toTarget) > 0.0001f) {
+			orbitYaw_ = std::atan2f(toTarget.x, toTarget.z);
+		}
+	}
 	orbitYaw_ += mouseMove.x * mouseSensitivity_;
 	orbitPitch_ += mouseMove.y * mouseSensitivity_;
 
@@ -47,6 +54,9 @@ void LockOnCamera::Update() {
 	Vector3 orbitDir = {sinf(orbitYaw_) * cosf(orbitPitch_), -sinf(orbitPitch_), cosf(orbitYaw_) * cosf(orbitPitch_)};
 
 	transform_.translate = playerPos - orbitDir * distance;
+	if (hasFollowPosition_) {
+		transform_.translate = followPosition_;
+	}
 	transform_.rotate = {orbitPitch_, orbitYaw_, 0.0f};
 
 	if (shakeTimer_ > 0.0f) {
