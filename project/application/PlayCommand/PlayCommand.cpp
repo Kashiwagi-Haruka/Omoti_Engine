@@ -9,19 +9,19 @@ bool PlayCommand::GetInput(Command& command) {
 		command = Command::JUMP;
 		return true;
 	}
-	if (Input::GetInstance()->TriggerKey(DIK_LSHIFT)) {
+	if (Input::GetInstance()->TriggerMouseButton(Input::MouseButton::kRight)) {
 		command = Command::DASH;
 		return true;
 	}
-	if (Input::GetInstance()->TriggerKey(DIK_Z)) {
+	if (Input::GetInstance()->TriggerMouseButton(Input::MouseButton::kLeft)) {
 		command = Command::NORMAL_ATTACK;
 		return true;
 	}
-	if (Input::GetInstance()->TriggerKey(DIK_X)) {
+	if (Input::GetInstance()->TriggerKey(DIK_E)) {
 		command = Command::SKILL_ATTACK;
 		return true;
 	}
-	if (Input::GetInstance()->TriggerKey(DIK_C)) {
+	if (Input::GetInstance()->TriggerKey(DIK_Q)) {
 		command = Command::SPECIAL_ATTACK;
 		return true;
 	}
