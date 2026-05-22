@@ -1,9 +1,11 @@
 #define NOMINMAX
 #include "SizukuSpecial.h"
 #include "Object3d/Object3dCommon.h"
+#include "Model/ModelManager.h"
 
 SizukuSpecial::SizukuSpecial(){ 
 	fieldPlane_ = std::make_unique<Primitive>(); 
+	ModelManager::GetInstance()->LoadModel("Resources/3d/iceFlower", "iceFlower");
 
 }
 void SizukuSpecial::Initialize() { 
