@@ -3,6 +3,7 @@
 #include "Mesh/Primitive/Primitive.h"
 #include "Transform.h"
 #include <memory>
+#include "Object/Characters/Base/Attribute.h"
 class Camera;
 class PlayerKey {
 
@@ -26,6 +27,9 @@ class PlayerKey {
 	float planeRotateVelocity_ = 0.0f;
 
 	bool isAninmationStarted_ = false;
+	Attribute attribute_ = Attribute::None;
+
+	void AttibuteColorSetting();
 
 	public:
 		PlayerKey();
@@ -36,4 +40,5 @@ class PlayerKey {
 	    void SetPlayerTransform(const Transform& transform) { playerTransform_ = transform; }
 	    void SetCamera(Camera* camera) { camera_ = camera; }
 	    void StartAnimation() { isAninmationStarted_ = true; }
+	    void SetAttribute(Attribute attribute) { attribute_ = attribute; }
 };

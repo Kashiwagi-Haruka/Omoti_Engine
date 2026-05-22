@@ -3,6 +3,7 @@
 #include "Mesh/Model/ModelManager.h"
 #include "Mesh/Object3d/Object3dCommon.h"
 #include "Engine/math/Function.h"
+#include "Engine/Texture/Data/Color.h"
 
 namespace{
 const float planeRotateAcceleration = 0.05f;
@@ -30,7 +31,7 @@ void PlayerKey::Initialize() {
 		  .rotate = {0.0f, 0.0f, 0.0f},
 		  .translate = {0.0f, 0.0f, -1.0f}
     };
-	planeCircleTransform_ = {.scale = {0.1f, 0.1f, 1.0f},
+	planeCircleTransform_ = {.scale = {0.75f, 0.75f, 1.0f},
 		  .rotate = {0.0f, 0.0f, 0.0f},
 		  .translate = {0.0f, 0.0f, -1.0f}
     };
@@ -40,7 +41,6 @@ void PlayerKey::Initialize() {
 
 	keyHoleObj_->Initialize(Primitive::Plane);
 	planeCircleObj_->Initialize(Primitive::Plane, "Resources/2d/KeyCircle.png");
-
 
 }
 void PlayerKey::Update() {
@@ -85,7 +85,33 @@ void PlayerKey::Update() {
 	keyHoleObj_->Update();
 	planeCircleObj_->Update();
 }
-
+void PlayerKey::AttibuteColorSetting() {
+	switch (attribute_) {
+	case Attribute::None:
+		planeCircleObj_->SetColor(Color::RGBAToVector4(255,255,255,255));
+		break;
+	case Attribute::Fire:
+		planeCircleObj_->SetColor(Color::RGBAToVector4(240, 40, 40, 255));
+		break;
+	case Attribute::Ice:
+		planeCircleObj_->SetColor(Color::RGBAToVector4(130, 210, 240, 255));
+		break;
+	case Attribute::Wind:
+		planeCircleObj_->SetColor(Color::RGBAToVector4(100, 210, 100, 255));
+		break;
+	case Attribute::Thunder:
+		planeCircleObj_->SetColor(Color::RGBAToVector4(200, 110, 210, 255));
+		break;
+	case Attribute::Imaginary:
+		planeCircleObj_->SetColor(Color::RGBAToVector4(240, 225, 70, 255));
+		break;
+	case Attribute::Quantum:
+		planeCircleObj_->SetColor(Color::RGBAToVector4(85, 85, 220, 255));
+		break;
+	default:
+		break;
+	}
+}
 void PlayerKey::Draw() {
 	Object3dCommon::GetInstance()->SetBlendMode(BlendMode::kBlendModeAlpha);
 	Object3dCommon::GetInstance()->DrawCommon();
