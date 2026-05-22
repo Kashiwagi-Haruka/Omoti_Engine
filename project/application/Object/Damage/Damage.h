@@ -1,12 +1,13 @@
 #pragma once
 #include "Primitive/Primitive.h"
+#include "Object/Characters/Base/Attribute.h"
 #include "Transform.h"
 #include <array>
 #include <memory>
 #include <vector>
 
-class Camera;
 
+class Camera;
 class Damage {
 	int MaxDamage_ = 99999999;
 
@@ -16,6 +17,7 @@ public:
 	void Draw();
 	void SetDamageValue(int damage);
 	void SetPosition(const Vector3& position);
+	void SetAttribute(Attribute attribute);
 
 private:
 	static constexpr float kShowDuration_ = 1.0f;
@@ -29,6 +31,7 @@ private:
 	    {0.0f, 2.0f, 0.0f},
 	};
 	Camera* camera_ = nullptr;
+	Attribute attribute_;
 	bool isVisible_ = false;
 	bool isFading_ = false;
 	float timer_ = 0.0f;
