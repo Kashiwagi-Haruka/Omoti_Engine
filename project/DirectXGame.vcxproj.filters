@@ -317,6 +317,11 @@
     <ClCompile Include="application\UI\AttackOperation\AttackOperation.cpp" />
     <ClCompile Include="application\Object\Characters\Playable\Individual\Sizuku\SizukuSpecial.cpp" />
     <ClCompile Include="application\Object\Characters\Playable\Individual\Yuzuki\YuzukiSpecial.cpp" />
+    <ClCompile Include="application\Object\Characters\Playable\Weapon\Spear\Spear.cpp" />
+    <ClCompile Include="application\Object\Characters\Playable\Weapon\Sword\Sword.cpp" />
+    <ClCompile Include="application\Object\Characters\Playable\Weapon\Gun\Gun.cpp" />
+    <ClCompile Include="application\Object\Characters\Playable\Weapon\BigSword\BigSword.cpp" />
+    <ClCompile Include="application\Object\Characters\Playable\Weapon\Allow\Allow.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Engine\Texture\RenderTexture2D.h" />
@@ -606,6 +611,11 @@
     <ClInclude Include="application\UI\AttackOperation\AttackOperation.h" />
     <ClInclude Include="application\Object\Characters\Playable\Individual\Sizuku\SizukuSpecial.h" />
     <ClInclude Include="application\Object\Characters\Playable\Individual\Yuzuki\YuzukiSpecial.h" />
+    <ClInclude Include="application\Object\Characters\Playable\Weapon\Spear\Spear.h" />
+    <ClInclude Include="application\Object\Characters\Playable\Weapon\Sword\Sword.h" />
+    <ClInclude Include="application\Object\Characters\Playable\Weapon\Gun\Gun.h" />
+    <ClInclude Include="application\Object\Characters\Playable\Weapon\BigSword\BigSword.h" />
+    <ClInclude Include="application\Object\Characters\Playable\Weapon\Allow\Allow.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include=".editorconfig" />
