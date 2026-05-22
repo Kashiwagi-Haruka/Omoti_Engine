@@ -17,7 +17,5 @@ public:
 
 	bool CheckCollision(std::string name, std::string name2);
 
-	void Update();
-
 	bool HandleGameSceneCollisions(Player& player, EnemyManager& enemyManager, ExpCubeManager& expCubeManager, House& house, Boss* boss, Vector3* outHitEnemyPos = nullptr);
 };
