@@ -37,20 +37,32 @@ bool PlayCommand::GetDASH() {
 	}
 	return false;
 }
-bool PlayCommand::GetNORMAL_ATTACK() {
-	if (Input::GetInstance()->TriggerMouseButton(Input::MouseButton::kLeft)) {
+bool PlayCommand::GetNORMAL_ATTACK_PUSH() {
+	if (Input::GetInstance()->PushMouseButton(Input::MouseButton::kLeft) ||Input::GetInstance()->PushButton(Input::PadButton::kButtonB)) {
+		return true;
+	}
+	return false;
+}
+bool PlayCommand::GetNORMAL_ATTACK_TRIGGER() {
+	if (Input::GetInstance()->TriggerMouseButton(Input::MouseButton::kLeft) || Input::GetInstance()->TriggerButton(Input::PadButton::kButtonB)) {
+		return true;
+	}
+	return false;
+}
+bool PlayCommand::GetNORMAL_ATTACK_RELEASE() {
+	if (Input::GetInstance()->TriggerMouseButton(Input::MouseButton::kLeft) || Input::GetInstance()->TriggerButton(Input::PadButton::kButtonB)) {
 		return true;
 	}
 	return false;
 }
 bool PlayCommand::GetSKILL_ATTACK() {
-	if (Input::GetInstance()->TriggerKey(DIK_E)) {
+	if (Input::GetInstance()->TriggerKey(DIK_E) || Input::GetInstance()->TriggerButton(Input::PadButton::kButtonY)) {
 		return true;
 	}
 	return false;
 }
 bool PlayCommand::GetSPECIAL_ATTACK() {
-	if (Input::GetInstance()->TriggerKey(DIK_Q)) {
+	if (Input::GetInstance()->TriggerKey(DIK_Q) || Input::GetInstance()->TriggerButton(Input::PadButton::kButtonX)) {
 		return true;
 	}
 	return false;

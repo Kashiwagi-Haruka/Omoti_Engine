@@ -6,6 +6,7 @@
 #include <algorithm>
 #include <numbers>
 #include "Object3d/Object3dCommon.h"
+#include "PlayCommand/PlayCommand.h"
 #ifdef USE_IMGUI
 #include <imgui.h>
 #endif // USE_IMGUI
@@ -72,11 +73,11 @@ void Player::Move() {
 	Vector3 inputAxis = {0.0f, 0.0f, 0.0f};
 	bool hasInput = false;
 
-	if (Input::GetInstance()->PushKey(DIK_A) || Input::GetInstance()->PushKey(DIK_D)) {
+	if (PlayCommand::GetMOVE_LEFT() || PlayCommand::GetMOVE_RIGHT()) {
 
-		if (!Input::GetInstance()->PushKey(DIK_D)) {
+		if (!PlayCommand::GetMOVE_RIGHT()) {
 
-			if (Input::GetInstance()->PushKey(DIK_A)) {
+			if (PlayCommand::GetMOVE_LEFT()) {
 
 				inputAxis.x = -1.0f;
 				hasInput = true;
@@ -86,9 +87,9 @@ void Player::Move() {
 			}
 		}
 
-		if (!Input::GetInstance()->PushKey(DIK_A)) {
+		if (!PlayCommand::GetMOVE_LEFT()) {
 
-			if (Input::GetInstance()->PushKey(DIK_D)) {
+			if (PlayCommand::GetMOVE_RIGHT()) {
 				inputAxis.x = 1.0f;
 				hasInput = true;
 				if (!attack_->IsAttacking()) {
@@ -97,11 +98,11 @@ void Player::Move() {
 			}
 		}
 	}
-	if (Input::GetInstance()->PushKey(DIK_W) || Input::GetInstance()->PushKey(DIK_S)) {
+	if (PlayCommand::GetMOVE_FRONT() || PlayCommand::GetMOVE_BACK()) {
 
-		if (!Input::GetInstance()->PushKey(DIK_W)) {
+		if (!PlayCommand::GetMOVE_FRONT()) {
 
-			if (Input::GetInstance()->PushKey(DIK_S)) {
+			if (PlayCommand::GetMOVE_BACK()) {
 				if (!attack_->IsAttacking()) {
 					models_->SetStateM(PlayerModels::StateM::walk);
 				}
@@ -110,9 +111,9 @@ void Player::Move() {
 			}
 		}
 
-		if (!Input::GetInstance()->PushKey(DIK_S)) {
+		if (!PlayCommand::GetMOVE_BACK()) {
 
-			if (Input::GetInstance()->PushKey(DIK_W)) {
+			if (PlayCommand::GetMOVE_FRONT()) {
 				inputAxis.z = 1.0f;
 				hasInput = true;
 				if (!attack_->IsAttacking()) {
@@ -161,28 +162,28 @@ void Player::Move() {
 		transform_.rotate.y = Function::Lerp(transform_.rotate.y, transform_.rotate.y + angleDiff, rotateTimer);
 	}
 
-	if (!Input::GetInstance()->PushKey(DIK_A) && !Input::GetInstance()->PushKey(DIK_D) && !Input::GetInstance()->PushKey(DIK_W) && !Input::GetInstance()->PushKey(DIK_S)) {
+	if (!PlayCommand::GetMOVE_LEFT() && !PlayCommand::GetMOVE_RIGHT() && !PlayCommand::GetMOVE_FRONT() && !PlayCommand::GetMOVE_BACK()) {
 		isDash = false;
 		if (!attack_->IsAttacking() && !attack_->isSkillAttacking()) {
 		models_->SetStateM(PlayerModels::StateM::idle);
 		}
 	} else {
-		isDash = Input::GetInstance()->PushKey(DIK_LSHIFT) || Input::GetInstance()->PushKey(DIK_RSHIFT);
+		isDash = PlayCommand::GetDASH();
 	}
 
-	if (Input::GetInstance()->TriggerKey(DIK_SPACE)) {
+	if (PlayCommand::GetJUMP()) {
 		if (!isfalling && !isJump) {
 			isJump = true;
 		}
 	}
 
-	if (!Input::GetInstance()->PushKey(DIK_A) && !Input::GetInstance()->PushKey(DIK_D)) {
+	if (!PlayCommand::GetMOVE_LEFT() && !PlayCommand::GetMOVE_RIGHT()) {
 		velocity_.x *= (1.0f - parameters_.decelerationRate);
 		if (velocity_.x > -0.01f && velocity_.x < 0.01f) {
 			velocity_.x = 0.0f;
 		}
 	}
-	if (!Input::GetInstance()->PushKey(DIK_W) && !Input::GetInstance()->PushKey(DIK_S)) {
+	if (!PlayCommand::GetMOVE_FRONT() && !PlayCommand::GetMOVE_BACK()) {
 		velocity_.z *= (1.0f - parameters_.decelerationRate);
 		if (velocity_.z > -0.01f && velocity_.z < 0.01f) {
 			velocity_.z = 0.0f;
@@ -196,10 +197,10 @@ void Player::Move() {
 		velocity_.z *= parameters_.dashMagnification;
 	}
 
-	if (Input::GetInstance()->PushKey(DIK_A)) {
+	if (PlayCommand::GetMOVE_LEFT()) {
 		bulletVelocity_.x = -1;
 	}
-	if (Input::GetInstance()->PushKey(DIK_D)) {
+	if (PlayCommand::GetMOVE_RIGHT()) {
 		bulletVelocity_.x = 1;
 	}
 }
