@@ -616,6 +616,7 @@
     <ClInclude Include="application\Object\Characters\Playable\Weapon\Gun\Gun.h" />
     <ClInclude Include="application\Object\Characters\Playable\Weapon\BigSword\BigSword.h" />
     <ClInclude Include="application\Object\Characters\Playable\Weapon\Allow\Allow.h" />
+    <ClInclude Include="application\Object\Characters\Playable\Weapon\BaseWeapon.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include=".editorconfig" />

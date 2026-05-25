@@ -350,6 +350,7 @@ copy "$(WindowsSdkDir)\bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)\
     <ClInclude Include="application\Object\Characters\Enemy\EnemyHitEffect.h" />
     <ClInclude Include="application\Object\Characters\Enemy\EnemyManager.h" />
     <ClInclude Include="application\Object\Characters\Enemy\EnemyStun.h" />
+    <ClInclude Include="application\Object\Characters\Playable\Weapon\BaseWeapon.h" />
     <ClInclude Include="application\Object\ExpCube\ExpCube.h" />
     <ClInclude Include="application\Object\ExpCube\ExpCubeManager.h" />
     <ClInclude Include="application\Object\House\House.h" />
