@@ -4,6 +4,7 @@
 #include "Function.h"
 #include <algorithm>
 #include <string>
+#include "Data/Color.h"
 
 void Damage::Initialize(Camera* camera) {
 	camera_ = camera;
@@ -67,7 +68,31 @@ void Damage::Update() {
 	for (int i = 0; i < digitCount; ++i) {
 		Primitive* primitive = digitPrimitives_[i].get();
 		primitive->SetCamera(camera_);
-		primitive->SetColor({1.0f, 1.0f, 1.0f, alpha_});
+		switch (attribute_) {
+		case Attribute::None:
+			primitive->SetColor(Color::RGBAToVector4(255, 255, 255, static_cast<int>(alpha_ * 255)));
+			break;
+		case Attribute::Fire:
+			primitive->SetColor(Color::RGBAToVector4(240, 40, 40, static_cast<int>(alpha_ * 255)));
+			break;
+		case Attribute::Ice:
+			primitive->SetColor(Color::RGBAToVector4(130, 210, 240, static_cast<int>(alpha_ * 255)));
+			break;
+		case Attribute::Wind:
+			primitive->SetColor(Color::RGBAToVector4(100, 210, 100, static_cast<int>(alpha_ * 255)));
+			break;
+		case Attribute::Thunder:
+			primitive->SetColor(Color::RGBAToVector4(200, 110, 210, static_cast<int>(alpha_ * 255)));
+			break;
+		case Attribute::Imaginary:
+			primitive->SetColor(Color::RGBAToVector4(240, 225, 70, static_cast<int>(alpha_ * 255)));
+			break;
+		case Attribute::Quantum:
+			primitive->SetColor(Color::RGBAToVector4(85, 85, 220, static_cast<int>(alpha_ * 255)));
+			break;
+		default:
+			break;
+		}
 		primitive->SetUvTransform({0.1f, 1.0f, 1.0f}, {0.0f, 0.0f, 0.0f}, {0.1f * static_cast<float>(digits_[i]), 0.0f, 0.0f});
 
 		Transform digitTransform = transform_;
@@ -88,3 +113,5 @@ void Damage::Draw() {
 		digitPrimitives_[i]->Draw();
 	}
 }
+
+void Damage::SetAttribute(Attribute attribute) { attribute_ = attribute; }

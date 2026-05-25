@@ -1,5 +1,4 @@
 #pragma once
-#include "Input.h"
 #include "Object3d/Object3d.h"
 #include "PlayerParameters.h"
 #include "Weapon/PlayerSword.h"

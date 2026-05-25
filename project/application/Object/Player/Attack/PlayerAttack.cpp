@@ -1,5 +1,5 @@
 #include "PlayerAttack.h"
-#include "Input.h"
+#include "PlayCommand/PlayCommand.h"
 
 PlayerAttack::PlayerAttack() {
 	sword_ = std::make_unique<PlayerSword>();
@@ -69,12 +69,12 @@ void PlayerAttack::Update() {
 	}
 
 	// ===== 左クリック長押し判定 =====
-	if (Input::GetInstance()->PushMouseButton(Input::MouseButton::kLeft) || Input::GetInstance()->PushButton(Input::PadButton::kButtonB)) {
+	if (PlayCommand::GetNORMAL_ATTACK_PUSH()) {
 		attackHoldTimer_ += 1.0f / 60.0f;
 	}
 
 	// ===== 攻撃入力の処理 =====
-	if (Input::GetInstance()->TriggerMouseButton(Input::MouseButton::kLeft) || Input::GetInstance()->TriggerButton(Input::PadButton::kButtonB)||(canCombo_&&nextComboInput_)) {
+	if (PlayCommand::GetNORMAL_ATTACK_TRIGGER()||(canCombo_&&nextComboInput_)) {
 
 		// ★ 空中にいる場合は落下攻撃
 		if (isfalling || isJump) {
@@ -144,7 +144,7 @@ void PlayerAttack::Update() {
 	}
 
 	// ===== 左クリックを離したとき =====
-	if (Input::GetInstance()->ReleaseMouseButton(Input::MouseButton::kLeft) || Input::GetInstance()->ReleaseButton(Input::PadButton::kButtonB)) {
+	if (PlayCommand::GetNORMAL_ATTACK_RELEASE()) {
 
 		// ★ 長押ししていた場合は重撃に変更
 		if (attackHoldTimer_ >= heavyAttackThreshold_ && isAttacking_) {
@@ -181,7 +181,7 @@ void PlayerAttack::Update() {
 			comboTimer_ = 0.0f;
 		}
 	}
-	if (Input::GetInstance()->TriggerKey(DIK_E) || Input::GetInstance()->TriggerButton(Input::PadButton::kButtonY)) {
+	if (PlayCommand::GetSKILL_ATTACK()) {
 		// スキル攻撃
 		if (!isSkillAttack) {
 			isSkillAttack = true;
@@ -198,7 +198,7 @@ void PlayerAttack::Update() {
 			comboTimer_ = 0.0f;
 		}
 	}
-	if (Input::GetInstance()->TriggerKey(DIK_Q) || Input::GetInstance()->TriggerButton(Input::PadButton::kButtonX)) {
+	if (PlayCommand::GetSPECIAL_ATTACK()) {
 		// 必殺技
 		if (!isSpecialAttack) {
 			isSpecialAttack = true;

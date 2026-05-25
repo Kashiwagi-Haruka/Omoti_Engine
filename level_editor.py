@@ -1,5 +1,6 @@
 import bpy
 import math
+import bpy_extras
 
 bl_info = {
     "name": "レベルエディタ",
@@ -60,11 +61,17 @@ class MYADDON_OT_add_filename(bpy.types.Operator):
 
 
 # オペレーター：シーン出力
-class MYADDON_OT_export_scene(bpy.types.Operator):
+class MYADDON_OT_export_scene(
+    bpy.types.Operator,
+    bpy_extras.io_utils.ExportHelper
+):
     bl_idname = "myaddon.myaddon_ot_export_scene"
     bl_label = "シーン出力"
     bl_description = "シーン情報をExportします"
     bl_options = {'REGISTER', 'UNDO'}
+
+    # 出力ファイルの拡張子
+    filename_ext = ".scene"
 
     def write_and_print(self, file, text):
         print(text)
@@ -72,51 +79,87 @@ class MYADDON_OT_export_scene(bpy.types.Operator):
         file.write("\n")
 
     def parse_scene_recursive(self, file, obj, level):
-        indent = ''
+        """シーン解析用再帰関数"""
+
+        # 深さ分インデントする
+        indent = ""
         for i in range(level):
-            indent += '\t'
+            indent += "\t"
 
-        self.write_and_print(file, indent + obj.type)
+        # オブジェクト名書き込み
+        self.write_and_print(file, indent + obj.type + " - " + obj.name)
 
+        # ローカルトランスフォームを取得
         trans, rot, scale = obj.matrix_local.decompose()
+
+        # 回転を Quaternion から Euler へ変換
         rot = rot.to_euler()
 
+        # ラジアンから度数法へ変換
         rot.x = math.degrees(rot.x)
         rot.y = math.degrees(rot.y)
         rot.z = math.degrees(rot.z)
 
-        self.write_and_print(file, indent + "T %f %f %f" % (trans.x, trans.y, trans.z))
-        self.write_and_print(file, indent + "R %f %f %f" % (rot.x, rot.y, rot.z))
-        self.write_and_print(file, indent + "S %f %f %f" % (scale.x, scale.y, scale.z))
+        # トランスフォーム情報を書き込み
+        self.write_and_print(
+            file,
+            indent + "Trans(%f,%f,%f)" % (trans.x, trans.y, trans.z)
+        )
+        self.write_and_print(
+            file,
+            indent + "Rot(%f,%f,%f)" % (rot.x, rot.y, rot.z)
+        )
+        self.write_and_print(
+            file,
+            indent + "Scale(%f,%f,%f)" % (scale.x, scale.y, scale.z)
+        )
 
+        # file_name カスタムプロパティがある場合だけ出力
         if "file_name" in obj:
-            self.write_and_print(file, indent + "N %s" % obj["file_name"])
+            self.write_and_print(
+                file,
+                indent + "FileName(%s)" % obj["file_name"]
+            )
 
         self.write_and_print(file, indent + "END")
         self.write_and_print(file, "")
 
+        # 子ノードへ進む
         for child in obj.children:
             self.parse_scene_recursive(file, child, level + 1)
+
+    def export(self):
+        """ファイルに出力"""
+
+        print("シーン情報出力開始... %r" % self.filepath)
+
+        # ファイルをテキスト形式で書き出し用にオープン
+        # スコープを抜けると自動的にクローズされる
+        with open(self.filepath, "w", encoding="utf-8") as file:
+
+            # ファイル識別用の先頭文字
+            self.write_and_print(file, "SCENE")
+
+            # シーン内の全オブジェクトについて
+            for obj in bpy.context.scene.objects:
+
+                # 親オブジェクトがあるものはスキップ
+                # 代わりに親から再帰で呼び出す
+                if obj.parent:
+                    continue
+
+                # シーン直下のオブジェクトをルートノードとして再帰処理
+                self.parse_scene_recursive(file, obj, 0)
 
     def execute(self, context):
         print("シーン情報をExportします")
 
-        filepath = bpy.data.filepath
-        if filepath == "":
-            self.report({'WARNING'}, "先にBlenderファイルを保存してください")
-            return {'CANCELLED'}
+        # ファイル出力のみを別関数に分離
+        self.export()
 
-        export_filepath = filepath.replace(".blend", ".txt")
-
-        with open(export_filepath, "w", encoding="utf-8") as file:
-            for obj in bpy.context.scene.objects:
-                if obj.parent:
-                    continue
-
-                self.parse_scene_recursive(file, obj, 0)
-
-        print("シーン情報をExportしました")
         self.report({'INFO'}, "シーン情報をExportしました")
+        print("シーン情報をExportしました")
+
         return {'FINISHED'}
 
 

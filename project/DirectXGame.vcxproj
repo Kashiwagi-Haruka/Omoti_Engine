@@ -159,6 +159,7 @@ copy "$(WindowsSdkDir)\bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)\
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="application\Object\Characters\Playable\Weapon\Allow\Allow.cpp" />
     <ClCompile Include="application\CameraController\LockOnCamera\LockOnCamera.cpp" />
     <ClCompile Include="application\Object\Characters\Enemy\Adhesion\Adhesion.cpp" />
     <ClCompile Include="application\CameraController\CameraController.cpp" />
@@ -199,6 +200,7 @@ copy "$(WindowsSdkDir)\bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)\
     <ClCompile Include="application\Object\Characters\CharacterDisplay\Text\CharacterDisplayMenuText.cpp" />
     <ClCompile Include="application\Object\Damage\DamageMath.cpp" />
     <ClCompile Include="application\UI\AttackOperation\AttackOperation.cpp" />
+    <ClCompile Include="application\Object\Characters\Playable\Weapon\BigSword\BigSword.cpp" />
     <ClCompile Include="Engine\Audio\AudioMixer.cpp" />
     <ClCompile Include="Engine\Editor\EditorData\Audio\EditorAudio.cpp" />
     <ClCompile Include="Engine\Editor\EditorData\Camera\EditorCamera.cpp" />
@@ -302,6 +304,11 @@ copy "$(WindowsSdkDir)\bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)\
     <ClCompile Include="application\CameraController\NormalAttackCamera\NormalAttackCamera.cpp" />
     <ClCompile Include="application\Object\Characters\Playable\Individual\Sizuku\SizukuSkill.cpp" />
     <ClCompile Include="application\UI\HPBar\HPBarUI.cpp" />
+    <ClCompile Include="application\Object\Characters\Playable\Individual\Sizuku\SizukuSpecial.cpp" />
+    <ClCompile Include="application\Object\Characters\Playable\Individual\Yuzuki\YuzukiSpecial.cpp" />
+    <ClCompile Include="application\Object\Characters\Playable\Weapon\Spear\Spear.cpp" />
+    <ClCompile Include="application\Object\Characters\Playable\Weapon\Gun\Gun.cpp" />
+    <ClCompile Include="application\Object\Characters\Playable\Weapon\Sword\Sword.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include=".editorconfig" />
@@ -323,6 +330,7 @@ copy "$(WindowsSdkDir)\bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)\
     <None Include="Resources\shader\Sprite\Sprite.hlsli" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="application\Object\Characters\Playable\Weapon\Allow\Allow.h" />
     <ClInclude Include="application\CameraController\LockOnCamera\LockOnCamera.h" />
     <ClInclude Include="application\Object\Characters\Enemy\Adhesion\Adhesion.h" />
     <ClInclude Include="application\CameraController\CameraController.h" />
@@ -342,6 +350,7 @@ copy "$(WindowsSdkDir)\bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)\
     <ClInclude Include="application\Object\Characters\Enemy\EnemyHitEffect.h" />
     <ClInclude Include="application\Object\Characters\Enemy\EnemyManager.h" />
     <ClInclude Include="application\Object\Characters\Enemy\EnemyStun.h" />
+    <ClInclude Include="application\Object\Characters\Playable\Weapon\BaseWeapon.h" />
     <ClInclude Include="application\Object\ExpCube\ExpCube.h" />
     <ClInclude Include="application\Object\ExpCube\ExpCubeManager.h" />
     <ClInclude Include="application\Object\House\House.h" />
@@ -367,6 +376,7 @@ copy "$(WindowsSdkDir)\bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)\
     <ClInclude Include="application\Object\Characters\CharacterDisplay\Text\CharacterDisplayMenuText.h" />
     <ClInclude Include="application\Object\Damage\DamageMath.h" />
     <ClInclude Include="application\UI\AttackOperation\AttackOperation.h" />
+    <ClInclude Include="application\Object\Characters\Playable\Weapon\BigSword\BigSword.h" />
     <ClInclude Include="Engine\Audio\AudioMixer.h" />
     <ClInclude Include="Engine\base\ScreenSize.h" />
     <ClInclude Include="Engine\Editor\EditorData\Audio\EditorAudio.h" />
@@ -477,6 +487,11 @@ copy "$(WindowsSdkDir)\bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)\
     <ClInclude Include="application\CameraController\NormalAttackCamera\NormalAttackCamera.h" />
     <ClInclude Include="application\Object\Characters\Playable\Individual\Sizuku\SizukuSkill.h" />
     <ClInclude Include="application\UI\HPBar\HPBarUI.h" />
+    <ClInclude Include="application\Object\Characters\Playable\Individual\Sizuku\SizukuSpecial.h" />
+    <ClInclude Include="application\Object\Characters\Playable\Individual\Yuzuki\YuzukiSpecial.h" />
+    <ClInclude Include="application\Object\Characters\Playable\Weapon\Spear\Spear.h" />
+    <ClInclude Include="application\Object\Characters\Playable\Weapon\Gun\Gun.h" />
+    <ClInclude Include="application\Object\Characters\Playable\Weapon\Sword\Sword.h" />
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="Resources\shader\FullScreenCopy\CopyImage.PS.hlsl">
