@@ -4,6 +4,7 @@ import gpu
 import copy
 import bpy_extras
 import gpu_extras.batch
+import mathutils
 
 
 bl_info = {
@@ -25,76 +26,96 @@ bl_info = {
 # コライダー描画
 # =========================================================
 class DrawCollider:
-    # 3Dビューに登録した描画関数のハンドル
     handle = None
 
     @staticmethod
     def draw_collider():
-        # 頂点データ
+
         vertices = {
             "pos": []
         }
 
-        # インデックスデータ
         indices = []
 
-        # Boxの8頂点分のローカル座標オフセット
         offsets = [
-            [-0.5, -0.5, -0.5],  # 左下前
-            [+0.5, -0.5, -0.5],  # 右下前
-            [-0.5, +0.5, -0.5],  # 左上前
-            [+0.5, +0.5, -0.5],  # 右上前
+            [-0.5, -0.5, -0.5],
+            [+0.5, -0.5, -0.5],
+            [-0.5, +0.5, -0.5],
+            [+0.5, +0.5, -0.5],
 
-            [-0.5, -0.5, +0.5],  # 左下奥
-            [+0.5, -0.5, +0.5],  # 右下奥
-            [-0.5, +0.5, +0.5],  # 左上奥
-            [+0.5, +0.5, +0.5],  # 右上奥
+            [-0.5, -0.5, +0.5],
+            [+0.5, -0.5, +0.5],
+            [-0.5, +0.5, +0.5],
+            [+0.5, +0.5, +0.5],
         ]
 
-        # 立方体のX,Y,Z方向サイズ
-        size = [2, 2, 2]
-
-        # 現在シーン内にある全オブジェクトを走査
+        # 現在シーンのオブジェクトを走査
         for object in bpy.context.scene.objects:
 
-            # このオブジェクトのBox頂点を追加する前の頂点数
+            # colliderプロパティがなければ描画しない
+            if "collider" not in object:
+                continue
+
+            # BOX以外は今のところ非対応
+            if object["collider"] != "BOX":
+                continue
+
+            # 追加前の頂点数
             start = len(vertices["pos"])
 
-            # Boxの8頂点分回す
-            for offset in offsets:
-                # オブジェクトの中心座標をコピー
-                pos = copy.copy(object.location)
+            # デフォルト値
+            center = mathutils.Vector((0, 0, 0))
+            size = mathutils.Vector((2, 2, 2))
 
-                # 中心点を基準に各頂点ごとにずらす
+            # カスタムプロパティ取得
+            if "collider_center" in object:
+                center[0] = object["collider_center"][0]
+                center[1] = object["collider_center"][1]
+                center[2] = object["collider_center"][2]
+
+            if "collider_size" in object:
+                size[0] = object["collider_size"][0]
+                size[1] = object["collider_size"][1]
+                size[2] = object["collider_size"][2]
+
+            # Box8頂点生成
+            for offset in offsets:
+
+                # ローカル座標
+                pos = copy.copy(center)
+
                 pos[0] += offset[0] * size[0]
                 pos[1] += offset[1] * size[1]
                 pos[2] += offset[2] * size[2]
 
-                # 頂点データリストに座標を追加
+                # ワールド座標へ変換
+                pos = object.matrix_world @ pos
+
+                # 頂点追加
                 vertices["pos"].append(pos)
 
-            # 前面を構成する辺の頂点インデックス
+            # 線登録
             indices.append([start + 0, start + 1])
             indices.append([start + 2, start + 3])
             indices.append([start + 0, start + 2])
             indices.append([start + 1, start + 3])
 
-            # 奥面を構成する辺の頂点インデックス
             indices.append([start + 4, start + 5])
             indices.append([start + 6, start + 7])
             indices.append([start + 4, start + 6])
             indices.append([start + 5, start + 7])
 
-            # 手前と奥を繋ぐ辺の頂点インデックス
             indices.append([start + 0, start + 4])
             indices.append([start + 1, start + 5])
             indices.append([start + 2, start + 6])
             indices.append([start + 3, start + 7])
 
-        # ビルトインの単色シェーダーを取得
-        shader = gpu.shader.from_builtin("UNIFORM_COLOR")
+        # 頂点なしなら終了
+        if len(vertices["pos"]) <= 0:
+            return
 
-        # 描画用バッチを作成
+        shader = gpu.shader.from_builtin("3D_UNIFORM_COLOR")
+
         batch = gpu_extras.batch.batch_for_shader(
             shader,
             "LINES",
@@ -102,17 +123,17 @@ class DrawCollider:
             indices=indices
         )
 
-        # シェーダーのパラメータ設定
-        color = [0.5, 1.0, 1.0, 1.0]
+        color = (0.5, 1.0, 1.0, 1.0)
 
         shader.bind()
         shader.uniform_float("color", color)
 
-        # 描画
         batch.draw(shader)
 
 
-# オペレーター：頂点を伸ばす
+# =========================================================
+# 頂点を伸ばす
+# =========================================================
 class MYADDON_OT_stretch_vertex(bpy.types.Operator):
     bl_idname = "myaddon.myaddon_ot_stretch_vertex"
     bl_label = "頂点を伸ばす"
@@ -120,12 +141,17 @@ class MYADDON_OT_stretch_vertex(bpy.types.Operator):
     bl_options = {'REGISTER', 'UNDO'}
 
     def execute(self, context):
+
         bpy.data.objects["Cube"].data.vertices[0].co.x += 1.0
+
         print("頂点を伸ばしました。")
+
         return {'FINISHED'}
 
 
-# オペレーター：ICO球生成
+# =========================================================
+# ICO球生成
+# =========================================================
 class MYADDON_OT_create_ico_sphere(bpy.types.Operator):
     bl_idname = "myaddon.myaddon_ot_create_object"
     bl_label = "ICO球生成"
@@ -133,29 +159,51 @@ class MYADDON_OT_create_ico_sphere(bpy.types.Operator):
     bl_options = {'REGISTER', 'UNDO'}
 
     def execute(self, context):
+
         bpy.ops.mesh.primitive_ico_sphere_add()
+
         print("ICO球を生成しました。")
+
         return {'FINISHED'}
 
 
-# オペレーター：file_nameカスタムプロパティ追加
+# =========================================================
+# file_name追加
+# =========================================================
 class MYADDON_OT_add_filename(bpy.types.Operator):
     bl_idname = "myaddon.myaddon_ot_add_filename"
-    bl_label = "FileName 追加"
+    bl_label = "FileName追加"
     bl_description = "['file_name']カスタムプロパティを追加します"
     bl_options = {'REGISTER', 'UNDO'}
 
     def execute(self, context):
-        if context.object is None:
-            self.report({'WARNING'}, "オブジェクトが選択されていません")
-            return {'CANCELLED'}
 
         context.object["file_name"] = ""
-        print("file_name を追加しました。")
+
         return {'FINISHED'}
 
 
-# オペレーター：シーン出力
+# =========================================================
+# collider追加
+# =========================================================
+class MYADDON_OT_add_collider(bpy.types.Operator):
+    bl_idname = "myaddon.myaddon_ot_add_collider"
+    bl_label = "Collider追加"
+    bl_description = "['collider']カスタムプロパティを追加します"
+    bl_options = {'REGISTER', 'UNDO'}
+
+    def execute(self, context):
+
+        context.object["collider"] = "BOX"
+        context.object["collider_center"] = mathutils.Vector((0, 0, 0))
+        context.object["collider_size"] = mathutils.Vector((2, 2, 2))
+
+        return {'FINISHED'}
+
+
+# =========================================================
+# シーン出力
+# =========================================================
 class MYADDON_OT_export_scene(
     bpy.types.Operator,
     bpy_extras.io_utils.ExportHelper
@@ -163,23 +211,29 @@ class MYADDON_OT_export_scene(
     bl_idname = "myaddon.myaddon_ot_export_scene"
     bl_label = "シーン出力"
     bl_description = "シーン情報をExportします"
-    bl_options = {'REGISTER', 'UNDO'}
 
-    filename_ext = ".scene"
+    filename_ext = ".txt"
 
     def write_and_print(self, file, text):
-        print(text)
-        file.write(text)
-        file.write("\n")
 
-    def parse_scene_recursive(self, file, obj, level):
+        print(text)
+
+        file.write(text)
+        file.write('\n')
+
+    def parse_scene_recursive(self, file, object, level):
+
         indent = ""
         for i in range(level):
             indent += "\t"
 
-        self.write_and_print(file, indent + obj.type + " - " + obj.name)
+        self.write_and_print(
+            file,
+            indent + object.type
+        )
 
-        trans, rot, scale = obj.matrix_local.decompose()
+        trans, rot, scale = object.matrix_local.decompose()
+
         rot = rot.to_euler()
 
         rot.x = math.degrees(rot.x)
@@ -188,54 +242,108 @@ class MYADDON_OT_export_scene(
 
         self.write_and_print(
             file,
-            indent + "Trans(%f,%f,%f)" % (trans.x, trans.y, trans.z)
-        )
-        self.write_and_print(
-            file,
-            indent + "Rot(%f,%f,%f)" % (rot.x, rot.y, rot.z)
-        )
-        self.write_and_print(
-            file,
-            indent + "Scale(%f,%f,%f)" % (scale.x, scale.y, scale.z)
+            indent + "T %f %f %f"
+            % (trans.x, trans.y, trans.z)
         )
 
-        if "file_name" in obj:
+        self.write_and_print(
+            file,
+            indent + "R %f %f %f"
+            % (rot.x, rot.y, rot.z)
+        )
+
+        self.write_and_print(
+            file,
+            indent + "S %f %f %f"
+            % (scale.x, scale.y, scale.z)
+        )
+
+        # file_name
+        if "file_name" in object:
+
             self.write_and_print(
                 file,
-                indent + "FileName(%s)" % obj["file_name"]
+                indent + "N %s"
+                % object["file_name"]
             )
 
-        self.write_and_print(file, indent + "END")
+        # collider
+        if "collider" in object:
+
+            self.write_and_print(
+                file,
+                indent + "C %s"
+                % object["collider"]
+            )
+
+            temp_str = indent + "CC %f %f %f"
+            temp_str %= (
+                object["collider_center"][0],
+                object["collider_center"][1],
+                object["collider_center"][2]
+            )
+
+            self.write_and_print(file, temp_str)
+
+            temp_str = indent + "CS %f %f %f"
+            temp_str %= (
+                object["collider_size"][0],
+                object["collider_size"][1],
+                object["collider_size"][2]
+            )
+
+            self.write_and_print(file, temp_str)
+
+        self.write_and_print(
+            file,
+            indent + "END"
+        )
+
         self.write_and_print(file, "")
 
-        for child in obj.children:
-            self.parse_scene_recursive(file, child, level + 1)
+        for child in object.children:
+            self.parse_scene_recursive(
+                file,
+                child,
+                level + 1
+            )
 
     def export(self):
-        print("シーン情報出力開始... %r" % self.filepath)
 
-        with open(self.filepath, "w", encoding="utf-8") as file:
-            self.write_and_print(file, "SCENE")
+        print("シーン情報をExportします")
 
-            for obj in bpy.context.scene.objects:
-                if obj.parent:
+        with open(self.filepath, "wt", encoding="utf-8") as file:
+
+            file.write("SCENE\n")
+
+            for object in bpy.context.scene.objects:
+
+                if object.parent:
                     continue
 
-                self.parse_scene_recursive(file, obj, 0)
+                self.parse_scene_recursive(
+                    file,
+                    object,
+                    0
+                )
 
     def execute(self, context):
-        print("シーン情報をExportします")
 
         self.export()
 
-        self.report({'INFO'}, "シーン情報をExportしました")
-        print("シーン情報をExportしました")
+        self.report(
+            {'INFO'},
+            "シーン情報をExportしました"
+        )
 
         return {'FINISHED'}
 
 
-# オブジェクトのファイルネームパネル
+# =========================================================
+# FileNameパネル
+# =========================================================
 class OBJECT_PT_file_name(bpy.types.Panel):
+
     bl_idname = "OBJECT_PT_file_name"
     bl_label = "FileName"
     bl_space_type = "PROPERTIES"
@@ -243,22 +351,70 @@ class OBJECT_PT_file_name(bpy.types.Panel):
     bl_context = "object"
 
     def draw(self, context):
-        if context.object is None:
-            return
 
         if "file_name" in context.object:
-            self.layout.prop(context.object, '["file_name"]', text=self.bl_label)
+            self.layout.prop(
+                context.object,
+                '["file_name"]',
+                text=self.bl_label
+            )
         else:
-            self.layout.operator(MYADDON_OT_add_filename.bl_idname)
+            self.layout.operator(
+                MYADDON_OT_add_filename.bl_idname
+            )
 
 
-# トップバーの拡張メニュー
-class TOPBAR_MT_my_menu(bpy.types.Menu):
-    bl_idname = "TOPBAR_MT_my_menu"
-    bl_label = "MyMenu"
-    bl_description = "拡張メニュー by " + bl_info["author"]
+# =========================================================
+# Colliderパネル
+# =========================================================
+class OBJECT_PT_collider(bpy.types.Panel):
+
+    bl_idname = "OBJECT_PT_collider"
+    bl_label = "Collider"
+    bl_space_type = "PROPERTIES"
+    bl_region_type = "WINDOW"
+    bl_context = "object"
 
     def draw(self, context):
+
+        if "collider" in context.object:
+
+            self.layout.prop(
+                context.object,
+                '["collider"]',
+                text="Type"
+            )
+
+            self.layout.prop(
+                context.object,
+                '["collider_center"]',
+                text="Center"
+            )
+
+            self.layout.prop(
+                context.object,
+                '["collider_size"]',
+                text="Size"
+            )
+
+        else:
+
+            self.layout.operator(
+                MYADDON_OT_add_collider.bl_idname
+            )
+
+
+# =========================================================
+# メニュー
+# =========================================================
+class TOPBAR_MT_my_menu(bpy.types.Menu):
+
+    bl_idname = "TOPBAR_MT_my_menu"
+    bl_label = "MyMenu"
+    bl_description = "拡張メニュー"
+
+    def draw(self, context):
+
         self.layout.operator(
             MYADDON_OT_stretch_vertex.bl_idname,
             text=MYADDON_OT_stretch_vertex.bl_label
@@ -274,66 +430,72 @@ class TOPBAR_MT_my_menu(bpy.types.Menu):
             text=MYADDON_OT_export_scene.bl_label
         )
 
-        self.layout.separator()
+    def submenu(self, context):
 
-        self.layout.operator(
-            "wm.url_open_preset",
-            text="Manual",
-            icon='HELP'
+        self.layout.menu(
+            TOPBAR_MT_my_menu.bl_idname
         )
 
-    def submenu(self, context):
-        self.layout.menu(TOPBAR_MT_my_menu.bl_idname)
 
-
-# Blenderに登録するクラスリスト
+# =========================================================
+# クラス登録
+# =========================================================
 classes = (
     MYADDON_OT_stretch_vertex,
     MYADDON_OT_create_ico_sphere,
-    MYADDON_OT_export_scene,
     MYADDON_OT_add_filename,
+    MYADDON_OT_add_collider,
+    MYADDON_OT_export_scene,
     OBJECT_PT_file_name,
+    OBJECT_PT_collider,
     TOPBAR_MT_my_menu,
 )
 
 
-# Add-On有効化時コールバック
+# =========================================================
+# register
+# =========================================================
 def register():
+
     for cls in classes:
         bpy.utils.register_class(cls)
 
-    bpy.types.TOPBAR_MT_editor_menus.append(TOPBAR_MT_my_menu.submenu)
+    bpy.types.TOPBAR_MT_editor_menus.append(
+        TOPBAR_MT_my_menu.submenu
+    )
 
-    # 3Dビューに描画関数を追加
-    if DrawCollider.handle is None:
-        DrawCollider.handle = bpy.types.SpaceView3D.draw_handler_add(
-            DrawCollider.draw_collider,
-            (),
-            "WINDOW",
-            "POST_VIEW"
-        )
+    DrawCollider.handle = bpy.types.SpaceView3D.draw_handler_add(
+        DrawCollider.draw_collider,
+        (),
+        "WINDOW",
+        "POST_VIEW"
+    )
 
     print("レベルエディタが有効化されました。")
 
 
-# Add-On無効化時コールバック
+# =========================================================
+# unregister
+# =========================================================
 def unregister():
-    bpy.types.TOPBAR_MT_editor_menus.remove(TOPBAR_MT_my_menu.submenu)
 
-    # 3Dビューから描画関数を削除
-    if DrawCollider.handle is not None:
-        bpy.types.SpaceView3D.draw_handler_remove(
-            DrawCollider.handle,
-            "WINDOW"
-        )
-        DrawCollider.handle = None
+    bpy.types.TOPBAR_MT_editor_menus.remove(
+        TOPBAR_MT_my_menu.submenu
+    )
 
-    for cls in reversed(classes):
+    bpy.types.SpaceView3D.draw_handler_remove(
+        DrawCollider.handle,
+        "WINDOW"
+    )
+
+    for cls in classes:
         bpy.utils.unregister_class(cls)
 
     print("レベルエディタが無効化されました。")
 
 
-# テスト実行用コード
+# =========================================================
+# テスト実行
+# =========================================================
 if __name__ == "__main__":
     register()

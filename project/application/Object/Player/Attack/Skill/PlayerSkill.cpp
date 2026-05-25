@@ -13,7 +13,7 @@ void PlayerSkill::StartSpecialAttack(const Transform& playerTransform, int iceCo
 void PlayerSkill::Draw() { sizuku_->Draw(); }
 
 void PlayerSkill::DrawSpecialAttack() { sizuku_->DrawSpecialAttack(); }
-
+void PlayerSkill::SetCamera(Camera* camera) { sizuku_->SetCamera(camera); }
 bool PlayerSkill::IsSkillEnd() { return sizuku_->IsSkillEnd(); }
 bool PlayerSkill::IsDamaging() const { return sizuku_->IsDamaging(); }
 bool PlayerSkill::IsSpecialEnd() const { return sizuku_->IsSpecialEnd(); }
