@@ -80,6 +80,10 @@ private:
 
 	Vector3 vinettColor_;
 	float vinettStrength_;
+	float introBlurDelayTimer_ = 0.0f;
+	static constexpr float kIntroBlurDelaySeconds_ = 2.0f;
+	static constexpr float kIntroBlurFadeDurationSeconds_ = 1.0f;
+	float introBlurStartKernelSize_ = 1.0f;
 
 public:
 	GameScene();

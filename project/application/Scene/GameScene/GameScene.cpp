@@ -189,7 +189,11 @@ void GameScene::Initialize() {
 	team_->Initialize();
 	
 	vinettColor_ = {255, 255, 255};
-	vinettStrength_ = 10;
+	vinettStrength_ = 10.0f;
+	Object3dCommon::GetInstance()->SetVignetteStrength(vinettStrength_);
+	introBlurStartKernelSize_ = 15.0f;
+	introBlurDelayTimer_ = 0.0f;
+	Object3dCommon::GetInstance()->SetBoxFilterKernelSize(static_cast<int>(introBlurStartKernelSize_));
 }
 
 void GameScene::DebugImGui() {
@@ -297,9 +301,19 @@ void GameScene::DebugImGui() {
 
 void GameScene::Update() {
 	GameTimer::GetInstance()->Update();
+	const float deltaTime = GameBase::GetInstance()->GetDeltaTime();
 	vinettStrength_ -= 0.3f;
 	vinettStrength_ = std::max(0.0f, vinettStrength_);
 	Object3dCommon::GetInstance()->SetVignetteStrength(vinettStrength_);
+	if (introBlurDelayTimer_ < kIntroBlurDelaySeconds_) {
+		introBlurDelayTimer_ += deltaTime;
+	} else {
+		const float fadeElapsed = introBlurDelayTimer_ - kIntroBlurDelaySeconds_;
+		const float t = std::clamp(fadeElapsed / kIntroBlurFadeDurationSeconds_, 0.0f, 1.0f);
+		const float kernelSizeFloat = std::lerp(introBlurStartKernelSize_, 1.0f, t);
+		Object3dCommon::GetInstance()->SetBoxFilterKernelSize(static_cast<int>(std::round(kernelSizeFloat)));
+		introBlurDelayTimer_ += deltaTime;
+	}
 	const bool isAltPressed = Input::GetInstance()->PushKey(DIK_LMENU) || Input::GetInstance()->PushKey(DIK_RMENU);
 	if (isAltPressed) {
 		Input::GetInstance()->SetIsCursorStability(false);

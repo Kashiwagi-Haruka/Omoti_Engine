@@ -75,7 +75,8 @@ class DirectXCommon {
 		float randomNoiseScale;
 		float randomNoiseTime;
 		float randomNoiseBlendMode;
-		float padding[2];
+		float boxFilterKernelSize;
+		float padding[3];
 	};
 	PostEffectParameters* postEffectParameterMappedData_ = nullptr;
 	float vignetteStrength_ = 0.0f;
@@ -84,6 +85,7 @@ class DirectXCommon {
 	float randomNoiseScale_ = 512.0f;
 	float randomNoiseTime_ = 0.0f;
 	int randomNoiseBlendMode_ = 0;
+	int boxFilterKernelSize_ = 1;
 	bool editorLayoutEnabled_ = false;
 	bool sceneCopiedToBackBufferThisFrame_ = false;
 	bool inOutlineRenderTarget_ = false;
@@ -139,6 +141,9 @@ public:
 	float GetRandomNoiseScale() const { return randomNoiseScale_; }
 	void SetRandomNoiseBlendMode(int blendMode);
 	int GetRandomNoiseBlendMode() const { return randomNoiseBlendMode_; }
+	void SetBoxFilterKernelSize(int kernelSize);
+	int GetBoxFilterKernelSize() const { return boxFilterKernelSize_; }
+	
 	void SetEditorLayoutEnabled(bool enabled) { editorLayoutEnabled_ = enabled; }
 	bool IsEditorLayoutEnabled() const { return editorLayoutEnabled_; }
 	void BeginOutlineRenderTarget();

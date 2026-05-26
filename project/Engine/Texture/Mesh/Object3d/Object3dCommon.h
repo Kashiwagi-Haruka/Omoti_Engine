@@ -361,6 +361,8 @@ public:
 	// ビネット色設定
 	void SetVignetteColor(const Vector3& color);
 
+	void SetBoxFilterKernelSize(int kernelSize);
+
 	// ランダムノイズ有効化切り替え
 	void SetRandomNoiseEnabled(bool enabled);
 	// ランダムノイズスケール設定
