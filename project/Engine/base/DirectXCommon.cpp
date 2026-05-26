@@ -561,7 +561,7 @@ void DirectXCommon::ScissorRectInitialize() {
 }
 #pragma endregion
 void DirectXCommon::SetVignetteStrength(float strength) {
-	vignetteStrength_ = std::clamp(strength, 0.0f, 1.0f);
+	vignetteStrength_ = std::max(strength, 0.0f);
 	if (postEffectParameterMappedData_) {
 		postEffectParameterMappedData_->vignetteStrength = vignetteStrength_;
 	}
