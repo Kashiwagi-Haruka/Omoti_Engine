@@ -70,14 +70,16 @@ class DirectXCommon {
 	Microsoft::WRL::ComPtr<ID3D12Resource> postEffectParameterResource_ = nullptr;
 	struct PostEffectParameters {
 		float vignetteStrength;
+		float vignetteColor[3];
 		float randomNoiseEnabled;
 		float randomNoiseScale;
 		float randomNoiseTime;
 		float randomNoiseBlendMode;
-		float padding[3];
+		float padding[2];
 	};
 	PostEffectParameters* postEffectParameterMappedData_ = nullptr;
 	float vignetteStrength_ = 0.0f;
+	Vector3 vignetteColor_ = {0.0f, 0.0f, 0.0f};
 	bool randomNoiseEnabled_ = false;
 	float randomNoiseScale_ = 512.0f;
 	float randomNoiseTime_ = 0.0f;
@@ -129,6 +131,8 @@ public:
 	float GetDeltaTime() const { return deltaTime_; }
 	void SetVignetteStrength(float strength);
 	float GetVignetteStrength() const { return vignetteStrength_; }
+	void SetVignetteColor(const Vector3& color);
+	Vector3 GetVignetteColor() const { return vignetteColor_; }
 	void SetRandomNoiseEnabled(bool enabled);
 	bool GetRandomNoiseEnabled() const { return randomNoiseEnabled_; }
 	void SetRandomNoiseScale(float scale);

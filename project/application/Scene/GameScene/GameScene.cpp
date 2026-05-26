@@ -1,3 +1,4 @@
+#define NOMINMAX
 #include "GameScene.h"
 #include "CameraController/CameraController.h"
 #include "GameTimer/GameTimer.h"
@@ -148,7 +149,7 @@ void GameScene::Initialize() {
 	uimanager->Initialize();
 	rasen_->Initialize(cameraController->GetCamera());
 	openWorld_->Initialize(cameraController->GetCamera());
-	playAreaMode_ = PlayAreaMode::kSpiral;
+	playAreaMode_ = PlayAreaMode::kOpenWorld;
 
 	activePointLightCount_ = 3;
 	pointLights_[0].color = {1.0f, 1.0f, 1.0f, 1.0f};
@@ -186,11 +187,21 @@ void GameScene::Initialize() {
 	characterDisplay_->Initialize();
 	characterDisplay_->SetActive(false);
 	team_->Initialize();
+	
+	vinettColor_ = {255, 255, 255};
+	vinettStrength_ = 10;
 }
 
 void GameScene::DebugImGui() {
 
 #ifdef USE_IMGUI
+	if (ImGui::Begin("vinett")) {
+		ImGui::ColorEdit3("vinettcolor", &vinettColor_.x);
+		ImGui::DragFloat("vinnettstrength", &vinettStrength_,0.1f);
+		Object3dCommon::GetInstance()->SetVignetteColor(vinettColor_);
+		Object3dCommon::GetInstance()->SetVignetteStrength(vinettStrength_);
+	}
+	ImGui::End();
 	if (ImGui::Begin("SampleLight")) {
 		if (ImGui::TreeNode("DirectionalLight")) {
 			ImGui::ColorEdit4("LightColor", &directionalLight_.color.x);
@@ -286,6 +297,9 @@ void GameScene::DebugImGui() {
 
 void GameScene::Update() {
 	GameTimer::GetInstance()->Update();
+	vinettStrength_ -= 0.3f;
+	vinettStrength_ = std::max(0.0f, vinettStrength_);
+	Object3dCommon::GetInstance()->SetVignetteStrength(vinettStrength_);
 	const bool isAltPressed = Input::GetInstance()->PushKey(DIK_LMENU) || Input::GetInstance()->PushKey(DIK_RMENU);
 	if (isAltPressed) {
 		Input::GetInstance()->SetIsCursorStability(false);
