@@ -1,3 +1,4 @@
+#define NOMINMAX
 #include "GameScene.h"
 #include "CameraController/CameraController.h"
 #include "GameTimer/GameTimer.h"
@@ -186,14 +187,17 @@ void GameScene::Initialize() {
 	characterDisplay_->Initialize();
 	characterDisplay_->SetActive(false);
 	team_->Initialize();
+	
+	vinettColor_ = {255, 255, 255};
+	vinettStrength_ = 10;
 }
 
 void GameScene::DebugImGui() {
 
 #ifdef USE_IMGUI
-	if (ImGui::Begin("vineett")) {
+	if (ImGui::Begin("vinett")) {
 		ImGui::ColorEdit3("vinettcolor", &vinettColor_.x);
-		ImGui::DragFloat("vinnettstrength", &vinettStrength_);
+		ImGui::DragFloat("vinnettstrength", &vinettStrength_,0.1f);
 		Object3dCommon::GetInstance()->SetVignetteColor(vinettColor_);
 		Object3dCommon::GetInstance()->SetVignetteStrength(vinettStrength_);
 	}
@@ -293,6 +297,9 @@ void GameScene::DebugImGui() {
 
 void GameScene::Update() {
 	GameTimer::GetInstance()->Update();
+	vinettStrength_ -= 0.3f;
+	vinettStrength_ = std::max(0.0f, vinettStrength_);
+	Object3dCommon::GetInstance()->SetVignetteStrength(vinettStrength_);
 	const bool isAltPressed = Input::GetInstance()->PushKey(DIK_LMENU) || Input::GetInstance()->PushKey(DIK_RMENU);
 	if (isAltPressed) {
 		Input::GetInstance()->SetIsCursorStability(false);
