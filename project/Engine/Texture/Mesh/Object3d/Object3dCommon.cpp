@@ -667,6 +667,8 @@ void Object3dCommon::SetEditorLights(
 }
 void Object3dCommon::SetVignetteStrength(float strength) { dxCommon_->SetVignetteStrength(strength); }
 
+void Object3dCommon::SetVignetteColor(const Vector3& color) { dxCommon_->SetVignetteColor(color); }
+
 void Object3dCommon::SetRandomNoiseEnabled(bool enabled) { dxCommon_->SetRandomNoiseEnabled(enabled); }
 
 void Object3dCommon::SetRandomNoiseScale(float scale) { dxCommon_->SetRandomNoiseScale(scale); }

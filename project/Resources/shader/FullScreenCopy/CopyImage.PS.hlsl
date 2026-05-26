@@ -25,7 +25,7 @@ PixelShaderOutput main(VertexShaderOutput input)
     float vignette = centeredUv.x * centeredUv.y * 16.0f;
     vignette = saturate(pow(vignette, 0.8f));
     float vignetteFactor = lerp(1.0f, vignette, saturate(vignetteStrength));
-    output.color.rgb *= vignetteFactor;
+    output.color.rgb *= lerp(vignetteColor, float3(1.0f, 1.0f, 1.0f), vignetteFactor);
 
     if (randomNoiseEnabled > 0.5f)
     {

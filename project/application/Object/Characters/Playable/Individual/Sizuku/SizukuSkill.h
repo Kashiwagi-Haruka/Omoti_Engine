@@ -5,6 +5,7 @@
 #include "Transform.h"
 #include <memory>
 #include <vector>
+#include "Engine/math/RigidBody.h"
 class SizukuSkill {
 
 private:

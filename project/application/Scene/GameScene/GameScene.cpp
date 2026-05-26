@@ -148,7 +148,7 @@ void GameScene::Initialize() {
 	uimanager->Initialize();
 	rasen_->Initialize(cameraController->GetCamera());
 	openWorld_->Initialize(cameraController->GetCamera());
-	playAreaMode_ = PlayAreaMode::kSpiral;
+	playAreaMode_ = PlayAreaMode::kOpenWorld;
 
 	activePointLightCount_ = 3;
 	pointLights_[0].color = {1.0f, 1.0f, 1.0f, 1.0f};
@@ -191,6 +191,13 @@ void GameScene::Initialize() {
 void GameScene::DebugImGui() {
 
 #ifdef USE_IMGUI
+	if (ImGui::Begin("vineett")) {
+		ImGui::ColorEdit3("vinettcolor", &vinettColor_.x);
+		ImGui::DragFloat("vinnettstrength", &vinettStrength_);
+		Object3dCommon::GetInstance()->SetVignetteColor(vinettColor_);
+		Object3dCommon::GetInstance()->SetVignetteStrength(vinettStrength_);
+	}
+	ImGui::End();
 	if (ImGui::Begin("SampleLight")) {
 		if (ImGui::TreeNode("DirectionalLight")) {
 			ImGui::ColorEdit4("LightColor", &directionalLight_.color.x);

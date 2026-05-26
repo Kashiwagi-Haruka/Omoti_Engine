@@ -78,6 +78,9 @@ private:
 	float damageGrayscaleTimer_ = 0.0f;
 	static constexpr float kDamageGrayscaleDuration_ = 0.5f;
 
+	Vector3 vinettColor_;
+	float vinettStrength_;
+
 public:
 	GameScene();
 	~GameScene() override;

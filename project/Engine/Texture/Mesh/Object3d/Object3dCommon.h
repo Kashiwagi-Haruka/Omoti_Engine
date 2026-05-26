@@ -358,6 +358,8 @@ public:
 
 	// ビネット強度設定
 	void SetVignetteStrength(float strength);
+	// ビネット色設定
+	void SetVignetteColor(const Vector3& color);
 
 	// ランダムノイズ有効化切り替え
 	void SetRandomNoiseEnabled(bool enabled);

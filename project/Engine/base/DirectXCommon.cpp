@@ -46,6 +46,7 @@ void DirectXCommon::initialize(WinApp* winApp) {
 	// シーンカラーをバックバッファにコピーするためのPSO作成
 	SceneCopyPipelineCreate();
 	SetVignetteStrength(vignetteStrength_);
+	SetVignetteColor(vignetteColor_);
 	SetRandomNoiseEnabled(randomNoiseEnabled_);
 	SetRandomNoiseScale(randomNoiseScale_);
 	SetRandomNoiseBlendMode(randomNoiseBlendMode_);
@@ -491,6 +492,9 @@ void DirectXCommon::SceneCopyPipelineCreate() {
 	hr_ = postEffectParameterResource_->Map(0, nullptr, reinterpret_cast<void**>(&postEffectParameterMappedData_));
 	assert(SUCCEEDED(hr_));
 	postEffectParameterMappedData_->vignetteStrength = vignetteStrength_;
+	postEffectParameterMappedData_->vignetteColor[0] = vignetteColor_.x;
+	postEffectParameterMappedData_->vignetteColor[1] = vignetteColor_.y;
+	postEffectParameterMappedData_->vignetteColor[2] = vignetteColor_.z;
 	postEffectParameterMappedData_->randomNoiseEnabled = randomNoiseEnabled_ ? 1.0f : 0.0f;
 	postEffectParameterMappedData_->randomNoiseScale = randomNoiseScale_;
 	postEffectParameterMappedData_->randomNoiseTime = randomNoiseTime_;
@@ -562,7 +566,16 @@ void DirectXCommon::SetVignetteStrength(float strength) {
 		postEffectParameterMappedData_->vignetteStrength = vignetteStrength_;
 	}
 }
-
+void DirectXCommon::SetVignetteColor(const Vector3& color) {
+	vignetteColor_.x = std::clamp(color.x, 0.0f, 1.0f);
+	vignetteColor_.y = std::clamp(color.y, 0.0f, 1.0f);
+	vignetteColor_.z = std::clamp(color.z, 0.0f, 1.0f);
+	if (postEffectParameterMappedData_) {
+		postEffectParameterMappedData_->vignetteColor[0] = vignetteColor_.x;
+		postEffectParameterMappedData_->vignetteColor[1] = vignetteColor_.y;
+		postEffectParameterMappedData_->vignetteColor[2] = vignetteColor_.z;
+	}
+}
 void DirectXCommon::SetRandomNoiseEnabled(bool enabled) {
 	randomNoiseEnabled_ = enabled;
 	if (postEffectParameterMappedData_) {
