@@ -21,7 +21,7 @@ PixelShaderOutput main(VertexShaderOutput input)
     PixelShaderOutput output;
     output.color = gTexture.Sample(gSampler, input.texcoord);
 
-    int kernelSize = max(static_cast<int>(boxFilterKernelSize), 1);
+    int kernelSize = max((int)(boxFilterKernelSize), 1);
     if (kernelSize > 1)
     {
         if ((kernelSize & 1) == 0)
@@ -34,7 +34,7 @@ PixelShaderOutput main(VertexShaderOutput input)
         uint width = 0;
         uint height = 0;
         gTexture.GetDimensions(width, height);
-        float2 uvStepSize = float2(rcp(width), rcp(height));
+        float2 uvStepSize = float2(rcp((float) width), rcp((float) height));
 
         float3 filteredColor = float3(0.0f, 0.0f, 0.0f);
         float sampleCount = 0.0f;
@@ -52,9 +52,7 @@ PixelShaderOutput main(VertexShaderOutput input)
                 {
                     continue;
                 }
-                float2 offset = float2(static_cast <
-                float > (x), static_cast <
-                float > (y)) * uvStepSize;
+                float2 offset = float2((float)(x),(float)(y)) * uvStepSize;
                 float2 texcoord = saturate(input.texcoord + offset);
                 filteredColor += gTexture.Sample(gSampler, texcoord).rgb;
                 sampleCount += 1.0f;
