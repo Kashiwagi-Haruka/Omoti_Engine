@@ -1,7 +1,9 @@
 #include "Team.h"
 #include "Input.h"
-#include "Object/Characters/Playable/Individual/Mei/Mei.h"
 #include "Object/Characters/Playable/Individual/Sizuku/Sizuku.h"
+#include "Object/Characters/Playable/Individual/Mei/Mei.h"
+#include "Object/Characters/Playable/Individual/Arte/Arte.h"
+#include "Object/Characters/Playable/Individual/Yuzuki/Yuzuki.h"
 #include "Text/FreeTypeManager/FreeTypeManager.h"
 #include "TextureManager.h"
 
@@ -9,6 +11,8 @@ void Team::Initialize() {
 	whiteTextureHandle_ = TextureManager::GetInstance()->GetTextureIndexByfilePath("Resources/2d/white2x2.png");
 	const uint32_t sizukuIconHandle = TextureManager::GetInstance()->GetTextureIndexByfilePath("Resources/2d/Character/Icon/Sizuku.png");
 	const uint32_t meiIconHandle = TextureManager::GetInstance()->GetTextureIndexByfilePath("Resources/2d/Character/Icon/Mei.png");
+	const uint32_t arteIconHandle = TextureManager::GetInstance()->GetTextureIndexByfilePath("Resources/2d/Character/Icon/Arte.png");
+	const uint32_t yuzukiIconHandle = TextureManager::GetInstance()->GetTextureIndexByfilePath("Resources/2d/Character/Icon/Yuzuki.png");
 	hudFontHandle_ = FreeTypeManager::CreateFace("Resources/Font/irohakakuC-Bold.ttf", 0);
 	FreeTypeManager::SetPixelSizes(hudFontHandle_, 28, 28);
 
@@ -18,6 +22,10 @@ void Team::Initialize() {
 	ownedCharacterIconHandles_.push_back(sizukuIconHandle);
 	ownedCharacters_.push_back(std::make_unique<Mei>());
 	ownedCharacterIconHandles_.push_back(meiIconHandle);
+	ownedCharacters_.push_back(std::make_unique<Arte>());
+	ownedCharacterIconHandles_.push_back(arteIconHandle);
+	ownedCharacters_.push_back(std::make_unique<Yuzuki>());
+	ownedCharacterIconHandles_.push_back(yuzukiIconHandle);
 
 	inventoryIcons_.clear();
 	for (size_t i = 0; i < ownedCharacterIconHandles_.size(); ++i) {
