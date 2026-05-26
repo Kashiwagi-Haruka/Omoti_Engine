@@ -50,6 +50,7 @@ void DirectXCommon::initialize(WinApp* winApp) {
 	SetRandomNoiseEnabled(randomNoiseEnabled_);
 	SetRandomNoiseScale(randomNoiseScale_);
 	SetRandomNoiseBlendMode(randomNoiseBlendMode_);
+	SetBoxFilterKernelSize(boxFilterKernelSize_);
 	// DSVの初期化
 	DepthStencilViewInitialize();
 	// フェンスの生成
@@ -499,6 +500,7 @@ void DirectXCommon::SceneCopyPipelineCreate() {
 	postEffectParameterMappedData_->randomNoiseScale = randomNoiseScale_;
 	postEffectParameterMappedData_->randomNoiseTime = randomNoiseTime_;
 	postEffectParameterMappedData_->randomNoiseBlendMode = static_cast<float>(randomNoiseBlendMode_);
+	postEffectParameterMappedData_->boxFilterKernelSize = static_cast<float>(boxFilterKernelSize_);
 }
 void DirectXCommon::DepthStencilViewInitialize() {
 
@@ -593,6 +595,16 @@ void DirectXCommon::SetRandomNoiseBlendMode(int blendMode) {
 	randomNoiseBlendMode_ = std::clamp(blendMode, 0, 4);
 	if (postEffectParameterMappedData_) {
 		postEffectParameterMappedData_->randomNoiseBlendMode = static_cast<float>(randomNoiseBlendMode_);
+	}
+}
+void DirectXCommon::SetBoxFilterKernelSize(int kernelSize) {
+	int clampedKernelSize = std::clamp(kernelSize, 1, 15);
+	if ((clampedKernelSize % 2) == 0) {
+		clampedKernelSize += (clampedKernelSize == 15) ? -1 : 1;
+	}
+	boxFilterKernelSize_ = clampedKernelSize;
+	if (postEffectParameterMappedData_) {
+		postEffectParameterMappedData_->boxFilterKernelSize = static_cast<float>(boxFilterKernelSize_);
 	}
 }
 void DirectXCommon::PreDraw() {
