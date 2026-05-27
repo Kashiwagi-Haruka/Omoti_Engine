@@ -51,13 +51,12 @@ void PlayerAttack::Update() {
 	}
 	if (isSkillAttack) {
 		models_->SetStateM(PlayerModels::StateM::skillAttack);
-		return;
 	}
 	if (isSpecialAttack) {
 		models_->SetStateM(PlayerModels::StateM::idle);
-		return;
 	}
 
+	if (!isSkillAttack && !isSpecialAttack) {
 	// コンボタイマーの更新
 	if (comboTimer_ > 0.0f) {
 		comboTimer_ -= 1.0f / 60.0f;
@@ -180,6 +179,7 @@ void PlayerAttack::Update() {
 			canCombo_ = false;
 			comboTimer_ = 0.0f;
 		}
+	}
 	}
 	if (PlayCommand::GetSKILL_ATTACK()) {
 		// スキル攻撃
