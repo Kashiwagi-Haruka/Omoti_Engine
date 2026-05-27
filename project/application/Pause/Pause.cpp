@@ -53,7 +53,6 @@ void Pause::Initialize() {
 	    .rotate{0.0f,  0.0f,  0.0f},
 	    .translate{0.0f,  0.0f,  0.0f},
 	});
-	BG_->SetColor({0.4f, 0.4f, 1.0f, 0.0f});
 	BG_->SetEnableLighting(false);
 
 	pauseFontHandle_ = FreeTypeManager::CreateFace("Resources/Font/irohakakuC-Bold.ttf", 0);
@@ -145,6 +144,31 @@ void Pause::Update(bool isPause) {
 
 	Select_->Update();
 	Button_->Update();
+	switch (currentAttribute) {
+	case Attribute::None:
+		BG_->SetColor({0.4f, 0.4f, 1.0f, 0.0f});
+		break;
+	case Attribute::Fire:
+		BG_->SetColor({0.4f, 0.4f, 1.0f, 0.0f});
+		break;
+	case Attribute::Ice:
+		BG_->SetColor({0.4f, 0.4f, 1.0f, 0.0f});
+		break;
+	case Attribute::Wind:
+		BG_->SetColor({0.4f, 0.4f, 1.0f, 0.0f});
+		break;
+	case Attribute::Thunder:
+		BG_->SetColor({0.4f, 0.4f, 1.0f, 0.0f});
+		break;
+	case Attribute::Imaginary:
+		BG_->SetColor({0.4f, 0.4f, 1.0f, 0.0f});
+		break;
+	case Attribute::Quantum:
+		BG_->SetColor({0.4f, 0.4f, 1.0f, 0.0f});
+		break;
+	default:
+		break;
+	}
 	BG_->Update();
 	pauseText_.Update(false);
 }
@@ -170,7 +194,7 @@ void Pause::Draw() {
 	}
 
 	Object3dCommon::GetInstance()->DrawCommon();
-	BG_->Draw();
+	/*BG_->Draw();*/
 	if (currentCharacterObj_) {
 		Object3dCommon::GetInstance()->DrawCommonMaterialColorOnlySkinning();
 		currentCharacterObj_->Draw();
