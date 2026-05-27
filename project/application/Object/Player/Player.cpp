@@ -257,6 +257,7 @@ void Player::Falling() {
 }
 
 void Player::Update() {
+	attack_->SetTransform(transform_);
 	attack_->Update();
 	Move();
 	Jump();
