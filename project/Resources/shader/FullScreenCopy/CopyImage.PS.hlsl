@@ -15,6 +15,29 @@ float rand2dTo1d(float2 value)
     float random = dot(smallValue, dotDir);
     return frac(sin(random) * 143758.5453f);
 }
+float3 ApplyGrayscale(float3 color)
+{
+    if (fullscreenGrayscaleEnabled < 0.5f)
+    {
+        return color;
+    }
+    float y = dot(color, float3(0.2125f, 0.7154f, 0.0721f));
+    return float3(y, y, y);
+}
+
+float3 ApplySepia(float3 color)
+{
+    if (fullscreenSepiaEnabled < 0.5f)
+    {
+        return color;
+    }
+
+    float3 sepia;
+    sepia.r = dot(color, float3(0.393f, 0.769f, 0.189f));
+    sepia.g = dot(color, float3(0.349f, 0.686f, 0.168f));
+    sepia.b = dot(color, float3(0.272f, 0.534f, 0.131f));
+    return saturate(sepia);
+}
 
 PixelShaderOutput main(VertexShaderOutput input)
 {
@@ -97,7 +120,9 @@ PixelShaderOutput main(VertexShaderOutput input)
 
         output.color.rgb = saturate(output.color.rgb);
     }
-
+    output.color.rgb = ApplyGrayscale(output.color.rgb);
+    output.color.rgb = ApplySepia(output.color.rgb);
+    
     float4 outlineColor = gOutlineTexture.Sample(gSampler, input.texcoord);
     output.color.rgb = lerp(output.color.rgb, outlineColor.rgb, saturate(outlineColor.a));
 

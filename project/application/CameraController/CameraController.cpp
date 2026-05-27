@@ -2,14 +2,22 @@
 #include "Camera.h"
 
 #include "Function.h"
+#include <algorithm>
+
 void CameraController::Initialize() {
 	playerCamera_ = std::make_unique<PlayerCamera>();
 	playerCamera_->Initialize();
 
 	lockOnCamera_ = std::make_unique<LockOnCamera>();
 	lockOnCamera_->Initialize();
-	camera_ = playerCamera_->GetCamera();
+
+	blendCamera_ = std::make_unique<Camera>();
+	switchStartTransform_ = playerCamera_->GetTransform();
+	blendCamera_->SetTransform(switchStartTransform_);
+	blendCamera_->Update();
+	camera_ = blendCamera_.get();
 }
+
 void CameraController::Update() {
 	if (autoLockOnTimer_ > 0.0f) {
 		autoLockOnTimer_ -= 1.0f / 60.0f;
@@ -20,36 +28,40 @@ void CameraController::Update() {
 			cameraMode_ = CameraMode::kPlayerCamera;
 		}
 	}
-	switch (cameraMode_) {
-	case CameraController::CameraMode::kPlayerCamera:
-		playerCamera_->SetPlayerPos(playerPos);
-		playerCamera_->Update();
-		if (preCameraMode_ != CameraMode::kPlayerCamera) {
-			isCameraSwitching_ = true;
-			if (cameraMode_ == CameraMode::kLockOnCamera) {
-				camera_->SetTranslate(Function::Lerp(playerCamera_->GetTransform().translate, lockOnCamera_->GetTransform().translate, cameraSwitchTimer_));
-			} else {
-			}
 
-		} else {
-			camera_ = playerCamera_->GetCamera();
-		}
+	playerCamera_->SetPlayerPos(playerPos);
+	playerCamera_->Update();
+	lockOnCamera_->SetPlayerPos(playerPos);
+	lockOnCamera_->SetFollowPosition(playerCamera_->GetTransform().translate);
+	lockOnCamera_->Update();
 
-		break;
-	case CameraController::CameraMode::kLockOnCamera:
-		playerCamera_->SetPlayerPos(playerPos);
-		playerCamera_->Update();
-		lockOnCamera_->SetPlayerPos(playerPos);
-		lockOnCamera_->SetFollowPosition(playerCamera_->GetTransform().translate);
-		lockOnCamera_->Update();
-		camera_ = lockOnCamera_->GetCamera();
-		break;
-	case CameraController::CameraMode::kNormalAttackCamera:
-		break;
-	default:
-		break;
+	const Transform targetTransform = (cameraMode_ == CameraMode::kLockOnCamera) ? lockOnCamera_->GetTransform() : playerCamera_->GetTransform();
+
+	if (preCameraMode_ != cameraMode_) {
+		isCameraSwitching_ = true;
+		cameraSwitchTimer_ = 0.0f;
+		switchStartTransform_ = blendCamera_->GetTransform();
 	}
+
+	if (isCameraSwitching_) {
+		cameraSwitchTimer_ += 1.0f / 60.0f;
+		const float t = std::clamp(cameraSwitchTimer_ / cameraSwitchDuration_, 0.0f, 1.0f);
+		Transform blendedTransform = targetTransform;
+		blendedTransform.translate = Function::Lerp(switchStartTransform_.translate, targetTransform.translate, t);
+		blendedTransform.rotate = Function::Lerp(switchStartTransform_.rotate, targetTransform.rotate, t);
+		blendCamera_->SetTransform(blendedTransform);
+		if (t >= 1.0f) {
+			isCameraSwitching_ = false;
+		}
+	} else {
+		blendCamera_->SetTransform(targetTransform);
+	}
+
+	blendCamera_->Update();
+	camera_ = blendCamera_.get();
+	preCameraMode_ = cameraMode_;
 }
+
 Camera* CameraController::GetCamera() { return camera_; }
 void CameraController::StartShake(float durationSeconds) { playerCamera_->StartShake(durationSeconds); }
 void CameraController::SetLockOnTarget(const Vector3& targetPos, float durationSeconds) {

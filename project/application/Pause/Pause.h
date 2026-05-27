@@ -7,6 +7,7 @@
 #include <array>
 #include <memory>
 #include "Camera.h"
+#include "Object/Characters/Base/Attribute.h"
 
 class Pause {
 
@@ -43,6 +44,8 @@ private:
 	std::unique_ptr<Camera> camera_;
 	Text pauseText_;
 	uint32_t pauseFontHandle_ = 0;
+	Attribute currentAttribute = Attribute::None;
+
 public:
 	Pause();
 	void Initialize();
@@ -50,5 +53,6 @@ public:
 	void Draw();
 	bool IsVisible() const { return isActive_ || isStart_ || isEnd_; }
 	void SetCurrentCharacterObj(Object3d* obj) { currentCharacterObj_ = obj; }
+	void SetCurrentAttribute(Attribute attribute) { currentAttribute = attribute; }
 	Action ConsumeAction();
 };

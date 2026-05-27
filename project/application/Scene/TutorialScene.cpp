@@ -44,6 +44,7 @@ void TutorialScene::Initialize() {
 	expCubeManager_->Initialize(cameraController_->GetCamera());
 	pause_->Initialize();
 	pause_->SetCurrentCharacterObj(player_->GetCharacterObject3d());
+	pause_->SetCurrentAttribute(player_->GetCurrentAttribute());
 	tutorialUI_->Initialize();
 
 	controlSpriteHandle_ = TextureManager::GetInstance()->GetTextureIndexByfilePath("Resources/2d/option.png");

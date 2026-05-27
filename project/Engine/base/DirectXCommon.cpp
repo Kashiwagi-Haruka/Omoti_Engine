@@ -1,5 +1,6 @@
 #define NOMINMAX
 #include "DirectXCommon.h"
+
 #include "Engine/Logger/Logger.h"
 #include "ParticleManager.h"
 #include "SrvManager/SrvManager.h"
@@ -501,6 +502,8 @@ void DirectXCommon::SceneCopyPipelineCreate() {
 	postEffectParameterMappedData_->randomNoiseTime = randomNoiseTime_;
 	postEffectParameterMappedData_->randomNoiseBlendMode = static_cast<float>(randomNoiseBlendMode_);
 	postEffectParameterMappedData_->boxFilterKernelSize = static_cast<float>(boxFilterKernelSize_);
+	postEffectParameterMappedData_->fullscreenGrayscaleEnabled = fullscreenGrayscaleEnabled_ ? 1.0f : 0.0f;
+	postEffectParameterMappedData_->fullscreenSepiaEnabled = fullscreenSepiaEnabled_ ? 1.0f : 0.0f;
 }
 void DirectXCommon::DepthStencilViewInitialize() {
 
@@ -612,6 +615,8 @@ void DirectXCommon::PreDraw() {
 	randomNoiseTime_ += deltaTime_;
 	if (postEffectParameterMappedData_) {
 		postEffectParameterMappedData_->randomNoiseTime = randomNoiseTime_;
+		postEffectParameterMappedData_->fullscreenGrayscaleEnabled = fullscreenGrayscaleEnabled_ ? 1.0f : 0.0f;
+		postEffectParameterMappedData_->fullscreenSepiaEnabled = fullscreenSepiaEnabled_ ? 1.0f : 0.0f;
 	}
 	// ① 現在のバックバッファをフレーム毎に更新
 	backBufferIndex_ = swapChain_->GetCurrentBackBufferIndex();

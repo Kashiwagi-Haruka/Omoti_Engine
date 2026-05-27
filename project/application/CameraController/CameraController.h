@@ -1,9 +1,9 @@
 #pragma once
-#include <memory>
-#include "Vector3.h"
-#include "Transform.h"
 #include "LockOnCamera/LockOnCamera.h"
 #include "PlayerCamera/PlayerCamera.h"
+#include "Transform.h"
+#include "Vector3.h"
+#include <memory>
 
 class Camera;
 
@@ -14,6 +14,7 @@ class CameraController {
 	CameraMode preCameraMode_ = CameraMode::kPlayerCamera;
 	std::unique_ptr<PlayerCamera> playerCamera_;
 	std::unique_ptr<LockOnCamera> lockOnCamera_;
+	std::unique_ptr<Camera> blendCamera_;
 
 	Vector3 playerPos = {0.0f, 0.0f, 0.0f};
 	Transform transform_{};
@@ -21,7 +22,9 @@ class CameraController {
 
 	bool isCameraSwitching_ = false;
 	float cameraSwitchTimer_ = 0.0f;
+	float cameraSwitchDuration_ = 0.2f;
 	float autoLockOnTimer_ = 0.0f;
+	Transform switchStartTransform_{};
 
 public:
 	void Initialize();

@@ -76,7 +76,9 @@ class DirectXCommon {
 		float randomNoiseTime;
 		float randomNoiseBlendMode;
 		float boxFilterKernelSize;
-		float padding[3];
+		float fullscreenGrayscaleEnabled;
+		float fullscreenSepiaEnabled;
+		float padding[2];
 	};
 	PostEffectParameters* postEffectParameterMappedData_ = nullptr;
 	float vignetteStrength_ = 0.0f;
@@ -86,6 +88,8 @@ class DirectXCommon {
 	float randomNoiseTime_ = 0.0f;
 	int randomNoiseBlendMode_ = 0;
 	int boxFilterKernelSize_ = 1;
+	bool fullscreenGrayscaleEnabled_ = false;
+	bool fullscreenSepiaEnabled_ = false;
 	bool editorLayoutEnabled_ = false;
 	bool sceneCopiedToBackBufferThisFrame_ = false;
 	bool inOutlineRenderTarget_ = false;
@@ -143,6 +147,10 @@ public:
 	int GetRandomNoiseBlendMode() const { return randomNoiseBlendMode_; }
 	void SetBoxFilterKernelSize(int kernelSize);
 	int GetBoxFilterKernelSize() const { return boxFilterKernelSize_; }
+	void SetFullscreenGrayscaleEnabled(bool enabled) { fullscreenGrayscaleEnabled_ = enabled; }
+	bool IsFullscreenGrayscaleEnabled() const { return fullscreenGrayscaleEnabled_; }
+	void SetFullscreenSepiaEnabled(bool enabled) { fullscreenSepiaEnabled_ = enabled; }
+	bool IsFullscreenSepiaEnabled() const { return fullscreenSepiaEnabled_; }
 	
 	void SetEditorLayoutEnabled(bool enabled) { editorLayoutEnabled_ = enabled; }
 	bool IsEditorLayoutEnabled() const { return editorLayoutEnabled_; }

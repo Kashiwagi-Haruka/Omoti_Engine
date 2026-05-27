@@ -706,3 +706,16 @@ Microsoft::WRL::ComPtr<ID3D12Resource> Object3dCommon::CreateBufferResource(size
 
 	return bufferResource;
 }
+void Object3dCommon::SetFullScreenGrayscaleEnabled(bool enable) {
+	fullScreenGrayscaleEnabled_ = enable;
+	if (dxCommon_) {
+		dxCommon_->SetFullscreenGrayscaleEnabled(enable);
+	}
+}
+
+void Object3dCommon::SetFullScreenSepiaEnabled(bool enable) {
+	fullScreenSepiaEnabled_ = enable;
+	if (dxCommon_) {
+		dxCommon_->SetFullscreenSepiaEnabled(enable);
+	}
+}

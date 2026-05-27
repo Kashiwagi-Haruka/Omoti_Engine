@@ -348,11 +348,11 @@ public:
 	bool IsAreaShadowEnabled() const { return areaShadowEnabled_; }
 
 	// 全画面グレースケールの有効化切り替え
-	void SetFullScreenGrayscaleEnabled(bool enable) { fullScreenGrayscaleEnabled_ = enable; }
+	void SetFullScreenGrayscaleEnabled(bool enable);
 	// 全画面グレースケール状態取得
 	bool IsFullScreenGrayscaleEnabled() const { return fullScreenGrayscaleEnabled_; }
 	// 全画面セピアの有効化切り替え
-	void SetFullScreenSepiaEnabled(bool enable) { fullScreenSepiaEnabled_ = enable; }
+	void SetFullScreenSepiaEnabled(bool enable);
 	// 全画面セピア状態取得
 	bool IsFullScreenSepiaEnabled() const { return fullScreenSepiaEnabled_; }
 
