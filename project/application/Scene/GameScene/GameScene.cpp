@@ -184,6 +184,7 @@ void GameScene::Initialize() {
 	spotLights_[0].cosFalloffStart = std::cos(std::numbers::pi_v<float> / 4.0f);
 	pause->Initialize();
 	pause->SetCurrentCharacterObj(player->GetCharacterObject3d());
+	pause->SetCurrentAttribute(player->GetCurrentAttribute());
 	characterDisplay_->Initialize();
 	characterDisplay_->SetActive(false);
 	team_->Initialize();
@@ -366,6 +367,7 @@ void GameScene::Update() {
 	if (team_->ConsumeCharacterSwitchTriggered()) {
 		player->SetCharacterType(team_->GetActiveCharacterName());
 		pause->SetCurrentCharacterObj(player->GetCharacterObject3d());
+		pause->SetCurrentAttribute(player->GetCurrentAttribute());
 	}
 	pause->Update(isPause);
 	Pause::Action pauseAction = pause->ConsumeAction();

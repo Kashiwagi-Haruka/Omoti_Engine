@@ -53,5 +53,6 @@ public:
 	void Draw();
 	bool IsVisible() const { return isActive_ || isStart_ || isEnd_; }
 	void SetCurrentCharacterObj(Object3d* obj) { currentCharacterObj_ = obj; }
+	void SetCurrentAttribute(Attribute attribute) { currentAttribute = attribute; }
 	Action ConsumeAction();
 };

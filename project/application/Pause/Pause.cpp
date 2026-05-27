@@ -1,4 +1,5 @@
 #include "Pause.h"
+#include "Data/Color.h"
 #include "Engine/Texture/Mesh/Object3d/Object3dCommon.h"
 #include "Engine/Texture/Sprite/SpriteCommon.h"
 #include "Function.h"
@@ -21,7 +22,7 @@ Pause::Pause() {
 
 	Select_->Initialize(SelectHandle_);
 	Button_->Initialize(ButtonHandle_);
-	BG_->Initialize(Primitive::PrimitiveName::Plane, "Resources/2d/white2x2.png");
+	BG_->Initialize(Primitive::PrimitiveName::Plane, "Resources/2d/Pause.png");
 	BG_->SetCamera(camera_.get());
 }
 
@@ -49,9 +50,9 @@ void Pause::Initialize() {
 	camera_->Update();
 
 	BG_->SetTransform({
-	    .scale{30.0f, 15.0f, 1.0f},
+	    .scale{1280.0f * 0.1f, 720.0f*0.1f, 1.0f },
 	    .rotate{0.0f,  0.0f,  0.0f},
-	    .translate{0.0f,  0.0f,  0.0f},
+	    .translate{0.0f,  0.0f,  10.0f},
 	});
 	BG_->SetEnableLighting(false);
 
@@ -146,25 +147,25 @@ void Pause::Update(bool isPause) {
 	Button_->Update();
 	switch (currentAttribute) {
 	case Attribute::None:
-		BG_->SetColor({0.4f, 0.4f, 1.0f, 0.0f});
+		BG_->SetColor(Color::RGBAToVector4(190,190,190,255));
 		break;
 	case Attribute::Fire:
-		BG_->SetColor({0.4f, 0.4f, 1.0f, 0.0f});
+		BG_->SetColor(Color::RGBAToVector4(225, 75, 65, 255));
 		break;
 	case Attribute::Ice:
-		BG_->SetColor({0.4f, 0.4f, 1.0f, 0.0f});
+		BG_->SetColor(Color::RGBAToVector4(130, 190, 220, 255));
 		break;
 	case Attribute::Wind:
-		BG_->SetColor({0.4f, 0.4f, 1.0f, 0.0f});
+		BG_->SetColor(Color::RGBAToVector4(130, 235, 170, 255));
 		break;
 	case Attribute::Thunder:
-		BG_->SetColor({0.4f, 0.4f, 1.0f, 0.0f});
+		BG_->SetColor(Color::RGBAToVector4(200, 100, 200, 255));
 		break;
 	case Attribute::Imaginary:
-		BG_->SetColor({0.4f, 0.4f, 1.0f, 0.0f});
+		BG_->SetColor(Color::RGBAToVector4(240, 210, 60, 255));
 		break;
 	case Attribute::Quantum:
-		BG_->SetColor({0.4f, 0.4f, 1.0f, 0.0f});
+		BG_->SetColor(Color::RGBAToVector4(55, 80, 160, 255));
 		break;
 	default:
 		break;
@@ -194,7 +195,7 @@ void Pause::Draw() {
 	}
 
 	Object3dCommon::GetInstance()->DrawCommon();
-	/*BG_->Draw();*/
+	BG_->Draw();
 	if (currentCharacterObj_) {
 		Object3dCommon::GetInstance()->DrawCommonMaterialColorOnlySkinning();
 		currentCharacterObj_->Draw();
