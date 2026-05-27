@@ -188,9 +188,9 @@ void PlayerAttack::Update() {
 			attackState_ = AttackState::kSkillAttack;
 			skill_->StartAttack(playerTransform_);
 			Audio::GetInstance()->SoundPlayWave(skillAttackSE, false);
-				isSpecialAttack = true;
-				attackState_ = AttackState::kSpecialAttack;
-				skill_->StartSpecialAttack(playerTransform_, 6);
+				//isSpecialAttack = true;
+				//attackState_ = AttackState::kSpecialAttack;
+				//skill_->StartSpecialAttack(playerTransform_, 6);
 			
 			// コンボリセット
 			comboStep_ = 0;
