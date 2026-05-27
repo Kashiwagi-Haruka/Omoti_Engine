@@ -49,7 +49,7 @@ void LockOnCamera::Update() {
 	if (orbitPitch_ < minPitch) {
 		orbitPitch_ = minPitch;
 	}
-	if (hasFollowPosition_) {
+	if (!hasTarget_ && hasFollowPosition_) {
 		Vector3 toFollow = followPosition_ - playerPos;
 		if (Function::LengthSquared(toFollow) > 0.0001f) {
 			orbitYaw_ = std::atan2f(toFollow.x, toFollow.z);
