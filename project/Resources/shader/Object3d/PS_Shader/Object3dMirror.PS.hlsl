@@ -35,7 +35,7 @@ struct PixelShaderOutput
 };
 float3 ApplyGrayscale(float3 color)
 {
-    if (gMaterial.grayscaleEnabled == 0 && gCamera.fullscreenGrayscaleEnabled == 0)
+    if (gMaterial.grayscaleEnabled == 0)
     {
         return color;
     }
@@ -44,7 +44,7 @@ float3 ApplyGrayscale(float3 color)
 }
 float3 ApplySepia(float3 color)
 {
-    if (gMaterial.sepiaEnabled == 0 && gCamera.fullscreenSepiaEnabled == 0)
+    if (gMaterial.sepiaEnabled == 0)
     {
         return color;
     }
@@ -55,6 +55,7 @@ float3 ApplySepia(float3 color)
     sepia.b = dot(color, float3(0.272f, 0.534f, 0.131f));
     return saturate(sepia);
 }
+
 
 
 PixelShaderOutput main(Object3dVertexShaderOutput input)

@@ -13,5 +13,7 @@ cbuffer PostEffectParameters : register(b0)
     float randomNoiseTime;
     float randomNoiseBlendMode;
     float boxFilterKernelSize;
-    float3 padding;
+    float fullscreenGrayscaleEnabled;
+    float fullscreenSepiaEnabled;
+    float2 padding;
 };
