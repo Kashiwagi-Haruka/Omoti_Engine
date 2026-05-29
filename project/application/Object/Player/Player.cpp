@@ -81,9 +81,6 @@ void Player::Move() {
 
 				inputAxis.x = -1.0f;
 				hasInput = true;
-				if (!attack_->IsAttacking()) {
-					models_->SetStateM(PlayerModels::StateM::walk);
-				}
 			}
 		}
 
@@ -92,9 +89,6 @@ void Player::Move() {
 			if (PlayCommand::GetMOVE_RIGHT()) {
 				inputAxis.x = 1.0f;
 				hasInput = true;
-				if (!attack_->IsAttacking()) {
-					models_->SetStateM(PlayerModels::StateM::walk);
-				}
 			}
 		}
 	}
@@ -103,9 +97,6 @@ void Player::Move() {
 		if (!PlayCommand::GetMOVE_FRONT()) {
 
 			if (PlayCommand::GetMOVE_BACK()) {
-				if (!attack_->IsAttacking()) {
-					models_->SetStateM(PlayerModels::StateM::walk);
-				}
 				inputAxis.z = -1.0f;
 				hasInput = true;
 			}
@@ -116,9 +107,6 @@ void Player::Move() {
 			if (PlayCommand::GetMOVE_FRONT()) {
 				inputAxis.z = 1.0f;
 				hasInput = true;
-				if (!attack_->IsAttacking()) {
-					models_->SetStateM(PlayerModels::StateM::walk);
-				}
 			}
 		}
 	}
@@ -164,16 +152,15 @@ void Player::Move() {
 
 	if (!PlayCommand::GetMOVE_LEFT() && !PlayCommand::GetMOVE_RIGHT() && !PlayCommand::GetMOVE_FRONT() && !PlayCommand::GetMOVE_BACK()) {
 		isDash = false;
-		if (!attack_->IsAttacking() && !attack_->isSkillAttacking()) {
-		models_->SetStateM(PlayerModels::StateM::idle);
-		}
 	} else {
 		isDash = PlayCommand::GetDASH();
 	}
 
-	if (PlayCommand::GetJUMP()) {
-		if (!isfalling && !isJump) {
-			isJump = true;
+	if (!attack_->IsAttacking() && !attack_->IsFallingAttacking()) {
+		if (hasInput) {
+			models_->SetStateM(PlayerModels::StateM::walk);
+		} else if (!attack_->isSkillAttacking() && !attack_->isSpecialAttacking()) {
+			models_->SetStateM(PlayerModels::StateM::idle);
 		}
 	}
 
