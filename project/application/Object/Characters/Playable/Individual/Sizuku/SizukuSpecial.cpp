@@ -9,10 +9,10 @@ SizukuSpecial::SizukuSpecial(){
 
 }
 void SizukuSpecial::Initialize() { 
-	fieldPlane_->Initialize(Primitive::Plane);
-}
+	fieldPlane_->Initialize(Primitive::Plane, "Resources/2d/Effect/sizukuField.png"); }
 void SizukuSpecial::Start() { 
 	isStarted_ = true; 
+	isEnd_ = false;
 	duration_ = 0; 
 	rainTimer_ = 0; 
 	iceRains_.clear(); 
@@ -21,6 +21,7 @@ void SizukuSpecial::Start() {
 }
 void SizukuSpecial::End() { 
 	isStarted_ = false; 
+	isEnd_ = true;
 	fieldPlaneTransform_.scale = {0.0f, 0.0f, 1.0f};
 	iceRains_.clear(); 
 }

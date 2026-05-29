@@ -4,16 +4,17 @@
 PlayerAttack::PlayerAttack() {
 	sword_ = std::make_unique<PlayerSword>();
 	skill_ = std::make_unique<PlayerSkill>();
+	special_ = std::make_unique<PlayerSpecialAttack>();
 	key_ = std::make_unique<PlayerKey>();
 }
-PlayerAttack::~PlayerAttack(){
+PlayerAttack::~PlayerAttack() {
 	Audio::GetInstance()->SoundUnload(&attackSE);
 	Audio::GetInstance()->SoundUnload(&attackEndSE);
 	Audio::GetInstance()->SoundUnload(&skillAttackSE);
 };
 void PlayerAttack::Initialize() {
-	isAttacking_ = false; 
-		// コンボ関連の初期化
+	isAttacking_ = false;
+	// コンボ関連の初期化
 	comboStep_ = 0;
 	comboTimer_ = 0.0f;
 	comboWindow_ = 0.8f; // コンボ受付時間（秒）
@@ -36,6 +37,8 @@ void PlayerAttack::Initialize() {
 	sword_->SetCamera(camera_);
 	skill_->Initialize();
 	skill_->SetCamera(camera_);
+	special_->Initialize();
+	special_->SetCamera(camera_);
 	key_->Initialize();
 	key_->SetCamera(camera_);
 }
@@ -203,6 +206,10 @@ void PlayerAttack::Update() {
 		if (!isSpecialAttack) {
 			isSpecialAttack = true;
 			attackState_ = AttackState::kSpecialAttack;
+			special_->SetPlayerTransform(playerTransform_);
+			special_->Start();
+
+			Audio::GetInstance()->SoundPlayWave(skillAttackSE, false);
 
 			// コンボリセット
 			comboStep_ = 0;
@@ -226,6 +233,11 @@ void PlayerAttack::Update() {
 	}
 
 	if (isSpecialAttack) {
+		special_->SetCamera(camera_);
+		special_->Update();
+		if (special_->IsEnd()) {
+			isSpecialAttack = false;
+		}
 	}
 	const auto swordJointMatrix = models_->GetJointWorldMatrix("剣");
 	sword_->SetCamera(camera_);
@@ -243,6 +255,9 @@ void PlayerAttack::Draw() {
 	// 攻撃の描画処理をここに記述
 	if (isSkillAttack) {
 		skill_->Draw();
+	}
+	if (isSpecialAttack) {
+		special_->Draw();
 	}
 	key_->Draw();
 	sword_->Draw();
