@@ -7,40 +7,40 @@
 
 namespace{
 const float planeRotateAcceleration = 0.05f;
-const float planeRotateMaxVelocity = 5.0f;
+const float planeRotateMaxVelocity = 2.0f;
 }
 
 
 PlayerKey::PlayerKey() {
-	/*keyObj_ = std::make_unique<Object3d>();*/
+	keyObj_ = std::make_unique<Object3d>();
 	keyHoleObj_ = std::make_unique<Primitive>();
 	planeCircleObj_ = std::make_unique<Primitive>();
-	/*ModelManager::GetInstance()->LoadModel("Resources/3d", "cube");*/
+	ModelManager::GetInstance()->LoadModel("Resources/3d/Key", "Key");
 }
 PlayerKey::~PlayerKey() = default;
 
 void PlayerKey::Initialize() { 
 
 	keyTransform_ = {
-	    .scale = {0.5f, 0.5f, 0.5f},
+	    .scale = {0.1f, 0.1f, 0.1f},
           .rotate = {0.0f, 0.0f, 0.0f},
           .translate = {0.0f, 0.0f, -1.0f}
     };
 	keyHoleTransform_ = {
-		.scale = {0.5f, 0.5f, 0.5f},
+		.scale = {1.0f, 1.0f, 0.5f},
 		  .rotate = {0.0f, 0.0f, 0.0f},
 		  .translate = {0.0f, 0.0f, -1.0f}
     };
-	planeCircleTransform_ = {.scale = {0.75f, 0.75f, 1.0f},
+	planeCircleTransform_ = {.scale = {2.0f, 2.0f, 1.0f},
 		  .rotate = {0.0f, 0.0f, 0.0f},
 		  .translate = {0.0f, 0.0f, -1.0f}
     };
 
-	//keyObj_->Initialize();
-	//keyObj_->SetModel("cube");
+	keyObj_->Initialize();
+	keyObj_->SetModel("Key");
 
-	keyHoleObj_->Initialize(Primitive::Plane);
-	planeCircleObj_->Initialize(Primitive::Plane, "Resources/2d/KeyCircle.png");
+	keyHoleObj_->Initialize(Primitive::Plane,"Resources/2d/KeyPrimitive/KeyHole.png");
+	planeCircleObj_->Initialize(Primitive::Plane, "Resources/2d/KeyPrimitive/KeyCircle.png");
 
 }
 void PlayerKey::Update() {
@@ -50,6 +50,8 @@ void PlayerKey::Update() {
 		if (isAninmationStarted_) {
 			keyAnimation_ = KeyAnimation::Start;
 			isAninmationStarted_ = false;
+			planeRotateVelocity_ = 0.0f;
+			planeCircleTransform_.rotate.z = 0.0f;
 		}
 		break;
 	case PlayerKey::KeyAnimation::Start:
@@ -77,11 +79,11 @@ void PlayerKey::Update() {
 	Matrix4x4 keyWorldMatrix = Function::MakeParentAffineMatrix(keyTransform_,playerTransform_);
 	Matrix4x4 keyHoleWorldMatrix = Function::MakeParentAffineMatrix(keyHoleTransform_, playerTransform_);
 	Matrix4x4 planeWorldMatrix = Function::MakeParentAffineMatrix(planeCircleTransform_, playerTransform_);
-	/*keyObj_->SetWorldMatrix(keyWorldMatrix);*/
+	keyObj_->SetWorldMatrix(keyWorldMatrix);
 	keyHoleObj_->SetWorldMatrix(keyHoleWorldMatrix);
 	planeCircleObj_->SetWorldMatrix(planeWorldMatrix);
 
-	/*keyObj_->Update();*/
+	keyObj_->Update();
 	keyHoleObj_->Update();
 	planeCircleObj_->Update();
 }
@@ -115,7 +117,7 @@ void PlayerKey::AttibuteColorSetting() {
 void PlayerKey::Draw() {
 	Object3dCommon::GetInstance()->SetBlendMode(BlendMode::kBlendModeAlpha);
 	Object3dCommon::GetInstance()->DrawCommon();
-	/*keyObj_->Draw();*/
+	keyObj_->Draw();
 	Object3dCommon::GetInstance()->DrawCommonNoCull();
 	keyHoleObj_->Draw();
 	planeCircleObj_->Draw();

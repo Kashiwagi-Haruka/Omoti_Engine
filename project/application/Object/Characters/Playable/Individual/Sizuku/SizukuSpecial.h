@@ -8,6 +8,7 @@ class Camera;
 class SizukuSpecial{
 
 	bool isStarted_ = false; // 開始フラグ
+	bool isEnd_ = false;
 	float duration_ = 0;     // 継続時間
 	float durationMax_ = 15; // 最大継続時間(秒)
 	float sizukuHeight_ = 0; // 雫の高さ
@@ -32,6 +33,6 @@ public:
 	void SetCamera(Camera* camera) { camera_ = camera; }
 	void SetSizukuTransform(Transform transform) { sizukuTransform_ = transform; }
 	void SetSizukuHeight(float height) {sizukuHeight_ = height; }
-
+	bool isEnd() { return isEnd_; }
 
 };

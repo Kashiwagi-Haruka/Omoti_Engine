@@ -4,21 +4,26 @@
 PlayerAttack::PlayerAttack() {
 	sword_ = std::make_unique<PlayerSword>();
 	skill_ = std::make_unique<PlayerSkill>();
+	special_ = std::make_unique<PlayerSpecialAttack>();
 	key_ = std::make_unique<PlayerKey>();
 }
-PlayerAttack::~PlayerAttack(){
+PlayerAttack::~PlayerAttack() {
 	Audio::GetInstance()->SoundUnload(&attackSE);
 	Audio::GetInstance()->SoundUnload(&attackEndSE);
 	Audio::GetInstance()->SoundUnload(&skillAttackSE);
 };
 void PlayerAttack::Initialize() {
-	isAttacking_ = false; 
-		// コンボ関連の初期化
+	isAttacking_ = false;
+	// コンボ関連の初期化
 	comboStep_ = 0;
 	comboTimer_ = 0.0f;
 	comboWindow_ = 0.8f; // コンボ受付時間（秒）
 	isAttacking_ = false;
 	canCombo_ = false;
+	nextComboInput_ = false;
+	nextHeavyAttackInput_ = false;
+	isfalling = false;
+	isJump = false;
 
 	// 重撃・落下攻撃関連
 	attackHoldTimer_ = 0.0f;
@@ -36,6 +41,8 @@ void PlayerAttack::Initialize() {
 	sword_->SetCamera(camera_);
 	skill_->Initialize();
 	skill_->SetCamera(camera_);
+	special_->Initialize();
+	special_->SetCamera(camera_);
 	key_->Initialize();
 	key_->SetCamera(camera_);
 }
@@ -43,6 +50,7 @@ void PlayerAttack::SetAttackName(std::string AttackName) {
 	// 攻撃名に応じた攻撃の初期化処理をここに記述
 	// 例: if (AttackName == "NormalAttack") { /* 通常攻撃の初期化 */ }
 }
+
 void PlayerAttack::Update() {
 	// 攻撃の更新処理をここに記述
 	// ★ 落下攻撃中は他の攻撃不可
@@ -51,13 +59,12 @@ void PlayerAttack::Update() {
 	}
 	if (isSkillAttack) {
 		models_->SetStateM(PlayerModels::StateM::skillAttack);
-		return;
 	}
 	if (isSpecialAttack) {
 		models_->SetStateM(PlayerModels::StateM::idle);
-		return;
 	}
 
+	if (!isSkillAttack && !isSpecialAttack) {
 	// コンボタイマーの更新
 	if (comboTimer_ > 0.0f) {
 		comboTimer_ -= 1.0f / 60.0f;
@@ -181,17 +188,19 @@ void PlayerAttack::Update() {
 			comboTimer_ = 0.0f;
 		}
 	}
+	}
 	if (PlayCommand::GetSKILL_ATTACK()) {
 		// スキル攻撃
 		if (!isSkillAttack) {
+			ResetNormalAttackState();
 			isSkillAttack = true;
 			attackState_ = AttackState::kSkillAttack;
 			skill_->StartAttack(playerTransform_);
 			Audio::GetInstance()->SoundPlayWave(skillAttackSE, false);
-				isSpecialAttack = true;
-				attackState_ = AttackState::kSpecialAttack;
-				skill_->StartSpecialAttack(playerTransform_, 6);
-			
+			// isSpecialAttack = true;
+			// attackState_ = AttackState::kSpecialAttack;
+			// skill_->StartSpecialAttack(playerTransform_, 6);
+
 			// コンボリセット
 			comboStep_ = 0;
 			canCombo_ = false;
@@ -201,8 +210,13 @@ void PlayerAttack::Update() {
 	if (PlayCommand::GetSPECIAL_ATTACK()) {
 		// 必殺技
 		if (!isSpecialAttack) {
+			ResetNormalAttackState();
 			isSpecialAttack = true;
 			attackState_ = AttackState::kSpecialAttack;
+			special_->SetPlayerTransform(playerTransform_);
+			special_->Start();
+
+			Audio::GetInstance()->SoundPlayWave(skillAttackSE, false);
 
 			// コンボリセット
 			comboStep_ = 0;
@@ -226,11 +240,27 @@ void PlayerAttack::Update() {
 	}
 
 	if (isSpecialAttack) {
+		special_->SetCamera(camera_);
+		special_->Update();
+		if (special_->IsEnd()) {
+			isSpecialAttack = false;
+		}
 	}
 	const auto swordJointMatrix = models_->GetJointWorldMatrix("剣");
 	sword_->SetCamera(camera_);
 	sword_->SetPlayerYaw(playerTransform_.rotate.y);
 	sword_->Update(playerTransform_, swordJointMatrix);
+}
+void PlayerAttack::ResetNormalAttackState() {
+	isAttacking_ = false;
+	isFallingAttack_ = false;
+	comboStep_ = 0;
+	comboTimer_ = 0.0f;
+	canCombo_ = false;
+	nextComboInput_ = false;
+	nextHeavyAttackInput_ = false;
+	attackHoldTimer_ = 0.0f;
+	sword_->EndAttack();
 }
 void PlayerAttack::EndAttack() {
 	isAttacking_ = false;
@@ -243,6 +273,9 @@ void PlayerAttack::Draw() {
 	// 攻撃の描画処理をここに記述
 	if (isSkillAttack) {
 		skill_->Draw();
+	}
+	if (isSpecialAttack) {
+		special_->Draw();
 	}
 	key_->Draw();
 	sword_->Draw();
