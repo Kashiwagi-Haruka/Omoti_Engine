@@ -245,6 +245,7 @@ void Player::Falling() {
 
 void Player::Update() {
 	attack_->SetTransform(transform_);
+	attack_->SetAirState(isJump, isfalling);
 	attack_->Update();
 	Move();
 	Jump();

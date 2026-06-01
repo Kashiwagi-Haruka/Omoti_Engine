@@ -10,8 +10,8 @@
 
 class PlayerAttack {
 
-	bool isfalling;
-	bool isJump;
+	bool isfalling = false;
+	bool isJump = false;
 	enum class AttackState {
 		kNone,          // 攻撃していない
 		kWeakAttack1,   // 弱攻撃1
@@ -71,15 +71,19 @@ public:
 	void Update();
 	void Draw();
 	void EndAttack();
+	void ResetNormalAttackState();
 
 	bool IsAttacking() const { return isAttacking_; }            // 攻撃中かどうかを返す関数
 	bool IsFallingAttacking() const { return isFallingAttack_; } // 落下攻撃中かどうかを返す関数
-	bool isSkillAttacking() const { return isSkillAttack; } // スキル攻撃中かどうかを返す関数
-	bool isSpecialAttacking() const { return isSpecialAttack; } // 必殺技攻撃中かどうかを返す関数
-	bool IsCanMove() const { return canMove_; }       // プレイヤーが移動できるかどうかを返す関数
-	
-	
+	bool isSkillAttacking() const { return isSkillAttack; }      // スキル攻撃中かどうかを返す関数
+	bool isSpecialAttacking() const { return isSpecialAttack; }  // 必殺技攻撃中かどうかを返す関数
+	bool IsCanMove() const { return canMove_; }                  // プレイヤーが移動できるかどうかを返す関数
+
 	void SetIsFallingAttack(bool isFalling) { isFallingAttack_ = isFalling; }
+	void SetAirState(bool isJumping, bool isFalling) {
+		isJump = isJumping;
+		isfalling = isFalling;
+	}
 	void SetAttacking(bool isAttacking) { isAttacking_ = isAttacking; }
 	void SetCamera(Camera* camera) { camera_ = camera; }
 	void SetTransform(const Transform& transform) { playerTransform_ = transform; }
@@ -89,5 +93,4 @@ public:
 	PlayerSword* GetSword() { return sword_.get(); }
 	PlayerSkill* GetSkill() { return skill_.get(); }
 	Vector3 GetSkillDamagePosition() const { return skill_->GetDamagePosition(); }
-
 };

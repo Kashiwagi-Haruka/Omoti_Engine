@@ -7,7 +7,7 @@
 
 namespace{
 const float planeRotateAcceleration = 0.05f;
-const float planeRotateMaxVelocity = 5.0f;
+const float planeRotateMaxVelocity = 2.0f;
 }
 
 
@@ -27,11 +27,11 @@ void PlayerKey::Initialize() {
           .translate = {0.0f, 0.0f, -1.0f}
     };
 	keyHoleTransform_ = {
-		.scale = {0.5f, 0.5f, 0.5f},
+		.scale = {1.0f, 1.0f, 0.5f},
 		  .rotate = {0.0f, 0.0f, 0.0f},
 		  .translate = {0.0f, 0.0f, -1.0f}
     };
-	planeCircleTransform_ = {.scale = {0.75f, 0.75f, 1.0f},
+	planeCircleTransform_ = {.scale = {2.0f, 2.0f, 1.0f},
 		  .rotate = {0.0f, 0.0f, 0.0f},
 		  .translate = {0.0f, 0.0f, -1.0f}
     };
@@ -39,8 +39,8 @@ void PlayerKey::Initialize() {
 	//keyObj_->Initialize();
 	//keyObj_->SetModel("cube");
 
-	keyHoleObj_->Initialize(Primitive::Plane);
-	planeCircleObj_->Initialize(Primitive::Plane, "Resources/2d/KeyCircle.png");
+	keyHoleObj_->Initialize(Primitive::Plane,"Resources/2d/KeyPrimitive/KeyHole.png");
+	planeCircleObj_->Initialize(Primitive::Plane, "Resources/2d/KeyPrimitive/KeyCircle.png");
 
 }
 void PlayerKey::Update() {
@@ -50,6 +50,8 @@ void PlayerKey::Update() {
 		if (isAninmationStarted_) {
 			keyAnimation_ = KeyAnimation::Start;
 			isAninmationStarted_ = false;
+			planeRotateVelocity_ = 0.0f;
+			planeCircleTransform_.rotate.z = 0.0f;
 		}
 		break;
 	case PlayerKey::KeyAnimation::Start:

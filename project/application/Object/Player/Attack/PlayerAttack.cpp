@@ -20,6 +20,10 @@ void PlayerAttack::Initialize() {
 	comboWindow_ = 0.8f; // コンボ受付時間（秒）
 	isAttacking_ = false;
 	canCombo_ = false;
+	nextComboInput_ = false;
+	nextHeavyAttackInput_ = false;
+	isfalling = false;
+	isJump = false;
 
 	// 重撃・落下攻撃関連
 	attackHoldTimer_ = 0.0f;
@@ -46,6 +50,7 @@ void PlayerAttack::SetAttackName(std::string AttackName) {
 	// 攻撃名に応じた攻撃の初期化処理をここに記述
 	// 例: if (AttackName == "NormalAttack") { /* 通常攻撃の初期化 */ }
 }
+
 void PlayerAttack::Update() {
 	// 攻撃の更新処理をここに記述
 	// ★ 落下攻撃中は他の攻撃不可
@@ -187,14 +192,15 @@ void PlayerAttack::Update() {
 	if (PlayCommand::GetSKILL_ATTACK()) {
 		// スキル攻撃
 		if (!isSkillAttack) {
+			ResetNormalAttackState();
 			isSkillAttack = true;
 			attackState_ = AttackState::kSkillAttack;
 			skill_->StartAttack(playerTransform_);
 			Audio::GetInstance()->SoundPlayWave(skillAttackSE, false);
-				//isSpecialAttack = true;
-				//attackState_ = AttackState::kSpecialAttack;
-				//skill_->StartSpecialAttack(playerTransform_, 6);
-			
+			// isSpecialAttack = true;
+			// attackState_ = AttackState::kSpecialAttack;
+			// skill_->StartSpecialAttack(playerTransform_, 6);
+
 			// コンボリセット
 			comboStep_ = 0;
 			canCombo_ = false;
@@ -204,6 +210,7 @@ void PlayerAttack::Update() {
 	if (PlayCommand::GetSPECIAL_ATTACK()) {
 		// 必殺技
 		if (!isSpecialAttack) {
+			ResetNormalAttackState();
 			isSpecialAttack = true;
 			attackState_ = AttackState::kSpecialAttack;
 			special_->SetPlayerTransform(playerTransform_);
@@ -243,6 +250,17 @@ void PlayerAttack::Update() {
 	sword_->SetCamera(camera_);
 	sword_->SetPlayerYaw(playerTransform_.rotate.y);
 	sword_->Update(playerTransform_, swordJointMatrix);
+}
+void PlayerAttack::ResetNormalAttackState() {
+	isAttacking_ = false;
+	isFallingAttack_ = false;
+	comboStep_ = 0;
+	comboTimer_ = 0.0f;
+	canCombo_ = false;
+	nextComboInput_ = false;
+	nextHeavyAttackInput_ = false;
+	attackHoldTimer_ = 0.0f;
+	sword_->EndAttack();
 }
 void PlayerAttack::EndAttack() {
 	isAttacking_ = false;
