@@ -212,19 +212,19 @@
     <ClCompile Include="Engine\Texture\TextureManager.cpp">
       <Filter>Engine\Texture</Filter>
     </ClCompile>
-    <ClCompile Include="application\Scene\Game\Game.cpp">
+    <ClCompile Include="application\Game\Game.cpp">
       <Filter>Application\Game</Filter>
     </ClCompile>
-    <ClCompile Include="application\Scene\GameOverScene.cpp">
+    <ClCompile Include="application\Scene\Scenes\GameOverScene\GameOverScene.cpp">
       <Filter>Application\Scene\GameOverScene</Filter>
     </ClCompile>
-    <ClCompile Include="application\Scene\GameScene\GameScene.cpp">
+    <ClCompile Include="application\Scene\Scenes\GameScene\GameScene.cpp">
       <Filter>Application\Scene\GameScene</Filter>
     </ClCompile>
     <ClCompile Include="application\GameTimer\GameTimer.cpp">
       <Filter>Application\GameTimer</Filter>
     </ClCompile>
-    <ClCompile Include="application\Scene\ResultScene.cpp">
+    <ClCompile Include="application\Scene\Scenes\ResultScene\ResultScene.cpp">
       <Filter>Application\Scene\ResultScene</Filter>
     </ClCompile>
     <ClCompile Include="application\Scene\SampleScene\SampleScene.cpp">
@@ -233,7 +233,7 @@
     <ClCompile Include="application\Scene\SceneFactory\SceneFactory.cpp">
       <Filter>Application\SceneFactory</Filter>
     </ClCompile>
-    <ClCompile Include="application\Scene\TitleScene.cpp">
+    <ClCompile Include="application\Scene\Scenes\TitleScene\TitleScene.cpp">
       <Filter>Application\Scene\TitleScene</Filter>
     </ClCompile>
     <ClCompile Include="application\Pause\Pause.cpp">
@@ -269,12 +269,12 @@
     <ClCompile Include="application\Object\Player\Weapon\PlayerSword.cpp" />
     <ClCompile Include="application\Object\Player\Weapon\playerSwordTrail.cpp" />
     <ClCompile Include="application\Object\MapchipField.cpp" />
-    <ClCompile Include="application\Scene\TutorialScene.cpp" />
+    <ClCompile Include="application\Scene\Scenes\TutorialScene\TutorialScene.cpp" />
     <ClCompile Include="application\Team\Team.cpp" />
     <ClCompile Include="application\TutorialUI\TutorialUI.cpp" />
     <ClCompile Include="application\UI\UIManager\UIManager.cpp" />
-    <ClCompile Include="application\Scene\GameScene\OpenWorld\OpenWorld.cpp" />
-    <ClCompile Include="application\Scene\GameScene\Rasen\Rasen.cpp" />
+    <ClCompile Include="application\Scene\Scenes\GameScene\OpenWorld\OpenWorld.cpp" />
+    <ClCompile Include="application\Scene\Scenes\GameScene\Rasen\Rasen.cpp" />
     <ClCompile Include="Engine\ScreenShot\ScreenShot.cpp" />
     <ClCompile Include="Engine\Editor\EditorManager\EditorManager.cpp" />
     <ClCompile Include="Engine\Editor\EditorData\Camera\EditorCamera.cpp" />
@@ -489,19 +489,19 @@
     <ClInclude Include="Engine\Texture\TextureManager.h">
       <Filter>Engine\Texture</Filter>
     </ClInclude>
-    <ClInclude Include="application\Scene\Game\Game.h">
+    <ClInclude Include="application\Game\Game.h">
       <Filter>Application\Game</Filter>
     </ClInclude>
-    <ClInclude Include="application\Scene\GameOverScene.h">
+    <ClInclude Include="application\Scene\Scenes\GameOverScene\GameOverScene.h">
       <Filter>Application\Scene\GameOverScene</Filter>
     </ClInclude>
-    <ClInclude Include="application\Scene\GameScene\GameScene.h">
+    <ClInclude Include="application\Scene\Scenes\GameScene\GameScene.h">
       <Filter>Application\Scene\GameScene</Filter>
     </ClInclude>
     <ClInclude Include="application\GameTimer\GameTimer.h">
       <Filter>Application\GameTimer</Filter>
     </ClInclude>
-    <ClInclude Include="application\Scene\ResultScene.h">
+    <ClInclude Include="application\Scene\Scenes\ResultScene\ResultScene.h">
       <Filter>Application\Scene\ResultScene</Filter>
     </ClInclude>
     <ClInclude Include="application\Scene\SampleScene\SampleScene.h">
@@ -510,7 +510,7 @@
     <ClInclude Include="application\Scene\SceneFactory\SceneFactory.h">
       <Filter>Application\SceneFactory</Filter>
     </ClInclude>
-    <ClInclude Include="application\Scene\TitleScene.h">
+    <ClInclude Include="application\Scene\Scenes\TitleScene\TitleScene.h">
       <Filter>Application\Scene\TitleScene</Filter>
     </ClInclude>
     <ClInclude Include="application\Pause\Pause.h">
@@ -549,12 +549,12 @@
     <ClInclude Include="application\Object\Player\Weapon\PlayerSword.h" />
     <ClInclude Include="application\Object\Player\Weapon\playerSwordTrail.h" />
     <ClInclude Include="application\Object\MapchipField.h" />
-    <ClInclude Include="application\Scene\TutorialScene.h" />
+    <ClInclude Include="application\Scene\Scenes\TutorialScene\TutorialScene.h" />
     <ClInclude Include="application\Team\Team.h" />
     <ClInclude Include="application\TutorialUI\TutorialUI.h" />
     <ClInclude Include="application\UI\UIManager\UIManager.h" />
-    <ClInclude Include="application\Scene\GameScene\OpenWorld\OpenWorld.h" />
-    <ClInclude Include="application\Scene\GameScene\Rasen\Rasen.h" />
+    <ClInclude Include="application\Scene\Scenes\GameScene\OpenWorld\OpenWorld.h" />
+    <ClInclude Include="application\Scene\Scenes\GameScene\Rasen\Rasen.h" />
     <ClInclude Include="Engine\ScreenShot\ScreenShot.h" />
     <ClInclude Include="Engine\Editor\EditorManager\EditorManager.h" />
     <ClInclude Include="Engine\Editor\EditorData\Camera\EditorCamera.h" />
