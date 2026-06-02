@@ -191,9 +191,11 @@ void Team::UpdatePartyUI() {
 	}
 
 	const bool isHoveringConfirm = IsInsideRect(mousePos, confirmPos_, confirmSize_);
-	if (isHoveringConfirm && Input::GetInstance()->TriggerKey(DIK_SPACE)) {
+	const bool isConfirmTriggered = isHoveringConfirm && (Input::GetInstance()->TriggerMouseButton(Input::MouseButton::kLeft) || Input::GetInstance()->TriggerKey(DIK_SPACE));
+	if (isConfirmTriggered) {
 		AssignCharacterToSlot(activeSlotIndex_, selectedInventoryIndex_);
 	}
+
 
 	confirmButton_->SetColor(isHoveringConfirm ? Vector4{0.95f, 0.8f, 0.3f, 1.0f} : Vector4{0.2f, 0.55f, 0.9f, 0.95f});
 
@@ -317,11 +319,20 @@ void Team::AssignCharacterToSlot(int slotIndex, int characterIndex) {
 	if (characterIndex < 0 || characterIndex >= static_cast<int>(ownedCharacterIconHandles_.size())) {
 		return;
 	}
+	int previousActiveCharacterIndex = -1;
+	if (activeSlotIndex_ >= 0 && activeSlotIndex_ < kMaxMembersCount) {
+		previousActiveCharacterIndex = teamMemberCharacterIndices_[activeSlotIndex_];
+	}
+
 	occupiedSlots_[slotIndex] = true;
 	activeSlotIndex_ = slotIndex;
 	selectedInventoryIndex_ = characterIndex;
 	teamMemberCharacterIndices_[slotIndex] = characterIndex;
 	teamMemberIcons_[slotIndex]->Initialize(ownedCharacterIconHandles_[characterIndex]);
+
+	if (previousActiveCharacterIndex != characterIndex) {
+		characterSwitchTriggered_ = true;
+	}
 }
 
 bool Team::IsInsideRect(const Vector2& point, const Vector2& pos, const Vector2& size) const { return point.x >= pos.x && point.x <= pos.x + size.x && point.y >= pos.y && point.y <= pos.y + size.y; }
