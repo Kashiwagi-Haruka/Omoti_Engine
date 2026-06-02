@@ -51,7 +51,7 @@ private:
 	Vector2 iconSize_{64.0f, 64.0f};
 	Vector2 confirmPos_{930.0f, 580.0f};
 	Vector2 confirmSize_{220.0f, 70.0f};
-	Vector2 previewPos_{900.0f, 380.0f};
+	Vector2 previewPos_{700.0f, 380.0f};
 	Vector2 previewSize_{128.0f, 128.0f};
 
 	int selectedSlotIndex_ = -1;
