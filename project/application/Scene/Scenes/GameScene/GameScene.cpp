@@ -22,6 +22,7 @@
 #include <fstream>
 #include <nlohmann/json.hpp>
 #include <numbers>
+#include "AudioManager/BGMManager/BGMManager.h"
 
 namespace {
 using json = nlohmann::json;
@@ -105,8 +106,6 @@ GameScene::GameScene() {
 	/*BG = std::make_unique<Background>();*/
 
 	pause = std::make_unique<Pause>();
-	BGMData = Audio::GetInstance()->SoundLoadFile("Resources/audio/BGM/Tailshaft.mp3");
-	Audio::GetInstance()->SetSoundVolume(&BGMData, 0.3f);
 	GameTimer::GetInstance()->Reset();
 	Input::GetInstance()->SetIsCursorStability(true);
 	Input::GetInstance()->SetIsCursorVisible(false);
@@ -117,9 +116,6 @@ GameScene::GameScene() {
 GameScene::~GameScene() {}
 
 void GameScene::Finalize() {
-
-	Audio::GetInstance()->SoundUnload(&BGMData);
-
 	rasen_->Finalize();
 	openWorld_->Finalize();
 }
@@ -128,7 +124,6 @@ void GameScene::Initialize() {
 
 	sceneEndClear = false;
 	sceneEndOver = false;
-	isBGMPlaying = false;
 	isCharacterDisplayMode_ = false;
 	isPartyMode_ = false;
 	cameraController->Initialize();
@@ -195,6 +190,8 @@ void GameScene::Initialize() {
 	introBlurStartKernelSize_ = 15.0f;
 	introBlurDelayTimer_ = 0.0f;
 	Object3dCommon::GetInstance()->SetBoxFilterKernelSize(static_cast<int>(introBlurStartKernelSize_));
+	Object3dCommon::GetInstance()->SetFullscreenFilterType(fullscreenFilterType_);
+	Object3dCommon::GetInstance()->SetGaussianFilterSigma(gaussianFilterSigma_);
 }
 
 void GameScene::DebugImGui() {
@@ -202,7 +199,14 @@ void GameScene::DebugImGui() {
 #ifdef USE_IMGUI
 	if (ImGui::Begin("vinett")) {
 		ImGui::ColorEdit3("vinettcolor", &vinettColor_.x);
-		ImGui::DragFloat("vinnettstrength", &vinettStrength_,0.1f);
+		ImGui::DragFloat("vinnettstrength", &vinettStrength_, 0.1f);
+		const char* filterTypes[] = {"Box", "Gaussian"};
+		if (ImGui::Combo("Fullscreen Filter", &fullscreenFilterType_, filterTypes, IM_ARRAYSIZE(filterTypes))) {
+			Object3dCommon::GetInstance()->SetFullscreenFilterType(fullscreenFilterType_);
+		}
+		if (ImGui::DragFloat("Gaussian Sigma", &gaussianFilterSigma_, 0.01f, 0.001f, 10.0f)) {
+			Object3dCommon::GetInstance()->SetGaussianFilterSigma(gaussianFilterSigma_);
+		}
 		Object3dCommon::GetInstance()->SetVignetteColor(vinettColor_);
 		Object3dCommon::GetInstance()->SetVignetteStrength(vinettStrength_);
 	}
@@ -323,10 +327,8 @@ void GameScene::Update() {
 		Input::GetInstance()->SetIsCursorStability(true);
 		Input::GetInstance()->SetIsCursorVisible(false);
 	}
-	if (!isBGMPlaying) {
-		Audio::GetInstance()->SoundPlayWave(BGMData, true);
-		isBGMPlaying = true;
-	}
+	
+	BGMManager::GetInstance()->Play(BGMManager::BGMType::Game);
 	if (!isTransitionIn && !isTransitionOut && Input::GetInstance()->TriggerKey(DIK_TAB)) {
 		playAreaMode_ = (playAreaMode_ == PlayAreaMode::kSpiral) ? PlayAreaMode::kOpenWorld : PlayAreaMode::kSpiral;
 		isPause = false;

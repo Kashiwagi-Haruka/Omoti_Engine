@@ -38,13 +38,21 @@ float3 ApplySepia(float3 color)
     sepia.b = dot(color, float3(0.272f, 0.534f, 0.131f));
     return saturate(sepia);
 }
+float Gauss(float x, float y, float sigma)
+{
+    static const float PI = 3.14159265f;
+    float safeSigma = max(sigma, 0.001f);
+    float exponent = -((x * x + y * y) * rcp(2.0f * safeSigma * safeSigma));
+    float denominator = 2.0f * PI * safeSigma * safeSigma;
+    return exp(exponent) * rcp(denominator);
+}
 
 PixelShaderOutput main(VertexShaderOutput input)
 {
     PixelShaderOutput output;
     output.color = gTexture.Sample(gSampler, input.texcoord);
 
-    int kernelSize = max((int)(boxFilterKernelSize), 1);
+    int kernelSize = max((int) (boxFilterKernelSize), 1);
     if (kernelSize > 1)
     {
         if ((kernelSize & 1) == 0)
@@ -59,8 +67,9 @@ PixelShaderOutput main(VertexShaderOutput input)
         gTexture.GetDimensions(width, height);
         float2 uvStepSize = float2(rcp((float) width), rcp((float) height));
 
+        bool useGaussianFilter = fullscreenFilterType > 0.5f;
         float3 filteredColor = float3(0.0f, 0.0f, 0.0f);
-        float sampleCount = 0.0f;
+        float weight = 0.0f;
         [loop]
         for (int y = -7; y <= 7; ++y)
         {
@@ -75,15 +84,15 @@ PixelShaderOutput main(VertexShaderOutput input)
                 {
                     continue;
                 }
-                float2 offset = float2((float)(x),(float)(y)) * uvStepSize;
+                float2 offset = float2((float) (x), (float) (y)) * uvStepSize;
                 float2 texcoord = saturate(input.texcoord + offset);
-                filteredColor += gTexture.Sample(gSampler, texcoord).rgb;
-                sampleCount += 1.0f;
+                float kernelWeight = useGaussianFilter ? Gauss((float) x, (float) y, gaussianFilterSigma) : 1.0f;
+                filteredColor += gTexture.Sample(gSampler, texcoord).rgb * kernelWeight;
+                weight += kernelWeight;
             }
         }
-        output.color.rgb = filteredColor / max(sampleCount, 1.0f);
+        output.color.rgb = filteredColor / max(weight, 0.0001f);
     }
-
     
     float2 centeredUv = input.texcoord * (1.0f - input.texcoord.yx);
     float vignette = centeredUv.x * centeredUv.y * 16.0f;

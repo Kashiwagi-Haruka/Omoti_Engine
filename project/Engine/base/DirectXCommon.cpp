@@ -52,6 +52,8 @@ void DirectXCommon::initialize(WinApp* winApp) {
 	SetRandomNoiseScale(randomNoiseScale_);
 	SetRandomNoiseBlendMode(randomNoiseBlendMode_);
 	SetBoxFilterKernelSize(boxFilterKernelSize_);
+	SetFullscreenFilterType(fullscreenFilterType_);
+	SetGaussianFilterSigma(gaussianFilterSigma_);
 	// DSVの初期化
 	DepthStencilViewInitialize();
 	// フェンスの生成
@@ -504,6 +506,8 @@ void DirectXCommon::SceneCopyPipelineCreate() {
 	postEffectParameterMappedData_->boxFilterKernelSize = static_cast<float>(boxFilterKernelSize_);
 	postEffectParameterMappedData_->fullscreenGrayscaleEnabled = fullscreenGrayscaleEnabled_ ? 1.0f : 0.0f;
 	postEffectParameterMappedData_->fullscreenSepiaEnabled = fullscreenSepiaEnabled_ ? 1.0f : 0.0f;
+	postEffectParameterMappedData_->fullscreenFilterType = static_cast<float>(fullscreenFilterType_);
+	postEffectParameterMappedData_->gaussianFilterSigma = gaussianFilterSigma_;
 }
 void DirectXCommon::DepthStencilViewInitialize() {
 
@@ -608,6 +612,18 @@ void DirectXCommon::SetBoxFilterKernelSize(int kernelSize) {
 	boxFilterKernelSize_ = clampedKernelSize;
 	if (postEffectParameterMappedData_) {
 		postEffectParameterMappedData_->boxFilterKernelSize = static_cast<float>(boxFilterKernelSize_);
+	}
+}
+void DirectXCommon::SetFullscreenFilterType(int filterType) {
+	fullscreenFilterType_ = std::clamp(filterType, 0, 1);
+	if (postEffectParameterMappedData_) {
+		postEffectParameterMappedData_->fullscreenFilterType = static_cast<float>(fullscreenFilterType_);
+	}
+}
+void DirectXCommon::SetGaussianFilterSigma(float sigma) {
+	gaussianFilterSigma_ = std::max(sigma, 0.001f);
+	if (postEffectParameterMappedData_) {
+		postEffectParameterMappedData_->gaussianFilterSigma = gaussianFilterSigma_;
 	}
 }
 void DirectXCommon::PreDraw() {

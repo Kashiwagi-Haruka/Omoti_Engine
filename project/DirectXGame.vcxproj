@@ -190,7 +190,7 @@ copy "$(WindowsSdkDir)\bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)\
     <ClCompile Include="application\Object\Player\PlayerParameters.cpp" />
     <ClCompile Include="application\Object\Player\Weapon\PlayerSword.cpp" />
     <ClCompile Include="application\Object\Player\Weapon\playerSwordTrail.cpp" />
-    <ClCompile Include="application\Scene\TutorialScene.cpp" />
+    <ClCompile Include="application\Scene\Scenes\TutorialScene\TutorialScene.cpp" />
     <ClCompile Include="application\Team\Team.cpp" />
     <ClCompile Include="application\TutorialUI\TutorialUI.cpp" />
     <ClCompile Include="application\UI\UIManager\UIManager.cpp" />
@@ -201,6 +201,7 @@ copy "$(WindowsSdkDir)\bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)\
     <ClCompile Include="application\Object\Damage\DamageMath.cpp" />
     <ClCompile Include="application\UI\AttackOperation\AttackOperation.cpp" />
     <ClCompile Include="application\Object\Characters\Playable\Weapon\BigSword\BigSword.cpp" />
+    <ClCompile Include="application\AudioManager\BGMManager\BGMManager.cpp" />
     <ClCompile Include="Engine\Audio\AudioMixer.cpp" />
     <ClCompile Include="Engine\Editor\EditorData\Audio\EditorAudio.cpp" />
     <ClCompile Include="Engine\Editor\EditorData\Camera\EditorCamera.cpp" />
@@ -262,7 +263,7 @@ copy "$(WindowsSdkDir)\bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)\
     <ClCompile Include="Engine\Texture\Mesh\Object3d\Object3d.cpp" />
     <ClCompile Include="Engine\Logger\Logger.cpp" />
     <ClCompile Include="Engine\StringUtillity\StringUtility.cpp" />
-    <ClCompile Include="application\Scene\GameScene\GameScene.cpp" />
+    <ClCompile Include="application\Scene\Scenes\GameScene\GameScene.cpp" />
     <ClCompile Include="Engine\Texture\Mesh\Object3d\Object3dCommon.cpp" />
     <ClCompile Include="Engine\Texture\Sprite\Sprite.cpp" />
     <ClCompile Include="Engine\Texture\Sprite\SpriteCommon.cpp" />
@@ -273,13 +274,13 @@ copy "$(WindowsSdkDir)\bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)\
     <ClCompile Include="Engine\Texture\SrvManager\SrvManager.cpp" />
     <ClCompile Include="Engine\Texture\Particle\ParticleManager.cpp" />
     <ClCompile Include="Engine\Texture\Particle\ParticleEmitter.cpp" />
-    <ClCompile Include="application\Scene\ResultScene.cpp" />
-    <ClCompile Include="application\Scene\TitleScene.cpp" />
+    <ClCompile Include="application\Scene\Scenes\ResultScene\ResultScene.cpp" />
+    <ClCompile Include="application\Scene\Scenes\TitleScene\TitleScene.cpp" />
     <ClCompile Include="application\SceneTransition\SceneTransition.cpp" />
     <ClCompile Include="Engine\BaseScene\SceneManager.cpp" />
     <ClCompile Include="Engine\BaseScene\FrameWork.cpp" />
-    <ClCompile Include="application\Scene\Game\Game.cpp" />
-    <ClCompile Include="application\Scene\GameOverScene.cpp" />
+    <ClCompile Include="application\Game\Game.cpp" />
+    <ClCompile Include="application\Scene\Scenes\GameOverScene\GameOverScene.cpp" />
     <ClCompile Include="application\Scene\SceneFactory\SceneFactory.cpp" />
     <ClCompile Include="application\Scene\SampleScene\SampleScene.cpp" />
     <ClCompile Include="application\GameTimer\GameTimer.cpp" />
@@ -291,8 +292,8 @@ copy "$(WindowsSdkDir)\bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)\
     <ClCompile Include="Engine\Texture\PSO\SpriteCreatePSO.cpp" />
     <ClCompile Include="Engine\Texture\RenderTexture2D.cpp" />
     <ClCompile Include="Engine\Texture\Mesh\Portal\PortalMesh.cpp" />
-    <ClCompile Include="application\Scene\GameScene\OpenWorld\OpenWorld.cpp" />
-    <ClCompile Include="application\Scene\GameScene\Rasen\Rasen.cpp" />
+    <ClCompile Include="application\Scene\Scenes\GameScene\OpenWorld\OpenWorld.cpp" />
+    <ClCompile Include="application\Scene\Scenes\GameScene\Rasen\Rasen.cpp" />
     <ClCompile Include="Engine\Texture\Mesh\SkyBox\SkyBox.cpp" />
     <ClCompile Include="application\PlayCommand\PlayCommand.cpp" />
     <ClCompile Include="application\Object\Player\PlayerKey\PlayerKey.cpp" />
@@ -309,6 +310,8 @@ copy "$(WindowsSdkDir)\bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)\
     <ClCompile Include="application\Object\Characters\Playable\Weapon\Spear\Spear.cpp" />
     <ClCompile Include="application\Object\Characters\Playable\Weapon\Gun\Gun.cpp" />
     <ClCompile Include="application\Object\Characters\Playable\Weapon\Sword\Sword.cpp" />
+    <ClCompile Include="application\AudioManager\SEManager\SEManager.cpp" />
+    <ClCompile Include="application\Option\Option.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include=".editorconfig" />
@@ -366,7 +369,7 @@ copy "$(WindowsSdkDir)\bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)\
     <ClInclude Include="application\Object\Player\Weapon\PlayerSword.h" />
     <ClInclude Include="application\Object\Player\Weapon\playerSwordTrail.h" />
     <ClInclude Include="application\Object\Characters\Playable\Base\WeaponTypes.h" />
-    <ClInclude Include="application\Scene\TutorialScene.h" />
+    <ClInclude Include="application\Scene\Scenes\TutorialScene\TutorialScene.h" />
     <ClInclude Include="application\Team\Team.h" />
     <ClInclude Include="application\TutorialUI\TutorialUI.h" />
     <ClInclude Include="application\UI\UIManager\UIManager.h" />
@@ -377,6 +380,7 @@ copy "$(WindowsSdkDir)\bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)\
     <ClInclude Include="application\Object\Damage\DamageMath.h" />
     <ClInclude Include="application\UI\AttackOperation\AttackOperation.h" />
     <ClInclude Include="application\Object\Characters\Playable\Weapon\BigSword\BigSword.h" />
+    <ClInclude Include="application\AudioManager\BGMManager\BGMManager.h" />
     <ClInclude Include="Engine\Audio\AudioMixer.h" />
     <ClInclude Include="Engine\base\ScreenSize.h" />
     <ClInclude Include="Engine\Editor\EditorData\Audio\EditorAudio.h" />
@@ -445,7 +449,7 @@ copy "$(WindowsSdkDir)\bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)\
     <ClInclude Include="Engine\Texture\Mesh\Object3d\Object3d.h" />
     <ClInclude Include="Engine\Logger\Logger.h" />
     <ClInclude Include="Engine\StringUtillity\StringUtility.h" />
-    <ClInclude Include="application\Scene\GameScene\GameScene.h" />
+    <ClInclude Include="application\Scene\Scenes\GameScene\GameScene.h" />
     <ClInclude Include="Engine\Texture\Mesh\Object3d\Object3dCommon.h" />
     <ClInclude Include="Engine\Texture\Sprite\Sprite.h" />
     <ClInclude Include="Engine\Texture\Sprite\SpriteCommon.h" />
@@ -456,13 +460,13 @@ copy "$(WindowsSdkDir)\bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)\
     <ClInclude Include="Engine\Texture\SrvManager\SrvManager.h" />
     <ClInclude Include="Engine\Texture\Particle\ParticleManager.h" />
     <ClInclude Include="Engine\Texture\Particle\ParticleEmitter.h" />
-    <ClInclude Include="application\Scene\ResultScene.h" />
-    <ClInclude Include="application\Scene\TitleScene.h" />
+    <ClInclude Include="application\Scene\Scenes\ResultScene\ResultScene.h" />
+    <ClInclude Include="application\Scene\Scenes\TitleScene\TitleScene.h" />
     <ClInclude Include="application\SceneTransition\SceneTransition.h" />
     <ClInclude Include="Engine\BaseScene\SceneManager.h" />
     <ClInclude Include="Engine\BaseScene\FrameWork.h" />
-    <ClInclude Include="application\Scene\Game\Game.h" />
-    <ClInclude Include="application\Scene\GameOverScene.h" />
+    <ClInclude Include="application\Game\Game.h" />
+    <ClInclude Include="application\Scene\Scenes\GameOverScene\GameOverScene.h" />
     <ClInclude Include="application\Scene\SceneFactory\SceneFactory.h" />
     <ClInclude Include="application\Scene\SampleScene\SampleScene.h" />
     <ClInclude Include="application\GameTimer\GameTimer.h" />
@@ -474,8 +478,8 @@ copy "$(WindowsSdkDir)\bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)\
     <ClInclude Include="Engine\Texture\PSO\SpriteCreatePSO.h" />
     <ClInclude Include="Engine\Texture\RenderTexture2D.h" />
     <ClInclude Include="Engine\Texture\Mesh\Portal\PortalMesh.h" />
-    <ClInclude Include="application\Scene\GameScene\OpenWorld\OpenWorld.h" />
-    <ClInclude Include="application\Scene\GameScene\Rasen\Rasen.h" />
+    <ClInclude Include="application\Scene\Scenes\GameScene\OpenWorld\OpenWorld.h" />
+    <ClInclude Include="application\Scene\Scenes\GameScene\Rasen\Rasen.h" />
     <ClInclude Include="Engine\Texture\Mesh\SkyBox\SkyBox.h" />
     <ClInclude Include="application\PlayCommand\PlayCommand.h" />
     <ClInclude Include="application\Object\Player\PlayerKey\PlayerKey.h" />
@@ -492,6 +496,8 @@ copy "$(WindowsSdkDir)\bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)\
     <ClInclude Include="application\Object\Characters\Playable\Weapon\Spear\Spear.h" />
     <ClInclude Include="application\Object\Characters\Playable\Weapon\Gun\Gun.h" />
     <ClInclude Include="application\Object\Characters\Playable\Weapon\Sword\Sword.h" />
+    <ClInclude Include="application\AudioManager\SEManager\SEManager.h" />
+    <ClInclude Include="application\Option\Option.h" />
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="Resources\shader\FullScreenCopy\CopyImage.PS.hlsl">

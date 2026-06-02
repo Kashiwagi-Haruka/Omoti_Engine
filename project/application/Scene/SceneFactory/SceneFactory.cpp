@@ -1,10 +1,10 @@
 #include "SceneFactory.h"
-#include "Scene/GameOverScene.h"
-#include "Scene/GameScene/GameScene.h"
-#include "Scene/ResultScene.h"
 #include "Scene/SampleScene/SampleScene.h"
-#include "Scene/TitleScene.h"
-#include "Scene/TutorialScene.h"
+#include "Scene/Scenes/GameOverScene/GameOverScene.h"
+#include "Scene/Scenes/GameScene/GameScene.h"
+#include "Scene/Scenes/ResultScene/ResultScene.h"
+#include "Scene/Scenes/TitleScene/TitleScene.h"
+#include "Scene/Scenes/TutorialScene/TutorialScene.h"
 #include <memory>
 std::unique_ptr<BaseScene> SceneFactory::CreateScene(const std::string& sceneName) {
 	std::unique_ptr<BaseScene> scene = nullptr;

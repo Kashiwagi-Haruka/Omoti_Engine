@@ -362,6 +362,11 @@ public:
 	void SetVignetteColor(const Vector3& color);
 
 	void SetBoxFilterKernelSize(int kernelSize);
+	int GetBoxFilterKernelSize() const;
+	void SetFullscreenFilterType(int filterType);
+	int GetFullscreenFilterType() const;
+	void SetGaussianFilterSigma(float sigma);
+	float GetGaussianFilterSigma() const;
 
 	// ランダムノイズ有効化切り替え
 	void SetRandomNoiseEnabled(bool enabled);

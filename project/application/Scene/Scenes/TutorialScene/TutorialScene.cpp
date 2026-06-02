@@ -1,5 +1,6 @@
 #define NOMINMAX
 #include "TutorialScene.h"
+#include "AudioManager/BGMManager/BGMManager.h"
 #include "CameraController/CameraController.h"
 #include "Input.h"
 #include "Object/Background/Sky.h"
@@ -18,8 +19,6 @@
 #include <imgui.h>
 
 TutorialScene::TutorialScene() {
-	BGMData_ = Audio::GetInstance()->SoundLoadFile("Resources/audio/BGM/Tailshaft.mp3");
-	Audio::GetInstance()->SetSoundVolume(&BGMData_, 0.3f);
 }
 namespace {
 const Vector3 kTutorialExpCubeSpawnOffset{2.5f, 0.0f, 2.5f};
@@ -68,7 +67,6 @@ void TutorialScene::Initialize() {
 	skillUseCount_ = 0;
 	attackComboCompleted_ = false;
 	previousStepIndex_ = -1;
-	isBGMPlaying_ = false;
 
 	Input::GetInstance()->SetIsCursorStability(true);
 	Input::GetInstance()->SetIsCursorVisible(false);
@@ -88,10 +86,7 @@ void TutorialScene::Update() {
 		Input::GetInstance()->SetIsCursorStability(true);
 		Input::GetInstance()->SetIsCursorVisible(false);
 	}
-	if (!isBGMPlaying_) {
-		Audio::GetInstance()->SoundPlayWave(BGMData_, true);
-		isBGMPlaying_ = true;
-	}
+	BGMManager::GetInstance()->Play(BGMManager::BGMType::Tutorial);
 	if (skipKeyHeld) {
 		skipHoldTimer_ += deltaTime;
 		if (skipHoldTimer_ >= kSkipHoldDuration) {
@@ -296,4 +291,4 @@ void TutorialScene::Draw() {
 	pause_->Draw();
 }
 
-void TutorialScene::Finalize() { Audio::GetInstance()->SoundUnload(&BGMData_); }
+void TutorialScene::Finalize() {}

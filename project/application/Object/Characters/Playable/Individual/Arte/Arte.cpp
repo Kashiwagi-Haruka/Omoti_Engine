@@ -62,7 +62,7 @@ void Arte::Update() {
 	worldMatrix_ = Function::MakeAffineMatrix(transform_.scale, transform_.rotate, transform_.translate);
 	arte_->SetWorldMatrix(worldMatrix_);
 	arte_->SetCamera(camera_);
-	arte_->SetColor({1.0f, 1.0f, 1.0f, 1.0f});
+	arte_->SetColor(Color::RGBAToVector4(93, 236, 203, 255));
 	arte_->Update();
 }
 

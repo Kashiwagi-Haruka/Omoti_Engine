@@ -24,7 +24,8 @@ private:
 	static constexpr int kMaxMembersCount = 4;
 
 	void UpdatePartyUI();
-	
+	void AssignCharacterToSlot(int slotIndex, int characterIndex);
+
 	bool IsInsideRect(const Vector2& point, const Vector2& pos, const Vector2& size) const;
 
 	uint32_t whiteTextureHandle_ = 0;
@@ -35,6 +36,7 @@ private:
 	std::array<std::unique_ptr<Sprite>, kMaxMembersCount> teamMemberIcons_{};
 	std::array<std::unique_ptr<Sprite>, kMaxMembersCount> inGameMemberIcons_{};
 	std::array<Text, kMaxMembersCount> inGameMemberNameTexts_{};
+	Text confirmButtonText_{};
 	std::array<int, kMaxMembersCount> teamMemberCharacterIndices_{};
 	std::array<bool, kMaxMembersCount> occupiedSlots_{};
 	std::array<Vector2, kMaxMembersCount> slotPositions_{};
@@ -43,6 +45,7 @@ private:
 	std::unique_ptr<Sprite> inventoryBg_;
 	std::unique_ptr<Sprite> confirmButton_;
 	std::unique_ptr<Sprite> candidatePreview_;
+	std::unique_ptr<Sprite> draggingIcon_;
 	std::unique_ptr<Sprite> inventorySelectionMarker_;
 
 	Vector2 slotSize_{80.0f, 80.0f};
@@ -51,13 +54,16 @@ private:
 	Vector2 iconSize_{64.0f, 64.0f};
 	Vector2 confirmPos_{930.0f, 580.0f};
 	Vector2 confirmSize_{220.0f, 70.0f};
-	Vector2 previewPos_{900.0f, 380.0f};
+	Vector2 previewPos_{700.0f, 380.0f};
 	Vector2 previewSize_{128.0f, 128.0f};
 
 	int selectedSlotIndex_ = -1;
 	int selectedInventoryIndex_ = 0;
 	int hoveredInventoryIndex_ = -1;
+	int dropTargetSlotIndex_ = -1;
+	int draggingInventoryIndex_ = -1;
 	bool isCandidateSelected_ = false;
+	bool isDraggingInventoryIcon_ = false;
 	int activeSlotIndex_ = 0;
 	bool characterSwitchTriggered_ = false;
 	uint32_t hudFontHandle_ = 0;

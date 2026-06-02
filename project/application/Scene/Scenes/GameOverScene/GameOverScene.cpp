@@ -3,16 +3,16 @@
 #include "SceneManager.h"
 #include "Sprite/SpriteCommon.h"
 #include "TextureManager.h"
+#include "AudioManager/BGMManager/BGMManager.h"
 GameOverScene::GameOverScene() {
 
 	logoSP_.handle = TextureManager::GetInstance()->GetTextureIndexByfilePath("Resources/2d/over.png");
 	logoSP_.sprite = std::make_unique<Sprite>();
 	logoSP_.sprite->Initialize(logoSP_.handle);
 	transition = std::make_unique<SceneTransition>();
-	BGM_ = Audio::GetInstance()->SoundLoadFile("Resources/audio/BGM/おそろい.mp3");
 }
 
-void GameOverScene::Finalize() { Audio::GetInstance()->SoundUnload(&BGM_); }
+void GameOverScene::Finalize() {}
 
 void GameOverScene::Initialize() {
 
@@ -37,14 +37,9 @@ void GameOverScene::Initialize() {
 	transition->Initialize(false);
 	isTransitionIn = true;
 	isTransitionOut = false;
-	isBGMPlaying = false;
 }
 void GameOverScene::Update() {
-
-	if (!isBGMPlaying) {
-		Audio::GetInstance()->SoundPlayWave(BGM_, true);
-		isBGMPlaying = true;
-	}
+	BGMManager::GetInstance()->Play(BGMManager::BGMType::GameOver);
 	if (Input::GetInstance()->TriggerKey(DIK_SPACE) && !isTransitionOut) {
 		transition->Initialize(true);
 		isTransitionOut = true;

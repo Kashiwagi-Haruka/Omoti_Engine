@@ -49,12 +49,9 @@ private:
 	bool isTransitionIn = true;
 	bool isTransitionOut = false;
 	std::string nextSceneName;
-	bool isBGMPlaying = false;
 	bool isPause = false;
 	bool isCharacterDisplayMode_ = false;
 	bool isPartyMode_ = false;
-
-	SoundData BGMData;
 
 	CharacterModel characterModel;
 	std::unique_ptr<CharacterDisplay> characterDisplay_;
@@ -84,6 +81,8 @@ private:
 	static constexpr float kIntroBlurDelaySeconds_ = 2.0f;
 	static constexpr float kIntroBlurFadeDurationSeconds_ = 1.0f;
 	float introBlurStartKernelSize_ = 1.0f;
+	int fullscreenFilterType_ = 1;
+	float gaussianFilterSigma_ = 2.0f;
 
 public:
 	GameScene();

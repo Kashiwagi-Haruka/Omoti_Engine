@@ -4,6 +4,7 @@
 #include "Mesh/Object3d/Object3dCommon.h"
 #include "Engine/math/Function.h"
 #include "Engine/Texture/Data/Color.h"
+#include <numbers>
 
 namespace{
 const float planeRotateAcceleration = 0.05f;
@@ -22,8 +23,8 @@ PlayerKey::~PlayerKey() = default;
 void PlayerKey::Initialize() { 
 
 	keyTransform_ = {
-	    .scale = {0.1f, 0.1f, 0.1f},
-          .rotate = {0.0f, 0.0f, 0.0f},
+	    .scale = {0.3f, 0.3f, 0.3f},
+          .rotate = {0.0f, std::numbers::pi_v<float>, 0.0f},
           .translate = {0.0f, 0.0f, -1.0f}
     };
 	keyHoleTransform_ = {

@@ -66,7 +66,6 @@ class DirectXCommon {
 
 	Microsoft::WRL::ComPtr<ID3D12RootSignature> copyRootSignature_ = nullptr;
 	Microsoft::WRL::ComPtr<ID3D12PipelineState> copyPipelineState_ = nullptr;
-
 	Microsoft::WRL::ComPtr<ID3D12Resource> postEffectParameterResource_ = nullptr;
 	struct PostEffectParameters {
 		float vignetteStrength;
@@ -78,7 +77,8 @@ class DirectXCommon {
 		float boxFilterKernelSize;
 		float fullscreenGrayscaleEnabled;
 		float fullscreenSepiaEnabled;
-		float padding[2];
+		float fullscreenFilterType;
+		float gaussianFilterSigma;
 	};
 	PostEffectParameters* postEffectParameterMappedData_ = nullptr;
 	float vignetteStrength_ = 0.0f;
@@ -88,6 +88,8 @@ class DirectXCommon {
 	float randomNoiseTime_ = 0.0f;
 	int randomNoiseBlendMode_ = 0;
 	int boxFilterKernelSize_ = 1;
+	int fullscreenFilterType_ = 0;
+	float gaussianFilterSigma_ = 2.0f;
 	bool fullscreenGrayscaleEnabled_ = false;
 	bool fullscreenSepiaEnabled_ = false;
 	bool editorLayoutEnabled_ = false;
@@ -147,6 +149,10 @@ public:
 	int GetRandomNoiseBlendMode() const { return randomNoiseBlendMode_; }
 	void SetBoxFilterKernelSize(int kernelSize);
 	int GetBoxFilterKernelSize() const { return boxFilterKernelSize_; }
+	void SetFullscreenFilterType(int filterType);
+	int GetFullscreenFilterType() const { return fullscreenFilterType_; }
+	void SetGaussianFilterSigma(float sigma);
+	float GetGaussianFilterSigma() const { return gaussianFilterSigma_; }
 	void SetFullscreenGrayscaleEnabled(bool enabled) { fullscreenGrayscaleEnabled_ = enabled; }
 	bool IsFullscreenGrayscaleEnabled() const { return fullscreenGrayscaleEnabled_; }
 	void SetFullscreenSepiaEnabled(bool enabled) { fullscreenSepiaEnabled_ = enabled; }

@@ -62,7 +62,7 @@ void Yuzuki::Update() {
 	worldMatrix_ = Function::MakeAffineMatrix(transform_.scale, transform_.rotate, transform_.translate);
 	yuzuki_->SetWorldMatrix(worldMatrix_);
 	yuzuki_->SetCamera(camera_);
-	yuzuki_->SetColor({1.0f, 1.0f, 1.0f, 1.0f});
+	yuzuki_->SetColor(Color::RGBAToVector4(207, 156, 236, 255));
 	yuzuki_->Update();
 }
 

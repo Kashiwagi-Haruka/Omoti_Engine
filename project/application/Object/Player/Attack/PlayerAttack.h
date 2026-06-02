@@ -55,14 +55,6 @@ class PlayerAttack {
 
 	Transform playerTransform_;
 
-	// SE
-	bool isAttackSE = false;
-	bool isAttackEndSE = false;
-
-	SoundData attackSE;
-	SoundData attackEndSE;
-	SoundData skillAttackSE;
-
 public:
 	PlayerAttack();
 	~PlayerAttack();
