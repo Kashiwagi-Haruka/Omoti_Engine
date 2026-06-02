@@ -201,6 +201,7 @@ copy "$(WindowsSdkDir)\bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)\
     <ClCompile Include="application\Object\Damage\DamageMath.cpp" />
     <ClCompile Include="application\UI\AttackOperation\AttackOperation.cpp" />
     <ClCompile Include="application\Object\Characters\Playable\Weapon\BigSword\BigSword.cpp" />
+    <ClCompile Include="application\AudioManager\BGMManager\BGMManager.cpp" />
     <ClCompile Include="Engine\Audio\AudioMixer.cpp" />
     <ClCompile Include="Engine\Editor\EditorData\Audio\EditorAudio.cpp" />
     <ClCompile Include="Engine\Editor\EditorData\Camera\EditorCamera.cpp" />
@@ -309,6 +310,7 @@ copy "$(WindowsSdkDir)\bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)\
     <ClCompile Include="application\Object\Characters\Playable\Weapon\Spear\Spear.cpp" />
     <ClCompile Include="application\Object\Characters\Playable\Weapon\Gun\Gun.cpp" />
     <ClCompile Include="application\Object\Characters\Playable\Weapon\Sword\Sword.cpp" />
+    <ClCompile Include="application\AudioManager\SEManager\SEManager.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include=".editorconfig" />
@@ -377,6 +379,7 @@ copy "$(WindowsSdkDir)\bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)\
     <ClInclude Include="application\Object\Damage\DamageMath.h" />
     <ClInclude Include="application\UI\AttackOperation\AttackOperation.h" />
     <ClInclude Include="application\Object\Characters\Playable\Weapon\BigSword\BigSword.h" />
+    <ClInclude Include="application\AudioManager\BGMManager\BGMManager.h" />
     <ClInclude Include="Engine\Audio\AudioMixer.h" />
     <ClInclude Include="Engine\base\ScreenSize.h" />
     <ClInclude Include="Engine\Editor\EditorData\Audio\EditorAudio.h" />
@@ -492,6 +495,7 @@ copy "$(WindowsSdkDir)\bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)\
     <ClInclude Include="application\Object\Characters\Playable\Weapon\Spear\Spear.h" />
     <ClInclude Include="application\Object\Characters\Playable\Weapon\Gun\Gun.h" />
     <ClInclude Include="application\Object\Characters\Playable\Weapon\Sword\Sword.h" />
+    <ClInclude Include="application\AudioManager\SEManager\SEManager.h" />
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="Resources\shader\FullScreenCopy\CopyImage.PS.hlsl">

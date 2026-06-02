@@ -33,8 +33,8 @@ void PlayerAttack::Initialize() {
 	isSkillAttack = false;
 	isSpecialAttack = false;
 
-	attackSE = Audio::GetInstance()->SoundLoadFile("Resources/audio/SE/normalAttack.mp3");
-	attackEndSE = Audio::GetInstance()->SoundLoadFile("Resources/audio/SE/endAttack.mp3");
+	attackSE = Audio::GetInstance()->SoundLoadFile("Resources/audio/SE/Attack/normalAttack.mp3");
+	attackEndSE = Audio::GetInstance()->SoundLoadFile("Resources/audio/SE/Attack/endAttack.mp3");
 	skillAttackSE = Audio::GetInstance()->SoundLoadFile("Resources/audio/SE/magic.mp3");
 
 	sword_->Initialize();

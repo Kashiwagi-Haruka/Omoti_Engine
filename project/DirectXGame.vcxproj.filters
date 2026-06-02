@@ -322,6 +322,8 @@
     <ClCompile Include="application\Object\Characters\Playable\Weapon\Gun\Gun.cpp" />
     <ClCompile Include="application\Object\Characters\Playable\Weapon\BigSword\BigSword.cpp" />
     <ClCompile Include="application\Object\Characters\Playable\Weapon\Allow\Allow.cpp" />
+    <ClCompile Include="application\AudioManager\SEManager\SEManager.cpp" />
+    <ClCompile Include="application\AudioManager\BGMManager\BGMManager.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Engine\Texture\RenderTexture2D.h" />
@@ -617,6 +619,8 @@
     <ClInclude Include="application\Object\Characters\Playable\Weapon\BigSword\BigSword.h" />
     <ClInclude Include="application\Object\Characters\Playable\Weapon\Allow\Allow.h" />
     <ClInclude Include="application\Object\Characters\Playable\Weapon\BaseWeapon.h" />
+    <ClInclude Include="application\AudioManager\SEManager\SEManager.h" />
+    <ClInclude Include="application\AudioManager\BGMManager\BGMManager.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include=".editorconfig" />
