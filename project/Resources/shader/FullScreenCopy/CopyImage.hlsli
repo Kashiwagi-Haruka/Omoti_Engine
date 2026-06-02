@@ -15,5 +15,6 @@ cbuffer PostEffectParameters : register(b0)
     float boxFilterKernelSize;
     float fullscreenGrayscaleEnabled;
     float fullscreenSepiaEnabled;
-    float2 padding;
+    float fullscreenFilterType;
+    float gaussianFilterSigma;
 };

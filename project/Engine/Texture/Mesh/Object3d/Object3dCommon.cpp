@@ -677,6 +677,16 @@ void Object3dCommon::SetRandomNoiseBlendMode(int blendMode) { dxCommon_->SetRand
 
 void Object3dCommon::SetBoxFilterKernelSize(int kernelSize) { dxCommon_->SetBoxFilterKernelSize(kernelSize); }
 
+int Object3dCommon::GetBoxFilterKernelSize() const { return dxCommon_->GetBoxFilterKernelSize(); }
+
+void Object3dCommon::SetFullscreenFilterType(int filterType) { dxCommon_->SetFullscreenFilterType(filterType); }
+
+int Object3dCommon::GetFullscreenFilterType() const { return dxCommon_->GetFullscreenFilterType(); }
+
+void Object3dCommon::SetGaussianFilterSigma(float sigma) { dxCommon_->SetGaussianFilterSigma(sigma); }
+
+float Object3dCommon::GetGaussianFilterSigma() const { return dxCommon_->GetGaussianFilterSigma(); }
+
 Microsoft::WRL::ComPtr<ID3D12Resource> Object3dCommon::CreateBufferResource(size_t sizeInBytes) {
 	// バッファの設定(UPLOAD用に変更)
 	D3D12_HEAP_PROPERTIES heapProperties = {};

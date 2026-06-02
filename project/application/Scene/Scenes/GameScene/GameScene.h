@@ -81,6 +81,8 @@ private:
 	static constexpr float kIntroBlurDelaySeconds_ = 2.0f;
 	static constexpr float kIntroBlurFadeDurationSeconds_ = 1.0f;
 	float introBlurStartKernelSize_ = 1.0f;
+	int fullscreenFilterType_ = 1;
+	float gaussianFilterSigma_ = 2.0f;
 
 public:
 	GameScene();
