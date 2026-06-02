@@ -311,6 +311,7 @@ copy "$(WindowsSdkDir)\bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)\
     <ClCompile Include="application\Object\Characters\Playable\Weapon\Gun\Gun.cpp" />
     <ClCompile Include="application\Object\Characters\Playable\Weapon\Sword\Sword.cpp" />
     <ClCompile Include="application\AudioManager\SEManager\SEManager.cpp" />
+    <ClCompile Include="application\Option\Option.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include=".editorconfig" />
@@ -496,6 +497,7 @@ copy "$(WindowsSdkDir)\bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)\
     <ClInclude Include="application\Object\Characters\Playable\Weapon\Gun\Gun.h" />
     <ClInclude Include="application\Object\Characters\Playable\Weapon\Sword\Sword.h" />
     <ClInclude Include="application\AudioManager\SEManager\SEManager.h" />
+    <ClInclude Include="application\Option\Option.h" />
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="Resources\shader\FullScreenCopy\CopyImage.PS.hlsl">

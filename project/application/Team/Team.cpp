@@ -55,12 +55,26 @@ void Team::Initialize() {
 	confirmButton_->SetColor({0.2f, 0.55f, 0.9f, 0.95f});
 	confirmButton_->Update();
 
+	confirmButtonText_.Initialize(hudFontHandle_);
+	confirmButtonText_.SetSize(confirmSize_);
+	confirmButtonText_.SetAlign(TextAlign::Center);
+	confirmButtonText_.SetColor({1.0f, 1.0f, 1.0f, 1.0f});
+	confirmButtonText_.SetString(U"確定");
+	confirmButtonText_.SetPosition({confirmPos_.x + confirmSize_.x * 0.5f, confirmPos_.y - 28.0f});
+	confirmButtonText_.UpdateLayout(false);
+
 	candidatePreview_ = std::make_unique<Sprite>();
 	candidatePreview_->Initialize(ownedCharacterIconHandles_[selectedInventoryIndex_]);
 	candidatePreview_->SetPosition(previewPos_);
 	candidatePreview_->SetScale(previewSize_);
 	candidatePreview_->SetColor({1.0f, 1.0f, 1.0f, 0.95f});
 	candidatePreview_->Update();
+
+	draggingIcon_ = std::make_unique<Sprite>();
+	draggingIcon_->Initialize(ownedCharacterIconHandles_[selectedInventoryIndex_]);
+	draggingIcon_->SetScale(iconSize_);
+	draggingIcon_->SetColor({1.0f, 1.0f, 1.0f, 0.78f});
+	draggingIcon_->Update();
 
 	inventorySelectionMarker_ = std::make_unique<Sprite>();
 	inventorySelectionMarker_->Initialize(whiteTextureHandle_);
@@ -121,6 +135,9 @@ void Team::Update(bool isPartyOpen) {
 		}
 	}
 	if (!isPartyOpen) {
+		isDraggingInventoryIcon_ = false;
+		draggingInventoryIndex_ = -1;
+		dropTargetSlotIndex_ = -1;
 		return;
 	}
 	Input::GetInstance()->SetIsCursorVisible(true);
@@ -131,9 +148,13 @@ void Team::Update(bool isPartyOpen) {
 void Team::UpdatePartyUI() {
 	Vector2 mousePos{Input::GetInstance()->GetMouseX(), Input::GetInstance()->GetMouseY()};
 	hoveredInventoryIndex_ = -1;
+	dropTargetSlotIndex_ = -1;
 	for (int i = 0; i < kMaxMembersCount; ++i) {
-		if (IsInsideRect(mousePos, slotPositions_[i], slotSize_) && Input::GetInstance()->TriggerMouseButton(Input::MouseButton::kLeft)) {
-			activeSlotIndex_ = i;
+		if (IsInsideRect(mousePos, slotPositions_[i], slotSize_)) {
+			dropTargetSlotIndex_ = i;
+			if (Input::GetInstance()->TriggerMouseButton(Input::MouseButton::kLeft)) {
+				activeSlotIndex_ = i;
+			}
 		}
 	}
 
@@ -147,22 +168,40 @@ void Team::UpdatePartyUI() {
 	if (hoveredInventoryIndex_ >= 0 && Input::GetInstance()->TriggerMouseButton(Input::MouseButton::kLeft)) {
 		selectedInventoryIndex_ = hoveredInventoryIndex_;
 		isCandidateSelected_ = true;
+		isDraggingInventoryIcon_ = true;
+		draggingInventoryIndex_ = hoveredInventoryIndex_;
 		candidatePreview_->Initialize(ownedCharacterIconHandles_[selectedInventoryIndex_]);
 		candidatePreview_->Update();
+		draggingIcon_->Initialize(ownedCharacterIconHandles_[draggingInventoryIndex_]);
+	}
+
+	if (isDraggingInventoryIcon_) {
+		if (draggingInventoryIndex_ >= 0 && draggingInventoryIndex_ < static_cast<int>(ownedCharacterIconHandles_.size())) {
+			draggingIcon_->SetPosition({mousePos.x - iconSize_.x * 0.5f, mousePos.y - iconSize_.y * 0.5f});
+			draggingIcon_->SetColor({1.0f, 1.0f, 1.0f, dropTargetSlotIndex_ >= 0 ? 0.95f : 0.78f});
+			draggingIcon_->Update();
+		}
+		if (Input::GetInstance()->ReleaseMouseButton(Input::MouseButton::kLeft)) {
+			if (dropTargetSlotIndex_ >= 0) {
+				AssignCharacterToSlot(dropTargetSlotIndex_, draggingInventoryIndex_);
+			}
+			isDraggingInventoryIcon_ = false;
+			draggingInventoryIndex_ = -1;
+		}
 	}
 
 	const bool isHoveringConfirm = IsInsideRect(mousePos, confirmPos_, confirmSize_);
 	if (isHoveringConfirm && Input::GetInstance()->TriggerKey(DIK_SPACE)) {
-		occupiedSlots_[activeSlotIndex_] = true;
-		teamMemberCharacterIndices_[activeSlotIndex_] = selectedInventoryIndex_;
-		teamMemberIcons_[activeSlotIndex_]->Initialize(ownedCharacterIconHandles_[selectedInventoryIndex_]);
+		AssignCharacterToSlot(activeSlotIndex_, selectedInventoryIndex_);
 	}
 
 	confirmButton_->SetColor(isHoveringConfirm ? Vector4{0.95f, 0.8f, 0.3f, 1.0f} : Vector4{0.2f, 0.55f, 0.9f, 0.95f});
 
 	for (int i = 0; i < kMaxMembersCount; ++i) {
 		Vector4 slotColor = {0.15f, 0.15f, 0.2f, 0.9f};
-		if (activeSlotIndex_ == i && occupiedSlots_[i]) {
+		if (isDraggingInventoryIcon_ && dropTargetSlotIndex_ == i) {
+			slotColor = {0.95f, 0.8f, 0.3f, 1.0f};
+		} else if (activeSlotIndex_ == i && occupiedSlots_[i]) {
 			slotColor = {0.2f, 0.85f, 0.35f, 1.0f};
 		}
 		teamSlotSprites_[i]->SetColor(slotColor);
@@ -179,6 +218,9 @@ void Team::UpdatePartyUI() {
 		if (static_cast<int>(i) == hoveredInventoryIndex_) {
 			color = {1.0f, 0.95f, 0.7f, 1.0f};
 		}
+		if (isDraggingInventoryIcon_ && static_cast<int>(i) == draggingInventoryIndex_) {
+			color.w = 0.55f;
+		}
 		inventoryIcons_[i]->SetColor(color);
 		inventoryIcons_[i]->Update();
 	}
@@ -194,6 +236,7 @@ void Team::UpdatePartyUI() {
 
 	inventoryBg_->Update();
 	confirmButton_->Update();
+	confirmButtonText_.Update(false);
 	candidatePreview_->Update();
 }
 
@@ -213,6 +256,10 @@ void Team::Draw() {
 		candidatePreview_->Draw();
 	}
 	confirmButton_->Draw();
+	confirmButtonText_.Draw();
+	if (isDraggingInventoryIcon_) {
+		draggingIcon_->Draw();
+	}
 }
 
 void Team::DrawInGameMemberList() {
@@ -263,11 +310,25 @@ bool Team::GetHasMember(int slotIndex) const {
 	return occupiedSlots_[slotIndex];
 }
 
+void Team::AssignCharacterToSlot(int slotIndex, int characterIndex) {
+	if (slotIndex < 0 || slotIndex >= kMaxMembersCount) {
+		return;
+	}
+	if (characterIndex < 0 || characterIndex >= static_cast<int>(ownedCharacterIconHandles_.size())) {
+		return;
+	}
+	occupiedSlots_[slotIndex] = true;
+	activeSlotIndex_ = slotIndex;
+	selectedInventoryIndex_ = characterIndex;
+	teamMemberCharacterIndices_[slotIndex] = characterIndex;
+	teamMemberIcons_[slotIndex]->Initialize(ownedCharacterIconHandles_[characterIndex]);
+}
+
 bool Team::IsInsideRect(const Vector2& point, const Vector2& pos, const Vector2& size) const { return point.x >= pos.x && point.x <= pos.x + size.x && point.y >= pos.y && point.y <= pos.y + size.y; }
 
 const std::u32string& Team::GetCharacterNameByIndex(int characterIndex) const {
 	static const std::u32string kEmptyName = U"";
-	static const std::array<std::u32string, 2> kCharacterNames = {U"Sizuku", U"Mei"};
+	static const std::array<std::u32string, 4> kCharacterNames = {U"Sizuku", U"Mei", U"Arte", U"Yuzuki"};
 	if (characterIndex < 0 || characterIndex >= static_cast<int>(kCharacterNames.size())) {
 		return kEmptyName;
 	}
@@ -283,7 +344,7 @@ std::string Team::GetActiveCharacterName() const {
 		return "Sizuku";
 	}
 	const int characterIndex = teamMemberCharacterIndices_[activeSlotIndex_];
-	static const std::array<std::string, 2> kCharacterNames = {"Sizuku", "Mei"};
+	static const std::array<std::string, 4> kCharacterNames = {"Sizuku", "Mei", "Arte", "Yuzuki"};
 	if (characterIndex < 0 || characterIndex >= static_cast<int>(kCharacterNames.size())) {
 		return "Sizuku";
 	}
