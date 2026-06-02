@@ -49,12 +49,9 @@ private:
 	bool isTransitionIn = true;
 	bool isTransitionOut = false;
 	std::string nextSceneName;
-	bool isBGMPlaying = false;
 	bool isPause = false;
 	bool isCharacterDisplayMode_ = false;
 	bool isPartyMode_ = false;
-
-	SoundData BGMData;
 
 	CharacterModel characterModel;
 	std::unique_ptr<CharacterDisplay> characterDisplay_;

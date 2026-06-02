@@ -44,9 +44,6 @@ class ResultScene : public BaseScene {
 	bool isTransitionIn = false;
 	bool isTransitionOut = false;
 
-	SoundData BGM_;
-	bool isBGMPlaying = false;
-
 public:
 	ResultScene();
 	~ResultScene() override = default;

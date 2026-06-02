@@ -1,5 +1,7 @@
 #include "Game.h"
 #include "SceneManager.h"
+#include "AudioManager/BGMManager/BGMManager.h"
+#include "AudioManager/SEManager/SEManager.h"
 
 void Game::Initialize() {
 	FrameWork::Initialize();
@@ -36,6 +38,8 @@ void Game::Draw() {
 void Game::Finalize() {
 
 	SceneManager::GetInstance()->Finalize();
+	SEManager::GetInstance()->Finalize();
+	BGMManager::GetInstance()->Finalize();
 	GameBase::GetInstance()->Finalize();
 	d3dResourceLeakChecker.LeakChecker();
 	CoUninitialize();

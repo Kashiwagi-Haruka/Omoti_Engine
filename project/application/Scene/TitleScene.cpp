@@ -3,6 +3,7 @@
 #include "SceneManager.h"
 #include "Sprite/SpriteCommon.h"
 #include "TextureManager.h"
+#include "AudioManager/BGMManager/BGMManager.h"
 #include <imgui.h>
 TitleScene::TitleScene() {
 	BGSP_.handle = TextureManager::GetInstance()->GetTextureIndexByfilePath("Resources/2d/title.png");
@@ -14,13 +15,11 @@ TitleScene::TitleScene() {
 	ruleSP_.handle = TextureManager::GetInstance()->GetTextureIndexByfilePath("Resources/2d/rule.png");
 	ruleSP_.sprite = std::make_unique<Sprite>();
 	ruleSP_.sprite->Initialize(ruleSP_.handle);
-	BGMData = Audio::GetInstance()->SoundLoadFile("Resources/audio/BGM/Rendez-vous_2.mp3");
-	Audio::GetInstance()->SetSoundVolume(&BGMData, 0.3f);
 	transition = std::make_unique<SceneTransition>();
 	characterModel_.LoadModel();
 }
 
-void TitleScene::Finalize() { Audio::GetInstance()->SoundUnload(&BGMData); }
+void TitleScene::Finalize() {}
 
 void TitleScene::Initialize() {
 
@@ -47,7 +46,6 @@ void TitleScene::Initialize() {
 	pressSpaceSprite->SetScale(pressSpaceSize);
 	pressSpaceSprite->SetPosition(pressSpacePos);
 	pressSpaceSprite->Update();
-	isBGMPlaying = false;
 	isTransitionIn = true;
 	isTransitionOut = false;
 	transition->Initialize(false);
@@ -56,10 +54,7 @@ void TitleScene::Initialize() {
 }
 
 void TitleScene::Update() {
-	if (!isBGMPlaying) {
-		Audio::GetInstance()->SoundPlayWave(BGMData, true);
-		isBGMPlaying = true;
-	}
+	BGMManager::GetInstance()->Play(BGMManager::BGMType::Title);
 
 	BGSP_.rotate += 0.01f;
 

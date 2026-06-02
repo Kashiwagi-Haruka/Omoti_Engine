@@ -24,8 +24,6 @@ class GameOverScene : public BaseScene {
 	std::unique_ptr<SceneTransition> transition = nullptr;
 	bool isTransitionIn = false;
 	bool isTransitionOut = false;
-	SoundData BGM_;
-	bool isBGMPlaying = false;
 
 public:
 	GameOverScene();

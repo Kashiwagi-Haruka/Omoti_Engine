@@ -6,6 +6,7 @@
 #include "Sprite/SpriteCommon.h"
 #include "TextureManager.h"
 #include <algorithm>
+#include "AudioManager/BGMManager/BGMManager.h"
 
 namespace {
 constexpr float kGoodTimeSeconds = 120.0f;
@@ -33,7 +34,6 @@ ResultScene::ResultScene() {
 	starOffHandle_ = TextureManager::GetInstance()->GetTextureIndexByfilePath("Resources/2d/StarOff.png");
 	numberHandle_ = TextureManager::GetInstance()->GetTextureIndexByfilePath("Resources/2d/No.png");
 	houseHpStringHandle_ = TextureManager::GetInstance()->GetTextureIndexByfilePath("Resources/2d/houseHPString.png");
-	BGM_ = Audio::GetInstance()->SoundLoadFile("Resources/audio/BGM/アンドロイドの涙.mp3");
 
 	for (int i = 0; i < 4; ++i) {
 		timeDigitSP_[i].handle = numberHandle_;
@@ -47,7 +47,7 @@ ResultScene::ResultScene() {
 	transition = std::make_unique<SceneTransition>();
 }
 
-void ResultScene::Finalize() { Audio::GetInstance()->SoundUnload(&BGM_); }
+void ResultScene::Finalize() {}
 
 void ResultScene::Initialize() {
 	logoSP_.sprite->SetAnchorPoint({0.5f, 0.5f});
@@ -123,13 +123,9 @@ void ResultScene::Initialize() {
 	transition->Initialize(false);
 	isTransitionIn = true;
 	isTransitionOut = false;
-	isBGMPlaying = false;
 }
 void ResultScene::Update() {
-	if (!isBGMPlaying) {
-		Audio::GetInstance()->SoundPlayWave(BGM_, true);
-		isBGMPlaying = true;
-	}
+	BGMManager::GetInstance()->Play(BGMManager::BGMType::Result);
 	logoSP_.sprite->Update();
 	for (int i = 0; i < 3; ++i) {
 		starSP_[i].sprite->Update();

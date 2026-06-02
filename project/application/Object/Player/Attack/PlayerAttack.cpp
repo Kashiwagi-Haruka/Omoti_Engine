@@ -1,5 +1,6 @@
 #include "PlayerAttack.h"
 #include "PlayCommand/PlayCommand.h"
+#include "AudioManager/SEManager/SEManager.h"
 
 PlayerAttack::PlayerAttack() {
 	sword_ = std::make_unique<PlayerSword>();
@@ -8,9 +9,6 @@ PlayerAttack::PlayerAttack() {
 	key_ = std::make_unique<PlayerKey>();
 }
 PlayerAttack::~PlayerAttack() {
-	Audio::GetInstance()->SoundUnload(&attackSE);
-	Audio::GetInstance()->SoundUnload(&attackEndSE);
-	Audio::GetInstance()->SoundUnload(&skillAttackSE);
 };
 void PlayerAttack::Initialize() {
 	isAttacking_ = false;
@@ -32,10 +30,6 @@ void PlayerAttack::Initialize() {
 
 	isSkillAttack = false;
 	isSpecialAttack = false;
-
-	attackSE = Audio::GetInstance()->SoundLoadFile("Resources/audio/SE/Attack/normalAttack.mp3");
-	attackEndSE = Audio::GetInstance()->SoundLoadFile("Resources/audio/SE/Attack/endAttack.mp3");
-	skillAttackSE = Audio::GetInstance()->SoundLoadFile("Resources/audio/SE/magic.mp3");
 
 	sword_->Initialize();
 	sword_->SetCamera(camera_);
@@ -125,25 +119,25 @@ void PlayerAttack::Update() {
 			case 1:
 				attackState_ = AttackState::kWeakAttack1;
 				sword_->StartAttack(1); // 1段階目
-				Audio::GetInstance()->SoundPlayWave(attackSE, false);
+				SEManager::GetInstance()->Play(SEManager::SEType::NormalAttack);
 				models_->SetStateM(PlayerModels::StateM::attack1);
 				break;
 			case 2:
 				attackState_ = AttackState::kWeakAttack2;
 				sword_->StartAttack(2); // 2段階目
-				Audio::GetInstance()->SoundPlayWave(attackSE, false);
+				SEManager::GetInstance()->Play(SEManager::SEType::NormalAttack);
 				models_->SetStateM(PlayerModels::StateM::attack2);
 				break;
 			case 3:
 				attackState_ = AttackState::kWeakAttack3;
 				sword_->StartAttack(3); // 3段階目
-				Audio::GetInstance()->SoundPlayWave(attackSE, false);
+				SEManager::GetInstance()->Play(SEManager::SEType::NormalAttack);
 				models_->SetStateM(PlayerModels::StateM::attack3);
 				break;
 			case 4:
 				attackState_ = AttackState::kWeakAttack4;
 				sword_->StartAttack(4); // 4段階目（フィニッシュ）
-				Audio::GetInstance()->SoundPlayWave(attackEndSE, false);
+				SEManager::GetInstance()->Play(SEManager::SEType::EndAttack);
 				models_->SetStateM(PlayerModels::StateM::attack4);
 				break;
 			}
@@ -196,7 +190,7 @@ void PlayerAttack::Update() {
 			isSkillAttack = true;
 			attackState_ = AttackState::kSkillAttack;
 			skill_->StartAttack(playerTransform_);
-			Audio::GetInstance()->SoundPlayWave(skillAttackSE, false);
+			SEManager::GetInstance()->Play(SEManager::SEType::Magic);
 			// isSpecialAttack = true;
 			// attackState_ = AttackState::kSpecialAttack;
 			// skill_->StartSpecialAttack(playerTransform_, 6);
@@ -216,7 +210,7 @@ void PlayerAttack::Update() {
 			special_->SetPlayerTransform(playerTransform_);
 			special_->Start();
 
-			Audio::GetInstance()->SoundPlayWave(skillAttackSE, false);
+			SEManager::GetInstance()->Play(SEManager::SEType::Magic);
 
 			// コンボリセット
 			comboStep_ = 0;
