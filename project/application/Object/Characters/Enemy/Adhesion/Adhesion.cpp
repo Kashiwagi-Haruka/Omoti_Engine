@@ -156,4 +156,5 @@ void Adhesion::Draw() {
 		AttributePlane_->Draw();
 		return;
 	}
+	AttributePlane_->Draw();
 }
