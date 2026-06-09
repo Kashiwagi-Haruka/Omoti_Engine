@@ -116,7 +116,6 @@ void PlayerKey::AttibuteColorSetting() {
 	}
 }
 void PlayerKey::Draw() {
-	Object3dCommon::GetInstance()->SetBlendMode(BlendMode::kBlendModeAlpha);
 	Object3dCommon::GetInstance()->DrawCommon();
 	keyObj_->Draw();
 	Object3dCommon::GetInstance()->DrawCommonNoCull();
