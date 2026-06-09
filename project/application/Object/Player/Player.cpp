@@ -193,7 +193,10 @@ void Player::Move() {
 }
 
 void Player::Jump() {
-
+	if (PlayCommand::GetJUMP() && !isJump && !isfalling && !attack_->IsFallingAttacking()) {
+		isJump = true;
+		jumpTimer = 0.0f;
+	}
 	if (isJump) {
 		velocity_.y = parameters_.jumpPower;
 
