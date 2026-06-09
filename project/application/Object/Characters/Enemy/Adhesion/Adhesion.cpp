@@ -3,6 +3,7 @@
 #include "Camera.h"
 #include "TextureManager.h"
 #include "Engine/base/GameBase.h"
+#include "Object3d/Object3dCommon.h"
 namespace {
 	const float kAppearanceDuration = 0.5f; // 出現アニメーションの継続時間
 const float kComparisonDisplayDuration = 10.0f; // 属性比較表示の継続時間
@@ -101,6 +102,9 @@ void Adhesion::AddAttribute(Attribute attribute) {
 		return;
 	}
 	const uint32_t bit = (1u << static_cast<uint32_t>(attribute));
+	if (currentAttribute_ == attribute && (attributeBitMask_ & bit) != 0) {
+		return;
+	}
 	const Attribute previousAttribute = currentAttribute_;
 	const bool hadPreviousAttribute = (previousAttribute != Attribute::None) && (previousAttribute != attribute);
 	attributeBitMask_ |= bit;
@@ -133,7 +137,10 @@ void Adhesion::Update() {
 		AttributePlane_->Update();
 		if (comparisonDisplayTimer_ <= 0.0f) {
 			isComparisonDisplayActive_ = false;
-			attributeBitMask_ = 0;
+			comparisonDisplayTimer_ = 0.0f;
+			AttributePlane_->SetTextureIndex(ResolveTextureIndex(currentAttribute_));
+			AttributePlane_->SetColor({1.0f, 1.0f, 1.0f, 1.0f});
+			SetTransform(baseTransform_);
 		}
 		return;
 	}
@@ -148,6 +155,7 @@ void Adhesion::Update() {
 }
 
 void Adhesion::Draw() {
+	Object3dCommon::GetInstance()->DrawCommonNoCull();
 	if (attributeBitMask_ == 0) {
 		return;
 	}
@@ -156,5 +164,7 @@ void Adhesion::Draw() {
 		AttributePlane_->Draw();
 		return;
 	}
+
 	AttributePlane_->Draw();
+	Object3dCommon::GetInstance()->DrawCommon();
 }

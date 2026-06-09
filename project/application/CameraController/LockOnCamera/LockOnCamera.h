@@ -19,6 +19,7 @@ class LockOnCamera {
 	Vector3 targetPos_ = {0.0f, 0.0f, 0.0f};
 	bool hasFollowPosition_ = false;
 	Vector3 followPosition_ = {0.0f, 0.0f, 0.0f};
+	float distance_ = 5.0f;
 
 public:
 	LockOnCamera();
@@ -41,4 +42,5 @@ public:
 		hasFollowPosition_ = true;
 	}
 	void ClearFollowPosition() { hasFollowPosition_ = false; }
+	void SetDistance(float distance) { distance_ = distance; }
 };
