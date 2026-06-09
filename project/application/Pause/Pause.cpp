@@ -22,7 +22,7 @@ Pause::Pause() {
 
 	Select_->Initialize(SelectHandle_);
 	Button_->Initialize(ButtonHandle_);
-	BG_->Initialize(Primitive::PrimitiveName::Plane, "Resources/2d/Pause.png");
+	BG_->Initialize(Primitive::PrimitiveName::Plane, "Resources/2d/Pause/Pause.png");
 	BG_->SetCamera(camera_.get());
 }
 
