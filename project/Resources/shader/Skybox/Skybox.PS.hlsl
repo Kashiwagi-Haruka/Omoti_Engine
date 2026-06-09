@@ -50,7 +50,8 @@ float3 ApplySkyboxToneMap(float3 color)
 PixelShaderOutput main(SkyboxVertexShaderOutput input)
 {
     PixelShaderOutput output;
-    float4 textureColor = gTexture.Sample(gSampler, input.texcoord);
+    float3 sampleDirection = normalize(input.texcoord);
+    float4 textureColor = gTexture.Sample(gSampler, sampleDirection);
     output.color = textureColor * gMaterial.color;
     output.color.rgb = ApplySkyboxToneMap(output.color.rgb);
     return output;
