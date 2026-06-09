@@ -25,7 +25,7 @@ void PlayerKey::Initialize() {
 	keyTransform_ = {
 	    .scale = {0.2f, 0.2f, 0.2f},
           .rotate = {std::numbers::pi_v<float>/2.0f, std::numbers::pi_v<float>, 0.0f },
-          .translate = {0.0f, 0.0f, -2.4f}
+          .translate = {0.0f, 0.0f, -2.3f}
     };
 	keyHoleTransform_ = {
 		.scale = {1.0f, 1.0f, 0.5f},
