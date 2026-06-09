@@ -452,8 +452,9 @@ void GameScene::Update() {
 		// ===== プレイヤーと敵の当たり判定 =====
 		Boss* activeBoss = (rasen_->IsBossActive() && boss_->GetIsAlive()) ? boss_.get() : nullptr;
 		Vector3 hitEnemyPos{};
-		const bool didHitEnemy = collisionManager_.HandleGameSceneCollisions(*player, *rasen_->GetEnemyManager(), *rasen_->GetExpCubeManager(), *rasen_->GetHouse(), activeBoss, &hitEnemyPos);
-		if (didHitEnemy) {
+		const bool didNormalAttackHitEnemy =
+		    collisionManager_.HandleGameSceneCollisions(*player, *rasen_->GetEnemyManager(), *rasen_->GetExpCubeManager(), *rasen_->GetHouse(), activeBoss, &hitEnemyPos);
+		if (didNormalAttackHitEnemy) {
 			cameraController->SetLockOnTarget(hitEnemyPos, 0.8f);
 		}
 		if (player->ConsumeDamageTrigger()) {

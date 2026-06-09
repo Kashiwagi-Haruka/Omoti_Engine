@@ -5,7 +5,7 @@
 #include "Engine/base/GameBase.h"
 namespace {
 	const float kAppearanceDuration = 0.5f; // 出現アニメーションの継続時間
-const float kComparisonDisplayDuration = 1.0f; // 属性比較表示の継続時間
+const float kComparisonDisplayDuration = 10.0f; // 属性比較表示の継続時間
 }
 Adhesion::Adhesion() {
 	preAttributePlane_ = std::make_unique<Primitive>();
