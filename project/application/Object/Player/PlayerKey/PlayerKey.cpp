@@ -44,6 +44,18 @@ void PlayerKey::Initialize() {
 	planeCircleObj_->Initialize(Primitive::Plane, "Resources/2d/KeyPrimitive/KeyCircle.png");
 
 }
+void PlayerKey::SetCamera(Camera* camera) {
+	camera_ = camera;
+	if (keyObj_) {
+		keyObj_->SetCamera(camera_);
+	}
+	if (keyHoleObj_) {
+		keyHoleObj_->SetCamera(camera_);
+	}
+	if (planeCircleObj_) {
+		planeCircleObj_->SetCamera(camera_);
+	}
+}
 void PlayerKey::Update() {
 
 	switch (keyAnimation_) {
