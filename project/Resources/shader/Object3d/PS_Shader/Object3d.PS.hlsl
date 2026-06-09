@@ -299,7 +299,7 @@ PixelShaderOutput main(Object3dVertexShaderOutput input)
         }
         float3 cameraToPosition = normalize(input.worldPosition - gCamera.worldPosition);
         float3 reflectedDirection = reflect(cameraToPosition, normalize(input.normal));
-        float3 environmentColor = gEnvironmentTexture.Sample(gSampler, reflectedDirection).rgb;
+        float3 environmentColor = ApplyEnvironmentMapToneMap(gEnvironmentTexture.Sample(gSampler, reflectedDirection).rgb);
 
         output.color.rgb = diffuse + specular + diffuseP + specularP + spotLightDiffuse + spotLightSpecular + areaLightDiffuse + areaLightSpecular;
         output.color.rgb += environmentColor * gMaterial.environmentCoefficient;
