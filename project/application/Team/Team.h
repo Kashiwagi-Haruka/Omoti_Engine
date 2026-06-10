@@ -2,12 +2,14 @@
 #include "Object/Characters/Playable/Base/PlayableBase.h"
 #include "Object3d/Object3d.h"
 #include "Sprite.h"
+#include "Primitive/Primitive.h"
 #include "Text/Text.h"
 #include "Vector2.h"
 #include <array>
 #include <memory>
 #include <string>
 #include <vector>
+#include "Camera.h"
 
 class Team {
 public:
@@ -82,6 +84,10 @@ private:
 	std::unique_ptr<Sprite> inventorySelectionMarker_;
 	/// ゲーム中HUDで現在操作中のメンバーを示すマーカー。
 	std::unique_ptr<Sprite> memberSelectionMarker_;
+	/// チーム編成画面背景板ポリ
+	std::unique_ptr<Primitive> teamBackgroundPlane_;
+	/// チーム画面用のカメラ
+	std::unique_ptr<Camera> camera_;
 
 	/// チームスロット背景の表示サイズ。
 	Vector2 slotSize_{80.0f, 80.0f};

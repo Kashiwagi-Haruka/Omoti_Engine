@@ -18,6 +18,21 @@ void Team::Initialize() {
 	hudFontHandle_ = FreeTypeManager::CreateFace("Resources/Font/irohakakuC-Bold.ttf", 0);
 	FreeTypeManager::SetPixelSizes(hudFontHandle_, 28, 28);
 
+	camera_ = std::make_unique<Camera>();
+	camera_->SetTransform({
+		.scale{1.0f, 1.0f, 1.0f},
+		.rotate{0.0f, 0.0f, 0.0f},
+		.translate{0.0f, 0.0f, -10.0f},
+	});
+	camera_->Update();
+
+	teamBackgroundPlane_ = std::make_unique<Primitive>();
+	teamBackgroundPlane_->Initialize(Primitive::PrimitiveName::Plane, "Resources/2d/Team/Background.png");
+	teamBackgroundPlane_->SetEnableLighting(false);
+	teamBackgroundPlane_->SetTransform({{16.0f*2.0f,9.0f*2.0f,1.0f},{0.0f,0.0f,0.0f},{0.0f,0.0f,0.0f}});
+	teamBackgroundPlane_->SetCamera(camera_.get());
+	teamBackgroundPlane_->Update();
+
 	ownedCharacters_.clear();
 	ownedCharacterIconHandles_.clear();
 	ownedCharacters_.push_back(std::make_unique<Sizuku>());
@@ -60,9 +75,9 @@ void Team::Initialize() {
 	confirmButtonText_.Initialize(hudFontHandle_);
 	confirmButtonText_.SetSize(confirmSize_);
 	confirmButtonText_.SetAlign(TextAlign::Center);
-	confirmButtonText_.SetColor({1.0f, 1.0f, 1.0f, 1.0f});
+	confirmButtonText_.SetColor({0.0f, 0.0f, 0.0f, 1.0f});
 	confirmButtonText_.SetString(U"確定");
-	confirmButtonText_.SetPosition({confirmPos_.x + confirmSize_.x * 0.5f, confirmPos_.y - 28.0f});
+	confirmButtonText_.SetPosition({confirmPos_.x + confirmSize_.x * 0.5f, confirmPos_.y});
 	confirmButtonText_.UpdateLayout(false);
 
 	candidatePreview_ = std::make_unique<Sprite>();
@@ -135,6 +150,9 @@ void Team::Initialize() {
 }
 
 void Team::Update(bool isPartyOpen) {
+	camera_->Update();
+	teamBackgroundPlane_->SetCamera(camera_.get());
+	teamBackgroundPlane_->Update();
 	for (int i = 0; i < kMaxMembersCount; ++i) {
 		if (Input::GetInstance()->TriggerKey(static_cast<BYTE>(DIK_1 + i)) && occupiedSlots_[i]) {
 			if (activeSlotIndex_ != i) {
@@ -252,10 +270,13 @@ void Team::UpdatePartyUI() {
 }
 
 void Team::Draw() {
+	Object3dCommon::GetInstance()->DrawCommon();
+	teamBackgroundPlane_->Draw();
 
 	if (!isMemberSelectionActive_) {
 		return;
 	}
+	SpriteCommon::GetInstance()->DrawCommon();
 	for (int i = 0; i < kMaxMembersCount; ++i) {
 		teamSlotSprites_[i]->Draw();
 		if (occupiedSlots_[i]) {
