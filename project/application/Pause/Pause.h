@@ -29,6 +29,7 @@ private:
 
 	Vector2 selectBasePos_{0.0f, 0.0f};
 	std::array<Vector2, 2> buttonBasePos_{};
+	std::array<std::unique_ptr<Sprite>, 3> selectSprites_{};
 
 	Vector2 selectSize_{400.0f, 400.0f};
 	Vector2 buttonSize_{80.0f, 80.0f};

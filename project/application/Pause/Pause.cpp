@@ -14,6 +14,7 @@ constexpr float kHiddenOffsetX = 1280.0f;
 Pause::Pause() {
 	SelectHandle_ = TextureManager::GetInstance()->GetTextureIndexByfilePath("Resources/2d/PauseSelect.png");
 	ButtonHandle_ = TextureManager::GetInstance()->GetTextureIndexByfilePath("Resources/2d/PauseButton.png");
+	const uint32_t selectTextureHandle = TextureManager::GetInstance()->GetTextureIndexByfilePath("Resources/2d/Pause/Select.png");
 
 	Select_ = std::make_unique<Sprite>();
 	Button_ = std::make_unique<Sprite>();
@@ -24,6 +25,18 @@ Pause::Pause() {
 	Button_->Initialize(ButtonHandle_);
 	BG_->Initialize(Primitive::PrimitiveName::Plane, "Resources/2d/Pause/Pause.png");
 	BG_->SetCamera(camera_.get());
+	for (int i = 0; i < 3; ++i) {
+		selectSprites_[i] = std::make_unique<Sprite>();
+		selectSprites_[i]->Initialize(selectTextureHandle);
+		selectSprites_[i]->SetScale(selectSize_);
+	}
+	selectSprites_[0]->SetColor({1.0f, 0.0f, 0.0f, 0.5f});
+	selectSprites_[1]->SetColor({0.0f, 1.0f, 0.0f, 0.5f});
+	selectSprites_[2]->SetColor({0.0f, 0.0f, 1.0f, 0.5f});
+
+	selectSprites_[0]->SetRotation(0.0f);
+	selectSprites_[1]->SetRotation(1.0f);
+	selectSprites_[2]->SetRotation(0.5f);
 }
 
 void Pause::Initialize() {
@@ -142,9 +155,14 @@ void Pause::Update(bool isPause) {
 
 	Select_->SetPosition(selectPos);
 	Button_->SetPosition(buttonPos);
+	
 
 	Select_->Update();
 	Button_->Update();
+	for (int i = 0; i < 3; ++i) {
+		selectSprites_[i]->SetPosition(selectBasePos_);
+		selectSprites_[i]->Update();
+	}
 	if (currentCharacterObj_) {
 		switch (currentAttribute) {
 		case Attribute::None:
@@ -207,6 +225,11 @@ void Pause::Draw() {
 	SpriteCommon::GetInstance()->DrawCommon();
 	Select_->Draw();
 	Button_->Draw();
+	SpriteCommon::GetInstance()->SetBlendMode(BlendMode::kBlendModeAdd);
+	for (int i = 0; i < 3; ++i) {
+		selectSprites_[i]->Draw();
+	}
+	SpriteCommon::GetInstance()->SetBlendMode(BlendMode::kBlendModeAlpha);
 
 	object3dCommon->SetDefaultCamera(previousDefaultCamera);
 }
