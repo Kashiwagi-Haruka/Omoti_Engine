@@ -1,13 +1,14 @@
 #define NOMINMAX
 #include "Adhesion.h"
 #include "Camera.h"
-#include "TextureManager.h"
 #include "Engine/base/GameBase.h"
 #include "Object3d/Object3dCommon.h"
+#include "TextureManager.h"
 namespace {
-	const float kAppearanceDuration = 0.5f; // 出現アニメーションの継続時間
+const float kAppearanceDuration = 0.5f;         // 出現アニメーションの継続時間
 const float kComparisonDisplayDuration = 10.0f; // 属性比較表示の継続時間
-}
+const float kReactionCutSize = 200.0f;          // リアクション画像を切り取るサイズ
+} // namespace
 Adhesion::Adhesion() {
 	preAttributePlane_ = std::make_unique<Primitive>();
 	AttributePlane_ = std::make_unique<Primitive>();
@@ -57,6 +58,55 @@ uint32_t Adhesion::ResolveTextureIndex(Attribute attribute) const {
 	return TextureManager::GetInstance()->GetTextureIndexByfilePath(texturePath);
 }
 
+uint32_t Adhesion::ResolveReactionTextureIndex(Attribute appliedAttribute) const {
+	const char* texturePath = "Resources/2d/Attribute/AttributeReaction/fireReaction.png";
+	switch (appliedAttribute) {
+	case Attribute::Fire:
+		texturePath = "Resources/2d/Attribute/AttributeReaction/fireReaction.png";
+		break;
+	case Attribute::Ice:
+		texturePath = "Resources/2d/Attribute/AttributeReaction/IceReaction.png";
+		break;
+	case Attribute::Thunder:
+		texturePath = "Resources/2d/Attribute/AttributeReaction/ThunderReaction.png";
+		break;
+	case Attribute::Wind:
+		texturePath = "Resources/2d/Attribute/AttributeReaction/WindReaction.png";
+		break;
+	case Attribute::Imaginary:
+		texturePath = "Resources/2d/Attribute/AttributeReaction/ImaginaryReaction.png";
+		break;
+	case Attribute::Quantum:
+		texturePath = "Resources/2d/Attribute/AttributeReaction/QuatumReaction.png";
+		break;
+	case Attribute::None:
+	case Attribute::MAXATTRIBUTE:
+	default:
+		break;
+	}
+	return TextureManager::GetInstance()->GetTextureIndexByfilePath(texturePath);
+}
+
+int Adhesion::ResolveReactionFrameIndex(Attribute appliedAttribute, Attribute previousAttribute) const {
+	if (appliedAttribute == previousAttribute || appliedAttribute == Attribute::None || appliedAttribute == Attribute::MAXATTRIBUTE) {
+		return 0;
+	}
+
+	int frameIndex = 0;
+	const Attribute reactionOrder[] = {Attribute::Fire, Attribute::Ice, Attribute::Thunder, Attribute::Wind, Attribute::Imaginary, Attribute::Quantum};
+	for (Attribute candidate : reactionOrder) {
+		if (candidate == appliedAttribute) {
+			continue;
+		}
+		if (candidate == previousAttribute) {
+			return frameIndex;
+		}
+		++frameIndex;
+	}
+
+	return 0;
+}
+
 void Adhesion::RefreshAttributeTexture() {
 	if (currentAttribute_ == Attribute::None) {
 		return;
@@ -65,19 +115,40 @@ void Adhesion::RefreshAttributeTexture() {
 	AttributePlane_->SetColor({1.0f, 1.0f, 1.0f, 0.0f});
 }
 
+void Adhesion::RefreshReactionTexture(Attribute appliedAttribute, Attribute previousAttribute) {
+	const uint32_t textureIndex = ResolveReactionTextureIndex(appliedAttribute);
+	AttributeReactionPlane_->SetTextureIndex(textureIndex);
+
+	const DirectX::TexMetadata& metadata = TextureManager::GetInstance()->GetMetaData(textureIndex);
+	const float textureWidth = metadata.width > 0 ? static_cast<float>(metadata.width) : kReactionCutSize;
+	const float textureHeight = metadata.height > 0 ? static_cast<float>(metadata.height) : kReactionCutSize;
+	const int frameIndex = ResolveReactionFrameIndex(appliedAttribute, previousAttribute);
+	const float uvWidth = kReactionCutSize / textureWidth;
+	const float uvHeight = kReactionCutSize / textureHeight;
+	const float uvLeft = static_cast<float>(frameIndex) * kReactionCutSize / textureWidth;
+
+	AttributeReactionPlane_->SetUvTransform({uvWidth, uvHeight, 1.0f}, {0.0f, 0.0f, 0.0f}, {uvLeft, 0.0f, 0.0f});
+	AttributeReactionPlane_->SetColor({1.0f, 1.0f, 1.0f, 1.0f});
+}
+
 void Adhesion::RefreshComparisonTransform() {
 	if (!hasBaseTransform_) {
 		return;
 	}
 
 	Transform leftTransform = baseTransform_;
-	leftTransform.translate.x -= 0.5f;
+	leftTransform.translate.x -= 0.7f;
 	leftTransform.translate.y += 1.75f;
 	leftTransform.scale = {0.6f, 0.6f, 0.6f};
 	preAttributePlane_->SetTransform(leftTransform);
 
+	Transform reactionTransform = baseTransform_;
+	reactionTransform.translate.y += 1.75f;
+	reactionTransform.scale = {0.6f, 0.6f, 0.6f};
+	AttributeReactionPlane_->SetTransform(reactionTransform);
+
 	Transform rightTransform = baseTransform_;
-	rightTransform.translate.x += 0.5f;
+	rightTransform.translate.x += 0.7f;
 	rightTransform.translate.y += 1.75f;
 	rightTransform.scale = {0.6f, 0.6f, 0.6f};
 	AttributePlane_->SetTransform(rightTransform);
@@ -115,6 +186,7 @@ void Adhesion::AddAttribute(Attribute attribute) {
 		preAttributePlane_->SetColor({1.0f, 1.0f, 1.0f, 1.0f});
 		AttributePlane_->SetTextureIndex(ResolveTextureIndex(currentAttribute_));
 		AttributePlane_->SetColor({1.0f, 1.0f, 1.0f, 1.0f});
+		RefreshReactionTexture(currentAttribute_, previousAttribute);
 		isComparisonDisplayActive_ = true;
 		comparisonDisplayTimer_ = kComparisonDisplayDuration;
 		RefreshComparisonTransform();
@@ -134,6 +206,7 @@ void Adhesion::Update() {
 	if (isComparisonDisplayActive_) {
 		comparisonDisplayTimer_ -= GameBase::GetInstance()->GetDeltaTime();
 		preAttributePlane_->Update();
+		AttributeReactionPlane_->Update();
 		AttributePlane_->Update();
 		if (comparisonDisplayTimer_ <= 0.0f) {
 			isComparisonDisplayActive_ = false;
@@ -161,6 +234,7 @@ void Adhesion::Draw() {
 	}
 	if (isComparisonDisplayActive_) {
 		preAttributePlane_->Draw();
+		AttributeReactionPlane_->Draw();
 		AttributePlane_->Draw();
 		return;
 	}
