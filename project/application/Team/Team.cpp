@@ -33,6 +33,14 @@ void Team::Initialize() {
 	teamBackgroundPlane_->SetCamera(camera_.get());
 	teamBackgroundPlane_->Update();
 
+	teamFormationText_.Initialize(hudFontHandle_);
+	teamFormationText_.SetSize({400.0f, 60.0f});
+	teamFormationText_.SetPosition({10.0f, 40.0f});
+	teamFormationText_.SetAlign(TextAlign::Left);
+	teamFormationText_.SetColor({0.0f, 0.0f, 0.0f, 1.0f});
+	teamFormationText_.SetString(U"チーム編成");
+	teamFormationText_.UpdateLayout(false);
+
 	ownedCharacters_.clear();
 	ownedCharacterIconHandles_.clear();
 	ownedCharacters_.push_back(std::make_unique<Sizuku>());
@@ -276,6 +284,7 @@ void Team::UpdatePartyUI() {
 	confirmButtonText_.Update(false);
 	candidatePreview_->Update();
 	formationTransitionText_.Update(false);
+	teamFormationText_.Update(false);
 }
 
 void Team::Draw() {
@@ -284,13 +293,16 @@ void Team::Draw() {
 
 
 	SpriteCommon::GetInstance()->DrawCommon();
+	
 	memberSelectionMarker_->Draw();
 	confirmButton_->Draw();
 	formationTransitionText_.Draw();
+	teamFormationText_.Draw();
 	confirmButtonText_.Draw();
 	if (!isMemberSelectionActive_) {
 		return;
 	}
+	SpriteCommon::GetInstance()->DrawCommon();
 	for (int i = 0; i < kMaxMembersCount; ++i) {
 		teamSlotSprites_[i]->Draw();
 		if (occupiedSlots_[i]) {

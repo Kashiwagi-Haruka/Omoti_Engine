@@ -64,6 +64,10 @@ private:
 	Text confirmButtonText_{};
 	/// 編成移行テキスト
 	Text formationTransitionText_{};
+	/// チーム編成テキスト
+	Text teamFormationText_{};
+
+
 	/// 各チームスロットに割り当てられている所持キャラクターのインデックス。
 	std::array<int, kMaxMembersCount> teamMemberCharacterIndices_{};
 	/// 各チームスロットが使用中かどうかを示すフラグ。
