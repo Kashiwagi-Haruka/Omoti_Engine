@@ -1,6 +1,7 @@
 #pragma once
 #include "Object/Characters/Playable/Base/PlayableBase.h"
 #include "Sprite.h"
+#include "Object3d.h"
 #include "Text/Text.h"
 #include "Vector2.h"
 #include <array>
@@ -31,6 +32,7 @@ private:
 	uint32_t whiteTextureHandle_ = 0;
 	std::vector<uint32_t> ownedCharacterIconHandles_{};
 	std::vector<std::unique_ptr<PlayableBase>> ownedCharacters_{};
+	std::vector<std::unique_ptr<Object3d>> teamMemberModels_{};
 
 	std::array<std::unique_ptr<Sprite>, kMaxMembersCount> teamSlotSprites_{};
 	std::array<std::unique_ptr<Sprite>, kMaxMembersCount> teamMemberIcons_{};
@@ -47,6 +49,7 @@ private:
 	std::unique_ptr<Sprite> candidatePreview_;
 	std::unique_ptr<Sprite> draggingIcon_;
 	std::unique_ptr<Sprite> inventorySelectionMarker_;
+	std::unique_ptr<Sprite> memberSelectionMarker_;
 
 	Vector2 slotSize_{80.0f, 80.0f};
 	Vector2 inventoryPanelPos_{70.0f, 170.0f};
@@ -64,6 +67,7 @@ private:
 	int draggingInventoryIndex_ = -1;
 	bool isCandidateSelected_ = false;
 	bool isDraggingInventoryIcon_ = false;
+	bool isMemberSelectionActive_ = false;
 	int activeSlotIndex_ = 0;
 	bool characterSwitchTriggered_ = false;
 	uint32_t hudFontHandle_ = 0;

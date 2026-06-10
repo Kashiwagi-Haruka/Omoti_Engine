@@ -6,6 +6,8 @@
 #include "Object/Characters/Playable/Individual/Yuzuki/Yuzuki.h"
 #include "Text/FreeTypeManager/FreeTypeManager.h"
 #include "TextureManager.h"
+#include "Object3d/Object3dCommon.h"
+#include "SpriteCommon.h"
 
 void Team::Initialize() {
 	whiteTextureHandle_ = TextureManager::GetInstance()->GetTextureIndexByfilePath("Resources/2d/white2x2.png");
@@ -75,6 +77,13 @@ void Team::Initialize() {
 	draggingIcon_->SetScale(iconSize_);
 	draggingIcon_->SetColor({1.0f, 1.0f, 1.0f, 0.78f});
 	draggingIcon_->Update();
+
+	memberSelectionMarker_ = std::make_unique<Sprite>();
+	memberSelectionMarker_->Initialize(whiteTextureHandle_);
+	memberSelectionMarker_->SetScale({slotSize_.x + 10.0f, slotSize_.y + 10.0f});
+	memberSelectionMarker_->SetColor({1.0f, 1.0f, 1.0f, 1.0f});
+	memberSelectionMarker_->SetPosition({confirmPos_.x + confirmSize_.x*0.5f-confirmSize_.x*2.0f,confirmPos_.y + confirmSize_.y*0.5f});
+	memberSelectionMarker_->Update();
 
 	inventorySelectionMarker_ = std::make_unique<Sprite>();
 	inventorySelectionMarker_->Initialize(whiteTextureHandle_);
@@ -243,6 +252,10 @@ void Team::UpdatePartyUI() {
 }
 
 void Team::Draw() {
+
+	if (!isMemberSelectionActive_) {
+		return;
+	}
 	for (int i = 0; i < kMaxMembersCount; ++i) {
 		teamSlotSprites_[i]->Draw();
 		if (occupiedSlots_[i]) {
@@ -261,6 +274,9 @@ void Team::Draw() {
 	confirmButtonText_.Draw();
 	if (isDraggingInventoryIcon_) {
 		draggingIcon_->Draw();
+	}
+	if (isMemberSelectionActive_) {
+		memberSelectionMarker_->Draw();
 	}
 }
 
