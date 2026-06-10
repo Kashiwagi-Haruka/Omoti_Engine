@@ -62,6 +62,8 @@ private:
 	std::array<Text, kMaxMembersCount> inGameMemberNameTexts_{};
 	/// 編成確定ボタンに表示するテキスト。
 	Text confirmButtonText_{};
+	/// 編成移行テキスト
+	Text formationTransitionText_{};
 	/// 各チームスロットに割り当てられている所持キャラクターのインデックス。
 	std::array<int, kMaxMembersCount> teamMemberCharacterIndices_{};
 	/// 各チームスロットが使用中かどうかを示すフラグ。

@@ -69,7 +69,7 @@ void Team::Initialize() {
 	confirmButton_->Initialize(whiteTextureHandle_);
 	confirmButton_->SetPosition(confirmPos_);
 	confirmButton_->SetScale(confirmSize_);
-	confirmButton_->SetColor({0.2f, 0.55f, 0.9f, 0.95f});
+	confirmButton_->SetColor({1.0f, 1.0f, 1.0f, 1.0f});
 	confirmButton_->Update();
 
 	confirmButtonText_.Initialize(hudFontHandle_);
@@ -97,8 +97,16 @@ void Team::Initialize() {
 	memberSelectionMarker_->Initialize(whiteTextureHandle_);
 	memberSelectionMarker_->SetScale({slotSize_.x + 10.0f, slotSize_.y + 10.0f});
 	memberSelectionMarker_->SetColor({1.0f, 1.0f, 1.0f, 1.0f});
-	memberSelectionMarker_->SetPosition({confirmPos_.x + confirmSize_.x*0.5f-confirmSize_.x*2.0f,confirmPos_.y + confirmSize_.y*0.5f});
+	memberSelectionMarker_->SetPosition({confirmPos_.x + confirmSize_.x*0.5f-confirmSize_.x*2.0f,confirmPos_.y});
 	memberSelectionMarker_->Update();
+
+	formationTransitionText_.Initialize(hudFontHandle_);
+	formationTransitionText_.SetSize({400.0f, 60.0f});
+	formationTransitionText_.SetAlign(TextAlign::Center);
+	formationTransitionText_.SetColor({0.0f, 0.0f, 0.0f, 1.0f});
+	formationTransitionText_.SetPosition(memberSelectionMarker_->GetPosition());
+	formationTransitionText_.SetString(U"編成変更");
+	formationTransitionText_.UpdateLayout(false);
 
 	inventorySelectionMarker_ = std::make_unique<Sprite>();
 	inventorySelectionMarker_->Initialize(whiteTextureHandle_);
@@ -267,16 +275,22 @@ void Team::UpdatePartyUI() {
 	confirmButton_->Update();
 	confirmButtonText_.Update(false);
 	candidatePreview_->Update();
+	formationTransitionText_.Update(false);
 }
 
 void Team::Draw() {
 	Object3dCommon::GetInstance()->DrawCommon();
 	teamBackgroundPlane_->Draw();
 
+
+	SpriteCommon::GetInstance()->DrawCommon();
+	memberSelectionMarker_->Draw();
+	confirmButton_->Draw();
+	formationTransitionText_.Draw();
+	confirmButtonText_.Draw();
 	if (!isMemberSelectionActive_) {
 		return;
 	}
-	SpriteCommon::GetInstance()->DrawCommon();
 	for (int i = 0; i < kMaxMembersCount; ++i) {
 		teamSlotSprites_[i]->Draw();
 		if (occupiedSlots_[i]) {
@@ -291,13 +305,8 @@ void Team::Draw() {
 	if (isCandidateSelected_) {
 		candidatePreview_->Draw();
 	}
-	confirmButton_->Draw();
-	confirmButtonText_.Draw();
 	if (isDraggingInventoryIcon_) {
 		draggingIcon_->Draw();
-	}
-	if (isMemberSelectionActive_) {
-		memberSelectionMarker_->Draw();
 	}
 }
 
