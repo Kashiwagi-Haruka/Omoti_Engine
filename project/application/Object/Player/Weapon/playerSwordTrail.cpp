@@ -1,6 +1,7 @@
 #include "playerSwordTrail.h"
 #include "Function.h"
 #include <cmath>
+#include "Object3d/Object3dCommon.h"
 
 namespace {
 float Length(const Vector3& v) { return std::sqrt(v.x * v.x + v.y * v.y + v.z * v.z); }
@@ -17,7 +18,7 @@ void PlayerSwordTrail::Initialize() {
 	points_.clear();
 	if (!trail_) {
 		trail_ = std::make_unique<Primitive>();
-		trail_->Initialize(Primitive::Band, "Resources/3d/Circle.png");
+		trail_->Initialize(Primitive::Band, "Resources/2d/Effect/SwordTrail.png");
 		trail_->SetEnableLighting(false);
 	}
 }
@@ -56,6 +57,7 @@ void PlayerSwordTrail::Draw() {
 	if (!trail_ || points_.size() < 2) {
 		return;
 	}
+	Object3dCommon::GetInstance()->SetBlendMode(BlendMode::kBlendModeAlpha);
 	trail_->Draw();
 }
 
@@ -126,7 +128,7 @@ void PlayerSwordTrail::UpdateTrailMesh() {
 
 	trail_->SetCamera(camera_);
 	trail_->SetWorldMatrix(Function::MakeIdentity4x4());
-	trail_->SetColor({0.2f, 0.7f, 1.0f, 0.6f});
+	/*trail_->SetColor({0.2f, 0.7f, 1.0f, 0.6f});*/
 	trail_->SetMeshData(vertices, indices);
 	trail_->Update();
 }

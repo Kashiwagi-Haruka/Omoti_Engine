@@ -22,7 +22,7 @@ Pause::Pause() {
 
 	Select_->Initialize(SelectHandle_);
 	Button_->Initialize(ButtonHandle_);
-	BG_->Initialize(Primitive::PrimitiveName::Plane, "Resources/2d/Pause.png");
+	BG_->Initialize(Primitive::PrimitiveName::Plane, "Resources/2d/Pause/Pause.png");
 	BG_->SetCamera(camera_.get());
 }
 
@@ -173,7 +173,6 @@ void Pause::Update(bool isPause) {
 	BG_->Update();
 	pauseText_.Update(false);
 }
-
 void Pause::Draw() {
 
 	if (!IsVisible()) {
@@ -181,29 +180,32 @@ void Pause::Draw() {
 	}
 	camera_->Update();
 	BG_->SetCamera(camera_.get());
-	
-	Object3dCommon::GetInstance()->SetDefaultCamera(camera_.get());
+
+	Object3dCommon* object3dCommon = Object3dCommon::GetInstance();
+	Camera* previousDefaultCamera = object3dCommon->GetDefaultCamera();
+	object3dCommon->SetDefaultCamera(camera_.get());
 	if (currentCharacterObj_) {
 		currentCharacterObj_->SetCamera(camera_.get());
-		currentCharacterObj_->SetTransform ({
-			.scale{2.0f, 2.0f, 2.0f},
-			.rotate{0.0f, 0.2f, 0.0f},
-			.translate{-2.0f, 0.0f, 0.0f},
+		currentCharacterObj_->SetTransform({
+		    .scale{2.0f,  2.0f, 2.0f},
+		    .rotate{0.0f,  0.2f, 0.0f},
+		    .translate{-2.0f, 0.0f, 0.0f},
 		});
 		currentCharacterObj_->SetColor({0.0f, 0.0f, 0.0f, 1.0f});
 		currentCharacterObj_->Update();
 	}
 
-	Object3dCommon::GetInstance()->DrawCommon();
+	object3dCommon->DrawCommon();
 	BG_->Draw();
 	if (currentCharacterObj_) {
-		Object3dCommon::GetInstance()->DrawCommonMaterialColorOnlySkinning();
+		object3dCommon->DrawCommonMaterialColorOnlySkinning();
 		currentCharacterObj_->Draw();
 	}
 
-	
 	pauseText_.Draw();
 	SpriteCommon::GetInstance()->DrawCommon();
 	Select_->Draw();
 	Button_->Draw();
+
+	object3dCommon->SetDefaultCamera(previousDefaultCamera);
 }

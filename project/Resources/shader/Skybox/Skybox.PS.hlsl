@@ -30,7 +30,9 @@ ConstantBuffer<Material> gMaterial : register(b0);
 PixelShaderOutput main(SkyboxVertexShaderOutput input)
 {
     PixelShaderOutput output;
-    float4 textureColor = gTexture.Sample(gSampler, input.texcoord);
+    float3 sampleDirection = normalize(input.texcoord);
+    float4 textureColor = gTexture.SampleLevel(gSampler, sampleDirection, 0.0f);
     output.color = textureColor * gMaterial.color;
+    output.color.rgb = ApplyEnvironmentMapToneMap(output.color.rgb);
     return output;
 }

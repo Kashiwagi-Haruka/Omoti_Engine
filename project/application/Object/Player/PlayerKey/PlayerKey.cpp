@@ -23,9 +23,9 @@ PlayerKey::~PlayerKey() = default;
 void PlayerKey::Initialize() { 
 
 	keyTransform_ = {
-	    .scale = {0.3f, 0.3f, 0.3f},
-          .rotate = {0.0f, std::numbers::pi_v<float>, 0.0f},
-          .translate = {0.0f, 0.0f, -1.0f}
+	    .scale = {0.2f, 0.2f, 0.2f},
+          .rotate = {std::numbers::pi_v<float>/2.0f, std::numbers::pi_v<float>, 0.0f },
+          .translate = {0.0f, 0.0f, -2.3f}
     };
 	keyHoleTransform_ = {
 		.scale = {1.0f, 1.0f, 0.5f},
@@ -43,6 +43,18 @@ void PlayerKey::Initialize() {
 	keyHoleObj_->Initialize(Primitive::Plane,"Resources/2d/KeyPrimitive/KeyHole.png");
 	planeCircleObj_->Initialize(Primitive::Plane, "Resources/2d/KeyPrimitive/KeyCircle.png");
 
+}
+void PlayerKey::SetCamera(Camera* camera) {
+	camera_ = camera;
+	if (keyObj_) {
+		keyObj_->SetCamera(camera_);
+	}
+	if (keyHoleObj_) {
+		keyHoleObj_->SetCamera(camera_);
+	}
+	if (planeCircleObj_) {
+		planeCircleObj_->SetCamera(camera_);
+	}
 }
 void PlayerKey::Update() {
 
@@ -116,7 +128,6 @@ void PlayerKey::AttibuteColorSetting() {
 	}
 }
 void PlayerKey::Draw() {
-	Object3dCommon::GetInstance()->SetBlendMode(BlendMode::kBlendModeAlpha);
 	Object3dCommon::GetInstance()->DrawCommon();
 	keyObj_->Draw();
 	Object3dCommon::GetInstance()->DrawCommonNoCull();

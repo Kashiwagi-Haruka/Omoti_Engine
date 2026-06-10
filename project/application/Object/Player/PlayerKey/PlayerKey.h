@@ -37,8 +37,8 @@ class PlayerKey {
 		void Initialize();
 		void Update();
 	    void Draw();
+	    void SetCamera(Camera* camera);
 	    void SetPlayerTransform(const Transform& transform) { playerTransform_ = transform; }
-	    void SetCamera(Camera* camera) { camera_ = camera; }
 	    void StartAnimation() { isAninmationStarted_ = true; }
 	    void SetAttribute(Attribute attribute) { attribute_ = attribute; }
 };

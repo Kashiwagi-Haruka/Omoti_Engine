@@ -15,7 +15,10 @@ class Adhesion {
 	Transform baseTransform_{};
 	bool hasBaseTransform_ = false;
 	uint32_t ResolveTextureIndex(Attribute attribute) const;
+	uint32_t ResolveReactionTextureIndex(Attribute appliedAttribute) const;
+	int ResolveReactionFrameIndex(Attribute appliedAttribute, Attribute previousAttribute) const;
 	void RefreshAttributeTexture();
+	void RefreshReactionTexture(Attribute appliedAttribute, Attribute previousAttribute);
 	void RefreshComparisonTransform();
 
 public:
