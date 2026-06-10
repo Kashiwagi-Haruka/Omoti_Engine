@@ -102,6 +102,8 @@ public:
 	Vector2 GetRotation() const { return {transform_.rotate.x, transform_.rotate.y}; }
 	void SetColor(const Vector4& color);
 	void SetTextureRange(const Vector2& leftTop, const Vector2& TextureSize);
+	Vector2 GetTextureLeftTop() const { return textureLeftTop; };
+	Vector2 GetTextureSize() const { return textureSize; };
 	bool GetIsFlipX() { return isFlipX_; };
 	void SetIsFlipX(const bool isFlipX);
 	bool GetIsFlipY() { return isFripY_; };
