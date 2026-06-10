@@ -5,9 +5,9 @@
 #include "Object3d/Object3dCommon.h"
 #include "TextureManager.h"
 namespace {
-const float kAppearanceDuration = 0.5f;         // 出現アニメーションの継続時間
-const float kComparisonDisplayDuration = 10.0f; // 属性比較表示の継続時間
-const float kReactionCutSize = 200.0f;          // リアクション画像を切り取るサイズ
+const float kAppearanceDuration = 0.5f;      // 出現アニメーションの継続時間
+const float kReactionDisplayDuration = 3.0f; // 属性リアクション表示の継続時間
+const float kReactionCutSize = 200.0f;       // リアクション画像を切り取るサイズ
 } // namespace
 Adhesion::Adhesion() {
 	preAttributePlane_ = std::make_unique<Primitive>();
@@ -159,7 +159,6 @@ void Adhesion::SetTransform(const Transform& transform) {
 	hasBaseTransform_ = true;
 	if (isComparisonDisplayActive_) {
 		RefreshComparisonTransform();
-		return;
 	}
 
 	Transform uiTransform = transform;
@@ -182,13 +181,13 @@ void Adhesion::AddAttribute(Attribute attribute) {
 	currentAttribute_ = attribute;
 
 	if (hadPreviousAttribute) {
-		preAttributePlane_->SetTextureIndex(ResolveTextureIndex(previousAttribute));
-		preAttributePlane_->SetColor({1.0f, 1.0f, 1.0f, 1.0f});
-		AttributePlane_->SetTextureIndex(ResolveTextureIndex(currentAttribute_));
-		AttributePlane_->SetColor({1.0f, 1.0f, 1.0f, 1.0f});
 		RefreshReactionTexture(currentAttribute_, previousAttribute);
+		attributeBitMask_ = 0;
+		currentAttribute_ = Attribute::None;
+		preAttributePlane_->SetColor({1.0f, 1.0f, 1.0f, 0.0f});
+		AttributePlane_->SetColor({1.0f, 1.0f, 1.0f, 0.0f});
 		isComparisonDisplayActive_ = true;
-		comparisonDisplayTimer_ = kComparisonDisplayDuration;
+		comparisonDisplayTimer_ = kReactionDisplayDuration;
 		RefreshComparisonTransform();
 		return;
 	}
@@ -199,22 +198,19 @@ void Adhesion::AddAttribute(Attribute attribute) {
 }
 
 void Adhesion::Update() {
-	if (attributeBitMask_ == 0) {
-		return;
-	}
-
 	if (isComparisonDisplayActive_) {
 		comparisonDisplayTimer_ -= GameBase::GetInstance()->GetDeltaTime();
-		preAttributePlane_->Update();
 		AttributeReactionPlane_->Update();
-		AttributePlane_->Update();
 		if (comparisonDisplayTimer_ <= 0.0f) {
 			isComparisonDisplayActive_ = false;
 			comparisonDisplayTimer_ = 0.0f;
-			AttributePlane_->SetTextureIndex(ResolveTextureIndex(currentAttribute_));
-			AttributePlane_->SetColor({1.0f, 1.0f, 1.0f, 1.0f});
+			AttributeReactionPlane_->SetColor({1.0f, 1.0f, 1.0f, 0.0f});
 			SetTransform(baseTransform_);
 		}
+		return;
+	}
+
+	if (attributeBitMask_ == 0) {
 		return;
 	}
 
@@ -229,13 +225,11 @@ void Adhesion::Update() {
 
 void Adhesion::Draw() {
 	Object3dCommon::GetInstance()->DrawCommonNoCull();
-	if (attributeBitMask_ == 0) {
+	if (isComparisonDisplayActive_) {
+		AttributeReactionPlane_->Draw();
 		return;
 	}
-	if (isComparisonDisplayActive_) {
-		preAttributePlane_->Draw();
-		AttributeReactionPlane_->Draw();
-		AttributePlane_->Draw();
+	if (attributeBitMask_ == 0) {
 		return;
 	}
 
