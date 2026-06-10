@@ -181,6 +181,7 @@ void Team::Update(bool isPartyOpen) {
 		isDraggingInventoryIcon_ = false;
 		draggingInventoryIndex_ = -1;
 		dropTargetSlotIndex_ = -1;
+		isMemberSelectionActive_ = false;
 		return;
 	}
 	Input::GetInstance()->SetIsCursorVisible(true);
