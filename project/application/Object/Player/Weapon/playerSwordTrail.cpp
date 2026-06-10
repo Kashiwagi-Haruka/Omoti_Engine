@@ -18,7 +18,7 @@ void PlayerSwordTrail::Initialize() {
 	points_.clear();
 	if (!trail_) {
 		trail_ = std::make_unique<Primitive>();
-		trail_->Initialize(Primitive::Band, "Resources/2d/SwordTrail.png");
+		trail_->Initialize(Primitive::Band, "Resources/2d/Effect/SwordTrail.png");
 		trail_->SetEnableLighting(false);
 	}
 }
