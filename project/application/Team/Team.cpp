@@ -52,6 +52,23 @@ void Team::Initialize() {
 	ownedCharacters_.push_back(std::make_unique<Yuzuki>());
 	ownedCharacterIconHandles_.push_back(yuzukiIconHandle);
 
+	const std::array<Vector4, kMaxMembersCount> teamDisplayModelColors = {
+	    Vector4{1.0f,            1.0f,            1.0f,            1.0f},
+	    Vector4{255.0f / 255.0f, 106.0f / 255.0f, 145.0f / 255.0f, 1.0f},
+	    Vector4{93.0f / 255.0f,  236.0f / 255.0f, 203.0f / 255.0f, 1.0f},
+	    Vector4{207.0f / 255.0f, 156.0f / 255.0f, 236.0f / 255.0f, 1.0f},
+	};
+	for (int i = 0; i < kMaxMembersCount; ++i) {
+		teamDisplayModels_[i] = std::make_unique<Object3d>();
+		teamDisplayModels_[i]->SetModel("sizuku");
+		teamDisplayModels_[i]->Initialize();
+		teamDisplayModels_[i]->SetCamera(camera_.get());
+		teamDisplayModels_[i]->SetColor(teamDisplayModelColors[i]);
+		teamDisplayModels_[i]->SetShininess(20.0f);
+		teamDisplayModels_[i]->SetOutlineWidth(2.0f);
+		teamDisplayModels_[i]->SetOutlineColor({99.0f / 255.0f, 48.0f / 255.0f, 48.0f / 255.0f, 1.0f});
+	}
+
 	inventoryIcons_.clear();
 	for (size_t i = 0; i < ownedCharacterIconHandles_.size(); ++i) {
 		auto icon = std::make_unique<Sprite>();
@@ -146,6 +163,16 @@ void Team::Initialize() {
 		inGameMemberNameTexts_[i].SetString(U"");
 		inGameMemberNameTexts_[i].UpdateLayout(false);
 
+		noMemberPlanes_[i] = std::make_unique<Primitive>();
+		noMemberPlanes_[i]->Initialize(Primitive::PrimitiveName::Plane, "Resources/2d/Team/NoMember.png");
+		noMemberPlanes_[i]->SetEnableLighting(false);
+		noMemberPlanes_[i]->SetTransform({
+		    noMemberPlaneScale_, {0.0f, 0.0f, 0.0f},
+             teamDisplayPositions_[i]
+        });
+		noMemberPlanes_[i]->SetCamera(camera_.get());
+		noMemberPlanes_[i]->Update();
+
 		slotPositions_[i] = {40.0f + (slotSize_.x + 18.0f) * i, 40.0f};
 		teamSlotSprites_[i]->SetPosition(slotPositions_[i]);
 		teamSlotSprites_[i]->Update();
@@ -169,6 +196,10 @@ void Team::Update(bool isPartyOpen) {
 	camera_->Update();
 	teamBackgroundPlane_->SetCamera(camera_.get());
 	teamBackgroundPlane_->Update();
+	for (int i = 0; i < kMaxMembersCount; ++i) {
+		noMemberPlanes_[i]->SetCamera(camera_.get());
+		noMemberPlanes_[i]->Update();
+	}
 	for (int i = 0; i < kMaxMembersCount; ++i) {
 		if (Input::GetInstance()->TriggerKey(static_cast<BYTE>(DIK_1 + i)) && occupiedSlots_[i]) {
 			if (activeSlotIndex_ != i) {
@@ -298,7 +329,9 @@ void Team::UpdatePartyUI() {
 void Team::Draw() {
 	Object3dCommon::GetInstance()->DrawCommon();
 	teamBackgroundPlane_->Draw();
-
+	if (!isMemberSelectionActive_) {
+		DrawTeamDisplayMembers();
+	}
 
 	SpriteCommon::GetInstance()->DrawCommon();
 	
@@ -329,7 +362,28 @@ void Team::Draw() {
 		draggingIcon_->Draw();
 	}
 }
+void Team::DrawTeamDisplayMembers() {
+	for (int i = 0; i < kMaxMembersCount; ++i) {
+		if (!occupiedSlots_[i]) {
+			noMemberPlanes_[i]->Draw();
+			continue;
+		}
 
+		const int characterIndex = teamMemberCharacterIndices_[i];
+		if (characterIndex < 0 || characterIndex >= static_cast<int>(teamDisplayModels_.size())) {
+			noMemberPlanes_[i]->Draw();
+			continue;
+		}
+
+		teamDisplayModels_[characterIndex]->SetTransform({
+		    teamDisplayModelScale_, {0.0f, 3.14159265f, 0.0f},
+             teamDisplayPositions_[i]
+        });
+		teamDisplayModels_[characterIndex]->SetCamera(camera_.get());
+		teamDisplayModels_[characterIndex]->Update();
+		teamDisplayModels_[characterIndex]->Draw();
+	}
+}
 void Team::DrawInGameMemberList() {
 	int occupiedMemberCount = 0;
 	for (int i = 0; i < kMaxMembersCount; ++i) {

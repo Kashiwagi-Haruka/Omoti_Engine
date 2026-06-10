@@ -1,15 +1,16 @@
 #pragma once
+#include "Camera.h"
 #include "Object/Characters/Playable/Base/PlayableBase.h"
 #include "Object3d/Object3d.h"
-#include "Sprite.h"
 #include "Primitive/Primitive.h"
+#include "Sprite.h"
 #include "Text/Text.h"
 #include "Vector2.h"
+#include "Vector3.h"
 #include <array>
 #include <memory>
 #include <string>
 #include <vector>
-#include "Camera.h"
 
 class Team {
 public:
@@ -39,6 +40,8 @@ private:
 	void UpdatePartyUI();
 	/// 指定キャラクターを指定スロットへ割り当てる。
 	void AssignCharacterToSlot(int slotIndex, int characterIndex);
+	/// チーム画面の4人分のモデル表示と空きスロット表示を描画する。
+	void DrawTeamDisplayMembers();
 
 	/// 指定座標が矩形範囲内に含まれているかを判定する。
 	bool IsInsideRect(const Vector2& point, const Vector2& pos, const Vector2& size) const;
@@ -49,8 +52,10 @@ private:
 	std::vector<uint32_t> ownedCharacterIconHandles_{};
 	/// 所持しているプレイアブルキャラクター実体の一覧。
 	std::vector<std::unique_ptr<PlayableBase>> ownedCharacters_{};
-	/// チームメンバー表示用3Dモデルの一覧。
-	std::vector<std::unique_ptr<Object3d>> teamMemberModels_{};
+	/// チーム画面に表示するキャラクターモデル。
+	std::array<std::unique_ptr<Object3d>, kMaxMembersCount> teamDisplayModels_{};
+	/// チーム画面の未編成スロットに表示するNoMember板ポリゴン。
+	std::array<std::unique_ptr<Primitive>, kMaxMembersCount> noMemberPlanes_{};
 
 	/// パーティ編成画面に表示するチームスロット背景。
 	std::array<std::unique_ptr<Sprite>, kMaxMembersCount> teamSlotSprites_{};
@@ -111,6 +116,17 @@ private:
 	Vector2 previewPos_{700.0f, 380.0f};
 	/// 選択中キャラクタープレビューの表示サイズ。
 	Vector2 previewSize_{128.0f, 128.0f};
+	/// チーム画面に表示する4人分のワールド座標。
+	std::array<Vector3, kMaxMembersCount> teamDisplayPositions_{
+	    Vector3{-9.0f, 0.0f, -0.8f},
+        Vector3{-3.0f, 0.0f, -0.8f},
+        Vector3{3.0f,  0.0f, -0.8f},
+        Vector3{9.0f,  0.0f, -0.8f}
+    };
+	/// チーム画面に表示するキャラクターモデルの拡大率。
+	Vector3 teamDisplayModelScale_{1.2f, 1.2f, 1.2f};
+	/// チーム画面に表示するNoMember板ポリゴンの拡大率。
+	Vector3 noMemberPlaneScale_{4.0f, 4.0f, 1.0f};
 
 	/// 現在選択されているチームスロット番号。
 	int selectedSlotIndex_ = -1;

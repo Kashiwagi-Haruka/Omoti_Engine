@@ -145,30 +145,32 @@ void Pause::Update(bool isPause) {
 
 	Select_->Update();
 	Button_->Update();
-	switch (currentAttribute) {
-	case Attribute::None:
-		BG_->SetColor(Color::RGBAToVector4(190,190,190,255));
-		break;
-	case Attribute::Fire:
-		BG_->SetColor(Color::RGBAToVector4(225, 75, 65, 255));
-		break;
-	case Attribute::Ice:
-		BG_->SetColor(Color::RGBAToVector4(130, 190, 220, 255));
-		break;
-	case Attribute::Wind:
-		BG_->SetColor(Color::RGBAToVector4(130, 235, 170, 255));
-		break;
-	case Attribute::Thunder:
-		BG_->SetColor(Color::RGBAToVector4(200, 100, 200, 255));
-		break;
-	case Attribute::Imaginary:
-		BG_->SetColor(Color::RGBAToVector4(240, 210, 60, 255));
-		break;
-	case Attribute::Quantum:
-		BG_->SetColor(Color::RGBAToVector4(55, 80, 160, 255));
-		break;
-	default:
-		break;
+	if (currentCharacterObj_) {
+		switch (currentAttribute) {
+		case Attribute::None:
+			currentCharacterObj_->SetColor(Color::RGBAToVector4(190, 190, 190, 255));
+			break;
+		case Attribute::Fire:
+			currentCharacterObj_->SetColor(Color::RGBAToVector4(225, 75, 65, 255));
+			break;
+		case Attribute::Ice:
+			currentCharacterObj_->SetColor(Color::RGBAToVector4(130, 190, 220, 255));
+			break;
+		case Attribute::Wind:
+			currentCharacterObj_->SetColor(Color::RGBAToVector4(130, 235, 170, 255));
+			break;
+		case Attribute::Thunder:
+			currentCharacterObj_->SetColor(Color::RGBAToVector4(200, 100, 200, 255));
+			break;
+		case Attribute::Imaginary:
+			currentCharacterObj_->SetColor(Color::RGBAToVector4(240, 210, 60, 255));
+			break;
+		case Attribute::Quantum:
+			currentCharacterObj_->SetColor(Color::RGBAToVector4(55, 80, 160, 255));
+			break;
+		default:
+			break;
+		}
 	}
 	BG_->Update();
 	pauseText_.Update(false);
@@ -191,7 +193,6 @@ void Pause::Draw() {
 		    .rotate{0.0f,  0.2f, 0.0f},
 		    .translate{-2.0f, 0.0f, 0.0f},
 		});
-		currentCharacterObj_->SetColor({0.0f, 0.0f, 0.0f, 1.0f});
 		currentCharacterObj_->Update();
 	}
 
