@@ -190,6 +190,13 @@ void Team::Update(bool isPartyOpen) {
 
 void Team::UpdatePartyUI() {
 	Vector2 mousePos{Input::GetInstance()->GetMouseX(), Input::GetInstance()->GetMouseY()};
+	const Vector2 memberSelectionMarkerPos = memberSelectionMarker_->GetPosition();
+	const Vector2 memberSelectionMarkerSize = memberSelectionMarker_->GetScale();
+	const bool isHoveringMemberSelectionMarker = IsInsideRect(mousePos, memberSelectionMarkerPos, memberSelectionMarkerSize);
+	if (isHoveringMemberSelectionMarker && Input::GetInstance()->TriggerMouseButton(Input::MouseButton::kLeft)) {
+		isMemberSelectionActive_ = true;
+	}
+	memberSelectionMarker_->SetColor(isHoveringMemberSelectionMarker ? Vector4{0.95f, 0.8f, 0.3f, 1.0f} : Vector4{1.0f, 1.0f, 1.0f, 1.0f});
 	hoveredInventoryIndex_ = -1;
 	dropTargetSlotIndex_ = -1;
 	for (int i = 0; i < kMaxMembersCount; ++i) {
