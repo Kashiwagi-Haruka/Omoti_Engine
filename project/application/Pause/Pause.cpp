@@ -27,19 +27,22 @@ Pause::Pause() {
 
 	BG_->Initialize(Primitive::PrimitiveName::Plane, "Resources/2d/Pause/Pause.png");
 	BG_->SetCamera(camera_.get());
+	selectRotation_[0] = 0.0f;
+	selectRotation_[1] = 1.0f;
+	selectRotation_[2] = 0.5f;
+	selectScale_[0] = 160.0f;
+	selectScale_[1] = 180.0f;
+	selectScale_[2] = 200.0f;
 	for (int i = 0; i < 3; ++i) {
 		selectSprites_[i] = std::make_unique<Sprite>();
 		selectSprites_[i]->Initialize(selectTextureHandle);
-		selectSprites_[i]->SetScale({200.0f, 200.0f});
+		selectSprites_[i]->SetScale({selectScale_[i], selectScale_[i]});
 		selectSprites_[i]->SetAnchorPoint({0.5f, 0.5f});
+		selectSprites_[i]->SetRotation(selectRotation_[i]);
 	}
 	selectSprites_[0]->SetColor({1.0f, 0.0f, 0.0f, 0.5f});
 	selectSprites_[1]->SetColor({0.0f, 1.0f, 0.0f, 0.5f});
 	selectSprites_[2]->SetColor({0.0f, 0.0f, 1.0f, 0.5f});
-
-	selectSprites_[0]->SetRotation(0.0f);
-	selectSprites_[1]->SetRotation(1.0f);
-	selectSprites_[2]->SetRotation(0.5f);
 }
 
 void Pause::Initialize() {
@@ -163,7 +166,7 @@ void Pause::Update(bool isPause) {
 			action_ = Action::kResume;
 		}
 	}
-
+	SelectSpriteUpdate();
 	if (!menuTexts_.empty()) {
 		const Vector2 selectPosition = {menuTexts_[selectIndex_].GetPosition().x + offsetX, menuTexts_[selectIndex_].GetPosition().y};
 		for (auto& selectSprite : selectSprites_) {
@@ -247,5 +250,13 @@ void Pause::CurrentCharacterUpdate() {
 		default:
 			break;
 		}
+	}
+}
+void Pause::SelectSpriteUpdate() {
+	for (int i = 0; i < 3; ++i) {
+		selectRotation_[i] += 0.025f;
+		selectScale_[i] += 1.0f * std::cos(selectRotation_[i]);
+		selectSprites_[i]->SetRotation(std::sinf(selectRotation_[i]));
+		selectSprites_[i]->SetScale({selectScale_[i], selectScale_[i]});
 	}
 }

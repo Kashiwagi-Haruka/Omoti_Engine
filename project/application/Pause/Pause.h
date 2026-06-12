@@ -26,6 +26,8 @@ private:
 	Object3d* currentCharacterObj_ = nullptr;
 
 	std::array<std::unique_ptr<Sprite>, 3> selectSprites_{};
+	float selectRotation_[3]{};
+	float selectScale_[3]{};
 
 	float startTime = 0.0f;
 	int selectIndex_ = 1;
@@ -42,6 +44,7 @@ private:
 	Attribute currentAttribute = Attribute::None;
 
 	void CurrentCharacterUpdate();
+	void SelectSpriteUpdate();
 
 public:
 	Pause();
