@@ -27,8 +27,9 @@ void SpriteCommon::DrawCommon() {
 	if (!dxCommon_->IsEditorLayoutEnabled()) {
 		dxCommon_->EnsureSceneTextureCopiedToBackBuffer();
 	}
+	activePipeline_ = ActivePipeline::Sprite;
 	dxCommon_->GetCommandList()->SetGraphicsRootSignature(pso_->GetRootSignature().Get());
-	dxCommon_->GetCommandList()->SetPipelineState(pso_->GetGraphicsPipelineState(blendMode_).Get()); // 通常
+	ApplyBlendMode();
 
 	dxCommon_->GetCommandList()->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 }
@@ -36,10 +37,25 @@ void SpriteCommon::DrawCommonFont() {
 	if (!dxCommon_->IsEditorLayoutEnabled()) {
 		dxCommon_->EnsureSceneTextureCopiedToBackBuffer();
 	}
+	activePipeline_ = ActivePipeline::Font;
 	dxCommon_->GetCommandList()->SetGraphicsRootSignature(psoFont_->GetRootSignature().Get());
-	dxCommon_->GetCommandList()->SetPipelineState(psoFont_->GetGraphicsPipelineState(blendMode_).Get()); // 通常
+	ApplyBlendMode();
 
 	dxCommon_->GetCommandList()->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+}
+
+void SpriteCommon::SetBlendMode(const BlendMode& blendMode) {
+	blendMode_ = blendMode;
+	ApplyBlendMode();
+}
+
+void SpriteCommon::ApplyBlendMode() {
+	if (!dxCommon_ || !pso_ || !psoFont_) {
+		return;
+	}
+
+	SpriteCreatePSO* activePso = activePipeline_ == ActivePipeline::Font ? psoFont_.get() : pso_.get();
+	dxCommon_->GetCommandList()->SetPipelineState(activePso->GetGraphicsPipelineState(blendMode_).Get());
 }
 Microsoft::WRL::ComPtr<ID3D12Resource> SpriteCommon::CreateBufferResource(size_t sizeInBytes) {
 	// バッファの設定（UPLOAD用に変更）

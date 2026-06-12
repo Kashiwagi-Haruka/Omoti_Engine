@@ -10,27 +10,21 @@ namespace {
 constexpr float kTransitionSpeed = 0.06f;
 constexpr float kHiddenOffsetX = 1280.0f;
 static const int kMenuCount = 4;
-std::u32string menuStrings[kMenuCount] = {U"再開", U"設定", U"ライセンス", U"タイトル"};
+	std::u32string menuStrings[kMenuCount] = {U"再開", U"設定", U"ライセンス", U"タイトル"};
 } // namespace
 
 Pause::Pause() {
-	SelectHandle_ = TextureManager::GetInstance()->GetTextureIndexByfilePath("Resources/2d/PauseSelect.png");
-	ButtonHandle_ = TextureManager::GetInstance()->GetTextureIndexByfilePath("Resources/2d/PauseButton.png");
 	const uint32_t selectTextureHandle = TextureManager::GetInstance()->GetTextureIndexByfilePath("Resources/2d/Pause/Select.png");
 
-	Select_ = std::make_unique<Sprite>();
-	Button_ = std::make_unique<Sprite>();
 	BG_ = std::make_unique<Primitive>();
 	camera_ = std::make_unique<Camera>();
 
-	Select_->Initialize(SelectHandle_);
-	Button_->Initialize(ButtonHandle_);
 	BG_->Initialize(Primitive::PrimitiveName::Plane, "Resources/2d/Pause/Pause.png");
 	BG_->SetCamera(camera_.get());
 	for (int i = 0; i < 3; ++i) {
 		selectSprites_[i] = std::make_unique<Sprite>();
 		selectSprites_[i]->Initialize(selectTextureHandle);
-		selectSprites_[i]->SetScale(selectSize_);
+		selectSprites_[i]->SetScale({400.0f, 400.0f});
 	}
 	selectSprites_[0]->SetColor({1.0f, 0.0f, 0.0f, 0.5f});
 	selectSprites_[1]->SetColor({0.0f, 1.0f, 0.0f, 0.5f});
@@ -49,13 +43,6 @@ void Pause::Initialize() {
 	isActive_ = false;
 	action_ = Action::kNone;
 	selectIndex_ = 1;
-
-	selectBasePos_ = {(1700.0f - selectSize_.x) / 2.0f, (900.0f - selectSize_.y) / 2.0f};
-	buttonBasePos_[0] = {selectBasePos_.x - 60.0f, selectBasePos_.y + 60.0f};
-	buttonBasePos_[1] = {selectBasePos_.x - 60.0f, selectBasePos_.y + 260.0f};
-
-	Select_->SetScale(selectSize_);
-	Button_->SetScale(buttonSize_);
 
 	camera_->SetTransform({
 	    .scale{1.0f, 1.0f, 1.0f },
@@ -161,52 +148,12 @@ void Pause::Update(bool isPause) {
 		              Input::GetInstance()->TriggerButton(Input::PadButton::kButtonB);
 
 		if (confirm) {
-			action_ = (selectIndex_ == 0) ? Action::kTitle : Action::kResume;
+
 		} else if (cancel) {
 			action_ = Action::kResume;
 		}
 	}
-
-	Vector2 selectPos = {selectBasePos_.x + offsetX, selectBasePos_.y};
-	Vector2 buttonPos = {buttonBasePos_[selectIndex_].x + offsetX, buttonBasePos_[selectIndex_].y};
-
-	Select_->SetPosition(selectPos);
-	Button_->SetPosition(buttonPos);
-	
-
-	Select_->Update();
-	Button_->Update();
-	for (int i = 0; i < 3; ++i) {
-		selectSprites_[i]->SetPosition(selectBasePos_);
-		selectSprites_[i]->Update();
-	}
-	if (currentCharacterObj_) {
-		switch (currentAttribute) {
-		case Attribute::None:
-			currentCharacterObj_->SetColor(Color::RGBAToVector4(190, 190, 190, 255));
-			break;
-		case Attribute::Fire:
-			currentCharacterObj_->SetColor(Color::RGBAToVector4(225, 75, 65, 255));
-			break;
-		case Attribute::Ice:
-			currentCharacterObj_->SetColor(Color::RGBAToVector4(130, 190, 220, 255));
-			break;
-		case Attribute::Wind:
-			currentCharacterObj_->SetColor(Color::RGBAToVector4(130, 235, 170, 255));
-			break;
-		case Attribute::Thunder:
-			currentCharacterObj_->SetColor(Color::RGBAToVector4(200, 100, 200, 255));
-			break;
-		case Attribute::Imaginary:
-			currentCharacterObj_->SetColor(Color::RGBAToVector4(240, 210, 60, 255));
-			break;
-		case Attribute::Quantum:
-			currentCharacterObj_->SetColor(Color::RGBAToVector4(55, 80, 160, 255));
-			break;
-		default:
-			break;
-		}
-	}
+	CurrentCharacterUpdate();
 	BG_->Update();
 	pauseText_.Update(false);
 	for (auto& menuText : menuTexts_) {
@@ -245,9 +192,6 @@ void Pause::Draw() {
 	for (auto& menuText : menuTexts_) {
 		menuText.Draw();
 	}
-	SpriteCommon::GetInstance()->DrawCommon();
-	Select_->Draw();
-	Button_->Draw();
 	SpriteCommon::GetInstance()->SetBlendMode(BlendMode::kBlendModeAdd);
 	for (int i = 0; i < 3; ++i) {
 		selectSprites_[i]->Draw();
@@ -255,4 +199,34 @@ void Pause::Draw() {
 	SpriteCommon::GetInstance()->SetBlendMode(BlendMode::kBlendModeAlpha);
 
 	object3dCommon->SetDefaultCamera(previousDefaultCamera);
+}
+
+void Pause::CurrentCharacterUpdate() {
+	if (currentCharacterObj_) {
+		switch (currentAttribute) {
+		case Attribute::None:
+			currentCharacterObj_->SetColor(Color::RGBAToVector4(190, 190, 190, 255));
+			break;
+		case Attribute::Fire:
+			currentCharacterObj_->SetColor(Color::RGBAToVector4(225, 75, 65, 255));
+			break;
+		case Attribute::Ice:
+			currentCharacterObj_->SetColor(Color::RGBAToVector4(130, 190, 220, 255));
+			break;
+		case Attribute::Wind:
+			currentCharacterObj_->SetColor(Color::RGBAToVector4(130, 235, 170, 255));
+			break;
+		case Attribute::Thunder:
+			currentCharacterObj_->SetColor(Color::RGBAToVector4(200, 100, 200, 255));
+			break;
+		case Attribute::Imaginary:
+			currentCharacterObj_->SetColor(Color::RGBAToVector4(240, 210, 60, 255));
+			break;
+		case Attribute::Quantum:
+			currentCharacterObj_->SetColor(Color::RGBAToVector4(55, 80, 160, 255));
+			break;
+		default:
+			break;
+		}
+	}
 }

@@ -1,6 +1,20 @@
 #pragma once
+#include "Text/Text.h"
+#include <vector>
 class Option {
 
+	enum class Menu {
+		kCamera,
+		kSound,
+		kBack,
+	};
 
+	std::vector<Text> menuTexts_;	
+
+public:
+	Option();
+	void Initialize();
+	void Update();
+	void Draw();
 
 };

@@ -18,9 +18,16 @@ private:
 
 	std::unique_ptr<SpriteCreatePSO> pso_;
 	std::unique_ptr<SpriteCreatePSO> psoFont_;
+	enum class ActivePipeline {
+		Sprite,
+		Font,
+	};
+	ActivePipeline activePipeline_ = ActivePipeline::Sprite;
 	bool isSpriteVisible_ = true;
 
 	HRESULT hr_;
+
+	void ApplyBlendMode();
 
 public:
 	static SpriteCommon* GetInstance();
@@ -28,7 +35,7 @@ public:
 	void Finalize();
 	void DrawCommon();
 	void DrawCommonFont();
-	void SetBlendMode(const BlendMode& blendMode = BlendMode::kBlendModeAlpha) { blendMode_ = blendMode; }
+	void SetBlendMode(const BlendMode& blendMode = BlendMode::kBlendModeAlpha);
 	void SetSpriteVisible(bool isVisible) { isSpriteVisible_ = isVisible; }
 	bool IsSpriteVisible() const { return isSpriteVisible_; }
 	Microsoft::WRL::ComPtr<ID3D12Resource> CreateBufferResource(size_t sizeInBytes);
