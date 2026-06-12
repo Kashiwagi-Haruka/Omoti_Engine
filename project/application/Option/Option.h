@@ -13,6 +13,7 @@ class Option {
 
 public:
 	Option();
+	~Option();
 	void Initialize();
 	void Update();
 	void Draw();

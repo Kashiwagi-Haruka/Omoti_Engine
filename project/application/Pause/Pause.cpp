@@ -10,7 +10,13 @@ namespace {
 constexpr float kTransitionSpeed = 0.06f;
 constexpr float kHiddenOffsetX = 1280.0f;
 static const int kMenuCount = 4;
-	std::u32string menuStrings[kMenuCount] = {U"再開", U"設定", U"ライセンス", U"タイトル"};
+std::u32string menuStrings[kMenuCount] = {U"再開", U"設定", U"ライセンス", U"タイトル"};
+constexpr std::array<Pause::Action, kMenuCount> kMenuActions = {
+    Pause::Action::kResume,
+    Pause::Action::kOptions,
+    Pause::Action::kLicense,
+    Pause::Action::kTitle,
+};
 } // namespace
 
 Pause::Pause() {
@@ -25,6 +31,7 @@ Pause::Pause() {
 		selectSprites_[i] = std::make_unique<Sprite>();
 		selectSprites_[i]->Initialize(selectTextureHandle);
 		selectSprites_[i]->SetScale({400.0f, 400.0f});
+		selectSprites_[i]->SetAnchorPoint({0.5f, 0.5f});
 	}
 	selectSprites_[0]->SetColor({1.0f, 0.0f, 0.0f, 0.5f});
 	selectSprites_[1]->SetColor({0.0f, 1.0f, 0.0f, 0.5f});
@@ -36,6 +43,8 @@ Pause::Pause() {
 }
 
 void Pause::Initialize() {
+
+	menuTexts_.clear();
 
 	startTime = 0.0f;
 	isStart_ = false;
@@ -58,7 +67,7 @@ void Pause::Initialize() {
 	});
 	BG_->SetEnableLighting(false);
 
-	pauseFontHandle_ = FreeTypeManager::CreateFace("Resources/Font/irohakakuC-Bold.ttf", 0);
+	pauseFontHandle_ = FreeTypeManager::CreateFace("Resources/Font/JF-Dot-jiskan24-2000.ttf", 0);
 	FreeTypeManager::SetPixelSizes(pauseFontHandle_, 72, 72);
 	pauseText_.Initialize(pauseFontHandle_);
 	pauseText_.SetSize({1280.0f, 200.0f});
@@ -67,13 +76,12 @@ void Pause::Initialize() {
 	pauseText_.SetAlign(TextAlign::Center);
 	pauseText_.SetColor({1.0f, 1.0f, 1.0f, 1.0f});
 	pauseText_.UpdateLayout(false);
-	uint32_t menuFontHandle = FreeTypeManager::CreateFace("Resources/Font/JF-Dot-jiskan24-2000.ttf", 0);
-	FreeTypeManager::SetPixelSizes(menuFontHandle, 48, 48);
+	FreeTypeManager::SetPixelSizes(pauseFontHandle_, 48, 48);
 
 	
 	for (int i = 0; i < kMenuCount; ++i) {
 		Text text;
-		text.Initialize(menuFontHandle);
+		text.Initialize(pauseFontHandle_);
 		text.SetSize({1280.0f, 100.0f});
 		text.SetString(menuStrings[i]);
 		text.SetPosition({640.0f, 200.0f + i * 100.0f});
@@ -139,8 +147,10 @@ void Pause::Update(bool isPause) {
 		bool moveUp = Input::GetInstance()->TriggerKey(DIK_W) || Input::GetInstance()->TriggerKey(DIK_UP) || Input::GetInstance()->TriggerButton(Input::PadButton::kButtonUp);
 		bool moveDown = Input::GetInstance()->TriggerKey(DIK_S) || Input::GetInstance()->TriggerKey(DIK_DOWN) || Input::GetInstance()->TriggerButton(Input::PadButton::kButtonDown);
 
-		if (moveUp || moveDown) {
-			selectIndex_ = 1 - selectIndex_;
+		if (moveUp && !moveDown) {
+			selectIndex_ = (selectIndex_ + kMenuCount - 1) % kMenuCount;
+		} else if (moveDown && !moveUp) {
+			selectIndex_ = (selectIndex_ + 1) % kMenuCount;
 		}
 
 		bool confirm = Input::GetInstance()->TriggerKey(DIK_RETURN) || Input::GetInstance()->TriggerKey(DIK_SPACE) || Input::GetInstance()->TriggerButton(Input::PadButton::kButtonA);
@@ -148,9 +158,17 @@ void Pause::Update(bool isPause) {
 		              Input::GetInstance()->TriggerButton(Input::PadButton::kButtonB);
 
 		if (confirm) {
-
+			action_ = kMenuActions[selectIndex_];
 		} else if (cancel) {
 			action_ = Action::kResume;
+		}
+	}
+
+	if (!menuTexts_.empty()) {
+		const Vector2 selectPosition = {menuTexts_[selectIndex_].GetPosition().x + offsetX, menuTexts_[selectIndex_].GetPosition().y};
+		for (auto& selectSprite : selectSprites_) {
+			selectSprite->SetPosition(selectPosition);
+			selectSprite->Update();
 		}
 	}
 	CurrentCharacterUpdate();
@@ -192,6 +210,7 @@ void Pause::Draw() {
 	for (auto& menuText : menuTexts_) {
 		menuText.Draw();
 	}
+	SpriteCommon::GetInstance()->DrawCommon();
 	SpriteCommon::GetInstance()->SetBlendMode(BlendMode::kBlendModeAdd);
 	for (int i = 0; i < 3; ++i) {
 		selectSprites_[i]->Draw();
