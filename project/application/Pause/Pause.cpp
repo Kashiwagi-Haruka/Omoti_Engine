@@ -29,7 +29,7 @@ Pause::Pause() {
 	BG_->SetCamera(camera_.get());
 	selectRotation_[0] = 0.0f;
 	selectRotation_[1] = 1.0f;
-	selectRotation_[2] = 0.5f;
+	selectRotation_[2] = 2.0f;
 	selectScale_[0] = 160.0f;
 	selectScale_[1] = 180.0f;
 	selectScale_[2] = 200.0f;
