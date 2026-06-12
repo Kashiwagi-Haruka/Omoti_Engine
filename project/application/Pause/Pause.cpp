@@ -30,7 +30,7 @@ Pause::Pause() {
 	for (int i = 0; i < 3; ++i) {
 		selectSprites_[i] = std::make_unique<Sprite>();
 		selectSprites_[i]->Initialize(selectTextureHandle);
-		selectSprites_[i]->SetScale({400.0f, 400.0f});
+		selectSprites_[i]->SetScale({200.0f, 200.0f});
 		selectSprites_[i]->SetAnchorPoint({0.5f, 0.5f});
 	}
 	selectSprites_[0]->SetColor({1.0f, 0.0f, 0.0f, 0.5f});
