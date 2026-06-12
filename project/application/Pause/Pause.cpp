@@ -80,7 +80,7 @@ void Pause::Initialize() {
 	pauseText_.SetAlign(TextAlign::Center);
 	pauseText_.SetColor({1.0f, 1.0f, 1.0f, 1.0f});
 	pauseText_.UpdateLayout(false);
-	uint32_t menuFontHandle = FreeTypeManager::CreateFace("Resources/Font/JF-Dot-jiskan24-2000", 0);
+	uint32_t menuFontHandle = FreeTypeManager::CreateFace("Resources/Font/JF-Dot-jiskan24-2000.ttf", 0);
 	FreeTypeManager::SetPixelSizes(menuFontHandle, 48, 48);
 
 	
