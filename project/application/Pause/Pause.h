@@ -44,6 +44,7 @@ private:
 	Action action_ = Action::kNone;
 	std::unique_ptr<Camera> camera_;
 	Text pauseText_;
+	std::vector<Text> menuTexts_;
 	uint32_t pauseFontHandle_ = 0;
 	Attribute currentAttribute = Attribute::None;
 

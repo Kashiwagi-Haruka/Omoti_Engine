@@ -9,6 +9,8 @@
 namespace {
 constexpr float kTransitionSpeed = 0.06f;
 constexpr float kHiddenOffsetX = 1280.0f;
+static const int kMenuCount = 4;
+std::u32string menuStrings[kMenuCount] = {U"再開", U"設定", U"ライセンス", U"タイトル"};
 } // namespace
 
 Pause::Pause() {
@@ -78,6 +80,21 @@ void Pause::Initialize() {
 	pauseText_.SetAlign(TextAlign::Center);
 	pauseText_.SetColor({1.0f, 1.0f, 1.0f, 1.0f});
 	pauseText_.UpdateLayout(false);
+	uint32_t menuFontHandle = FreeTypeManager::CreateFace("Resources/Font/JF-Dot-jiskan24-2000", 0);
+	FreeTypeManager::SetPixelSizes(menuFontHandle, 48, 48);
+
+	
+	for (int i = 0; i < kMenuCount; ++i) {
+		Text text;
+		text.Initialize(menuFontHandle);
+		text.SetSize({1280.0f, 100.0f});
+		text.SetString(menuStrings[i]);
+		text.SetPosition({640.0f, 200.0f + i * 100.0f});
+		text.SetAlign(TextAlign::Center);
+		text.SetColor({1.0f, 1.0f, 1.0f, 1.0f});
+		text.UpdateLayout(false);
+		menuTexts_.push_back(text);
+	}
 }
 
 Pause::Action Pause::ConsumeAction() {
@@ -192,6 +209,9 @@ void Pause::Update(bool isPause) {
 	}
 	BG_->Update();
 	pauseText_.Update(false);
+	for (auto& menuText : menuTexts_) {
+		menuText.Update(false);
+	}
 }
 void Pause::Draw() {
 
@@ -222,6 +242,9 @@ void Pause::Draw() {
 	}
 
 	pauseText_.Draw();
+	for (auto& menuText : menuTexts_) {
+		menuText.Draw();
+	}
 	SpriteCommon::GetInstance()->DrawCommon();
 	Select_->Draw();
 	Button_->Draw();
