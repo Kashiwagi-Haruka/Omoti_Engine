@@ -88,6 +88,49 @@ void SaveCharacterTuningJson(const std::string& characterName, const CharacterTu
             {"parameter", ToJson(data.currentParameter)                                                                              }
     });
 }
+
+bool TryFindNearestEnemyInPlayerFront(Player& player, EnemyManager& enemyManager, Vector3* outEnemyPos) {
+	if (!outEnemyPos) {
+		return false;
+	}
+
+	const Vector3 playerPos = player.GetPosition();
+	const float playerYaw = player.GetRotate().y;
+	const Vector3 playerForward = {std::sinf(playerYaw), 0.0f, std::cosf(playerYaw)};
+
+	bool found = false;
+	float nearestDistanceSq = 0.0f;
+	Vector3 nearestPos{};
+
+	for (const auto& enemy : enemyManager.GetEnemies()) {
+		if (!enemy || !enemy->GetIsAlive()) {
+			continue;
+		}
+
+		Vector3 toEnemy = enemy->GetPosition() - playerPos;
+		toEnemy.y = 0.0f;
+		const float distanceSq = Function::LengthSquared(toEnemy);
+		if (distanceSq < 0.0001f) {
+			continue;
+		}
+
+		const Vector3 directionToEnemy = Function::Normalize(toEnemy);
+		if (Function::Dot(playerForward, directionToEnemy) <= 0.0f) {
+			continue;
+		}
+
+		if (!found || distanceSq < nearestDistanceSq) {
+			found = true;
+			nearestDistanceSq = distanceSq;
+			nearestPos = enemy->GetPosition();
+		}
+	}
+
+	if (found) {
+		*outEnemyPos = nearestPos;
+	}
+	return found;
+}
 } // namespace
 
 GameScene::GameScene() {
@@ -455,7 +498,12 @@ void GameScene::Update() {
 		const bool didNormalAttackHitEnemy =
 		    collisionManager_.HandleGameSceneCollisions(*player, *rasen_->GetEnemyManager(), *rasen_->GetExpCubeManager(), *rasen_->GetHouse(), activeBoss, &hitEnemyPos);
 		if (didNormalAttackHitEnemy) {
-			cameraController->SetLockOnTarget(hitEnemyPos, 0.8f);
+			Vector3 lockOnTargetPos = hitEnemyPos;
+			if (TryFindNearestEnemyInPlayerFront(*player, *rasen_->GetEnemyManager(), &lockOnTargetPos)) {
+				cameraController->SetLockOnTarget(lockOnTargetPos, 0.8f);
+			} else {
+				cameraController->SetLockOnTarget(hitEnemyPos, 0.8f);
+			}
 		}
 		if (player->ConsumeDamageTrigger()) {
 			cameraController->StartShake(0.75f);
