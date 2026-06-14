@@ -1,6 +1,6 @@
 #include "CameraController.h"
 #include "Camera.h"
-
+#include "Input.h"
 #include "Function.h"
 #include <algorithm>
 
@@ -31,6 +31,14 @@ void CameraController::Update() {
 
 	playerCamera_->SetPlayerPos(playerPos);
 	playerCamera_->Update();
+	const Vector2 mouseMove = Input::GetInstance()->GetMouseMove();
+	const bool isMouseMoved = mouseMove.x != 0.0f || mouseMove.y != 0.0f;
+	if (isMouseMoved && cameraMode_ != CameraMode::kPlayerCamera) {
+		cameraMode_ = CameraMode::kPlayerCamera;
+		autoLockOnTimer_ = 0.0f;
+		isCameraSwitching_ = false;
+		blendCamera_->SetTransform(playerCamera_->GetTransform());
+	}
 	lockOnCamera_->SetPlayerPos(playerPos);
 	lockOnCamera_->SetFollowPosition(playerCamera_->GetTransform().translate);
 	lockOnCamera_->SetOrbitPitch(playerCamera_->GetTransform().rotate.x);
