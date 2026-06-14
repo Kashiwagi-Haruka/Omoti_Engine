@@ -32,6 +32,7 @@ public:
 	Transform GetTransform() { return transform_; }
 	void SetTransform(Transform transform) { transform_ = transform; }
 	void SetPlayerPos(const Vector3& pos) { playerPos = pos; }
+	void SetOrbitPitch(float pitch) { orbitPitch_ = pitch; }
 	void SetTargetPos(const Vector3& pos) {
 		targetPos_ = pos;
 		hasTarget_ = true;

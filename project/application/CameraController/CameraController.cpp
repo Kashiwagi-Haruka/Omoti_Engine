@@ -33,6 +33,7 @@ void CameraController::Update() {
 	playerCamera_->Update();
 	lockOnCamera_->SetPlayerPos(playerPos);
 	lockOnCamera_->SetFollowPosition(playerCamera_->GetTransform().translate);
+	lockOnCamera_->SetOrbitPitch(playerCamera_->GetTransform().rotate.x);
 	lockOnCamera_->Update();
 
 	const Transform targetTransform = (cameraMode_ == CameraMode::kLockOnCamera) ? lockOnCamera_->GetTransform() : playerCamera_->GetTransform();
