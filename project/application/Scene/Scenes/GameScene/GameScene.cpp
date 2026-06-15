@@ -89,6 +89,8 @@ void SaveCharacterTuningJson(const std::string& characterName, const CharacterTu
     });
 }
 
+constexpr float kLockOnTargetMaxAngle = std::numbers::pi_v<float> / 3.0f;
+
 bool TryFindNearestEnemyInPlayerFront(Player& player, EnemyManager& enemyManager, Vector3* outEnemyPos) {
 	if (!outEnemyPos) {
 		return false;
@@ -97,6 +99,7 @@ bool TryFindNearestEnemyInPlayerFront(Player& player, EnemyManager& enemyManager
 	const Vector3 playerPos = player.GetPosition();
 	const float playerYaw = player.GetRotate().y;
 	const Vector3 playerForward = {std::sinf(playerYaw), 0.0f, std::cosf(playerYaw)};
+	const float minForwardDot = std::cos(kLockOnTargetMaxAngle);
 
 	bool found = false;
 	float nearestDistanceSq = 0.0f;
@@ -115,7 +118,8 @@ bool TryFindNearestEnemyInPlayerFront(Player& player, EnemyManager& enemyManager
 		}
 
 		const Vector3 directionToEnemy = Function::Normalize(toEnemy);
-		if (Function::Dot(playerForward, directionToEnemy) <= 0.0f) {
+		const float forwardDot = Function::Dot(playerForward, directionToEnemy);
+		if (forwardDot < minForwardDot) {
 			continue;
 		}
 
