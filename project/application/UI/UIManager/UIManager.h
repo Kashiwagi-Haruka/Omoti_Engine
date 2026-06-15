@@ -39,8 +39,6 @@ class UIManager {
 		Vector2 translate = {0, 0};
 	};
 
-	// 操作方法表示用スプライト。
-	SpriteData HowtoOperateSPData;
 	// レベルラベル用スプライト。
 	SpriteData LevelSPData;
 	// 数字表示用スプライト群。

@@ -16,9 +16,6 @@ UIManager::UIManager() {
 
 	attackOperationUI_ = std::make_unique<AttackOperation>();
 
-	// WASD / SPACE / ATTACK
-	HowtoOperateSPData.handle = TextureManager::GetInstance()->GetTextureIndexByfilePath("Resources/2d/option.png");
-
 	// Level
 	LevelSPData.handle = TextureManager::GetInstance()->GetTextureIndexByfilePath("Resources/2d/Lv.png");
 
@@ -50,8 +47,6 @@ UIManager::UIManager() {
 	// ===========================
 	//      Sprite の生成
 	// ===========================
-
-	HowtoOperateSPData.sprite = std::make_unique<Sprite>();
 
 	LevelSPData.sprite = std::make_unique<Sprite>();
 
@@ -85,10 +80,6 @@ void UIManager::Initialize() {
 	attackOperationUI_->Initialize();
 
 	// ------------------ WASD / SPACE / ATTACK ------------------
-
-	HowtoOperateSPData.sprite->Initialize(HowtoOperateSPData.handle);
-	HowtoOperateSPData.sprite->SetScale({700, 100});
-	HowtoOperateSPData.sprite->SetPosition({10, 600});
 
 	// ------------------ Level ------------------
 	LevelSPData.sprite->Initialize(LevelSPData.handle);
@@ -163,8 +154,6 @@ void UIManager::Update() {
 	hpBarUI_->Update();
 
 	attackOperationUI_->Update();
-
-	HowtoOperateSPData.sprite->Update();
 
 	LevelSPData.sprite->Update();
 
@@ -258,7 +247,6 @@ void UIManager::Draw() {
 	hpBarUI_->Draw();
 	SpriteCommon::GetInstance()->DrawCommon();
 	attackOperationUI_->Draw();
-	HowtoOperateSPData.sprite->Draw();
 
 	LevelSPData.sprite->Draw();
 

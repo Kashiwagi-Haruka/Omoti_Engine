@@ -19,10 +19,17 @@ class AttackOperation {
 	// ジャンプのスプライト
 	SpriteData jumpSPData_;
 	// 通常攻撃のスプライトデータ。
-	SpriteData NormalAttackSPData;
+	SpriteData normalAttackSPData;
 	// スキルアイコン表示用スプライト。
-	SpriteData SkillIconSPData;
-	
+	SpriteData skillIconSPData;
+
+	SpriteData specialAttackSPData;
+	// キーボードスプライト
+	SpriteData keyboardJumpSPData;
+	SpriteData keyboardNormalAttackSPData;
+	SpriteData keyboardSkillIconSPData;
+	SpriteData keyboardSpecialAttackSPData;
+
 
 	public:
 	AttackOperation();
