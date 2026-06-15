@@ -61,6 +61,8 @@ void Player::SetCharacterType(const std::string& characterName) {
 	}
 }
 Attribute Player::GetCurrentAttribute() const { return /*models_ ? */models_->GetCurrentAttribute()/* : Attribute::None*/; }
+const BaseParameter& Player::GetCurrentBaseParameter() const { return models_->GetCurrentBaseParameter(); }
+const Parameter& Player::GetCurrentCombatParameter() const { return models_->GetCurrentParameter(); }
 void Player::Move() {
 
 	// ★ 落下攻撃中は移動できない

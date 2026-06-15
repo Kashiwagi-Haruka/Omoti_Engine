@@ -2,6 +2,7 @@
 #include "Adhesion/Adhesion.h"
 #include "EnemyAttack.h"
 #include "EnemyStun.h"
+#include "Object/Characters/Base/CharacterParameters.h"
 #include "Primitive/Primitive.h"
 #include "Transform.h"
 #include "Vector3.h"
@@ -14,6 +15,8 @@ class Object3d;
 class Enemy {
 
 	int HP = 10;
+	BaseParameter baseParameter_{10.0f, 0.0f, 10.0f};
+	Parameter parameter_{};
 	bool isAlive = true;
 	bool isDying_ = false;
 	bool isStun_ = false;
@@ -88,4 +91,6 @@ public:
 	bool IsAttacking() const { return enemyAttack_ && enemyAttack_->IsAttacking(); }
 	bool IsStunned() const { return isStun_; }
 	void AddAdhesionAttribute(Attribute attribute);
+	const BaseParameter& GetBaseParameter() const { return baseParameter_; }
+	const Parameter& GetParameter() const { return parameter_; }
 };

@@ -4,6 +4,7 @@
 #include "Object/Boss/Boss.h"
 #include "Object/Characters/Base/Attribute.h"
 #include "Object/Characters/Enemy/EnemyManager.h"
+#include "Object/Damage/DamageMath.h"
 #include "Object/ExpCube/ExpCubeManager.h"
 #include "Object/House/House.h"
 #include "Object/Player/Player.h"
@@ -68,7 +69,9 @@ bool CollisionManager::HandleGameSceneCollisions(Player& player, EnemyManager& e
 						*outHitEnemyPos = enemy->GetPosition();
 					}
 				}
-				enemy->SetHPSubtract(1);
+				const int damage = DamageMath::CalculatePlayerToEnemyDamage(
+				    player.GetCurrentBaseParameter(), player.GetCurrentCombatParameter(), enemy->GetBaseParameter(), enemy->GetParameter(), playerAttackAttribute);
+				enemy->SetHPSubtract(damage);
 				enemy->AddAdhesionAttribute(playerAttackAttribute);
 				enemy->TriggerDamageInvincibility();
 				enemyManager.OnEnemyDamaged(enemy.get());
@@ -84,7 +87,8 @@ bool CollisionManager::HandleGameSceneCollisions(Player& player, EnemyManager& e
 			bool hitSkill = RigidBody::isCollision(skillAabb, enemyAabb);
 			int skillDamageId = player.GetSkill()->GetSkillDamageId();
 			if (hitSkill && enemy->GetLastSkillDamageId() != skillDamageId) {
-				enemy->SetHPSubtract(1);
+				const int damage = DamageMath::CalculatePlayerToEnemyDamage(
+				    player.GetCurrentBaseParameter(), player.GetCurrentCombatParameter(), enemy->GetBaseParameter(), enemy->GetParameter(), playerAttackAttribute);
 				enemy->AddAdhesionAttribute(playerAttackAttribute);
 				enemy->SetLastSkillDamageId(skillDamageId);
 				enemyManager.OnEnemyDamaged(enemy.get());
@@ -107,7 +111,8 @@ bool CollisionManager::HandleGameSceneCollisions(Player& player, EnemyManager& e
 
 			if (hitSpecial) {
 				if (enemy->CanTakeDamage()) {
-					enemy->SetHPSubtract(1);
+					const int damage = DamageMath::CalculatePlayerToEnemyDamage(
+					    player.GetCurrentBaseParameter(), player.GetCurrentCombatParameter(), enemy->GetBaseParameter(), enemy->GetParameter(), playerAttackAttribute);
 					enemy->AddAdhesionAttribute(playerAttackAttribute);
 					enemy->TriggerDamageInvincibility();
 					enemyManager.OnEnemyDamaged(enemy.get());
