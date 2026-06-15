@@ -86,19 +86,24 @@ public:
 		transform_.translate.y = pos.y;
 		transform_.translate.z = 0.0f;
 	}
+	Vector2 GetPosition() const { return {transform_.translate.x, transform_.translate.y}; }
 	void SetScale(const Vector2& scale) {
 		transform_.scale.x = scale.x;
 		transform_.scale.y = scale.y;
 		transform_.scale.z = 1.0f;
 	}
+	Vector2 GetScale() const { return {transform_.scale.x, transform_.scale.y}; }
 	void SetRotation(const float& rot) {
 
 		transform_.rotate.x = 0.0f;
 		transform_.rotate.y = 0.0f;
 		transform_.rotate.z = rot;
 	}
+	Vector2 GetRotation() const { return {transform_.rotate.x, transform_.rotate.y}; }
 	void SetColor(const Vector4& color);
 	void SetTextureRange(const Vector2& leftTop, const Vector2& TextureSize);
+	Vector2 GetTextureLeftTop() const { return textureLeftTop; };
+	Vector2 GetTextureSize() const { return textureSize; };
 	bool GetIsFlipX() { return isFlipX_; };
 	void SetIsFlipX(const bool isFlipX);
 	bool GetIsFlipY() { return isFripY_; };

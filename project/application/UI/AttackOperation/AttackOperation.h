@@ -8,8 +8,6 @@ class AttackOperation {
 	struct SpriteData {
 		// 描画用スプライト本体。
 		std::unique_ptr<Sprite> sprite;
-		// 使用するテクスチャハンドル。
-		uint32_t handle = 0;
 		// スプライトサイズ（スケール）。
 		Vector2 size = {100, 100};
 		// 回転量（未使用の場合は0）。
@@ -17,8 +15,21 @@ class AttackOperation {
 		// 描画位置。
 		Vector2 translate = {0, 0};
 	};
+
+	// ジャンプのスプライト
+	SpriteData jumpSPData_;
+	// 通常攻撃のスプライトデータ。
+	SpriteData normalAttackSPData;
 	// スキルアイコン表示用スプライト。
-	SpriteData SkillIconSPData;
+	SpriteData skillIconSPData;
+
+	SpriteData specialAttackSPData;
+	// キーボードスプライト
+	SpriteData keyboardJumpSPData;
+	SpriteData keyboardNormalAttackSPData;
+	SpriteData keyboardSkillIconSPData;
+	SpriteData keyboardSpecialAttackSPData;
+
 
 	public:
 	AttackOperation();

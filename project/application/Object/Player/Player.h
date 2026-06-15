@@ -114,4 +114,6 @@ public:
 	Object3d* GetCharacterObject3d() { return models_ ? models_->GetCharacterObject3d() : nullptr; }
 	void SetCharacterType(const std::string& characterName);
 	Attribute GetCurrentAttribute() const;
+	const BaseParameter& GetCurrentBaseParameter() const;
+	const Parameter& GetCurrentCombatParameter() const;
 };

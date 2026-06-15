@@ -35,4 +35,8 @@ public:
 	Attribute GetAttribute() const { return attribute_; }
 	void SetWeaponTypes(WeaponTypes weaponTypes) { weaponTypes_ = weaponTypes; }
 	WeaponTypes GetWeaponTypes() const { return weaponTypes_; }
+	void SetBaseParameter(const BaseParameter& baseParameter) { baseParameter_ = baseParameter; }
+	const BaseParameter& GetBaseParameter() const { return baseParameter_; }
+	void SetParameter(const Parameter& parameter) { parameter_ = parameter; }
+	const Parameter& GetParameter() const { return parameter_; }
 };

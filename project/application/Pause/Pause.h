@@ -15,23 +15,19 @@ public:
 	enum class Action {
 		kNone,
 		kResume,
+		kOptions,
+		kLicense,
 		kTitle,
 	};
 
 private:
-	std::unique_ptr<Sprite> Select_;
-	std::unique_ptr<Sprite> Button_;
+
 	std::unique_ptr<Primitive> BG_;
 	Object3d* currentCharacterObj_ = nullptr;
 
-	uint32_t SelectHandle_;
-	uint32_t ButtonHandle_;
-
-	Vector2 selectBasePos_{0.0f, 0.0f};
-	std::array<Vector2, 2> buttonBasePos_{};
-
-	Vector2 selectSize_{400.0f, 400.0f};
-	Vector2 buttonSize_{80.0f, 80.0f};
+	std::array<std::unique_ptr<Sprite>, 3> selectSprites_{};
+	float selectRotation_[3]{};
+	float selectScale_[3]{};
 
 	float startTime = 0.0f;
 	int selectIndex_ = 1;
@@ -43,8 +39,12 @@ private:
 	Action action_ = Action::kNone;
 	std::unique_ptr<Camera> camera_;
 	Text pauseText_;
+	std::vector<Text> menuTexts_;
 	uint32_t pauseFontHandle_ = 0;
 	Attribute currentAttribute = Attribute::None;
+
+	void CurrentCharacterUpdate();
+	void SelectSpriteUpdate();
 
 public:
 	Pause();
