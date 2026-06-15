@@ -89,7 +89,7 @@ void SaveCharacterTuningJson(const std::string& characterName, const CharacterTu
     });
 }
 
-constexpr float kLockOnTargetMaxAngle = std::numbers::pi_v<float> / 3.0f;
+constexpr float kLockOnTargetMaxAngle = std::numbers::pi_v<float> / 4.0f;
 
 bool TryFindNearestEnemyInPlayerFront(Player& player, EnemyManager& enemyManager, Vector3* outEnemyPos) {
 	if (!outEnemyPos) {
