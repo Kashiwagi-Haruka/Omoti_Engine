@@ -30,7 +30,7 @@ void AttackOperation::Initialize() {
 	specialAttackSPData.sprite->Initialize(specialAttackHandle);
 	specialAttackSPData.sprite->SetAnchorPoint({1.0f, 1.0f});
 	specialAttackSPData.sprite->SetScale({64, 64});
-	uint32_t keyboardHandle = TextureManager::GetInstance()->GetTextureIndexByfilePath("Resources/2d/white2x2.png.png");
+	uint32_t keyboardHandle = TextureManager::GetInstance()->GetTextureIndexByfilePath("Resources/2d/white2x2.png");
 	keyboardSkillIconSPData.sprite->Initialize(keyboardHandle);
 	keyboardJumpSPData.sprite->Initialize(keyboardHandle);
 	keyboardNormalAttackSPData.sprite->Initialize(keyboardHandle);
