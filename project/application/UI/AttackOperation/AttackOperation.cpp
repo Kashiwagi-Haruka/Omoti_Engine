@@ -1,6 +1,13 @@
 #include "AttackOperation.h"
-#include "TextureManager.h"
+#include "PlayCommand/PlayCommand.h"
 #include "Sprite/Sprite.h"
+#include "TextureManager.h"
+
+namespace {
+constexpr Vector2 kOperationIconBaseSize{90.0f, 90.0f};
+constexpr float kPressedScaleRate = 1.15f;
+constexpr float kScaleReturnRate = 0.25f;
+} // namespace
 AttackOperation::AttackOperation() {
 	// スキルアイコンのテクスチャハンドルを取得
 	jumpSPData_.sprite = std::make_unique<Sprite>();
@@ -17,19 +24,19 @@ void AttackOperation::Initialize() {
 	uint32_t skillHandle = TextureManager::GetInstance()->GetTextureIndexByfilePath("Resources/2d/AttackOperation/skill.png");
 	skillIconSPData.sprite->Initialize(skillHandle);
 	skillIconSPData.sprite->SetAnchorPoint({1.0f, 1.0f});
-	skillIconSPData.sprite->SetScale({90, 90});
-	uint32_t jumpHandle = TextureManager::GetInstance()->GetTextureIndexByfilePath("Resources/2d/AttackOperation/skill.png");
+	SetOperationSpriteBaseSize(skillIconSPData, kOperationIconBaseSize);
+	uint32_t jumpHandle = TextureManager::GetInstance()->GetTextureIndexByfilePath("Resources/2d/AttackOperation/Dash.png");
 	jumpSPData_.sprite->Initialize(jumpHandle);
 	jumpSPData_.sprite->SetAnchorPoint({1.0f, 1.0f});
-	jumpSPData_.sprite->SetScale({90, 90});
-	uint32_t normalAttackHandle = TextureManager::GetInstance()->GetTextureIndexByfilePath("Resources/2d/AttackOperation/skill.png");
+	SetOperationSpriteBaseSize(jumpSPData_, kOperationIconBaseSize);
+	uint32_t normalAttackHandle = TextureManager::GetInstance()->GetTextureIndexByfilePath("Resources/2d/AttackOperation/NormalAttack.png");
 	normalAttackSPData.sprite->Initialize(normalAttackHandle);
 	normalAttackSPData.sprite->SetAnchorPoint({1.0f, 1.0f});
-	normalAttackSPData.sprite->SetScale({90, 90});
+	SetOperationSpriteBaseSize(normalAttackSPData, kOperationIconBaseSize);
 	uint32_t specialAttackHandle = TextureManager::GetInstance()->GetTextureIndexByfilePath("Resources/2d/AttackOperation/skill.png");
 	specialAttackSPData.sprite->Initialize(specialAttackHandle);
 	specialAttackSPData.sprite->SetAnchorPoint({1.0f, 1.0f});
-	specialAttackSPData.sprite->SetScale({90, 90});
+	SetOperationSpriteBaseSize(specialAttackSPData, kOperationIconBaseSize);
 	uint32_t keyboardHandle = TextureManager::GetInstance()->GetTextureIndexByfilePath("Resources/2d/white2x2.png");
 	keyboardSkillIconSPData.sprite->Initialize(keyboardHandle);
 	keyboardJumpSPData.sprite->Initialize(keyboardHandle);
@@ -38,28 +45,24 @@ void AttackOperation::Initialize() {
 }
 void AttackOperation::Update() {
 	skillIconSPData.translate = {1260.0f, 700.0f};
-	skillIconSPData.sprite->SetPosition(skillIconSPData.translate);
-	skillIconSPData.sprite->Update();
+	UpdateOperationSprite(skillIconSPData, PlayCommand::GetSKILL_ATTACK());
 	normalAttackSPData.translate = {skillIconSPData.translate.x - skillIconSPData.size.x - 20.0f, 700.0f};
-	normalAttackSPData.sprite->SetPosition(normalAttackSPData.translate);
-	normalAttackSPData.sprite->Update();
+	UpdateOperationSprite(normalAttackSPData, PlayCommand::GetNORMAL_ATTACK_PUSH());
 	jumpSPData_.translate = {normalAttackSPData.translate.x - normalAttackSPData.size.x - 20.0f, 700.0f};
-	jumpSPData_.sprite->SetPosition(jumpSPData_.translate);
-	jumpSPData_.sprite->Update();
+	UpdateOperationSprite(jumpSPData_, PlayCommand::GetJUMP());
 	specialAttackSPData.translate = {skillIconSPData.translate.x, skillIconSPData.translate.y - skillIconSPData.size.y - 20.0f};
-	specialAttackSPData.sprite->SetPosition(specialAttackSPData.translate);
-	specialAttackSPData.sprite->Update();
+	UpdateOperationSprite(specialAttackSPData, PlayCommand::GetSPECIAL_ATTACK());
 
-	keyboardSkillIconSPData.translate = {skillIconSPData.translate.x, skillIconSPData.translate.y+skillIconSPData.size.y-20.0f};
+	keyboardSkillIconSPData.translate = {skillIconSPData.translate.x, skillIconSPData.translate.y + skillIconSPData.size.y - 20.0f};
 	keyboardSkillIconSPData.sprite->SetPosition(keyboardSkillIconSPData.translate);
 	keyboardSkillIconSPData.sprite->Update();
-	keyboardJumpSPData.translate = {jumpSPData_.translate.x, jumpSPData_.translate.y+jumpSPData_.size.y-20.0f};
+	keyboardJumpSPData.translate = {jumpSPData_.translate.x, jumpSPData_.translate.y + jumpSPData_.size.y - 20.0f};
 	keyboardJumpSPData.sprite->SetPosition(keyboardJumpSPData.translate);
 	keyboardJumpSPData.sprite->Update();
-	keyboardNormalAttackSPData.translate = {normalAttackSPData.translate.x, normalAttackSPData.translate.y+normalAttackSPData.size.y-20.0f};
+	keyboardNormalAttackSPData.translate = {normalAttackSPData.translate.x, normalAttackSPData.translate.y + normalAttackSPData.size.y - 20.0f};
 	keyboardNormalAttackSPData.sprite->SetPosition(keyboardNormalAttackSPData.translate);
 	keyboardNormalAttackSPData.sprite->Update();
-	keyboardSpecialAttackSPData.translate = {specialAttackSPData.translate.x, specialAttackSPData.translate.y+specialAttackSPData.size.y-20.0f};
+	keyboardSpecialAttackSPData.translate = {specialAttackSPData.translate.x, specialAttackSPData.translate.y + specialAttackSPData.size.y - 20.0f};
 	keyboardSpecialAttackSPData.sprite->SetPosition(keyboardSpecialAttackSPData.translate);
 	keyboardSpecialAttackSPData.sprite->Update();
 }
@@ -89,4 +92,27 @@ void AttackOperation::Draw() {
 	if (keyboardSpecialAttackSPData.sprite) {
 		keyboardSpecialAttackSPData.sprite->Draw();
 	}
+}
+void AttackOperation::SetOperationSpriteBaseSize(SpriteData& spriteData, const Vector2& size) {
+	spriteData.size = size;
+	if (spriteData.sprite) {
+		spriteData.sprite->SetScale(size);
+	}
+}
+
+void AttackOperation::UpdateOperationSprite(SpriteData& spriteData, bool isPressed) {
+	if (!spriteData.sprite) {
+		return;
+	}
+
+	const Vector2 targetScale = isPressed ? Vector2{spriteData.size.x * kPressedScaleRate, spriteData.size.y * kPressedScaleRate} : spriteData.size;
+	const Vector2 currentScale = spriteData.sprite->GetScale();
+	const Vector2 nextScale{
+	    currentScale.x + (targetScale.x - currentScale.x) * kScaleReturnRate,
+	    currentScale.y + (targetScale.y - currentScale.y) * kScaleReturnRate,
+	};
+
+	spriteData.sprite->SetScale(nextScale);
+	spriteData.sprite->SetPosition(spriteData.translate);
+	spriteData.sprite->Update();
 }

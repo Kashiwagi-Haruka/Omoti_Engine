@@ -37,4 +37,7 @@ class AttackOperation {
 	void Update();
 	void Draw();
 
+private:
+	void UpdateOperationSprite(SpriteData& spriteData, bool isPressed);
+	void SetOperationSpriteBaseSize(SpriteData& spriteData, const Vector2& size);
 };
