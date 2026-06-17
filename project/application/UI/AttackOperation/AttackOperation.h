@@ -16,19 +16,22 @@ class AttackOperation {
 		Vector2 translate = {0, 0};
 	};
 
+	// ダッシュのスプライトデータ。
+	SpriteData dashSPData_;
 	// ジャンプのスプライト
 	SpriteData jumpSPData_;
 	// 通常攻撃のスプライトデータ。
-	SpriteData normalAttackSPData;
+	SpriteData normalAttackSPData_;
 	// スキルアイコン表示用スプライト。
-	SpriteData skillIconSPData;
-
-	SpriteData specialAttackSPData;
+	SpriteData skillIconSPData_;
+	// スペシャル攻撃のスプライトデータ。
+	SpriteData specialAttackSPData_;
 	// キーボードスプライト
-	SpriteData keyboardJumpSPData;
-	SpriteData keyboardNormalAttackSPData;
-	SpriteData keyboardSkillIconSPData;
-	SpriteData keyboardSpecialAttackSPData;
+	SpriteData keyboardDashSPData_;
+	SpriteData keyboardJumpSPData_;
+	SpriteData keyboardNormalAttackSPData_;
+	SpriteData keyboardSkillIconSPData_;
+	SpriteData keyboardSpecialAttackSPData_;
 
 
 	public:
