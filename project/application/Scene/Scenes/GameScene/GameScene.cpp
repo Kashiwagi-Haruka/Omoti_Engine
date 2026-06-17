@@ -191,7 +191,7 @@ void GameScene::Initialize() {
 	uimanager->Initialize();
 	rasen_->Initialize(cameraController->GetCamera());
 	openWorld_->Initialize(cameraController->GetCamera());
-	playAreaMode_ = PlayAreaMode::kSpiral;
+	playAreaMode_ = PlayAreaMode::kOpenWorld;
 
 	activePointLightCount_ = 3;
 	pointLights_[0].color = {1.0f, 1.0f, 1.0f, 1.0f};

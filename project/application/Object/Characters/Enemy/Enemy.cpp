@@ -46,6 +46,7 @@ void Enemy::Initialize(Camera* camera, Vector3 translates) {
 	enemyAttack_ = std::make_unique<EnemyAttack>();
 	enemyAttack_->Initialize(camera_);
 	adhesion_->Initialize();
+	adhesion_->SetCamera(camera_);
 	object_->SetColor(kDefaultColor);
 }
 void Enemy::Update(const Vector3& housePos, const Vector3& houseScale, const Vector3& playerPos, bool isPlayerAlive) {
@@ -116,6 +117,7 @@ void Enemy::Update(const Vector3& housePos, const Vector3& houseScale, const Vec
 	object_->SetTransform(transform_);
 	object_->Update();
 	if (adhesion_) {
+		adhesion_->SetCamera(camera_);
 		adhesion_->SetTransform(transform_);
 		adhesion_->Update();
 	}

@@ -71,7 +71,12 @@ public:
 	int GetHP() { return HP; }
 	bool GetIsAlive() { return isAlive; }
 	bool IsDying() const { return isDying_; }
-	void SetCamera(Camera* camera) { camera_ = camera; }
+	void SetCamera(Camera* camera) {
+		camera_ = camera;
+		if (adhesion_) {
+			adhesion_->SetCamera(camera_);
+		}
+	}
 	Vector3 GetPosition() { return transform_.translate; }
 	Vector3 GetScale() { return transform_.scale; }
 	void SetPosition(const Vector3& position) { transform_.translate = position; }
