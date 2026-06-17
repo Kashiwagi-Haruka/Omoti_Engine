@@ -9,22 +9,6 @@ class Sprite;
 class GameBase;
 class UIManager {
 
-	// 数字表示で使用するインデックス一覧。
-	enum Numbers {
-
-		kExp100,        // EXPの百の位。
-		kExp10,         // EXPの十の位。
-		kEexp1,         // EXPの一の位。
-		kExpMax100,     // 最大EXPの百の位。
-		kExpMax10,      // 最大EXPの十の位。
-		kExpMax1,       // 最大EXPの一の位。
-		kLv,            // レベル表示用。
-		kAttuck,        // 攻撃アップ表示用。
-		kHealth,        // 体力アップ表示用。
-		kSpeed,         // 速度アップ表示用。
-		kArrow,         // 矢数アップ表示用。
-		NumbersCountMax // 数字表示の総数。
-	};
 	// スプライトに必要なリソースと変換情報。
 	struct SpriteData {
 		// 描画用スプライト本体。
@@ -39,29 +23,6 @@ class UIManager {
 		Vector2 translate = {0, 0};
 	};
 
-	//// レベルラベル用スプライト。
-	//SpriteData LevelSPData;
-	//// 数字表示用スプライト群。
-	//SpriteData NumberSPData[NumbersCountMax];
-	//// MAX表示用スプライト群。
-	//SpriteData MaxSPData[5];
-	//// 攻撃アップ表示用スプライト。
-	//SpriteData AttackUpSPData;
-	//// 体力アップ表示用スプライト。
-	//SpriteData HealthUpSPData;
-	//// 速度アップ表示用スプライト。
-	//SpriteData SpeedUpSPData;
-	//// 矢数アップ表示用スプライト。
-	//SpriteData AllowUpSPData;
-
-	//// スラッシュ表示用スプライト（未使用含む）。
-	//SpriteData SlashSPData[2];
-	//// EXPラベル用スプライト。
-	//SpriteData EXPSPData;
-	//// EXPバー用スプライト。
-	//SpriteData expBarSPData;
-	//// EXPバー背景用スプライト。
-	//SpriteData expBarBackSPData;
 	// 家HP数字表示用スプライト群。
 	SpriteData houseHpNumberSPData[3];
 	// 家HPの%表示用スプライト。
@@ -69,9 +30,6 @@ class UIManager {
 	// 家HPラベル用スプライト。
 	SpriteData houseHpStringSPData;
 
-
-	// EXPバー最大サイズ。
-	Vector2 expBarMaxSize = {300, 40};
 	// 数字テクスチャの1桁あたりサイズ。
 	Vector2 numbersTextureSize = {300, 300};
 	// 家HP数字テクスチャの1桁あたりサイズ。
