@@ -14,7 +14,7 @@ UIManager::~UIManager() {}
 
 void UIManager::Initialize() {
 
-	cursolSprite_->Initialize(TextureManager::GetInstance()->GetTextureIndexByfilePath("Resources/2d/cursol.png"));
+	cursolSprite_->Initialize(TextureManager::GetInstance()->GetTextureIndexByfilePath("Resources/2d/Cursol.png"));
 
 	hpBarUI_->Initialize();
 
