@@ -167,13 +167,13 @@ void Adhesion::SetTransform(const Transform& transform) {
 	AttributePlane_->SetTransform(uiTransform);
 }
 
-void Adhesion::AddAttribute(Attribute attribute) {
+bool Adhesion::AddAttribute(Attribute attribute) {
 	if (attribute == Attribute::None || attribute == Attribute::MAXATTRIBUTE) {
-		return;
+		return false;
 	}
 	const uint32_t bit = (1u << static_cast<uint32_t>(attribute));
 	if (currentAttribute_ == attribute && (attributeBitMask_ & bit) != 0) {
-		return;
+		return false;
 	}
 	const Attribute previousAttribute = currentAttribute_;
 	const bool hadPreviousAttribute = (previousAttribute != Attribute::None) && (previousAttribute != attribute);
@@ -189,12 +189,13 @@ void Adhesion::AddAttribute(Attribute attribute) {
 		isComparisonDisplayActive_ = true;
 		comparisonDisplayTimer_ = kReactionDisplayDuration;
 		RefreshComparisonTransform();
-		return;
+		return true;
 	}
 
 	isComparisonDisplayActive_ = false;
 	comparisonDisplayTimer_ = 0.0f;
 	RefreshAttributeTexture();
+	return false;
 }
 
 void Adhesion::Update() {

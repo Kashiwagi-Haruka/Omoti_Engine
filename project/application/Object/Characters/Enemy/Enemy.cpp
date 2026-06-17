@@ -211,8 +211,9 @@ bool Enemy::ConsumeAttackHit() {
 	return enemyAttack_->ConsumeHit();
 }
 
-void Enemy::AddAdhesionAttribute(Attribute attribute) {
+bool Enemy::AddAdhesionAttribute(Attribute attribute) {
 	if (adhesion_) {
-		adhesion_->AddAttribute(attribute);
+		return adhesion_->AddAttribute(attribute);
 	}
+	return false;
 }

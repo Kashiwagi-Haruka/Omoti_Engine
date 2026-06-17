@@ -18,6 +18,15 @@ AABB MakeAabb(const Vector3& center, const Vector3& halfSize) {
 	return aabb;
 }
 bool IsNormalAttackComboStep(int comboStep) { return comboStep >= 1 && comboStep <= 4; }
+constexpr int kAttributeReactionDamage = 1;
+
+void ApplyAttributeDamage(Enemy& enemy, EnemyManager& enemyManager, Attribute attribute) {
+	if (!enemy.AddAdhesionAttribute(attribute)) {
+		return;
+	}
+	enemy.SetHPSubtract(kAttributeReactionDamage);
+	enemyManager.OnEnemyDamaged(&enemy, kAttributeReactionDamage, attribute);
+}
 } // namespace
 
 bool CollisionManager::HandleGameSceneCollisions(Player& player, EnemyManager& enemyManager, ExpCubeManager& expCubeManager, House& house, Boss* boss, Vector3* outHitEnemyPos) {
@@ -72,9 +81,9 @@ bool CollisionManager::HandleGameSceneCollisions(Player& player, EnemyManager& e
 				const int damage = DamageMath::CalculatePlayerToEnemyDamage(
 				    player.GetCurrentBaseParameter(), player.GetCurrentCombatParameter(), enemy->GetBaseParameter(), enemy->GetParameter(), playerAttackAttribute);
 				enemy->SetHPSubtract(damage);
-				enemy->AddAdhesionAttribute(playerAttackAttribute);
+				enemyManager.OnEnemyDamaged(enemy.get(), damage, playerAttackAttribute);
+				ApplyAttributeDamage(*enemy, enemyManager, playerAttackAttribute);
 				enemy->TriggerDamageInvincibility();
-				enemyManager.OnEnemyDamaged(enemy.get(), damage);
 				tryEnemyFlinch(enemy.get());
 				if (!enemy->GetIsAlive()) {
 					expCubeManager.SpawnDrops(enemy->GetPosition(), 3);
@@ -89,9 +98,10 @@ bool CollisionManager::HandleGameSceneCollisions(Player& player, EnemyManager& e
 			if (hitSkill && enemy->GetLastSkillDamageId() != skillDamageId) {
 				const int damage = DamageMath::CalculatePlayerToEnemyDamage(
 				    player.GetCurrentBaseParameter(), player.GetCurrentCombatParameter(), enemy->GetBaseParameter(), enemy->GetParameter(), playerAttackAttribute);
-				enemy->AddAdhesionAttribute(playerAttackAttribute);
+				enemy->SetHPSubtract(damage);
+				enemyManager.OnEnemyDamaged(enemy.get(), damage, playerAttackAttribute);
+				ApplyAttributeDamage(*enemy, enemyManager, playerAttackAttribute);
 				enemy->SetLastSkillDamageId(skillDamageId);
-				enemyManager.OnEnemyDamaged(enemy.get(), damage);
 				tryEnemyFlinch(enemy.get());
 				if (!enemy->GetIsAlive()) {
 					expCubeManager.SpawnDrops(enemy->GetPosition(), 3);
@@ -113,9 +123,10 @@ bool CollisionManager::HandleGameSceneCollisions(Player& player, EnemyManager& e
 				if (enemy->CanTakeDamage()) {
 					const int damage = DamageMath::CalculatePlayerToEnemyDamage(
 					    player.GetCurrentBaseParameter(), player.GetCurrentCombatParameter(), enemy->GetBaseParameter(), enemy->GetParameter(), playerAttackAttribute);
-					enemy->AddAdhesionAttribute(playerAttackAttribute);
+					enemy->SetHPSubtract(damage);
+					enemyManager.OnEnemyDamaged(enemy.get(), damage, playerAttackAttribute);
+					ApplyAttributeDamage(*enemy, enemyManager, playerAttackAttribute);
 					enemy->TriggerDamageInvincibility();
-					enemyManager.OnEnemyDamaged(enemy.get(), damage);
 					tryEnemyFlinch(enemy.get());
 					if (!enemy->GetIsAlive()) {
 						expCubeManager.SpawnDrops(enemy->GetPosition(), 3);

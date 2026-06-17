@@ -14,7 +14,7 @@ class Object3d;
 
 class Enemy {
 
-	int HP = 10;
+	int HP = 40;
 	BaseParameter baseParameter_{10.0f, 0.0f, 10.0f};
 	Parameter parameter_{};
 	bool isAlive = true;
@@ -90,7 +90,7 @@ public:
 	void SetLastSkillDamageId(int skillDamageId) { lastSkillDamageId_ = skillDamageId; }
 	bool IsAttacking() const { return enemyAttack_ && enemyAttack_->IsAttacking(); }
 	bool IsStunned() const { return isStun_; }
-	void AddAdhesionAttribute(Attribute attribute);
+	bool AddAdhesionAttribute(Attribute attribute);
 	const BaseParameter& GetBaseParameter() const { return baseParameter_; }
 	const Parameter& GetParameter() const { return parameter_; }
 };

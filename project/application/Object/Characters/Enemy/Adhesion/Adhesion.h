@@ -27,6 +27,6 @@ public:
 	void Initialize();
 	void Update();
 	void SetTransform(const Transform& transform);
-	void AddAttribute(Attribute attribute);
+	bool AddAttribute(Attribute attribute);
 	void Draw();
 };

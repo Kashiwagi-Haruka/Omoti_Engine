@@ -50,7 +50,7 @@ bool PlayCommand::GetNORMAL_ATTACK_TRIGGER() {
 	return false;
 }
 bool PlayCommand::GetNORMAL_ATTACK_RELEASE() {
-	if (Input::GetInstance()->TriggerMouseButton(Input::MouseButton::kLeft) || Input::GetInstance()->TriggerButton(Input::PadButton::kButtonB)) {
+	if (Input::GetInstance()->ReleaseMouseButton(Input::MouseButton::kLeft) || Input::GetInstance()->ReleaseButton(Input::PadButton::kButtonB)) {
 		return true;
 	}
 	return false;
