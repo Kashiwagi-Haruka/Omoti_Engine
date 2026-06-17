@@ -22,7 +22,7 @@ Enemy::Enemy() {
 void Enemy::Initialize(Camera* camera, Vector3 translates) {
 	isAlive = true;
 	isStun_ = false;
-	HP = 10;
+	HP = 40;
 	stunTime = 0;
 	attackTimer_ = 0.0f;
 	damageInvincibleTimer_ = 0.0f;
