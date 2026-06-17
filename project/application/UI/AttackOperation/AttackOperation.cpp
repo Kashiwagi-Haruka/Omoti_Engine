@@ -53,17 +53,25 @@ void AttackOperation::Update() {
 	specialAttackSPData.translate = {skillIconSPData.translate.x, skillIconSPData.translate.y - skillIconSPData.size.y - 20.0f};
 	UpdateOperationSprite(specialAttackSPData, PlayCommand::GetSPECIAL_ATTACK());
 
+	keyboardSkillIconSPData.size = {100, 40};
 	keyboardSkillIconSPData.translate = {skillIconSPData.translate.x, skillIconSPData.translate.y + skillIconSPData.size.y - 20.0f};
 	keyboardSkillIconSPData.sprite->SetPosition(keyboardSkillIconSPData.translate);
+	keyboardSkillIconSPData.sprite->SetScale(keyboardSkillIconSPData.size);
 	keyboardSkillIconSPData.sprite->Update();
 	keyboardJumpSPData.translate = {jumpSPData_.translate.x, jumpSPData_.translate.y + jumpSPData_.size.y - 20.0f};
+	keyboardJumpSPData.size = {100, 40};
 	keyboardJumpSPData.sprite->SetPosition(keyboardJumpSPData.translate);
+	keyboardJumpSPData.sprite->SetScale(keyboardJumpSPData.size);
 	keyboardJumpSPData.sprite->Update();
+
 	keyboardNormalAttackSPData.translate = {normalAttackSPData.translate.x, normalAttackSPData.translate.y + normalAttackSPData.size.y - 20.0f};
 	keyboardNormalAttackSPData.sprite->SetPosition(keyboardNormalAttackSPData.translate);
+	keyboardNormalAttackSPData.size = {100, 40};
+	keyboardNormalAttackSPData.sprite->SetScale(keyboardNormalAttackSPData.size);
 	keyboardNormalAttackSPData.sprite->Update();
 	keyboardSpecialAttackSPData.translate = {specialAttackSPData.translate.x, specialAttackSPData.translate.y + specialAttackSPData.size.y - 20.0f};
 	keyboardSpecialAttackSPData.sprite->SetPosition(keyboardSpecialAttackSPData.translate);
+	keyboardSpecialAttackSPData.sprite->SetScale({100, 40});
 	keyboardSpecialAttackSPData.sprite->Update();
 }
 void AttackOperation::Draw() {
