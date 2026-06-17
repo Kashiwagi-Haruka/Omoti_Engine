@@ -326,6 +326,7 @@
     <ClCompile Include="application\AudioManager\BGMManager\BGMManager.cpp" />
     <ClCompile Include="application\Option\Option.cpp" />
     <ClCompile Include="application\UI\Menu\Menu.cpp" />
+    <ClCompile Include="application\UI\Tower\TowerUI.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Engine\Texture\RenderTexture2D.h" />
@@ -625,6 +626,7 @@
     <ClInclude Include="application\AudioManager\BGMManager\BGMManager.h" />
     <ClInclude Include="application\Option\Option.h" />
     <ClInclude Include="application\UI\Menu\Menu.h" />
+    <ClInclude Include="application\UI\Tower\TowerUI.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include=".editorconfig" />
