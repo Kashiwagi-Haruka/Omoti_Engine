@@ -42,4 +42,29 @@ void Menu::Initialize() {
 	helpKeyboardSprite_->SetScale(kKeyIconSize);
 }
 void Menu::Update() {}
-void Menu::Draw() {}
+void Menu::Draw() { 
+	if (pauseSprite_){
+		pauseSprite_->Draw(); 
+	}
+	if (characterDisplaySprite_) {
+		characterDisplaySprite_->Draw();
+	}
+	if (teamSelectSprite_) {
+		teamSelectSprite_->Draw();
+	}
+	if (helpKeyboardSprite_) {
+		helpKeyboardSprite_->Draw();
+	}
+	if (pauseKeyboardSprite_) {
+		pauseKeyboardSprite_->Draw();
+	}
+	if (characterDisplayKeyboardSprite_) {
+		characterDisplayKeyboardSprite_->Draw();
+	}
+	if (teamSelectKeyboardSprite_) {
+		teamSelectKeyboardSprite_->Draw();
+	}
+	if (helpKeyboardSprite_) {
+		helpKeyboardSprite_->Draw();
+	}
+}

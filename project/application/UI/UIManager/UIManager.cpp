@@ -8,6 +8,7 @@ UIManager::UIManager() {
 	hpBarUI_ = std::make_unique<HPBarUI>();
 	attackOperationUI_ = std::make_unique<AttackOperation>();
 	towerUI_ = std::make_unique<TowerUI>();
+	menuUI_ = std::make_unique<Menu>();
 }
 
 UIManager::~UIManager() {}
@@ -21,6 +22,8 @@ void UIManager::Initialize() {
 	attackOperationUI_->Initialize();
 
 	towerUI_->Initialize();
+
+	menuUI_->Initialize();
 }
 
 void UIManager::Update() {
@@ -32,6 +35,8 @@ void UIManager::Update() {
 	attackOperationUI_->Update();
 
 	towerUI_->Update();
+
+	menuUI_->Update();
 }
 
 void UIManager::Draw() {
@@ -45,6 +50,7 @@ void UIManager::Draw() {
 	attackOperationUI_->Draw();
 	SpriteCommon::GetInstance()->DrawCommon();
 	towerUI_->Draw();
+	menuUI_->Draw();
 }
 
 void UIManager::SetPlayerHP(int HP) { hpBarUI_->SetPlayerHP(HP); }

@@ -3,6 +3,7 @@
 #include "UI/HPBar/HPBarUI.h"
 #include "UI/AttackOperation/AttackOperation.h"
 #include "UI/Tower/TowerUI.h"
+#include "UI/Menu/Menu.h"
 #include "Sprite.h"
 
 class GameBase;
@@ -16,6 +17,7 @@ class UIManager {
 	std::unique_ptr<HPBarUI> hpBarUI_;
 	std::unique_ptr<AttackOperation> attackOperationUI_;
 	std::unique_ptr<TowerUI> towerUI_;
+	std::unique_ptr<Menu> menuUI_;
 
 public:
 	// 生成時にUIリソースを読み込む。
