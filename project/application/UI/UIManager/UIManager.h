@@ -1,15 +1,17 @@
 #pragma once
 #include "Object/Player/PlayerParameters.h"
-
 #include "UI/HPBar/HPBarUI.h"
 #include "UI/AttackOperation/AttackOperation.h"
 #include "UI/Tower/TowerUI.h"
+#include "Sprite.h"
 
 class GameBase;
 class UIManager {
 
 	// プレイヤーパラメータの保持領域。
 	Parameters parameters_;
+
+	std::unique_ptr<Sprite> cursolSprite_;
 
 	std::unique_ptr<HPBarUI> hpBarUI_;
 	std::unique_ptr<AttackOperation> attackOperationUI_;
