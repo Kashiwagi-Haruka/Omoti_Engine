@@ -39,29 +39,29 @@ class UIManager {
 		Vector2 translate = {0, 0};
 	};
 
-	// レベルラベル用スプライト。
-	SpriteData LevelSPData;
-	// 数字表示用スプライト群。
-	SpriteData NumberSPData[NumbersCountMax];
-	// MAX表示用スプライト群。
-	SpriteData MaxSPData[5];
-	// 攻撃アップ表示用スプライト。
-	SpriteData AttackUpSPData;
-	// 体力アップ表示用スプライト。
-	SpriteData HealthUpSPData;
-	// 速度アップ表示用スプライト。
-	SpriteData SpeedUpSPData;
-	// 矢数アップ表示用スプライト。
-	SpriteData AllowUpSPData;
+	//// レベルラベル用スプライト。
+	//SpriteData LevelSPData;
+	//// 数字表示用スプライト群。
+	//SpriteData NumberSPData[NumbersCountMax];
+	//// MAX表示用スプライト群。
+	//SpriteData MaxSPData[5];
+	//// 攻撃アップ表示用スプライト。
+	//SpriteData AttackUpSPData;
+	//// 体力アップ表示用スプライト。
+	//SpriteData HealthUpSPData;
+	//// 速度アップ表示用スプライト。
+	//SpriteData SpeedUpSPData;
+	//// 矢数アップ表示用スプライト。
+	//SpriteData AllowUpSPData;
 
-	// スラッシュ表示用スプライト（未使用含む）。
-	SpriteData SlashSPData[2];
-	// EXPラベル用スプライト。
-	SpriteData EXPSPData;
-	// EXPバー用スプライト。
-	SpriteData expBarSPData;
-	// EXPバー背景用スプライト。
-	SpriteData expBarBackSPData;
+	//// スラッシュ表示用スプライト（未使用含む）。
+	//SpriteData SlashSPData[2];
+	//// EXPラベル用スプライト。
+	//SpriteData EXPSPData;
+	//// EXPバー用スプライト。
+	//SpriteData expBarSPData;
+	//// EXPバー背景用スプライト。
+	//SpriteData expBarBackSPData;
 	// 家HP数字表示用スプライト群。
 	SpriteData houseHpNumberSPData[3];
 	// 家HPの%表示用スプライト。
