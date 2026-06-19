@@ -1,9 +1,11 @@
 #include "Menu.h"
 #include "TextureManager.h"
 #include "WinApp.h"
+#include "Input.h"
 namespace{
 constexpr Vector2 kIconMargin = { 20.0f, 20.0f };
 constexpr Vector2 kIconSize = {80.0f, 80.0f};
+constexpr Vector2 kSelectIconSize = {100.0f, 100.0f};
 
 constexpr Vector2 kKeyIconSize = {80.0f, 32.0f};
 constexpr float kKeyMarginY = 20.0f;
@@ -74,7 +76,14 @@ void Menu::Initialize() {
 	teamSelectKeyboardSprite_->Update();
 	helpKeyboardSprite_->Update();
 }
-void Menu::Update() {}
+void Menu::Update() {
+
+	UpdateIcon(pauseSprite_.get()); 
+	UpdateIcon(characterDisplaySprite_.get()); 
+	UpdateIcon(teamSelectSprite_.get()); 
+	UpdateIcon(helpSprite_.get()); 
+
+}
 void Menu::Draw() { 
 	if (pauseSprite_){
 		pauseSprite_->Draw(); 
@@ -102,4 +111,20 @@ void Menu::Draw() {
 	if (helpKeyboardSprite_) {
 		helpKeyboardSprite_->Draw();
 	}
+}
+void Menu::UpdateIcon(Sprite* sprite){ 
+	if (sprite->GetPosition().x -(kIconSize.x*sprite->GetAnchorPoint().x) <= Input::GetInstance()->GetMouseX()) {
+		if (sprite->GetPosition().x + (kIconSize.x * (1.0f-sprite->GetAnchorPoint().x)) >= Input::GetInstance()->GetMouseX()) {
+			if (sprite->GetPosition().y - (kIconSize.y * sprite->GetAnchorPoint().y) <= Input::GetInstance()->GetMouseY()) {
+				if (sprite->GetPosition().y + (kIconSize.y * (1.0f-sprite->GetAnchorPoint().y)) >= Input::GetInstance()->GetMouseY()) {
+					sprite->SetScale(kSelectIconSize);
+					sprite->Update();
+					return;
+				}
+			}
+		}
+	}
+	sprite->SetScale(kIconSize);
+	sprite->Update();
+	return;
 }

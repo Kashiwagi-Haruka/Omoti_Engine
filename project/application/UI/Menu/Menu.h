@@ -20,4 +20,5 @@ private:
 	std::unique_ptr<Sprite> teamSelectKeyboardSprite_;
     std::unique_ptr<Sprite> helpKeyboardSprite_;
 
+    void UpdateIcon(Sprite* sprite);
 };
