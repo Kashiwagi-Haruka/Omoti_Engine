@@ -50,7 +50,6 @@ void Menu::Initialize() {
 	helpKeyboardSprite_->SetScale(kKeyIconSize);
 	helpKeyboardSprite_->SetPosition({helpKeyboardSprite_->GetPosition().x, helpKeyboardSprite_->GetPosition().y + kKeyMarginY});
 
-
 	pauseSprite_->Update();
 	characterDisplaySprite_->Update();
 	teamSelectSprite_->Update();
