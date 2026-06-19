@@ -2,6 +2,8 @@
 #include "UIManager.h"
 #include "Sprite/SpriteCommon.h"
 #include "TextureManager.h"
+#include "PlayCommand/PlayCommand.h"
+#include "Input.h"
 
 UIManager::UIManager() {
 	cursolSprite_ = std::make_unique<Sprite>();
@@ -16,6 +18,7 @@ UIManager::~UIManager() {}
 void UIManager::Initialize() {
 
 	cursolSprite_->Initialize(TextureManager::GetInstance()->GetTextureIndexByfilePath("Resources/2d/Cursor.png"));
+	cursolSprite_->SetScale({30.0f, 30.0f});
 
 	hpBarUI_->Initialize();
 
@@ -28,6 +31,8 @@ void UIManager::Initialize() {
 
 void UIManager::Update() {
 
+	cursolSprite_->SetPosition({
+	    Input::GetInstance()->GetMouseX(),Input::GetInstance()->GetMouseY()});
 	cursolSprite_->Update();
 
 	hpBarUI_->Update();
@@ -42,15 +47,17 @@ void UIManager::Update() {
 void UIManager::Draw() {
 
 	SpriteCommon::GetInstance()->DrawCommon();
-	if (cursolSprite_) {
-		cursolSprite_->Draw();
-	}
 	hpBarUI_->Draw();
 	SpriteCommon::GetInstance()->DrawCommon();
 	attackOperationUI_->Draw();
 	SpriteCommon::GetInstance()->DrawCommon();
 	towerUI_->Draw();
 	menuUI_->Draw();
+	if (PlayCommand::GetCURSOR_DISPLAY()) {
+		if (cursolSprite_) {
+			cursolSprite_->Draw();
+		}
+	}
 }
 
 void UIManager::SetPlayerHP(int HP) { hpBarUI_->SetPlayerHP(HP); }

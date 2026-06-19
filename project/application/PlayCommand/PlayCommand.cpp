@@ -79,3 +79,10 @@ bool PlayCommand::GetESCAPE() {
 	}
 	return false;
 }
+bool PlayCommand::GetCURSOR_DISPLAY(){ 
+	if (Input::GetInstance()->PushKey(DIK_LALT) || Input::GetInstance()->PushKey(DIK_RALT)) {
+		return true;
+	}
+	return false;
+
+}

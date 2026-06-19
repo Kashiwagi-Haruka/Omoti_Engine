@@ -4,7 +4,7 @@
 #include "Sprite/Sprite.h"
 #include "TextureManager.h"
 #include "WinApp.h"
-
+#include "Input.h"
 #include <algorithm>
 
 namespace {
@@ -82,23 +82,11 @@ void AttackOperation::Update() {
 	dashSPData_.translate = {specialAttackSPData_.translate.x - specialAttackSPData_.size.x - 20.0f, specialAttackSPData_.translate.y};
 	UpdateOperationSprite(dashSPData_, PlayCommand::GetDASH());
 
-	auto updateKeyboardSprite = [](SpriteData& keyboardSpriteData, const SpriteData& iconSpriteData) {
-		const float screenBottom = static_cast<float>(WinApp::kClientHeight) - kKeyboardDisplayBottomMargin;
-		keyboardSpriteData.size = kKeyboardDisplaySize;
-		keyboardSpriteData.translate = {
-		    iconSpriteData.translate.x,
-		    std::min(iconSpriteData.translate.y + kKeyboardDisplayIconOffsetY, screenBottom),
-		};
-		keyboardSpriteData.sprite->SetPosition(keyboardSpriteData.translate);
-		keyboardSpriteData.sprite->SetScale(keyboardSpriteData.size);
-		keyboardSpriteData.sprite->Update();
-	};
-
-	updateKeyboardSprite(keyboardSkillIconSPData_, skillIconSPData_);
-	updateKeyboardSprite(keyboardJumpSPData_, jumpSPData_);
-	updateKeyboardSprite(keyboardNormalAttackSPData_, normalAttackSPData_);
-	updateKeyboardSprite(keyboardSpecialAttackSPData_, specialAttackSPData_);
-	updateKeyboardSprite(keyboardDashSPData_, dashSPData_);
+	UpdateKeyboardSprite(keyboardSkillIconSPData_, skillIconSPData_);
+	UpdateKeyboardSprite(keyboardJumpSPData_, jumpSPData_);
+	UpdateKeyboardSprite(keyboardNormalAttackSPData_, normalAttackSPData_);
+	UpdateKeyboardSprite(keyboardSpecialAttackSPData_, specialAttackSPData_);
+	UpdateKeyboardSprite(keyboardDashSPData_, dashSPData_);
 }
 void AttackOperation::Draw() {
 	// スキルアイコンを描画
@@ -152,4 +140,16 @@ void AttackOperation::UpdateOperationSprite(SpriteData& spriteData, bool isPress
 	spriteData.sprite->SetScale(nextScale);
 	spriteData.sprite->SetPosition(spriteData.translate);
 	spriteData.sprite->Update();
+}
+
+void AttackOperation::UpdateKeyboardSprite(SpriteData& keyboardSpriteData, const SpriteData& iconSpriteData) {
+	const float screenBottom = static_cast<float>(WinApp::kClientHeight) - kKeyboardDisplayBottomMargin;
+	keyboardSpriteData.size = kKeyboardDisplaySize;
+	keyboardSpriteData.translate = {
+	    iconSpriteData.translate.x,
+	    std::min(iconSpriteData.translate.y + kKeyboardDisplayIconOffsetY, screenBottom),
+	};
+	keyboardSpriteData.sprite->SetPosition(keyboardSpriteData.translate);
+	keyboardSpriteData.sprite->SetScale(keyboardSpriteData.size);
+	keyboardSpriteData.sprite->Update();
 }

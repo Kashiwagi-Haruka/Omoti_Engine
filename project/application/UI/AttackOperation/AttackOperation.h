@@ -42,5 +42,6 @@ class AttackOperation {
 
 private:
 	void UpdateOperationSprite(SpriteData& spriteData, bool isPressed);
+	void UpdateKeyboardSprite(SpriteData& keyboardSpriteData, const SpriteData& iconSpriteData);
 	void SetOperationSpriteBaseSize(SpriteData& spriteData, const Vector2& size);
 };

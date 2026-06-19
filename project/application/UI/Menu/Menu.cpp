@@ -1,12 +1,13 @@
 #include "Menu.h"
 #include "TextureManager.h"
-
+#include "WinApp.h"
 namespace{
 constexpr Vector2 kIconMargin = { 20.0f, 20.0f };
-constexpr Vector2 kIconSize = {100.0f, 100.0f};
+constexpr Vector2 kIconSize = {80.0f, 80.0f};
 
-constexpr Vector2 kKeyIconSize = {100.0f, 40.0f};
+constexpr Vector2 kKeyIconSize = {80.0f, 32.0f};
 constexpr float kKeyMarginY = 20.0f;
+constexpr Vector2 kKeyAncor = {1.0f, 0.0f};
 }
 
 Menu::Menu() { 
@@ -34,21 +35,35 @@ void Menu::Initialize() {
 
 	pauseSprite_->SetScale(kIconSize);
 	pauseSprite_->SetPosition({kIconMargin.x, kIconMargin.y});
+	pauseSprite_->SetAnchorPoint({0.0f, 0.0f});
+
 	characterDisplaySprite_->SetScale(kIconSize);
-	characterDisplaySprite_->SetPosition({1280.0f - kIconMargin.x, kIconMargin.y});
+	characterDisplaySprite_->SetPosition({WinApp::kClientWidth - (kIconMargin.x), kIconMargin.y});
+	characterDisplaySprite_->SetAnchorPoint({1.0f, 0.0f});
+
 	teamSelectSprite_->SetScale(kIconSize);
 	teamSelectSprite_->SetPosition({characterDisplaySprite_->GetPosition().x - (kIconSize.x + kIconMargin.x),kIconMargin.y});
+	teamSelectSprite_->SetAnchorPoint({1.0f, 0.0f});
+
 	helpSprite_->SetScale(kIconSize);
 	helpSprite_->SetPosition({teamSelectSprite_->GetPosition().x - (kIconSize.x + kIconMargin.x), kIconMargin.y});
+	helpSprite_->SetAnchorPoint({1.0f, 0.0f});
 
 	pauseKeyboardSprite_->SetScale(kKeyIconSize);
-	pauseKeyboardSprite_->SetPosition({pauseSprite_->GetPosition().x, pauseSprite_->GetPosition().y + kKeyMarginY});
+	pauseKeyboardSprite_->SetPosition({pauseSprite_->GetPosition().x, pauseSprite_->GetPosition().y + kKeyMarginY + (kIconSize.y / 2.0f)});
+	pauseKeyboardSprite_->SetAnchorPoint({0.0f,0.0f});
+	
 	characterDisplayKeyboardSprite_->SetScale(kKeyIconSize);
-	characterDisplayKeyboardSprite_->SetPosition({characterDisplaySprite_->GetPosition().x, characterDisplaySprite_->GetPosition().y + kKeyMarginY});
+	characterDisplayKeyboardSprite_->SetPosition({characterDisplaySprite_->GetPosition().x, characterDisplaySprite_->GetPosition().y + kKeyMarginY + (kIconSize.y / 2.0f)});
+	characterDisplayKeyboardSprite_->SetAnchorPoint(kKeyAncor);
+
 	teamSelectKeyboardSprite_->SetScale(kKeyIconSize);
-	teamSelectKeyboardSprite_->SetPosition({teamSelectSprite_->GetPosition().x, teamSelectSprite_->GetPosition().y + kKeyMarginY});
+	teamSelectKeyboardSprite_->SetPosition({teamSelectSprite_->GetPosition().x, teamSelectSprite_->GetPosition().y + kKeyMarginY + (kIconSize.y / 2.0f)});
+	teamSelectKeyboardSprite_->SetAnchorPoint(kKeyAncor);
+
 	helpKeyboardSprite_->SetScale(kKeyIconSize);
-	helpKeyboardSprite_->SetPosition({helpKeyboardSprite_->GetPosition().x, helpKeyboardSprite_->GetPosition().y + kKeyMarginY});
+	helpKeyboardSprite_->SetPosition({helpSprite_->GetPosition().x, helpSprite_->GetPosition().y + kKeyMarginY + (kIconSize.y / 2.0f)});
+	helpKeyboardSprite_->SetAnchorPoint(kKeyAncor);
 
 	pauseSprite_->Update();
 	characterDisplaySprite_->Update();
@@ -70,9 +85,11 @@ void Menu::Draw() {
 	if (teamSelectSprite_) {
 		teamSelectSprite_->Draw();
 	}
-	if (helpKeyboardSprite_) {
-		helpKeyboardSprite_->Draw();
+	if (helpSprite_) {
+		helpSprite_->Draw();
 	}
+
+	
 	if (pauseKeyboardSprite_) {
 		pauseKeyboardSprite_->Draw();
 	}
