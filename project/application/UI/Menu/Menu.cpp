@@ -2,6 +2,7 @@
 #include "TextureManager.h"
 #include "WinApp.h"
 #include "Input.h"
+#include "PlayCommand/PlayCommand.h"
 namespace{
 constexpr Vector2 kIconMargin = { 20.0f, 20.0f };
 constexpr Vector2 kIconSize = {80.0f, 80.0f};
@@ -78,10 +79,10 @@ void Menu::Initialize() {
 }
 void Menu::Update() {
 
-	UpdateIcon(pauseSprite_.get()); 
-	UpdateIcon(characterDisplaySprite_.get()); 
-	UpdateIcon(teamSelectSprite_.get()); 
-	UpdateIcon(helpSprite_.get()); 
+	UpdateIcon(pauseSprite_.get(),pauseKeyboardSprite_.get()); 
+	UpdateIcon(characterDisplaySprite_.get(),characterDisplayKeyboardSprite_.get()); 
+	UpdateIcon(teamSelectSprite_.get(),teamSelectKeyboardSprite_.get()); 
+	UpdateIcon(helpSprite_.get(),helpKeyboardSprite_.get()); 
 
 }
 void Menu::Draw() { 
@@ -112,13 +113,17 @@ void Menu::Draw() {
 		helpKeyboardSprite_->Draw();
 	}
 }
-void Menu::UpdateIcon(Sprite* sprite){ 
+void Menu::UpdateIcon(Sprite* sprite,Sprite* keySprite){ 
 	if (sprite->GetPosition().x -(kIconSize.x*sprite->GetAnchorPoint().x) <= Input::GetInstance()->GetMouseX()) {
 		if (sprite->GetPosition().x + (kIconSize.x * (1.0f-sprite->GetAnchorPoint().x)) >= Input::GetInstance()->GetMouseX()) {
 			if (sprite->GetPosition().y - (kIconSize.y * sprite->GetAnchorPoint().y) <= Input::GetInstance()->GetMouseY()) {
 				if (sprite->GetPosition().y + (kIconSize.y * (1.0f-sprite->GetAnchorPoint().y)) >= Input::GetInstance()->GetMouseY()) {
 					sprite->SetScale(kSelectIconSize);
 					sprite->Update();
+					if (PlayCommand::GetDESIDE()) {
+						keySprite->SetColor({1.0f, 1.0f, 0.0f, 1.0f});
+						keySprite->Update();
+					}
 					return;
 				}
 			}
@@ -126,5 +131,7 @@ void Menu::UpdateIcon(Sprite* sprite){
 	}
 	sprite->SetScale(kIconSize);
 	sprite->Update();
+	keySprite->SetColor({1.0f, 1.0f, 1.0f, 1.0f});
+	keySprite->Update();
 	return;
 }
