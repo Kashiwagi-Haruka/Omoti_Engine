@@ -9,7 +9,7 @@
 
 namespace {
 constexpr float kFrameTime = 1.0f / 60.0f;
-constexpr const char* kParticleTexturePath = "Resources/2d/defaultParticle.png";
+constexpr const char* kParticleTexturePath = "Resources/2d/ArrowParticle.png";
 constexpr const char* kParticleGroupPrefix = "enemyHitParticle_";
 uint32_t gHitParticleGroupSerial = 0;
 } // namespace
@@ -38,14 +38,14 @@ void EnemyHitEffect::Initialize() {
     };
 	hitParticleEmitter_ = std::make_unique<ParticleEmitter>(hitParticleGroupName_);
 	hitParticleEmitter_->SetTransform(hitParticleTransform_);
-	hitParticleEmitter_->SetCount(28);
+	hitParticleEmitter_->SetCount(35);
 	hitParticleEmitter_->SetFrequency(1.0f);
 	hitParticleEmitter_->SetAcceleration({0.0f, 0.0f, 0.0f});
 	hitParticleEmitter_->SetAreaMin({-2.0f, -2.0f, 0.0f});
 	hitParticleEmitter_->SetAreaMax({2.0f, 2.0f, 0.0f});
 	hitParticleEmitter_->SetLife(activeDuration_);
-	hitParticleEmitter_->SetBeforeColor({1.0f, 0.72f, 0.24f, 1.0f});
-	hitParticleEmitter_->SetAfterColor({1.0f, 0.32f, 0.05f, 0.0f});
+	hitParticleEmitter_->SetBeforeColor({0.5f, 0.72f, 1.0f, 1.0f});
+	hitParticleEmitter_->SetAfterColor({1.0f, 1.0f, 1.0f, 0.0f});
 	hitParticleEmitter_->SetEmissionAngle(std::numbers::pi_v<float> * 2.0f);
 	hitParticleEmitter_->SetEmissionSpeed(3.2f);
 

@@ -16,15 +16,16 @@ VertexShaderOutput main(VertexShaderInput input, uint instanceId : SV_InstanceID
 
     Particle particle = gParticles[instanceId];
 
-    float4x4 worldMatrix = gPerView.billboardMatrix;
-    worldMatrix[0] *= particle.scale.x;
-    worldMatrix[1] *= particle.scale.y;
-    worldMatrix[2] *= particle.scale.z;
-    worldMatrix[3].xyz = particle.translate;
+    float3 billboardRight = gPerView.billboardMatrix[0].xyz;
+    float3 billboardUp = gPerView.billboardMatrix[1].xyz;
+    float3 billboardForward = gPerView.billboardMatrix[2].xyz;
 
-    float4x4 worldViewProjection = mul(worldMatrix, gPerView.viewProjection);
+    float3 worldPosition = particle.translate;
+    worldPosition += billboardRight * input.position.x * particle.scale.x;
+    worldPosition += billboardUp * input.position.y * particle.scale.y;
+    worldPosition += billboardForward * input.position.z * particle.scale.z;
 
-    output.position = mul(input.position, worldViewProjection);
+    output.position = mul(float4(worldPosition, 1.0f), gPerView.viewProjection);
     output.texcoord = input.texcoord;
     float t = (particle.lifeTime > 0.0f) ? saturate(particle.currentTime / particle.lifeTime) : 1.0f;
     output.color = lerp(particle.beforeColor, particle.afterColor, t);

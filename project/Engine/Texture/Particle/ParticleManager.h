@@ -81,10 +81,16 @@ private:
 		float emissionAngle = 6.283185307f;
 		float emissionSpeed = 1.0f;
 		float emissionAnglePadding[2] = {0.0f, 0.0f};
+		Vector3 emissionRight{1.0f, 0.0f, 0.0f};
+		float emissionRightPadding = 0.0f;
+		Vector3 emissionUp{0.0f, 1.0f, 0.0f};
+		float emissionUpPadding = 0.0f;
 	};
 	static_assert(offsetof(EmitterSphere, beforeColor) == 64, "EmitterSphere.beforeColor layout mismatch with shader cbuffer");
 	static_assert(offsetof(EmitterSphere, afterColor) == 80, "EmitterSphere.afterColor layout mismatch with shader cbuffer");
-	static_assert(sizeof(EmitterSphere) == 112, "EmitterSphere size mismatch with shader cbuffer");
+	static_assert(offsetof(EmitterSphere, emissionRight) == 112, "EmitterSphere.emissionRight layout mismatch with shader cbuffer");
+	static_assert(offsetof(EmitterSphere, emissionUp) == 128, "EmitterSphere.emissionUp layout mismatch with shader cbuffer");
+	static_assert(sizeof(EmitterSphere) == 144, "EmitterSphere size mismatch with shader cbuffer");
 
 	struct PerFrame {
 		float time = 0.0f;
