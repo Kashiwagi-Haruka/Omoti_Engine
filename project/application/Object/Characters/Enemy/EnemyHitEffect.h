@@ -1,12 +1,21 @@
 #pragma once
 #include "Object3d/Object3d.h"
 #include "ParticleEmitter.h"
+#include "Primitive/Primitive.h"
 #include "Transform.h"
 #include "Vector3.h"
 #include <array>
 #include <memory>
 #include <string>
 class EnemyHitEffect {
+
+	struct HitBillboard {
+		std::unique_ptr<Primitive> primitive;
+		Transform transform;
+		Vector3 offset;
+		float randomAngle;
+		float baseScale;
+	};
 
 	struct IceShard {
 		std::unique_ptr<Object3d> object;
@@ -17,10 +26,12 @@ class EnemyHitEffect {
 	};
 
 	static constexpr int kIceShardCount = 10;
+	static constexpr int kHitBillboardCount = 6;
 
 	std::unique_ptr<Object3d> hitEffect_;
 	std::unique_ptr<ParticleEmitter> hitParticleEmitter_;
 	std::array<IceShard, kIceShardCount> iceShards_;
+	std::array<HitBillboard, kHitBillboardCount> hitBillboards_;
 	std::string hitParticleGroupName_;
 	Transform hitTransform_;
 	Transform hitParticleTransform_;

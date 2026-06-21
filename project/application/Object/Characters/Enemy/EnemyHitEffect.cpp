@@ -6,6 +6,7 @@
 #include "ParticleManager.h"
 #include <algorithm>
 #include <cmath>
+#include <cstddef>
 #include <cstdint>
 #include <numbers>
 #include <random>
@@ -19,6 +20,10 @@ constexpr float kIceShardMaxSpeed = 7.0f;
 constexpr float kIceShardMinScale = 0.18f;
 constexpr float kIceShardMaxScale = 0.32f;
 constexpr float kIceShardSpawnRadius = 0.15f;
+constexpr float kHitBillboardMinScale = 0.75f;
+constexpr float kHitBillboardMaxScale = 1.35f;
+constexpr float kHitBillboardSpawnRadius = 0.22f;
+constexpr float kHitBillboardDepthSpacing = 0.015f;
 constexpr const char* kParticleGroupPrefix = "enemyHitParticle_";
 uint32_t gHitParticleGroupSerial = 0;
 std::mt19937 gRandomEngine{std::random_device{}()};
@@ -46,6 +51,23 @@ void EnemyHitEffect::Initialize() {
 	hitEffect_->SetModel("HitEffect");
 	hitEffect_->SetEnableLighting(false);
 	hitEffect_->SetCamera(camera_);
+
+	for (auto& billboard : hitBillboards_) {
+		billboard.primitive = std::make_unique<Primitive>();
+		billboard.primitive->SetEditorRegistrationEnabled(false);
+		billboard.primitive->Initialize(Primitive::Plane, "Resources/2d/Effect/SizukuSwordEffect.png");
+		billboard.primitive->SetEnableLighting(false);
+		billboard.primitive->SetCamera(camera_);
+		billboard.primitive->SetColor({0.45f, 0.75f, 1.0f, 0.85f});
+		billboard.transform = {
+		    .scale{1.0f, 1.0f, 1.0f},
+            .rotate{0.0f, 0.0f, 0.0f},
+            .translate{0.0f, 0.0f, 0.0f}
+        };
+		billboard.offset = {0.0f, 0.0f, 0.0f};
+		billboard.randomAngle = 0.0f;
+		billboard.baseScale = 1.0f;
+	}
 
 	for (auto& shard : iceShards_) {
 		shard.object = std::make_unique<Object3d>();
@@ -97,6 +119,21 @@ void EnemyHitEffect::Activate(const Vector3& position) {
 	activeTimer_ = activeDuration_;
 	enemyPosition_ = position;
 
+	for (auto& billboard : hitBillboards_) {
+		const Vector3 offsetDirection = MakeRandomUnitVector();
+		const float scale = RandomRange(kHitBillboardMinScale, kHitBillboardMaxScale);
+		billboard.baseScale = scale;
+		billboard.randomAngle = RandomRange(0.0f, std::numbers::pi_v<float> * 2.0f);
+		billboard.offset = offsetDirection * kHitBillboardSpawnRadius;
+		billboard.transform.scale = {scale, scale, scale};
+		billboard.transform.rotate = {0.0f, 0.0f, billboard.randomAngle};
+		billboard.transform.translate = enemyPosition_ + billboard.offset;
+		if (billboard.primitive) {
+			billboard.primitive->SetCamera(camera_);
+			billboard.primitive->SetColor({0.45f, 0.75f, 1.0f, 0.9f});
+		}
+	}
+
 	for (auto& shard : iceShards_) {
 		const Vector3 direction = MakeRandomUnitVector();
 		const float speed = RandomRange(kIceShardMinSpeed, kIceShardMaxSpeed);
@@ -132,10 +169,32 @@ void EnemyHitEffect::Update() {
 	}
 
 	const float deltaTime = kFrameTime;
+	const float scaleRatio = std::max(activeTimer_ / activeDuration_, 0.0f);
+	Matrix4x4 billboardMatrix = Function::MakeIdentity4x4();
+	if (camera_) {
+		billboardMatrix = Function::Inverse(camera_->GetViewMatrix());
+		billboardMatrix.m[3][0] = billboardMatrix.m[3][1] = billboardMatrix.m[3][2] = 0.0f;
+	}
+	for (std::size_t i = 0; i < hitBillboards_.size(); ++i) {
+		auto& billboard = hitBillboards_[i];
+		const float currentScale = billboard.baseScale * scaleRatio;
+		billboard.transform.scale = {currentScale, currentScale, currentScale};
+		billboard.transform.translate = enemyPosition_ + billboard.offset + Vector3{0.0f, 0.0f, kHitBillboardDepthSpacing * static_cast<float>(i)};
+		const Matrix4x4 scaleMatrix = Function::MakeScaleMatrix(billboard.transform.scale);
+		const Matrix4x4 angleMatrix = Function::MakeRotateZMatrix(billboard.randomAngle);
+		const Matrix4x4 translateMatrix = Function::MakeTranslateMatrix(billboard.transform.translate);
+		const Matrix4x4 worldMatrix = Function::Multiply(Function::Multiply(scaleMatrix, Function::Multiply(angleMatrix, billboardMatrix)), translateMatrix);
+		if (billboard.primitive) {
+			billboard.primitive->SetCamera(camera_);
+			billboard.primitive->SetColor({0.45f, 0.75f, 1.0f, 0.9f * scaleRatio});
+			billboard.primitive->SetWorldMatrix(worldMatrix);
+			billboard.primitive->UpdateCameraMatrices();
+		}
+	}
+
 	for (auto& shard : iceShards_) {
 		shard.transform.translate += shard.velocity * deltaTime;
 		shard.transform.rotate += shard.angularVelocity * deltaTime;
-		const float scaleRatio = std::max(activeTimer_ / activeDuration_, 0.0f);
 		const float currentScale = shard.baseScale * scaleRatio;
 		shard.transform.scale = {currentScale, currentScale, currentScale};
 		if (shard.object) {
@@ -163,6 +222,12 @@ void EnemyHitEffect::Draw() {
 	}
 
 	hitEffect_->Draw();
+	Object3dCommon::GetInstance()->DrawCommonNoCullDepth();
+	for (auto& billboard : hitBillboards_) {
+		if (billboard.primitive) {
+			billboard.primitive->Draw();
+		}
+	}
 	Object3dCommon::GetInstance()->DrawCommon();
 	for (auto& shard : iceShards_) {
 		if (shard.object) {
