@@ -1,11 +1,17 @@
 #include "EnemyHitEffect.h"
 #include "GameBase.h"
 #include "Model/ModelManager.h"
+#include "Object3d/Object3dCommon.h"
+#include "ParticleManager.h"
+#include <cstdint>
 #include <numbers>
+#include <string>
 
 namespace {
 constexpr float kFrameTime = 1.0f / 60.0f;
 constexpr const char* kParticleTexturePath = "Resources/2d/defaultParticle.png";
+constexpr const char* kParticleGroupPrefix = "enemyHitParticle_";
+uint32_t gHitParticleGroupSerial = 0;
 } // namespace
 
 void EnemyHitEffect::Initialize() {
@@ -23,33 +29,24 @@ void EnemyHitEffect::Initialize() {
         .translate{0, 0, 0}
     };
 
-	constexpr float kBaseRotations[kParticleCount] = {
-	    0.0f, 0.42f, 0.96f, 1.58f, 2.24f, 2.86f, 3.44f,
-	};
-	constexpr Vector3 kBaseScales[kParticleCount] = {
-	    {1.15f, 1.15f, 1.0f},
-        {0.82f, 0.82f, 1.0f},
-        {1.42f, 1.42f, 1.0f},
-        {0.64f, 0.64f, 1.0f},
-        {1.0f,  1.0f,  1.0f},
-        {1.28f, 1.28f, 1.0f},
-        {0.74f, 0.74f, 1.0f},
-	};
-
-	for (std::size_t i = 0; i < kParticleCount; ++i) {
-		particleBaseRotations_[i] = kBaseRotations[i];
-		particleBaseScales_[i] = kBaseScales[i];
-		hitParticleTransforms_[i] = {
-		    .scale{kBaseScales[i]},
-            .rotate{0.0f, 0.0f, kBaseRotations[i]},
-            .translate{0.0f, 0.0f, 0.0f}
-        };
-		hitParticles_[i] = std::make_unique<Primitive>();
-		hitParticles_[i]->Initialize(Primitive::Plane, kParticleTexturePath);
-		hitParticles_[i]->SetTransform(hitParticleTransforms_[i]);
-		hitParticles_[i]->SetEnableLighting(false);
-		hitParticles_[i]->SetCamera(camera_);
-	}
+	hitParticleGroupName_ = kParticleGroupPrefix + std::to_string(gHitParticleGroupSerial++);
+	ParticleManager::GetInstance()->CreateParticleGroup(hitParticleGroupName_, kParticleTexturePath);
+	hitParticleTransform_ = {
+	    .scale{0.18f, 0.18f, 0.18f},
+        .rotate{0.0f,  0.0f,  0.0f },
+        .translate{0.0f,  0.0f,  0.0f }
+    };
+	hitParticleEmitter_ = std::make_unique<ParticleEmitter>(hitParticleGroupName_);
+	hitParticleEmitter_->SetTransform(hitParticleTransform_);
+	hitParticleEmitter_->SetCount(28);
+	hitParticleEmitter_->SetFrequency(1.0f);
+	hitParticleEmitter_->SetAcceleration({0.0f, 0.0f, 0.0f});
+	hitParticleEmitter_->SetAreaMin({-1.2f, -1.2f, 0.0f});
+	hitParticleEmitter_->SetAreaMax({1.2f, 1.2f, 0.0f});
+	hitParticleEmitter_->SetLife(activeDuration_);
+	hitParticleEmitter_->SetBeforeColor({1.0f, 0.72f, 0.24f, 1.0f});
+	hitParticleEmitter_->SetAfterColor({1.0f, 0.32f, 0.05f, 0.0f});
+	hitParticleEmitter_->SetEmissionAngle(std::numbers::pi_v<float> * 2.0f);
 
 	enemyPosition_ = {0.0f, 0.0f, 0.0f};
 }
@@ -58,6 +55,12 @@ void EnemyHitEffect::Activate(const Vector3& position) {
 	isActive_ = true;
 	activeTimer_ = activeDuration_;
 	enemyPosition_ = position;
+
+	hitParticleTransform_.translate = enemyPosition_;
+	if (hitParticleEmitter_) {
+		hitParticleEmitter_->SetTransform(hitParticleTransform_);
+		hitParticleEmitter_->Emit();
+	}
 }
 
 void EnemyHitEffect::Update() {
@@ -71,33 +74,16 @@ void EnemyHitEffect::Update() {
 		return;
 	}
 
-	const float progress = 1.0f - (activeTimer_ / activeDuration_);
-	const float popScale = 0.75f + progress * 1.65f;
-	const float fade = activeTimer_ / activeDuration_;
-
 	hitTransform_.translate = enemyPosition_;
 	hitTransform_.rotate.y = std::numbers::pi_v<float>;
 
 	Matrix4x4 c = camera_->GetWorldMatrix();
 	c.m[3][0] = c.m[3][1] = c.m[3][2] = 0;
 	Matrix4x4 world = Function::Multiply(c, Function::MakeAffineMatrix(hitTransform_.scale, hitTransform_.rotate, hitTransform_.translate));
-
+	ParticleManager::GetInstance()->SetCamera(camera_);
 	hitEffect_->SetCamera(camera_);
 	hitEffect_->SetWorldMatrix(world);
 	hitEffect_->Update();
-
-	for (std::size_t i = 0; i < kParticleCount; ++i) {
-		hitParticleTransforms_[i].translate = enemyPosition_;
-		hitParticleTransforms_[i].rotate.y = std::numbers::pi_v<float>;
-		hitParticleTransforms_[i].rotate.z = particleBaseRotations_[i] + progress * (1.8f + 0.22f * static_cast<float>(i));
-		hitParticleTransforms_[i].scale = {particleBaseScales_[i].x * popScale, particleBaseScales_[i].y * popScale, particleBaseScales_[i].z};
-
-		Matrix4x4 particleWorld = Function::Multiply(c, Function::MakeAffineMatrix(hitParticleTransforms_[i].scale, hitParticleTransforms_[i].rotate, hitParticleTransforms_[i].translate));
-		hitParticles_[i]->SetCamera(camera_);
-		hitParticles_[i]->SetWorldMatrix(particleWorld);
-		hitParticles_[i]->SetColor({1.0f, 0.72f, 0.24f, fade});
-		hitParticles_[i]->Update();
-	}
 }
 
 void EnemyHitEffect::Draw() {
@@ -106,7 +92,8 @@ void EnemyHitEffect::Draw() {
 	}
 
 	hitEffect_->Draw();
-	for (auto& particle : hitParticles_) {
-		particle->Draw();
+	if (hitParticleEmitter_) {
+		hitParticleEmitter_->Draw();
+		Object3dCommon::GetInstance()->DrawCommonNoCullDepth();
 	}
 }

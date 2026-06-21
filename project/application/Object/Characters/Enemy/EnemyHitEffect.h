@@ -1,27 +1,22 @@
 #pragma once
 #include "Object3d/Object3d.h"
-#include "Primitive/Primitive.h"
+#include "ParticleEmitter.h"
 #include "Transform.h"
 #include "Vector3.h"
-#include <array>
-#include <cstddef>
 #include <memory>
-#include <vector>
+#include <string>
 class EnemyHitEffect {
 
-	static constexpr std::size_t kParticleCount = 7;
-
 	std::unique_ptr<Object3d> hitEffect_;
-	std::array<std::unique_ptr<Primitive>, kParticleCount> hitParticles_;
-	std::array<Transform, kParticleCount> hitParticleTransforms_;
-	std::array<float, kParticleCount> particleBaseRotations_{};
-	std::array<Vector3, kParticleCount> particleBaseScales_{};
+	std::unique_ptr<ParticleEmitter> hitParticleEmitter_;
+	std::string hitParticleGroupName_;
 	Transform hitTransform_;
+	Transform hitParticleTransform_;
 	Camera* camera_ = nullptr;
 	Vector3 enemyPosition_;
 	bool isActive_ = false;
 	float activeTimer_ = 0.0f;
-	float activeDuration_ = 0.28f;
+	float activeDuration_ = 0.35f;
 
 public:
 	void Initialize();
