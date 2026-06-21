@@ -228,8 +228,8 @@ void ParticleManager::Draw(const std::string& name) {
 }
 
 void ParticleManager::Emit(
-    const std::string& name, const Transform& transform, uint32_t count, const Vector3& accel, const AABB& area, float life, const Vector4& beforeColor, const Vector4& afterColor,
-    float emissionAngle) {
+    const std::string& name, const Transform& transform, uint32_t count, const Vector3& accel, const AABB& area, float life, const Vector4& beforeColor, const Vector4& afterColor, float emissionAngle,
+    float emissionSpeed) {
 	(void)name;
 	if (!isParticleInitialized_) {
 		InitializeParticlesByCompute();
@@ -248,6 +248,7 @@ void ParticleManager::Emit(
 	emitterData_->beforeColor = beforeColor;
 	emitterData_->afterColor = afterColor;
 	emitterData_->emissionAngle = std::max(emissionAngle, 0.0f);
+	emitterData_->emissionSpeed = std::max(emissionSpeed, 0.0f);
 	emitterData_->emit = 1;
 
 	perFrameData_->time = 0.0f;

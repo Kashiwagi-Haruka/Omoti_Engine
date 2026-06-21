@@ -32,7 +32,7 @@ void EnemyHitEffect::Initialize() {
 	hitParticleGroupName_ = kParticleGroupPrefix + std::to_string(gHitParticleGroupSerial++);
 	ParticleManager::GetInstance()->CreateParticleGroup(hitParticleGroupName_, kParticleTexturePath);
 	hitParticleTransform_ = {
-	    .scale{0.18f, 0.18f, 0.18f},
+	    .scale{0.10f, 0.10f, 0.10f},
         .rotate{0.0f,  0.0f,  0.0f },
         .translate{0.0f,  0.0f,  0.0f }
     };
@@ -41,12 +41,13 @@ void EnemyHitEffect::Initialize() {
 	hitParticleEmitter_->SetCount(28);
 	hitParticleEmitter_->SetFrequency(1.0f);
 	hitParticleEmitter_->SetAcceleration({0.0f, 0.0f, 0.0f});
-	hitParticleEmitter_->SetAreaMin({-1.2f, -1.2f, 0.0f});
-	hitParticleEmitter_->SetAreaMax({1.2f, 1.2f, 0.0f});
+	hitParticleEmitter_->SetAreaMin({-2.0f, -2.0f, 0.0f});
+	hitParticleEmitter_->SetAreaMax({2.0f, 2.0f, 0.0f});
 	hitParticleEmitter_->SetLife(activeDuration_);
 	hitParticleEmitter_->SetBeforeColor({1.0f, 0.72f, 0.24f, 1.0f});
 	hitParticleEmitter_->SetAfterColor({1.0f, 0.32f, 0.05f, 0.0f});
 	hitParticleEmitter_->SetEmissionAngle(std::numbers::pi_v<float> * 2.0f);
+	hitParticleEmitter_->SetEmissionSpeed(3.2f);
 
 	enemyPosition_ = {0.0f, 0.0f, 0.0f};
 }

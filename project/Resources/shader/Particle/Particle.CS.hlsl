@@ -66,7 +66,7 @@ void main(uint3 DTid : SV_DispatchThreadID)
 
             gParticles[emitIndex].scale = gEmitter.particleScale;
             gParticles[emitIndex].translate = gEmitter.translate + randomDirection * randomLength;
-            gParticles[emitIndex].velocity = randomDirection;
+            gParticles[emitIndex].velocity = randomDirection * gEmitter.emissionSpeed;
             gParticles[emitIndex].lifeTime = gEmitter.lifeTime;
             gParticles[emitIndex].currentTime = 0.0f;
             gParticles[emitIndex].beforeColor = gEmitter.beforeColor;

@@ -32,7 +32,8 @@ struct EmitterSphere
     float4 beforeColor;
     float4 afterColor;
     float emissionAngle;
-    float3 emissionAnglePadding;
+    float emissionSpeed;
+    float2 emissionAnglePadding;
 };
 
 struct PerFrame

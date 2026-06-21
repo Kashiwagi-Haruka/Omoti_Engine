@@ -23,12 +23,14 @@ public:
 	void SetAreaMin(Vector3 areaMin);
 	void SetAreaMax(Vector3 areaMax);
 	void SetEmissionAngle(float emissionAngle);
+	void SetEmissionSpeed(float emissionSpeed);
 	float GetFrequency() { return frequency; }
 	uint32_t GetCount() { return count; }
 	Vector3 GetAcceleration() { return acceleration_; }
 	Vector3 GetAreaMin() { return areaMin_; }
 	Vector3 GetAreaMax() { return areaMax_; }
 	float GetEmissionAngle() const { return emissionAngle_; }
+	float GetEmissionSpeed() const { return emissionSpeed_; }
 	// === Transform Getter / Setter ===
 	Transform& GetTransformRef() { return transform_; }
 	const Transform& GetTransform() const { return transform_; }
@@ -56,4 +58,5 @@ private:
 	Vector4 beforeColor_ = {1, 1, 1, 1};
 	Vector4 afterColor_ = {1, 1, 1, 0};
 	float emissionAngle_ = 2.0f * 3.1415926535f;
+	float emissionSpeed_ = 1.0f;
 };
