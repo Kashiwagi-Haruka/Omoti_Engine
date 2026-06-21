@@ -12,7 +12,6 @@ class EnemyHitEffect {
 	struct HitBillboard {
 		std::unique_ptr<Primitive> primitive;
 		Transform transform;
-		Vector3 offset;
 		float randomAngle;
 		float baseScale;
 	};
