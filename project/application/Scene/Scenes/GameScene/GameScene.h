@@ -75,6 +75,11 @@ private:
 	float damageGrayscaleTimer_ = 0.0f;
 	static constexpr float kDamageGrayscaleDuration_ = 0.5f;
 
+		std::unique_ptr<Sprite> hitVinettSprite_;
+	uint32_t hitVinettTextureHandle_ = 0;
+	float hitVinettTimer_ = 0.0f;
+	static constexpr float kHitVinettDuration_ = 0.25f;
+
 	Vector3 vinettColor_;
 	float vinettStrength_;
 	float introBlurDelayTimer_ = 0.0f;
