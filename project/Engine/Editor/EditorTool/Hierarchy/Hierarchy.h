@@ -70,12 +70,18 @@ private:
 	bool ResetToLoadedSnapshot();
 	void UndoEditorChange();
 	void RedoEditorChange();
+	void PushGuizmoUndoIfNeeded();
 
 	bool SaveObjectEditorsToJson(const std::string& filePath) const;
 	bool LoadObjectEditorsFromJson(const std::string& filePath);
 
 	std::vector<EditorSnapshot> undoStack_;
 	std::vector<EditorSnapshot> redoStack_;
+	EditorSnapshot guizmoBeforeEdit_{};
+	Transform guizmoStartTransform_{};
+	size_t guizmoTargetIndex_ = 0;
+	bool guizmoTargetIsPrimitive_ = false;
+	bool guizmoWasUsing_ = false;
 	EditorSnapshot loadedSnapshot_{};
 	bool hasLoadedSnapshot_ = false;
 	std::string loadedSnapshotFilePath_;

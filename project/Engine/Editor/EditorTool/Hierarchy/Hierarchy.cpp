@@ -35,6 +35,14 @@ std::filesystem::path ResolveObjectEditorJsonPath(const std::string& filePath) {
 
 bool HasObjectEditorJsonFile(const std::string& filePath) { return std::filesystem::exists(ResolveObjectEditorJsonPath(filePath)); }
 
+bool IsNearlyEqual(float lhs, float rhs) { return std::fabs(lhs - rhs) <= 0.0001f; }
+
+bool IsTransformNearlyEqual(const Transform& lhs, const Transform& rhs) {
+	return IsNearlyEqual(lhs.scale.x, rhs.scale.x) && IsNearlyEqual(lhs.scale.y, rhs.scale.y) && IsNearlyEqual(lhs.scale.z, rhs.scale.z) && IsNearlyEqual(lhs.rotate.x, rhs.rotate.x) &&
+	       IsNearlyEqual(lhs.rotate.y, rhs.rotate.y) && IsNearlyEqual(lhs.rotate.z, rhs.rotate.z) && IsNearlyEqual(lhs.translate.x, rhs.translate.x) &&
+	       IsNearlyEqual(lhs.translate.y, rhs.translate.y) && IsNearlyEqual(lhs.translate.z, rhs.translate.z);
+}
+
 } // namespace
 
 Hierarchy* Hierarchy::GetInstance() {
@@ -101,6 +109,7 @@ void Hierarchy::ResetForSceneChange() {
 	editorLight_.Reset();
 	undoStack_.clear();
 	redoStack_.clear();
+	guizmoWasUsing_ = false;
 	editorCamera_.DeactivatePreview();
 	for (const auto& object : editorOwnedObjects_) {
 		UnregisterObject3d(object.get());
@@ -161,6 +170,23 @@ void Hierarchy::RedoEditorChange() {
 	ApplyEditorSnapshot(redoStack_.back());
 	redoStack_.pop_back();
 	hasUnsavedChanges_ = true;
+}
+void Hierarchy::PushGuizmoUndoIfNeeded() {
+	if (!guizmoWasUsing_) {
+		return;
+	}
+
+	const bool targetExists = guizmoTargetIsPrimitive_ ? guizmoTargetIndex_ < primitiveEditorTransforms_.size() : guizmoTargetIndex_ < editorTransforms_.size();
+	if (targetExists) {
+		const Transform& currentTransform = guizmoTargetIsPrimitive_ ? primitiveEditorTransforms_[guizmoTargetIndex_] : editorTransforms_[guizmoTargetIndex_];
+		if (!IsTransformNearlyEqual(currentTransform, guizmoStartTransform_)) {
+			undoStack_.push_back(std::move(guizmoBeforeEdit_));
+			redoStack_.clear();
+			hasUnsavedChanges_ = true;
+		}
+	}
+
+	guizmoWasUsing_ = false;
 }
 void Hierarchy::ApplyEditorSnapshot(const EditorSnapshot& snapshot) {
 	editorTransforms_ = snapshot.objectTransforms;
@@ -789,6 +815,7 @@ void Hierarchy::DrawSelectionBoxEditor() {
 void Hierarchy::DrawSelectedObjectGuizmo(const ImGuiViewport* viewport, float contentStartY, float leftPanelWidth, float rightPanelWidth, float availableHeight) {
 #ifdef USE_IMGUI
 	if (isPlaying_ || !IsObjectSelected()) {
+		PushGuizmoUndoIfNeeded();
 		return;
 	}
 
@@ -797,6 +824,7 @@ void Hierarchy::DrawSelectedObjectGuizmo(const ImGuiViewport* viewport, float co
 
 	Camera* camera = Object3dCommon::GetInstance()->GetDefaultCamera();
 	if (!camera) {
+		PushGuizmoUndoIfNeeded();
 		return;
 	}
 
@@ -820,9 +848,10 @@ void Hierarchy::DrawSelectedObjectGuizmo(const ImGuiViewport* viewport, float co
 	const float scenePosY = viewport->WorkPos.y + kRenderedToolbarHeight;
 	ImGuizmo::SetRect(scenePosX, scenePosY, std::max(1.0f, sceneWidth), std::max(1.0f, sceneHeight));
 
-
 	Transform& transform = selectedIsPrimitive_ ? primitiveEditorTransforms_[selectedObjectIndex_] : editorTransforms_[selectedObjectIndex_];
 	Matrix4x4 worldMatrix = Function::MakeAffineMatrix(transform.scale, transform.rotate, transform.translate);
+	const EditorSnapshot beforeGuizmoEdit = CreateCurrentSnapshot();
+	const Transform startTransform = transform;
 
 	ImGuizmo::OPERATION operation = ImGuizmo::TRANSLATE;
 	if (ImGui::IsKeyDown(ImGuiKey_E)) {
@@ -854,6 +883,17 @@ void Hierarchy::DrawSelectedObjectGuizmo(const ImGuiViewport* viewport, float co
 		}
 		selectionBoxDirty_ = true;
 		hasUnsavedChanges_ = true;
+	}
+
+	const bool isUsingGuizmo = ImGuizmo::IsUsing();
+	if (isUsingGuizmo && !guizmoWasUsing_) {
+		guizmoBeforeEdit_ = beforeGuizmoEdit;
+		guizmoStartTransform_ = startTransform;
+		guizmoTargetIndex_ = selectedObjectIndex_;
+		guizmoTargetIsPrimitive_ = selectedIsPrimitive_;
+		guizmoWasUsing_ = true;
+	} else if (!isUsingGuizmo) {
+		PushGuizmoUndoIfNeeded();
 	}
 #else
 	(void)viewport;
