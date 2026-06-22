@@ -556,10 +556,6 @@ void Primitive::Initialize(PrimitiveName name, uint32_t slices) {
 	textureIndex_ = TextureManager::GetInstance()->GetTextureIndexByfilePath(texturePath);
 
 	isUseSetWorld = false;
-	if (editorRegistrationEnabled_) {
-		Hierarchy::GetInstance()->RegisterPrimitive(this);
-		
-	}
 }
 // 指定テクスチャでプリミティブを初期化
 void Primitive::Initialize(PrimitiveName name, const std::string& texturePath) { Initialize(name, texturePath, kDefaultSlices); }
@@ -614,10 +610,6 @@ void Primitive::Initialize(PrimitiveName name, const std::string& texturePath, u
 	textureIndex_ = TextureManager::GetInstance()->GetTextureIndexByfilePath(texturePath);
 
 	isUseSetWorld = false;
-	if (editorRegistrationEnabled_) {
-		Hierarchy::GetInstance()->RegisterPrimitive(this);
-
-	}
 }
 // 座標変換やマテリアル定数を更新
 void Primitive::Update() {

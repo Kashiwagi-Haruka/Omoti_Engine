@@ -107,16 +107,15 @@ void ImGuiManager::Begin() {
 #endif
 	EditorManager* editorManager = EditorManager::GetInstance();
 #ifdef USE_IMGUI
-	const bool isEditorLayoutEnabled = editorManager->HasRegisteredObjects();
+
+	constexpr bool isEditorLayoutEnabled = true;
 	if (dxCommon_) {
 		dxCommon_->SetEditorLayoutEnabled(isEditorLayoutEnabled);
 	}
 	prevEditorLayoutEnabled_ = isEditorLayoutEnabled;
 #endif
 	editorManager->DrawObjectEditors();
-	if (editorManager->HasRegisteredObjects()) {
-		editorManager->DrawAssetWindow();
-	}
+	editorManager->DrawAssetWindow();
 }
 
 void ImGuiManager::End() {
