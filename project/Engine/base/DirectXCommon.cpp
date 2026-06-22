@@ -2,6 +2,9 @@
 #include "DirectXCommon.h"
 
 #include "Engine/Logger/Logger.h"
+#ifdef USE_IMGUI
+#include "Engine/Editor/EditorTool/Hierarchy/Hierarchy.h"
+#endif
 #include "ParticleManager.h"
 #include "SrvManager/SrvManager.h"
 #include "TextureManager.h"
@@ -763,6 +766,16 @@ void DirectXCommon::DrawSceneTextureToBackBuffer() {
 	commandList_->SetPipelineState(copyPipelineState_.Get());
 	commandList_->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 	commandList_->SetGraphicsRootDescriptorTable(0, sceneSrvHandleGPU_);
+	if (postEffectParameterMappedData_) {
+		float effectiveVignetteStrength = vignetteStrength_;
+#ifdef USE_IMGUI
+		const Hierarchy* hierarchy = Hierarchy::GetInstance();
+		if (editorLayoutEnabled_ && hierarchy && !hierarchy->IsPlayMode()) {
+			effectiveVignetteStrength = 0.0f;
+		}
+#endif
+		postEffectParameterMappedData_->vignetteStrength = effectiveVignetteStrength;
+	}
 	commandList_->SetGraphicsRootConstantBufferView(1, postEffectParameterResource_->GetGPUVirtualAddress());
 	commandList_->DrawInstanced(3, 1, 0, 0);
 	commandList_->RSSetViewports(1, &viewport_);
