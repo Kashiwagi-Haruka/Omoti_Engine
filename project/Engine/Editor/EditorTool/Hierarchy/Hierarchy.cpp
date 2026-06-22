@@ -769,6 +769,14 @@ void Hierarchy::SetPlayMode(bool isPlaying) {
 void Hierarchy::DrawEditorGridLines() {
 #ifdef USE_IMGUI
 	DrawCameraBillboards();
+	Object3dCommon* object3dCommon = Object3dCommon::GetInstance();
+	if (object3dCommon) {
+		const bool hasEditorOwnedObject = std::any_of(editorOwnedObjects_.begin(), editorOwnedObjects_.end(), [](const auto& object) { return object != nullptr; });
+		const bool hasEditorOwnedPrimitive = std::any_of(editorOwnedPrimitives_.begin(), editorOwnedPrimitives_.end(), [](const auto& primitive) { return primitive != nullptr; });
+		if (hasEditorOwnedObject || hasEditorOwnedPrimitive) {
+			object3dCommon->DrawCommon();
+		}
+	}
 	for (const auto& object : editorOwnedObjects_) {
 		if (object) {
 			object->Update();
