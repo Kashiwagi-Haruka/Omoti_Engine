@@ -853,16 +853,41 @@ void Hierarchy::DrawSelectedObjectGuizmo(const ImGuiViewport* viewport, float co
 	const EditorSnapshot beforeGuizmoEdit = CreateCurrentSnapshot();
 	const Transform startTransform = transform;
 
-	ImGuizmo::OPERATION operation = ImGuizmo::TRANSLATE;
-	if (ImGui::IsKeyDown(ImGuiKey_E)) {
-		operation = ImGuizmo::ROTATE;
-	} else if (ImGui::IsKeyDown(ImGuiKey_R)) {
-		operation = ImGuizmo::SCALE;
-	} else if (ImGui::IsKeyDown(ImGuiKey_W)) {
-		operation = ImGuizmo::TRANSLATE;
+	if (ImGui::IsKeyPressed(ImGuiKey_W, false)) {
+		currentGuizmoOperation_ = 0;
+	} else if (ImGui::IsKeyPressed(ImGuiKey_E, false)) {
+		currentGuizmoOperation_ = 1;
+	} else if (ImGui::IsKeyPressed(ImGuiKey_R, false)) {
+		currentGuizmoOperation_ = 2;
 	}
 
-	if (ImGuizmo::Manipulate(&camera->GetViewMatrix().m[0][0], &camera->GetProjectionMatrix().m[0][0], operation, ImGuizmo::WORLD, &worldMatrix.m[0][0])) {
+	ImGuizmo::OPERATION operation = ImGuizmo::TRANSLATE;
+	if (currentGuizmoOperation_ == 1) {
+		operation = ImGuizmo::ROTATE;
+	} else if (currentGuizmoOperation_ == 2) {
+		operation = ImGuizmo::SCALE;
+	}
+
+	const ImVec2 operationWindowPos{scenePosX + 12.0f, scenePosY + 12.0f};
+	ImGui::SetNextWindowPos(operationWindowPos, ImGuiCond_Always);
+	ImGui::SetNextWindowBgAlpha(0.65f);
+	if (ImGui::Begin("##GuizmoOperation", nullptr, ImGuiWindowFlags_NoDecoration | ImGuiWindowFlags_AlwaysAutoResize | ImGuiWindowFlags_NoSavedSettings | ImGuiWindowFlags_NoNav)) {
+		if (ImGui::RadioButton("Move (W)", currentGuizmoOperation_ == 0)) {
+			currentGuizmoOperation_ = 0;
+		}
+		ImGui::SameLine();
+		if (ImGui::RadioButton("Rotate (E)", currentGuizmoOperation_ == 1)) {
+			currentGuizmoOperation_ = 1;
+		}
+		ImGui::SameLine();
+		if (ImGui::RadioButton("Scale (R)", currentGuizmoOperation_ == 2)) {
+			currentGuizmoOperation_ = 2;
+		}
+	}
+	ImGui::End();
+
+	const ImGuizmo::MODE gizmoMode = operation == ImGuizmo::TRANSLATE ? ImGuizmo::WORLD : ImGuizmo::LOCAL;
+	if (ImGuizmo::Manipulate(&camera->GetViewMatrix().m[0][0], &camera->GetProjectionMatrix().m[0][0], operation, gizmoMode, &worldMatrix.m[0][0])) {
 		float translation[3]{};
 		float rotationDegrees[3]{};
 		float scale[3]{};

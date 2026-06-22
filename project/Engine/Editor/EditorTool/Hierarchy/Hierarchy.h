@@ -82,6 +82,7 @@ private:
 	size_t guizmoTargetIndex_ = 0;
 	bool guizmoTargetIsPrimitive_ = false;
 	bool guizmoWasUsing_ = false;
+	int currentGuizmoOperation_ = 0;
 	EditorSnapshot loadedSnapshot_{};
 	bool hasLoadedSnapshot_ = false;
 	std::string loadedSnapshotFilePath_;
