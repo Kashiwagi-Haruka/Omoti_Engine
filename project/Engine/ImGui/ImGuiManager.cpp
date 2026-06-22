@@ -8,6 +8,7 @@
 #include "externals/imgui/imgui_impl_win32.h"
 #endif
 #include "DirectXCommon.h"
+#include "Input.h"
 #include "TextureManager.h"
 #include "SrvManager/SrvManager.h"
 #include "WinApp.h"
@@ -111,6 +112,10 @@ void ImGuiManager::Begin() {
 	constexpr bool isEditorLayoutEnabled = true;
 	if (dxCommon_) {
 		dxCommon_->SetEditorLayoutEnabled(isEditorLayoutEnabled);
+	}
+	if (isEditorLayoutEnabled) {
+		Input::GetInstance()->SetIsCursorStability(false);
+		Input::GetInstance()->SetIsCursorVisible(true);
 	}
 	prevEditorLayoutEnabled_ = isEditorLayoutEnabled;
 #endif
