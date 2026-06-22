@@ -15,9 +15,9 @@
 #include "Primitive/Primitive.h"
 #include "Sprite/SpriteCommon.h"
 #ifdef USE_IMGUI
-#include "externals/ImGuizmo/ImGuizmo.h"
 #include "externals/imgui/imgui.h"
 #include "externals/imgui/imgui_internal.h"
+#include "externals/ImGuizmo/ImGuizmo.h"
 #endif
 
 #include <algorithm>
