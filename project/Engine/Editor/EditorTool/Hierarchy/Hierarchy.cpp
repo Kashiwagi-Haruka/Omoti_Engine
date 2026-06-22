@@ -62,7 +62,7 @@ void Hierarchy::Finalize() {
 }
 bool Hierarchy::IsEditorPreviewActive() const {
 #ifdef USE_IMGUI
-	return HasRegisteredObjects() && !isPlaying_;
+	return !isPlaying_;
 #else
 	return false;
 #endif
