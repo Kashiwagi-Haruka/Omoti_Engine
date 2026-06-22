@@ -768,13 +768,16 @@ void DirectXCommon::DrawSceneTextureToBackBuffer() {
 	commandList_->SetGraphicsRootDescriptorTable(0, sceneSrvHandleGPU_);
 	if (postEffectParameterMappedData_) {
 		float effectiveVignetteStrength = vignetteStrength_;
+		int effectiveBoxFilterKernelSize = boxFilterKernelSize_;
 #ifdef USE_IMGUI
 		const Hierarchy* hierarchy = Hierarchy::GetInstance();
 		if (editorLayoutEnabled_ && hierarchy && !hierarchy->IsPlayMode()) {
 			effectiveVignetteStrength = 0.0f;
+			effectiveBoxFilterKernelSize = 1;
 		}
 #endif
 		postEffectParameterMappedData_->vignetteStrength = effectiveVignetteStrength;
+		postEffectParameterMappedData_->boxFilterKernelSize = static_cast<float>(effectiveBoxFilterKernelSize);
 	}
 	commandList_->SetGraphicsRootConstantBufferView(1, postEffectParameterResource_->GetGPUVirtualAddress());
 	commandList_->DrawInstanced(3, 1, 0, 0);
