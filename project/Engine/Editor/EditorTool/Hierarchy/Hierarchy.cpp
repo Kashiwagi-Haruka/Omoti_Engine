@@ -792,6 +792,9 @@ void Hierarchy::DrawSelectedObjectGuizmo(const ImGuiViewport* viewport, float co
 		return;
 	}
 
+	(void)contentStartY;
+	(void)availableHeight;
+
 	Camera* camera = Object3dCommon::GetInstance()->GetDefaultCamera();
 	if (!camera) {
 		return;
@@ -801,11 +804,22 @@ void Hierarchy::DrawSelectedObjectGuizmo(const ImGuiViewport* viewport, float co
 	ImGuizmo::SetOrthographic(false);
 	ImGuizmo::SetDrawlist(ImGui::GetForegroundDrawList(const_cast<ImGuiViewport*>(viewport)));
 
-	const float scenePosX = viewport->WorkPos.x + leftPanelWidth;
-	const float scenePosY = contentStartY;
-	const float sceneWidth = std::max(1.0f, viewport->WorkSize.x - leftPanelWidth - rightPanelWidth);
-	const float sceneHeight = std::max(1.0f, availableHeight);
-	ImGuizmo::SetRect(scenePosX, scenePosY, sceneWidth, sceneHeight);
+	constexpr float kRenderedToolbarHeight = 44.0f;
+	constexpr float kGameAspect = 16.0f / 9.0f;
+	const float availableWidth = std::max(1.0f, viewport->WorkSize.x - leftPanelWidth - rightPanelWidth);
+	const float renderedAvailableHeight = std::max(1.0f, viewport->WorkSize.y - kRenderedToolbarHeight);
+
+	float sceneWidth = availableWidth;
+	float sceneHeight = sceneWidth / kGameAspect;
+	if (sceneHeight > renderedAvailableHeight) {
+		sceneHeight = renderedAvailableHeight;
+		sceneWidth = sceneHeight * kGameAspect;
+	}
+
+	const float scenePosX = viewport->WorkPos.x + leftPanelWidth + (availableWidth - sceneWidth) * 0.5f;
+	const float scenePosY = viewport->WorkPos.y + kRenderedToolbarHeight;
+	ImGuizmo::SetRect(scenePosX, scenePosY, std::max(1.0f, sceneWidth), std::max(1.0f, sceneHeight));
+
 
 	Transform& transform = selectedIsPrimitive_ ? primitiveEditorTransforms_[selectedObjectIndex_] : editorTransforms_[selectedObjectIndex_];
 	Matrix4x4 worldMatrix = Function::MakeAffineMatrix(transform.scale, transform.rotate, transform.translate);
