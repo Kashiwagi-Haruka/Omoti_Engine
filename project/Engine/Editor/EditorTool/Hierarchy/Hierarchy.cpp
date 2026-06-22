@@ -288,14 +288,14 @@ void Hierarchy::AddPrimitiveAssetToHierarchy(const std::string& primitiveName) {
 }
 
 void Hierarchy::AddObject3dAssetToHierarchy(const std::string& modelName) {
-	Object3d* rawObject = CreateEditorOwnedObject(editorOwnedObjects_, kDefaultObjectModelName, "");
+	Object3d* rawObject = CreateEditorOwnedObject(editorOwnedObjects_, modelName.empty() ? kDefaultObjectModelName : modelName, "");
 	RegisterObject3d(rawObject);
 	const size_t index = editorTransforms_.empty() ? 0 : editorTransforms_.size() - 1;
 	if (index < objectNames_.size()) {
 		objectNames_[index] = modelName;
 	}
 	if (index < objectModelNames_.size()) {
-		objectModelNames_[index] = kDefaultObjectModelName;
+		objectModelNames_[index] = modelName.empty() ? kDefaultObjectModelName : modelName;
 	}
 	selectedObjectIndex_ = index;
 	selectedIsPrimitive_ = false;

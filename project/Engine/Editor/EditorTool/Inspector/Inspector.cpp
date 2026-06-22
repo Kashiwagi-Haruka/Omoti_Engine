@@ -52,11 +52,11 @@ bool Inspector::DrawObjectInspector(
 	std::array<char, 128> modelBuffer{};
 	const size_t modelCopyLength = std::min(modelBuffer.size() - 1, modelName.size());
 	std::copy_n(modelName.begin(), modelCopyLength, modelBuffer.begin());
-	if (ImGui::InputText(("Model##object_" + std::to_string(index)).c_str(), modelBuffer.data(), modelBuffer.size(), ImGuiInputTextFlags_EnterReturnsTrue)) {
+	if (ImGui::InputText(("Model##object_" + std::to_string(index)).c_str(), modelBuffer.data(), modelBuffer.size())) {
 		modelName = modelBuffer.data();
 		modelChanged = true;
 	}
-	ImGui::TextUnformatted("Press Enter to apply model name (without extension).");
+	ImGui::TextUnformatted("Model name is applied immediately (without extension).");
 	transformChanged |= DrawTransformEditor("object_" + std::to_string(index), transform);
 	materialChanged |= DrawMaterialEditor("object_" + std::to_string(index), material);
 	return transformChanged || materialChanged || nameChanged || modelChanged;
@@ -74,6 +74,7 @@ bool Inspector::DrawObjectInspector(
 	return false;
 #endif
 }
+
 
 bool Inspector::DrawPrimitiveInspector(
     size_t index, std::string& primitiveName, Transform& transform, InspectorMaterial& material, bool isPlaying, bool& transformChanged, bool& materialChanged, bool& nameChanged) {
