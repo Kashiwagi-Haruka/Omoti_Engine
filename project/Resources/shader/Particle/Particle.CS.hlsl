@@ -62,11 +62,29 @@ void main(uint3 DTid : SV_DispatchThreadID)
                 planarDirection = float2(1.0f, 0.0f);
             }
             planarDirection = normalize(planarDirection);
-            float3 randomDirection = float3(planarDirection.x, planarDirection.y, 0.0f);
+            float3 emissionRight = gEmitter.emissionRight;
+            float3 emissionUp = gEmitter.emissionUp;
+            if (length(emissionRight) < 0.0001f)
+            {
+                emissionRight = float3(1.0f, 0.0f, 0.0f);
+            }
+            else
+            {
+                emissionRight = normalize(emissionRight);
+            }
+            if (length(emissionUp) < 0.0001f)
+            {
+                emissionUp = float3(0.0f, 1.0f, 0.0f);
+            }
+            else
+            {
+                emissionUp = normalize(emissionUp);
+            }
+            float3 randomDirection = normalize((emissionRight * planarDirection.x) + (emissionUp * planarDirection.y));
 
             gParticles[emitIndex].scale = gEmitter.particleScale;
             gParticles[emitIndex].translate = gEmitter.translate + randomDirection * randomLength;
-            gParticles[emitIndex].velocity = randomDirection;
+            gParticles[emitIndex].velocity = randomDirection * gEmitter.emissionSpeed;
             gParticles[emitIndex].lifeTime = gEmitter.lifeTime;
             gParticles[emitIndex].currentTime = 0.0f;
             gParticles[emitIndex].beforeColor = gEmitter.beforeColor;

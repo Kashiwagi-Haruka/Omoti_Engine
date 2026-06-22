@@ -15,6 +15,6 @@ class PlayCommand {
 	static bool GetSPECIAL_ATTACK(); // 必殺攻撃
 	static bool GetDESIDE();          // 決定
 	static bool GetESCAPE();          // キャンセル
-
+	static bool GetCURSOR_DISPLAY();  // カーソル表示
 
 };

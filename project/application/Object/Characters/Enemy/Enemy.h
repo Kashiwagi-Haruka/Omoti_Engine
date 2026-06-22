@@ -14,7 +14,7 @@ class Object3d;
 
 class Enemy {
 
-	int HP = 10;
+	int HP = 40;
 	BaseParameter baseParameter_{10.0f, 0.0f, 10.0f};
 	Parameter parameter_{};
 	bool isAlive = true;
@@ -71,7 +71,12 @@ public:
 	int GetHP() { return HP; }
 	bool GetIsAlive() { return isAlive; }
 	bool IsDying() const { return isDying_; }
-	void SetCamera(Camera* camera) { camera_ = camera; }
+	void SetCamera(Camera* camera) {
+		camera_ = camera;
+		if (adhesion_) {
+			adhesion_->SetCamera(camera_);
+		}
+	}
 	Vector3 GetPosition() { return transform_.translate; }
 	Vector3 GetScale() { return transform_.scale; }
 	void SetPosition(const Vector3& position) { transform_.translate = position; }
@@ -90,7 +95,7 @@ public:
 	void SetLastSkillDamageId(int skillDamageId) { lastSkillDamageId_ = skillDamageId; }
 	bool IsAttacking() const { return enemyAttack_ && enemyAttack_->IsAttacking(); }
 	bool IsStunned() const { return isStun_; }
-	void AddAdhesionAttribute(Attribute attribute);
+	bool AddAdhesionAttribute(Attribute attribute);
 	const BaseParameter& GetBaseParameter() const { return baseParameter_; }
 	const Parameter& GetParameter() const { return parameter_; }
 };

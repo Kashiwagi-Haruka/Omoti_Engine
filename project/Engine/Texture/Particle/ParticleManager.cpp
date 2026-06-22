@@ -228,8 +228,8 @@ void ParticleManager::Draw(const std::string& name) {
 }
 
 void ParticleManager::Emit(
-    const std::string& name, const Transform& transform, uint32_t count, const Vector3& accel, const AABB& area, float life, const Vector4& beforeColor, const Vector4& afterColor,
-    float emissionAngle) {
+    const std::string& name, const Transform& transform, uint32_t count, const Vector3& accel, const AABB& area, float life, const Vector4& beforeColor, const Vector4& afterColor, float emissionAngle,
+    float emissionSpeed) {
 	(void)name;
 	if (!isParticleInitialized_) {
 		InitializeParticlesByCompute();
@@ -248,6 +248,14 @@ void ParticleManager::Emit(
 	emitterData_->beforeColor = beforeColor;
 	emitterData_->afterColor = afterColor;
 	emitterData_->emissionAngle = std::max(emissionAngle, 0.0f);
+	emitterData_->emissionSpeed = std::max(emissionSpeed, 0.0f);
+	emitterData_->emissionRight = {1.0f, 0.0f, 0.0f};
+	emitterData_->emissionUp = {0.0f, 1.0f, 0.0f};
+	if (camera_) {
+		Matrix4x4 billboardMatrix = Function::Inverse(camera_->GetViewMatrix());
+		emitterData_->emissionRight = {billboardMatrix.m[0][0], billboardMatrix.m[0][1], billboardMatrix.m[0][2]};
+		emitterData_->emissionUp = {billboardMatrix.m[1][0], billboardMatrix.m[1][1], billboardMatrix.m[1][2]};
+	}
 	emitterData_->emit = 1;
 
 	perFrameData_->time = 0.0f;

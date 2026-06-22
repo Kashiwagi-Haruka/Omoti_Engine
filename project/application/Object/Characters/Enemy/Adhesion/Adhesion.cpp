@@ -2,6 +2,7 @@
 #include "Adhesion.h"
 #include "Camera.h"
 #include "Engine/base/GameBase.h"
+#include "Function.h"
 #include "Object3d/Object3dCommon.h"
 #include "TextureManager.h"
 namespace {
@@ -106,7 +107,6 @@ int Adhesion::ResolveReactionFrameIndex(Attribute appliedAttribute, Attribute pr
 
 	return 0;
 }
-
 void Adhesion::RefreshAttributeTexture() {
 	if (currentAttribute_ == Attribute::None) {
 		return;
@@ -131,6 +131,27 @@ void Adhesion::RefreshReactionTexture(Attribute appliedAttribute, Attribute prev
 	AttributeReactionPlane_->SetColor({1.0f, 1.0f, 1.0f, 1.0f});
 }
 
+void Adhesion::ApplyBillboardTransform(Primitive* primitive, const Transform& transform) const {
+	if (!primitive) {
+		return;
+	}
+
+	if (!camera_) {
+		primitive->SetTransform(transform);
+		return;
+	}
+
+	Matrix4x4 billboardMatrix = Function::Inverse(camera_->GetViewMatrix());
+	billboardMatrix.m[3][0] = 0.0f;
+	billboardMatrix.m[3][1] = 0.0f;
+	billboardMatrix.m[3][2] = 0.0f;
+
+	const Matrix4x4 scaleMatrix = Function::MakeScaleMatrix(transform.scale);
+	const Matrix4x4 translateMatrix = Function::MakeTranslateMatrix(transform.translate);
+	const Matrix4x4 worldMatrix = Function::Multiply(Function::Multiply(scaleMatrix, billboardMatrix), translateMatrix);
+	primitive->SetWorldMatrix(worldMatrix);
+}
+
 void Adhesion::RefreshComparisonTransform() {
 	if (!hasBaseTransform_) {
 		return;
@@ -140,18 +161,18 @@ void Adhesion::RefreshComparisonTransform() {
 	leftTransform.translate.x -= 0.7f;
 	leftTransform.translate.y += 1.75f;
 	leftTransform.scale = {0.6f, 0.6f, 0.6f};
-	preAttributePlane_->SetTransform(leftTransform);
+	ApplyBillboardTransform(preAttributePlane_.get(), leftTransform);
 
 	Transform reactionTransform = baseTransform_;
 	reactionTransform.translate.y += 1.75f;
 	reactionTransform.scale = {0.6f, 0.6f, 0.6f};
-	AttributeReactionPlane_->SetTransform(reactionTransform);
+	ApplyBillboardTransform(AttributeReactionPlane_.get(), reactionTransform);
 
 	Transform rightTransform = baseTransform_;
 	rightTransform.translate.x += 0.7f;
 	rightTransform.translate.y += 1.75f;
 	rightTransform.scale = {0.6f, 0.6f, 0.6f};
-	AttributePlane_->SetTransform(rightTransform);
+	ApplyBillboardTransform(AttributePlane_.get(), rightTransform);
 }
 
 void Adhesion::SetTransform(const Transform& transform) {
@@ -164,16 +185,23 @@ void Adhesion::SetTransform(const Transform& transform) {
 	Transform uiTransform = transform;
 	uiTransform.translate.y += 1.75f;
 	uiTransform.scale = {0.8f, 0.8f, 0.8f};
-	AttributePlane_->SetTransform(uiTransform);
+	ApplyBillboardTransform(AttributePlane_.get(), uiTransform);
 }
 
-void Adhesion::AddAttribute(Attribute attribute) {
+void Adhesion::SetCamera(Camera* camera) {
+	camera_ = camera;
+	preAttributePlane_->SetCamera(camera_);
+	AttributePlane_->SetCamera(camera_);
+	AttributeReactionPlane_->SetCamera(camera_);
+}
+
+bool Adhesion::AddAttribute(Attribute attribute) {
 	if (attribute == Attribute::None || attribute == Attribute::MAXATTRIBUTE) {
-		return;
+		return false;
 	}
 	const uint32_t bit = (1u << static_cast<uint32_t>(attribute));
 	if (currentAttribute_ == attribute && (attributeBitMask_ & bit) != 0) {
-		return;
+		return false;
 	}
 	const Attribute previousAttribute = currentAttribute_;
 	const bool hadPreviousAttribute = (previousAttribute != Attribute::None) && (previousAttribute != attribute);
@@ -189,17 +217,19 @@ void Adhesion::AddAttribute(Attribute attribute) {
 		isComparisonDisplayActive_ = true;
 		comparisonDisplayTimer_ = kReactionDisplayDuration;
 		RefreshComparisonTransform();
-		return;
+		return true;
 	}
 
 	isComparisonDisplayActive_ = false;
 	comparisonDisplayTimer_ = 0.0f;
 	RefreshAttributeTexture();
+	return false;
 }
 
 void Adhesion::Update() {
 	if (isComparisonDisplayActive_) {
 		comparisonDisplayTimer_ -= GameBase::GetInstance()->GetDeltaTime();
+		RefreshComparisonTransform();
 		AttributeReactionPlane_->Update();
 		if (comparisonDisplayTimer_ <= 0.0f) {
 			isComparisonDisplayActive_ = false;
@@ -220,6 +250,7 @@ void Adhesion::Update() {
 		alpha = std::min(alpha, 1.0f);
 		AttributePlane_->SetColor({1.0f, 1.0f, 1.0f, alpha});
 	}
+	SetTransform(baseTransform_);
 	AttributePlane_->Update();
 }
 

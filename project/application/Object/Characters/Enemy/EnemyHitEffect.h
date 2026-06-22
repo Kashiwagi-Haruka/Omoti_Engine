@@ -1,23 +1,44 @@
 #pragma once
-#include <memory>
 #include "Object3d/Object3d.h"
-#include <vector>
-#include "Transform.h"
+#include "ParticleEmitter.h"
 #include "Primitive/Primitive.h"
+#include "Transform.h"
 #include "Vector3.h"
+#include <array>
+#include <memory>
+#include <string>
 class EnemyHitEffect {
 
+	struct HitBillboard {
+		std::unique_ptr<Primitive> primitive;
+		Transform transform;
+		float randomAngle;
+		float baseScale;
+	};
+
+	struct IceShard {
+		std::unique_ptr<Object3d> object;
+		Transform transform;
+		Vector3 velocity;
+		Vector3 angularVelocity;
+		float baseScale;
+	};
+
+	static constexpr int kIceShardCount = 10;
+	static constexpr int kHitBillboardCount = 6;
+
 	std::unique_ptr<Object3d> hitEffect_;
-	std::unique_ptr<Primitive> hitPrimitive_;
-	std::unique_ptr<Primitive> hitPrimitiveInner_;
+	std::unique_ptr<ParticleEmitter> hitParticleEmitter_;
+	std::array<IceShard, kIceShardCount> iceShards_;
+	std::array<HitBillboard, kHitBillboardCount> hitBillboards_;
+	std::string hitParticleGroupName_;
 	Transform hitTransform_;
-	Transform hitPrimitiveTransform_;
-	Transform hitPrimitiveInnerTransform_;
+	Transform hitParticleTransform_;
 	Camera* camera_ = nullptr;
 	Vector3 enemyPosition_;
 	bool isActive_ = false;
 	float activeTimer_ = 0.0f;
-	float activeDuration_ = 0.2f;
+	float activeDuration_ = 0.35f;
 
 public:
 	void Initialize();
@@ -27,6 +48,4 @@ public:
 	bool IsActive() const { return isActive_; }
 	void Update();
 	void Draw();
-
-
 };

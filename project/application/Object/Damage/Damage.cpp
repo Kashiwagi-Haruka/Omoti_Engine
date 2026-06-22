@@ -65,6 +65,7 @@ void Damage::Update() {
 
 	const int digitCount = static_cast<int>(std::min(digits_.size(), digitPrimitives_.size()));
 	const float totalWidth = (digitCount - 1) * digitSpacing_;
+	const Matrix4x4 baseTranslateMatrix = Function::MakeTranslateMatrix(transform_.translate);
 	for (int i = 0; i < digitCount; ++i) {
 		Primitive* primitive = digitPrimitives_[i].get();
 		primitive->SetCamera(camera_);
@@ -95,9 +96,11 @@ void Damage::Update() {
 		}
 		primitive->SetUvTransform({0.1f, 1.0f, 1.0f}, {0.0f, 0.0f, 0.0f}, {0.1f * static_cast<float>(digits_[i]), 0.0f, 0.0f});
 
-		Transform digitTransform = transform_;
-		digitTransform.translate.x += (static_cast<float>(i) * digitSpacing_) - (totalWidth * 0.5f);
-		const Matrix4x4 worldMatrix = Function::Multiply(billboardMatrix, Function::MakeAffineMatrix(digitTransform.scale, digitTransform.rotate, digitTransform.translate));
+		const float localXOffset = (static_cast<float>(i) * digitSpacing_) - (totalWidth * 0.5f);
+		const Matrix4x4 scaleMatrix = Function::MakeScaleMatrix(transform_.scale);
+		const Matrix4x4 localOffsetMatrix = Function::MakeTranslateMatrix(localXOffset, 0.0f, 0.0f);
+		const Matrix4x4 localBillboardMatrix = Function::Multiply(scaleMatrix, Function::Multiply(localOffsetMatrix, billboardMatrix));
+		const Matrix4x4 worldMatrix = Function::Multiply(localBillboardMatrix, baseTranslateMatrix);
 		primitive->SetWorldMatrix(worldMatrix);
 		primitive->UpdateCameraMatrices();
 	}

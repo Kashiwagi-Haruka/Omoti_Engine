@@ -39,7 +39,7 @@ void HPBarUI::Initialize() {
 	playerHpText.Initialize(fontHandle_);
 	playerHpText.SetString(U"HP");
 	playerHpText.SetPosition({playerHPFlameSPData.translate.x,playerHPFlameSPData.translate.y+playerHPFlameSPData.size.y * 0.5f});
-	playerHpText.SetColor({1.0f, 1.0f, 1.0f, 1.0f});
+	playerHpText.SetColor({0.0f, 0.0f, 0.2f, 1.0f});
 	playerHpText.SetAlign(TextAlign::Center);
 	playerHpText.UpdateLayout(false);
 }

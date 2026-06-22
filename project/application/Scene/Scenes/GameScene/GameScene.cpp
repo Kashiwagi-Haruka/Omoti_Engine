@@ -16,6 +16,7 @@
 #include "SceneManager.h"
 #include "Sprite/SpriteCommon.h"
 #include "TextureManager.h"
+#include "WinApp.h"
 #include <algorithm>
 #include <cmath>
 #include <filesystem>
@@ -89,6 +90,8 @@ void SaveCharacterTuningJson(const std::string& characterName, const CharacterTu
     });
 }
 
+constexpr float kLockOnTargetMaxAngle = std::numbers::pi_v<float> / 4.0f;
+
 bool TryFindNearestEnemyInPlayerFront(Player& player, EnemyManager& enemyManager, Vector3* outEnemyPos) {
 	if (!outEnemyPos) {
 		return false;
@@ -97,6 +100,7 @@ bool TryFindNearestEnemyInPlayerFront(Player& player, EnemyManager& enemyManager
 	const Vector3 playerPos = player.GetPosition();
 	const float playerYaw = player.GetRotate().y;
 	const Vector3 playerForward = {std::sinf(playerYaw), 0.0f, std::cosf(playerYaw)};
+	const float minForwardDot = std::cos(kLockOnTargetMaxAngle);
 
 	bool found = false;
 	float nearestDistanceSq = 0.0f;
@@ -115,7 +119,8 @@ bool TryFindNearestEnemyInPlayerFront(Player& player, EnemyManager& enemyManager
 		}
 
 		const Vector3 directionToEnemy = Function::Normalize(toEnemy);
-		if (Function::Dot(playerForward, directionToEnemy) <= 0.0f) {
+		const float forwardDot = Function::Dot(playerForward, directionToEnemy);
+		if (forwardDot < minForwardDot) {
 			continue;
 		}
 
@@ -230,6 +235,14 @@ void GameScene::Initialize() {
 	vinettColor_ = {255, 255, 255};
 	vinettStrength_ = 10.0f;
 	Object3dCommon::GetInstance()->SetVignetteStrength(vinettStrength_);
+	hitVinettTextureHandle_ = TextureManager::GetInstance()->GetTextureIndexByfilePath("Resources/2d/Effect/HitVinett.png");
+	hitVinettSprite_ = std::make_unique<Sprite>();
+	hitVinettSprite_->Initialize(hitVinettTextureHandle_);
+	hitVinettSprite_->SetPosition({0.0f, 0.0f});
+	hitVinettSprite_->SetScale({static_cast<float>(WinApp::kClientWidth), static_cast<float>(WinApp::kClientHeight)});
+	hitVinettSprite_->SetColor({1.0f, 1.0f, 1.0f, 0.0f});
+	hitVinettSprite_->Update();
+	hitVinettTimer_ = 0.0f;
 	introBlurStartKernelSize_ = 15.0f;
 	introBlurDelayTimer_ = 0.0f;
 	Object3dCommon::GetInstance()->SetBoxFilterKernelSize(static_cast<int>(introBlurStartKernelSize_));
@@ -495,8 +508,12 @@ void GameScene::Update() {
 		// ===== プレイヤーと敵の当たり判定 =====
 		Boss* activeBoss = (rasen_->IsBossActive() && boss_->GetIsAlive()) ? boss_.get() : nullptr;
 		Vector3 hitEnemyPos{};
+		bool didPlayerAttackHitEnemy = false;
 		const bool didNormalAttackHitEnemy =
-		    collisionManager_.HandleGameSceneCollisions(*player, *rasen_->GetEnemyManager(), *rasen_->GetExpCubeManager(), *rasen_->GetHouse(), activeBoss, &hitEnemyPos);
+		    collisionManager_.HandleGameSceneCollisions(*player, *rasen_->GetEnemyManager(), *rasen_->GetExpCubeManager(), *rasen_->GetHouse(), activeBoss, &hitEnemyPos, &didPlayerAttackHitEnemy);
+		if (didPlayerAttackHitEnemy) {
+			hitVinettTimer_ = kHitVinettDuration_;
+		}
 		if (didNormalAttackHitEnemy) {
 			Vector3 lockOnTargetPos = hitEnemyPos;
 			if (TryFindNearestEnemyInPlayerFront(*player, *rasen_->GetEnemyManager(), &lockOnTargetPos)) {
@@ -509,6 +526,14 @@ void GameScene::Update() {
 			cameraController->StartShake(0.75f);
 			damageGrayscaleTimer_ = kDamageGrayscaleDuration_;
 		}
+	}
+	if (hitVinettTimer_ > 0.0f) {
+		hitVinettTimer_ = std::max(0.0f, hitVinettTimer_ - deltaTime);
+	}
+	if (hitVinettSprite_) {
+		const float alpha = (kHitVinettDuration_ > 0.0f) ? (hitVinettTimer_ / kHitVinettDuration_) : 0.0f;
+		hitVinettSprite_->SetColor({1.0f, 1.0f, 1.0f, alpha});
+		hitVinettSprite_->Update();
 	}
 	if (damageGrayscaleTimer_ > 0.0f) {
 		damageGrayscaleTimer_ -= GameBase::GetInstance()->GetDeltaTime();
@@ -572,6 +597,9 @@ void GameScene::Draw() {
 	}
 
 	SpriteCommon::GetInstance()->DrawCommon();
+	if (hitVinettTimer_ > 0.0f && hitVinettSprite_) {
+		hitVinettSprite_->Draw();
+	}
 	uimanager->Draw();
 	team_->DrawInGameMemberList();
 	pause->Draw();

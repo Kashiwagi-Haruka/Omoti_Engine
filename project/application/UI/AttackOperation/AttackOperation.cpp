@@ -1,92 +1,155 @@
+#define NOMINMAX
 #include "AttackOperation.h"
-#include "TextureManager.h"
+#include "PlayCommand/PlayCommand.h"
 #include "Sprite/Sprite.h"
+#include "TextureManager.h"
+#include "WinApp.h"
+#include "Input.h"
+#include <algorithm>
+
+namespace {
+constexpr Vector2 kOperationIconBaseSize{90.0f, 90.0f};
+constexpr float kPressedScaleRate = 1.15f;
+constexpr float kScaleReturnRate = 0.25f;
+constexpr Vector2 kKeyboardDisplaySize{100.0f, 40.0f};
+constexpr float kKeyboardDisplayBottomMargin = 5.0f;
+constexpr float kKeyboardDisplayIconOffsetY = 15.0f;
+} // namespace
 AttackOperation::AttackOperation() {
 	// スキルアイコンのテクスチャハンドルを取得
+	dashSPData_.sprite = std::make_unique<Sprite>();
 	jumpSPData_.sprite = std::make_unique<Sprite>();
-	skillIconSPData.sprite = std::make_unique<Sprite>();
-	normalAttackSPData.sprite = std::make_unique<Sprite>();
-	specialAttackSPData.sprite = std::make_unique<Sprite>();
-	keyboardSkillIconSPData.sprite = std::make_unique<Sprite>();
-	keyboardJumpSPData.sprite = std::make_unique<Sprite>();
-	keyboardNormalAttackSPData.sprite = std::make_unique<Sprite>();
-	keyboardSpecialAttackSPData.sprite = std::make_unique<Sprite>();
+	skillIconSPData_.sprite = std::make_unique<Sprite>();
+	normalAttackSPData_.sprite = std::make_unique<Sprite>();
+	specialAttackSPData_.sprite = std::make_unique<Sprite>();
+
+	keyboardDashSPData_.sprite = std::make_unique<Sprite>();
+	keyboardSkillIconSPData_.sprite = std::make_unique<Sprite>();
+	keyboardJumpSPData_.sprite = std::make_unique<Sprite>();
+	keyboardNormalAttackSPData_.sprite = std::make_unique<Sprite>();
+	keyboardSpecialAttackSPData_.sprite = std::make_unique<Sprite>();
 }
 void AttackOperation::Initialize() {
+	uint32_t dashHandle = TextureManager::GetInstance()->GetTextureIndexByfilePath("Resources/2d/AttackOperation/dash.png");
+	dashSPData_.sprite->Initialize(dashHandle);
+	dashSPData_.sprite->SetAnchorPoint({1.0f, 1.0f});
+	SetOperationSpriteBaseSize(dashSPData_, kOperationIconBaseSize);
 	// スキルアイコンの初期化
 	uint32_t skillHandle = TextureManager::GetInstance()->GetTextureIndexByfilePath("Resources/2d/AttackOperation/skill.png");
-	skillIconSPData.sprite->Initialize(skillHandle);
-	skillIconSPData.sprite->SetAnchorPoint({1.0f, 1.0f});
-	skillIconSPData.sprite->SetScale({64, 64});
-	uint32_t jumpHandle = TextureManager::GetInstance()->GetTextureIndexByfilePath("Resources/2d/AttackOperation/skill.png");
+	skillIconSPData_.sprite->Initialize(skillHandle);
+	skillIconSPData_.sprite->SetAnchorPoint({1.0f, 1.0f});
+	SetOperationSpriteBaseSize(skillIconSPData_, kOperationIconBaseSize);
+	uint32_t jumpHandle = TextureManager::GetInstance()->GetTextureIndexByfilePath("Resources/2d/AttackOperation/jump.png");
 	jumpSPData_.sprite->Initialize(jumpHandle);
 	jumpSPData_.sprite->SetAnchorPoint({1.0f, 1.0f});
-	jumpSPData_.sprite->SetScale({64, 64});
-	uint32_t normalAttackHandle = TextureManager::GetInstance()->GetTextureIndexByfilePath("Resources/2d/AttackOperation/skill.png");
-	normalAttackSPData.sprite->Initialize(normalAttackHandle);
-	normalAttackSPData.sprite->SetAnchorPoint({1.0f, 1.0f});
-	normalAttackSPData.sprite->SetScale({64, 64});
-	uint32_t specialAttackHandle = TextureManager::GetInstance()->GetTextureIndexByfilePath("Resources/2d/AttackOperation/skill.png");
-	specialAttackSPData.sprite->Initialize(specialAttackHandle);
-	specialAttackSPData.sprite->SetAnchorPoint({1.0f, 1.0f});
-	specialAttackSPData.sprite->SetScale({64, 64});
-	uint32_t keyboardHandle = TextureManager::GetInstance()->GetTextureIndexByfilePath("Resources/2d/white2x2.png");
-	keyboardSkillIconSPData.sprite->Initialize(keyboardHandle);
-	keyboardJumpSPData.sprite->Initialize(keyboardHandle);
-	keyboardNormalAttackSPData.sprite->Initialize(keyboardHandle);
-	keyboardSpecialAttackSPData.sprite->Initialize(keyboardHandle);
-}
-void AttackOperation::Update() {
-	skillIconSPData.translate = {1260.0f, 700.0f};
-	skillIconSPData.sprite->SetPosition(skillIconSPData.translate);
-	skillIconSPData.sprite->Update();
-	normalAttackSPData.translate = {skillIconSPData.translate.x - skillIconSPData.size.x - 20.0f, 700.0f};
-	normalAttackSPData.sprite->SetPosition(normalAttackSPData.translate);
-	normalAttackSPData.sprite->Update();
-	jumpSPData_.translate = {normalAttackSPData.translate.x - normalAttackSPData.size.x - 20.0f, 700.0f};
-	jumpSPData_.sprite->SetPosition(jumpSPData_.translate);
-	jumpSPData_.sprite->Update();
-	specialAttackSPData.translate = {skillIconSPData.translate.x, skillIconSPData.translate.y - skillIconSPData.size.y - 20.0f};
-	specialAttackSPData.sprite->SetPosition(specialAttackSPData.translate);
-	specialAttackSPData.sprite->Update();
+	SetOperationSpriteBaseSize(jumpSPData_, kOperationIconBaseSize);
+	uint32_t normalAttackHandle = TextureManager::GetInstance()->GetTextureIndexByfilePath("Resources/2d/AttackOperation/normalAttack.png");
+	normalAttackSPData_.sprite->Initialize(normalAttackHandle);
+	normalAttackSPData_.sprite->SetAnchorPoint({1.0f, 1.0f});
+	SetOperationSpriteBaseSize(normalAttackSPData_, kOperationIconBaseSize);
+	uint32_t specialAttackHandle = TextureManager::GetInstance()->GetTextureIndexByfilePath("Resources/2d/AttackOperation/special.png");
+	specialAttackSPData_.sprite->Initialize(specialAttackHandle);
+	specialAttackSPData_.sprite->SetAnchorPoint({1.0f, 1.0f});
+	SetOperationSpriteBaseSize(specialAttackSPData_, kOperationIconBaseSize);
 
-	keyboardSkillIconSPData.translate = {skillIconSPData.translate.x, skillIconSPData.translate.y+skillIconSPData.size.y-20.0f};
-	keyboardSkillIconSPData.sprite->SetPosition(keyboardSkillIconSPData.translate);
-	keyboardSkillIconSPData.sprite->Update();
-	keyboardJumpSPData.translate = {jumpSPData_.translate.x, jumpSPData_.translate.y+jumpSPData_.size.y-20.0f};
-	keyboardJumpSPData.sprite->SetPosition(keyboardJumpSPData.translate);
-	keyboardJumpSPData.sprite->Update();
-	keyboardNormalAttackSPData.translate = {normalAttackSPData.translate.x, normalAttackSPData.translate.y+normalAttackSPData.size.y-20.0f};
-	keyboardNormalAttackSPData.sprite->SetPosition(keyboardNormalAttackSPData.translate);
-	keyboardNormalAttackSPData.sprite->Update();
-	keyboardSpecialAttackSPData.translate = {specialAttackSPData.translate.x, specialAttackSPData.translate.y+specialAttackSPData.size.y-20.0f};
-	keyboardSpecialAttackSPData.sprite->SetPosition(keyboardSpecialAttackSPData.translate);
-	keyboardSpecialAttackSPData.sprite->Update();
+	uint32_t normalKeyHandle = TextureManager::GetInstance()->GetTextureIndexByfilePath("Resources/2d/AttackOperation/Keyboard/normalAttackMouse.png");
+	uint32_t dashKeyHandle = TextureManager::GetInstance()->GetTextureIndexByfilePath("Resources/2d/AttackOperation/Keyboard/dashMouse.png");
+	uint32_t jumpKeyHandle = TextureManager::GetInstance()->GetTextureIndexByfilePath("Resources/2d/AttackOperation/Keyboard/jumpKey.png");
+	uint32_t skillKeyHandle = TextureManager::GetInstance()->GetTextureIndexByfilePath("Resources/2d/AttackOperation/Keyboard/skillKey.png");
+	uint32_t specialKeyHandle = TextureManager::GetInstance()->GetTextureIndexByfilePath("Resources/2d/AttackOperation/Keyboard/specialKey.png");
+
+	keyboardDashSPData_.sprite->Initialize(dashKeyHandle);
+	keyboardSkillIconSPData_.sprite->Initialize(skillKeyHandle);
+	keyboardJumpSPData_.sprite->Initialize(jumpKeyHandle);
+	keyboardNormalAttackSPData_.sprite->Initialize(normalKeyHandle);
+	keyboardSpecialAttackSPData_.sprite->Initialize(specialKeyHandle);
+	keyboardDashSPData_.sprite->SetAnchorPoint({1.0f, 1.0f});
+	keyboardSkillIconSPData_.sprite->SetAnchorPoint({1.0f, 1.0f});
+	keyboardJumpSPData_.sprite->SetAnchorPoint({1.0f, 1.0f});
+	keyboardNormalAttackSPData_.sprite->SetAnchorPoint({1.0f, 1.0f});
+	keyboardSpecialAttackSPData_.sprite->SetAnchorPoint({1.0f, 1.0f});
+}
+
+void AttackOperation::Update() {
+	skillIconSPData_.translate = {1260.0f, 700.0f};
+	UpdateOperationSprite(skillIconSPData_, PlayCommand::GetSKILL_ATTACK());
+	normalAttackSPData_.translate = {skillIconSPData_.translate.x - skillIconSPData_.size.x - 20.0f, 700.0f};
+	UpdateOperationSprite(normalAttackSPData_, PlayCommand::GetNORMAL_ATTACK_PUSH());
+	jumpSPData_.translate = {normalAttackSPData_.translate.x - normalAttackSPData_.size.x - 20.0f, 700.0f};
+	UpdateOperationSprite(jumpSPData_, PlayCommand::GetJUMP());
+	specialAttackSPData_.translate = {skillIconSPData_.translate.x, skillIconSPData_.translate.y - skillIconSPData_.size.y - 20.0f};
+	UpdateOperationSprite(specialAttackSPData_, PlayCommand::GetSPECIAL_ATTACK());
+	dashSPData_.translate = {specialAttackSPData_.translate.x - specialAttackSPData_.size.x - 20.0f, specialAttackSPData_.translate.y};
+	UpdateOperationSprite(dashSPData_, PlayCommand::GetDASH());
+
+	UpdateKeyboardSprite(keyboardSkillIconSPData_, skillIconSPData_);
+	UpdateKeyboardSprite(keyboardJumpSPData_, jumpSPData_);
+	UpdateKeyboardSprite(keyboardNormalAttackSPData_, normalAttackSPData_);
+	UpdateKeyboardSprite(keyboardSpecialAttackSPData_, specialAttackSPData_);
+	UpdateKeyboardSprite(keyboardDashSPData_, dashSPData_);
 }
 void AttackOperation::Draw() {
 	// スキルアイコンを描画
-	if (skillIconSPData.sprite) {
-		skillIconSPData.sprite->Draw();
+	if (dashSPData_.sprite) {
+		dashSPData_.sprite->Draw();
 	}
-	if (normalAttackSPData.sprite) {
-		normalAttackSPData.sprite->Draw();
+	if (skillIconSPData_.sprite) {
+		skillIconSPData_.sprite->Draw();
+	}
+	if (normalAttackSPData_.sprite) {
+		normalAttackSPData_.sprite->Draw();
 	}
 	if (jumpSPData_.sprite) {
 		jumpSPData_.sprite->Draw();
 	}
-	if (specialAttackSPData.sprite) {
-		specialAttackSPData.sprite->Draw();
+	if (specialAttackSPData_.sprite) {
+		specialAttackSPData_.sprite->Draw();
 	}
-	if (keyboardSkillIconSPData.sprite) {
-		keyboardSkillIconSPData.sprite->Draw();
+	if (keyboardSkillIconSPData_.sprite) {
+		keyboardSkillIconSPData_.sprite->Draw();
 	}
-	if (keyboardJumpSPData.sprite) {
-		keyboardJumpSPData.sprite->Draw();
+	if (keyboardJumpSPData_.sprite) {
+		keyboardJumpSPData_.sprite->Draw();
 	}
-	if (keyboardNormalAttackSPData.sprite) {
-		keyboardNormalAttackSPData.sprite->Draw();
+	if (keyboardNormalAttackSPData_.sprite) {
+		keyboardNormalAttackSPData_.sprite->Draw();
 	}
-	if (keyboardSpecialAttackSPData.sprite) {
-		keyboardSpecialAttackSPData.sprite->Draw();
+	if (keyboardSpecialAttackSPData_.sprite) {
+		keyboardSpecialAttackSPData_.sprite->Draw();
 	}
+}
+void AttackOperation::SetOperationSpriteBaseSize(SpriteData& spriteData, const Vector2& size) {
+	spriteData.size = size;
+	if (spriteData.sprite) {
+		spriteData.sprite->SetScale(size);
+	}
+}
+
+void AttackOperation::UpdateOperationSprite(SpriteData& spriteData, bool isPressed) {
+	if (!spriteData.sprite) {
+		return;
+	}
+
+	const Vector2 targetScale = isPressed ? Vector2{spriteData.size.x * kPressedScaleRate, spriteData.size.y * kPressedScaleRate} : spriteData.size;
+	const Vector2 currentScale = spriteData.sprite->GetScale();
+	const Vector2 nextScale{
+	    currentScale.x + (targetScale.x - currentScale.x) * kScaleReturnRate,
+	    currentScale.y + (targetScale.y - currentScale.y) * kScaleReturnRate,
+	};
+
+	spriteData.sprite->SetScale(nextScale);
+	spriteData.sprite->SetPosition(spriteData.translate);
+	spriteData.sprite->Update();
+}
+
+void AttackOperation::UpdateKeyboardSprite(SpriteData& keyboardSpriteData, const SpriteData& iconSpriteData) {
+	const float screenBottom = static_cast<float>(WinApp::kClientHeight) - kKeyboardDisplayBottomMargin;
+	keyboardSpriteData.size = kKeyboardDisplaySize;
+	keyboardSpriteData.translate = {
+	    iconSpriteData.translate.x,
+	    std::min(iconSpriteData.translate.y + kKeyboardDisplayIconOffsetY, screenBottom),
+	};
+	keyboardSpriteData.sprite->SetPosition(keyboardSpriteData.translate);
+	keyboardSpriteData.sprite->SetScale(keyboardSpriteData.size);
+	keyboardSpriteData.sprite->Update();
 }

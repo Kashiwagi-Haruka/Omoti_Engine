@@ -4,7 +4,24 @@
 #include "Input.h"
 #include <cmath>
 #include <imgui.h>
+#include <numbers>
 #include <random>
+namespace {
+
+float NormalizeAngle(float angle) {
+	const float twoPi = 2.0f * std::numbers::pi_v<float>;
+	while (angle > std::numbers::pi_v<float>) {
+		angle -= twoPi;
+	}
+	while (angle < -std::numbers::pi_v<float>) {
+		angle += twoPi;
+	}
+	return angle;
+}
+
+float GetNearestAngle(float current, float target) { return current + NormalizeAngle(target - current); }
+
+} // namespace
 LockOnCamera::LockOnCamera() {}
 LockOnCamera::~LockOnCamera() {}
 void LockOnCamera::Initialize() {
@@ -35,11 +52,11 @@ void LockOnCamera::Update() {
 	if (hasTarget_) {
 		Vector3 toTarget = targetPos_ - playerPos;
 		if (Function::LengthSquared(toTarget) > 0.0001f) {
-			orbitYaw_ = std::atan2f(toTarget.x, toTarget.z);
+			orbitYaw_ = GetNearestAngle(orbitYaw_, std::atan2f(toTarget.x, toTarget.z));
 		}
 	}
-	//orbitYaw_ += mouseMove.x * mouseSensitivity_;
-	//orbitPitch_ += mouseMove.y * mouseSensitivity_;
+	// orbitYaw_ += mouseMove.x * mouseSensitivity_;
+	// orbitPitch_ += mouseMove.y * mouseSensitivity_;
 
 	const float maxPitch = 1.2f;
 	const float minPitch = -1.2f;
@@ -52,7 +69,7 @@ void LockOnCamera::Update() {
 	if (!hasTarget_ && hasFollowPosition_) {
 		Vector3 toFollow = followPosition_ - playerPos;
 		if (Function::LengthSquared(toFollow) > 0.0001f) {
-			orbitYaw_ = std::atan2f(toFollow.x, toFollow.z);
+			orbitYaw_ = GetNearestAngle(orbitYaw_, std::atan2f(toFollow.x, toFollow.z));
 		}
 	}
 	Vector3 orbitDir = {sinf(orbitYaw_) * cosf(orbitPitch_), -sinf(orbitPitch_), cosf(orbitYaw_) * cosf(orbitPitch_)};

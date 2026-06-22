@@ -73,7 +73,8 @@ void TitleScene::Update() {
 			isTransitionIn = false;
 		}
 		if (transition->IsEnd() && isTransitionOut) {
-			SceneManager::GetInstance()->ChangeScene("Tutorial");
+			/*SceneManager::GetInstance()->ChangeScene("Tutorial");*/
+			SceneManager::GetInstance()->ChangeScene("Game");
 		}
 	}
 #ifdef USE_IMGUI

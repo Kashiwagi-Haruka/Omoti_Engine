@@ -18,10 +18,21 @@ AABB MakeAabb(const Vector3& center, const Vector3& halfSize) {
 	return aabb;
 }
 bool IsNormalAttackComboStep(int comboStep) { return comboStep >= 1 && comboStep <= 4; }
+constexpr int kAttributeReactionDamage = 1;
+
+void ApplyAttributeDamage(Enemy& enemy, EnemyManager& enemyManager, Attribute attribute) {
+	if (!enemy.AddAdhesionAttribute(attribute)) {
+		return;
+	}
+	enemy.SetHPSubtract(kAttributeReactionDamage);
+	enemyManager.OnEnemyDamaged(&enemy, kAttributeReactionDamage, attribute);
+}
 } // namespace
 
-bool CollisionManager::HandleGameSceneCollisions(Player& player, EnemyManager& enemyManager, ExpCubeManager& expCubeManager, House& house, Boss* boss, Vector3* outHitEnemyPos) {
+bool CollisionManager::HandleGameSceneCollisions(
+    Player& player, EnemyManager& enemyManager, ExpCubeManager& expCubeManager, House& house, Boss* boss, Vector3* outHitEnemyPos, bool* outDidPlayerAttackHitEnemy) {
 	bool didNormalAttackHitEnemy = false;
+	bool didPlayerAttackHitEnemy = false;
 	AABB playerAabb = MakeAabb(player.GetPosition(), player.GetScale());
 	AABB houseAabb = MakeAabb(house.GetPosition(), house.GetScale());
 	auto tryEnemyFlinch = [](Enemy* target) {
@@ -63,6 +74,7 @@ bool CollisionManager::HandleGameSceneCollisions(Player& player, EnemyManager& e
 			AABB swordAabb = MakeAabb(swordPos, {swordHit, swordHit, swordHit});
 			bool hitSword = RigidBody::isCollision(swordAabb, enemyAabb);
 			if (hitSword && enemy->CanTakeDamage()) {
+				didPlayerAttackHitEnemy = true;
 				if (IsNormalAttackComboStep(player.GetSword()->GetComboStep())) {
 					didNormalAttackHitEnemy = true;
 					if (outHitEnemyPos) {
@@ -72,9 +84,9 @@ bool CollisionManager::HandleGameSceneCollisions(Player& player, EnemyManager& e
 				const int damage = DamageMath::CalculatePlayerToEnemyDamage(
 				    player.GetCurrentBaseParameter(), player.GetCurrentCombatParameter(), enemy->GetBaseParameter(), enemy->GetParameter(), playerAttackAttribute);
 				enemy->SetHPSubtract(damage);
-				enemy->AddAdhesionAttribute(playerAttackAttribute);
+				enemyManager.OnEnemyDamaged(enemy.get(), damage, playerAttackAttribute);
+				ApplyAttributeDamage(*enemy, enemyManager, playerAttackAttribute);
 				enemy->TriggerDamageInvincibility();
-				enemyManager.OnEnemyDamaged(enemy.get());
 				tryEnemyFlinch(enemy.get());
 				if (!enemy->GetIsAlive()) {
 					expCubeManager.SpawnDrops(enemy->GetPosition(), 3);
@@ -87,11 +99,13 @@ bool CollisionManager::HandleGameSceneCollisions(Player& player, EnemyManager& e
 			bool hitSkill = RigidBody::isCollision(skillAabb, enemyAabb);
 			int skillDamageId = player.GetSkill()->GetSkillDamageId();
 			if (hitSkill && enemy->GetLastSkillDamageId() != skillDamageId) {
+				didPlayerAttackHitEnemy = true;
 				const int damage = DamageMath::CalculatePlayerToEnemyDamage(
 				    player.GetCurrentBaseParameter(), player.GetCurrentCombatParameter(), enemy->GetBaseParameter(), enemy->GetParameter(), playerAttackAttribute);
-				enemy->AddAdhesionAttribute(playerAttackAttribute);
+				enemy->SetHPSubtract(damage);
+				enemyManager.OnEnemyDamaged(enemy.get(), damage, playerAttackAttribute);
+				ApplyAttributeDamage(*enemy, enemyManager, playerAttackAttribute);
 				enemy->SetLastSkillDamageId(skillDamageId);
-				enemyManager.OnEnemyDamaged(enemy.get());
 				tryEnemyFlinch(enemy.get());
 				if (!enemy->GetIsAlive()) {
 					expCubeManager.SpawnDrops(enemy->GetPosition(), 3);
@@ -111,11 +125,13 @@ bool CollisionManager::HandleGameSceneCollisions(Player& player, EnemyManager& e
 
 			if (hitSpecial) {
 				if (enemy->CanTakeDamage()) {
+					didPlayerAttackHitEnemy = true;
 					const int damage = DamageMath::CalculatePlayerToEnemyDamage(
 					    player.GetCurrentBaseParameter(), player.GetCurrentCombatParameter(), enemy->GetBaseParameter(), enemy->GetParameter(), playerAttackAttribute);
-					enemy->AddAdhesionAttribute(playerAttackAttribute);
+					enemy->SetHPSubtract(damage);
+					enemyManager.OnEnemyDamaged(enemy.get(), damage, playerAttackAttribute);
+					ApplyAttributeDamage(*enemy, enemyManager, playerAttackAttribute);
 					enemy->TriggerDamageInvincibility();
-					enemyManager.OnEnemyDamaged(enemy.get());
 					tryEnemyFlinch(enemy.get());
 					if (!enemy->GetIsAlive()) {
 						expCubeManager.SpawnDrops(enemy->GetPosition(), 3);
@@ -146,6 +162,7 @@ bool CollisionManager::HandleGameSceneCollisions(Player& player, EnemyManager& e
 			AABB swordAabb = MakeAabb(swordPos, {swordHit, swordHit, swordHit});
 			bool hitSword = RigidBody::isCollision(swordAabb, bossAabb);
 			if (hitSword && boss->CanTakeDamage()) {
+				didPlayerAttackHitEnemy = true;
 				boss->SetHPSubtract(1);
 				boss->TriggerDamageInvincibility();
 			}
@@ -156,6 +173,7 @@ bool CollisionManager::HandleGameSceneCollisions(Player& player, EnemyManager& e
 			bool hitSkill = RigidBody::isCollision(skillAabb, bossAabb);
 			int skillDamageId = player.GetSkill()->GetSkillDamageId();
 			if (hitSkill && boss->GetLastSkillDamageId() != skillDamageId) {
+				didPlayerAttackHitEnemy = true;
 				boss->SetHPSubtract(1);
 				boss->SetLastSkillDamageId(skillDamageId);
 			}
@@ -172,6 +190,7 @@ bool CollisionManager::HandleGameSceneCollisions(Player& player, EnemyManager& e
 			}
 
 			if (hitSpecial && boss->CanTakeDamage()) {
+				didPlayerAttackHitEnemy = true;
 				boss->SetHPSubtract(1);
 				boss->TriggerDamageInvincibility();
 			}
@@ -215,6 +234,9 @@ bool CollisionManager::HandleGameSceneCollisions(Player& player, EnemyManager& e
 				player.EXPMath();
 			}
 		}
+	}
+	if (outDidPlayerAttackHitEnemy) {
+		*outDidPlayerAttackHitEnemy = didPlayerAttackHitEnemy;
 	}
 	return didNormalAttackHitEnemy;
 }

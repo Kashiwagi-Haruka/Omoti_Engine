@@ -57,8 +57,9 @@ void PlayerSwordTrail::Draw() {
 	if (!trail_ || points_.size() < 2) {
 		return;
 	}
-	Object3dCommon::GetInstance()->SetBlendMode(BlendMode::kBlendModeAlpha);
+	Object3dCommon::GetInstance()->SetBlendMode(BlendMode::kBlendModeAdd);
 	trail_->Draw();
+	Object3dCommon::GetInstance()->SetBlendMode(BlendMode::kBlendModeAlpha);
 }
 
 void PlayerSwordTrail::UpdateTrailMesh() {

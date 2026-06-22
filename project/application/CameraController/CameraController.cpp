@@ -3,7 +3,30 @@
 #include "Input.h"
 #include "Function.h"
 #include <algorithm>
+#include <numbers>
 
+namespace {
+
+float NormalizeAngle(float angle) {
+	const float twoPi = 2.0f * std::numbers::pi_v<float>;
+	while (angle > std::numbers::pi_v<float>) {
+		angle -= twoPi;
+	}
+	while (angle < -std::numbers::pi_v<float>) {
+		angle += twoPi;
+	}
+	return angle;
+}
+
+Vector3 LerpRotationShortest(const Vector3& start, const Vector3& end, float ratio) {
+	return {
+	    Function::Lerp(start.x, start.x + NormalizeAngle(end.x - start.x), ratio),
+	    Function::Lerp(start.y, start.y + NormalizeAngle(end.y - start.y), ratio),
+	    Function::Lerp(start.z, start.z + NormalizeAngle(end.z - start.z), ratio),
+	};
+}
+
+} // namespace
 void CameraController::Initialize() {
 	playerCamera_ = std::make_unique<PlayerCamera>();
 	playerCamera_->Initialize();
@@ -57,7 +80,7 @@ void CameraController::Update() {
 		const float t = std::clamp(cameraSwitchTimer_ / cameraSwitchDuration_, 0.0f, 1.0f);
 		Transform blendedTransform = targetTransform;
 		blendedTransform.translate = Function::Lerp(switchStartTransform_.translate, targetTransform.translate, t);
-		blendedTransform.rotate = Function::Lerp(switchStartTransform_.rotate, targetTransform.rotate, t);
+		blendedTransform.rotate = LerpRotationShortest(switchStartTransform_.rotate, targetTransform.rotate, t);
 		blendCamera_->SetTransform(blendedTransform);
 		if (t >= 1.0f) {
 			isCameraSwitching_ = false;
