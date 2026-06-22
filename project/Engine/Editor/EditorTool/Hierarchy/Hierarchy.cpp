@@ -265,6 +265,45 @@ void Hierarchy::AddAudioAssetToHierarchy(const std::filesystem::path& audioPath)
 	saveStatusMessage_ = "Audio added: " + audioPath.string();
 	hasUnsavedChanges_ = true;
 }
+void Hierarchy::DeleteObjectAtIndex(size_t index) {
+	if (index >= objects_.size() || !objects_[index]) {
+		return;
+	}
+
+	Object3d* object = objects_[index];
+	UnregisterObject3d(object);
+	editorOwnedObjects_.erase(
+	    std::remove_if(editorOwnedObjects_.begin(), editorOwnedObjects_.end(), [object](const std::unique_ptr<Object3d>& ownedObject) { return ownedObject.get() == object; }),
+	    editorOwnedObjects_.end());
+
+	if (!selectedIsPrimitive_ && selectedObjectIndex_ == index) {
+		selectedObjectIndex_ = 0;
+	}
+	selectionBoxDirty_ = true;
+	redoStack_.clear();
+	hasUnsavedChanges_ = true;
+	saveStatusMessage_ = "Deleted object";
+}
+
+void Hierarchy::DeletePrimitiveAtIndex(size_t index) {
+	if (index >= primitives_.size() || !primitives_[index] || primitives_[index] == selectionBoxPrimitive_.get()) {
+		return;
+	}
+
+	Primitive* primitive = primitives_[index];
+	UnregisterPrimitive(primitive);
+	editorOwnedPrimitives_.erase(
+	    std::remove_if(editorOwnedPrimitives_.begin(), editorOwnedPrimitives_.end(), [primitive](const std::unique_ptr<Primitive>& ownedPrimitive) { return ownedPrimitive.get() == primitive; }),
+	    editorOwnedPrimitives_.end());
+
+	if (selectedIsPrimitive_ && selectedObjectIndex_ == index) {
+		selectedObjectIndex_ = 0;
+	}
+	selectionBoxDirty_ = true;
+	redoStack_.clear();
+	hasUnsavedChanges_ = true;
+	saveStatusMessage_ = "Deleted primitive";
+}
 void Hierarchy::RegisterObject3d(Object3d* object) {
 	if (!object) {
 		return;
@@ -1092,6 +1131,12 @@ void Hierarchy::DrawObjectEditors() {
 					selectedIsPrimitive_ = false;
 					selectionBoxDirty_ = true;
 				}
+				if (ImGui::BeginPopupContextItem(("##object_context_" + std::to_string(i)).c_str())) {
+					if (ImGui::MenuItem("delete")) {
+						DeleteObjectAtIndex(i);
+					}
+					ImGui::EndPopup();
+				}
 			}
 			ImGui::TreePop();
 		}
@@ -1108,6 +1153,12 @@ void Hierarchy::DrawObjectEditors() {
 					selectedObjectIndex_ = i;
 					selectedIsPrimitive_ = true;
 					selectionBoxDirty_ = true;
+				}
+				if (ImGui::BeginPopupContextItem(("##primitive_context_" + std::to_string(i)).c_str())) {
+					if (ImGui::MenuItem("delete")) {
+						DeletePrimitiveAtIndex(i);
+					}
+					ImGui::EndPopup();
 				}
 			}
 			ImGui::TreePop();

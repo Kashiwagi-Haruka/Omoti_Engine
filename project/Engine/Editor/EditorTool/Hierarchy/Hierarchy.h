@@ -71,6 +71,8 @@ private:
 	void UndoEditorChange();
 	void RedoEditorChange();
 	void PushGuizmoUndoIfNeeded();
+	void DeleteObjectAtIndex(size_t index);
+	void DeletePrimitiveAtIndex(size_t index);
 
 	bool SaveObjectEditorsToJson(const std::string& filePath) const;
 	bool LoadObjectEditorsFromJson(const std::string& filePath);
