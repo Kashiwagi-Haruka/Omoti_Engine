@@ -630,7 +630,6 @@
     <ClInclude Include="application\Option\Option.h" />
     <ClInclude Include="application\UI\Menu\Menu.h" />
     <ClInclude Include="application\UI\Tower\TowerUI.h" />
-    <ClInclude Include="externals\ImGuizmo\ImGuizmo.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include=".editorconfig" />

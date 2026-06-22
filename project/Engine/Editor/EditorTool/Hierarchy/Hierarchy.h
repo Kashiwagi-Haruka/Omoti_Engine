@@ -19,6 +19,7 @@
 class Object3d;
 class Primitive;
 class Camera;
+struct ImGuiViewport;
 
 class Hierarchy {
 public:
@@ -55,6 +56,7 @@ private:
 	void DrawSceneSelector();
 	void DrawLightEditor();
 	void DrawSelectionBoxEditor();
+	void DrawSelectedObjectGuizmo(const ImGuiViewport* viewport, float contentStartY, float leftPanelWidth, float rightPanelWidth, float availableHeight);
 	void DrawCameraEditor();
 	void DrawCameraBillboards();
 	void HandleHierarchyAssetDrop();

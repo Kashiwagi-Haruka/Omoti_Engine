@@ -15,6 +15,7 @@
 #include "Primitive/Primitive.h"
 #include "Sprite/SpriteCommon.h"
 #ifdef USE_IMGUI
+#include "externals/ImGuizmo/ImGuizmo.h"
 #include "externals/imgui/imgui.h"
 #include "externals/imgui/imgui_internal.h"
 #endif
@@ -29,6 +30,7 @@
 
 namespace {
 constexpr const char* kDragDropPayloadType = "OMOTI_EDITOR_ASSET";
+constexpr float kDegreesToRadians = 3.14159265358979323846f / 180.0f;
 std::filesystem::path ResolveObjectEditorJsonPath(const std::string& filePath) { return std::filesystem::path("Resources") / "JSON" / std::filesystem::path(filePath).filename(); }
 
 bool HasObjectEditorJsonFile(const std::string& filePath) { return std::filesystem::exists(ResolveObjectEditorJsonPath(filePath)); }
@@ -784,6 +786,69 @@ void Hierarchy::DrawSelectionBoxEditor() {
 	}
 #endif
 }
+void Hierarchy::DrawSelectedObjectGuizmo(const ImGuiViewport* viewport, float contentStartY, float leftPanelWidth, float rightPanelWidth, float availableHeight) {
+#ifdef USE_IMGUI
+	if (isPlaying_ || !IsObjectSelected()) {
+		return;
+	}
+
+	Camera* camera = Object3dCommon::GetInstance()->GetDefaultCamera();
+	if (!camera) {
+		return;
+	}
+
+	ImGuizmo::BeginFrame();
+	ImGuizmo::SetOrthographic(false);
+	ImGuizmo::SetDrawlist(ImGui::GetForegroundDrawList(const_cast<ImGuiViewport*>(viewport)));
+
+	const float scenePosX = viewport->WorkPos.x + leftPanelWidth;
+	const float scenePosY = contentStartY;
+	const float sceneWidth = std::max(1.0f, viewport->WorkSize.x - leftPanelWidth - rightPanelWidth);
+	const float sceneHeight = std::max(1.0f, availableHeight);
+	ImGuizmo::SetRect(scenePosX, scenePosY, sceneWidth, sceneHeight);
+
+	Transform& transform = selectedIsPrimitive_ ? primitiveEditorTransforms_[selectedObjectIndex_] : editorTransforms_[selectedObjectIndex_];
+	Matrix4x4 worldMatrix = Function::MakeAffineMatrix(transform.scale, transform.rotate, transform.translate);
+
+	ImGuizmo::OPERATION operation = ImGuizmo::TRANSLATE;
+	if (ImGui::IsKeyDown(ImGuiKey_E)) {
+		operation = ImGuizmo::ROTATE;
+	} else if (ImGui::IsKeyDown(ImGuiKey_R)) {
+		operation = ImGuizmo::SCALE;
+	} else if (ImGui::IsKeyDown(ImGuiKey_W)) {
+		operation = ImGuizmo::TRANSLATE;
+	}
+
+	if (ImGuizmo::Manipulate(&camera->GetViewMatrix().m[0][0], &camera->GetProjectionMatrix().m[0][0], operation, ImGuizmo::WORLD, &worldMatrix.m[0][0])) {
+		float translation[3]{};
+		float rotationDegrees[3]{};
+		float scale[3]{};
+		ImGuizmo::DecomposeMatrixToComponents(&worldMatrix.m[0][0], translation, rotationDegrees, scale);
+
+		transform.translate = {translation[0], translation[1], translation[2]};
+		transform.rotate = {rotationDegrees[0] * kDegreesToRadians, rotationDegrees[1] * kDegreesToRadians, rotationDegrees[2] * kDegreesToRadians};
+		transform.scale = {scale[0], scale[1], scale[2]};
+
+		if (selectedIsPrimitive_) {
+			if (Primitive* primitive = primitives_[selectedObjectIndex_]) {
+				primitive->SetTransform(transform);
+			}
+		} else {
+			if (Object3d* object = objects_[selectedObjectIndex_]) {
+				object->SetTransform(transform);
+			}
+		}
+		selectionBoxDirty_ = true;
+		hasUnsavedChanges_ = true;
+	}
+#else
+	(void)viewport;
+	(void)contentStartY;
+	(void)leftPanelWidth;
+	(void)rightPanelWidth;
+	(void)availableHeight;
+#endif
+}
 void Hierarchy::DrawObjectEditors() {
 	LoadObjectEditorsFromJsonIfExists("objectEditors.json");
 #ifdef USE_IMGUI
@@ -1026,5 +1091,7 @@ void Hierarchy::DrawObjectEditors() {
 		}
 	}
 	ImGui::End();
+
+	DrawSelectedObjectGuizmo(viewport, contentStartY, leftPanelWidth, rightPanelWidth, availableHeight);
 #endif
 }
