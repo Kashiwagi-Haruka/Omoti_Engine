@@ -792,8 +792,9 @@ void Hierarchy::DrawObjectEditors() {
 			ImGui::EndPopup();
 		}
 		if (toolbarResult.stopRequested) {
+			SceneManager::GetInstance()->RequestReinitializeCurrentScene();
 			SetPlayMode(false);
-			saveStatusMessage_ = "Stopped: applied editor values";
+			saveStatusMessage_ = "Stopped: restored editor state";
 		}
 	}
 	ImGui::End();

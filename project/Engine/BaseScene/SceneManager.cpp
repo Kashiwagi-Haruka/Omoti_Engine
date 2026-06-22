@@ -87,12 +87,16 @@ void SceneManager::Update() {
 	}
 
 	if (scene_) {
+#ifdef USE_IMGUI
 		Hierarchy* hierarchy = Hierarchy::GetInstance();
 		if (hierarchy && hierarchy->IsEditorPreviewActive()) {
 			hierarchy->UpdateEditorPreview();
-		} else {
+		} else if (!hierarchy || (hierarchy->IsPlayMode() && !hierarchy->IsPaused())) {
 			scene_->Update();
 		}
+#else
+		scene_->Update();
+#endif
 	}
 }
 
