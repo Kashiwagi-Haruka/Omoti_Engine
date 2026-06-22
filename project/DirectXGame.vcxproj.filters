@@ -125,6 +125,9 @@
     <ClCompile Include="externals\imgui\imgui_tables.cpp">
       <Filter>Extarnals</Filter>
     </ClCompile>
+    <ClCompile Include="externals\ImGuizmo\ImGuizmo.cpp">
+      <Filter>Extarnals</Filter>
+    </ClCompile>
     <ClCompile Include="externals\imgui\imgui_widgets.cpp">
       <Filter>Extarnals</Filter>
     </ClCompile>
@@ -627,6 +630,7 @@
     <ClInclude Include="application\Option\Option.h" />
     <ClInclude Include="application\UI\Menu\Menu.h" />
     <ClInclude Include="application\UI\Tower\TowerUI.h" />
+    <ClInclude Include="externals\ImGuizmo\ImGuizmo.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include=".editorconfig" />
