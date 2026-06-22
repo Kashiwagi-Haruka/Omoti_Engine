@@ -1,6 +1,7 @@
 #pragma once
 
 #include <memory>
+#include <filesystem>
 #include <string>
 #include <vector>
 
@@ -36,6 +37,9 @@ public:
 	bool IsPaused() const { return isPaused_; }
 	bool IsEditorPreviewActive() const;
 	bool LoadObjectEditorsFromJsonIfExists(const std::string& filePath);
+	void AddPrimitiveAssetToHierarchy(const std::string& primitiveName);
+	void AddObject3dAssetToHierarchy(const std::string& modelName);
+	void AddAudioAssetToHierarchy(const std::filesystem::path& audioPath);
 	void Finalize();
 
 private:
@@ -98,6 +102,8 @@ private:
 	EditorGrid::Settings gridSettings_{};
 	bool showGridWindow_ = true;
 	std::unique_ptr<Primitive> editorGridPlane_;
+	std::vector<std::unique_ptr<Object3d>> editorOwnedObjects_;
+	std::vector<std::unique_ptr<Primitive>> editorOwnedPrimitives_;
 	EditorLight editorLight_{};
 	EditorAudio editorAudio_{};
 	EditorCamera editorCamera_{};

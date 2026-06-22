@@ -16,6 +16,7 @@ public:
 	void SaveToJson(nlohmann::json& audioJson) const;
 	void LoadFromJson(const nlohmann::json& audioJson);
 	bool DrawEditor(bool isPlaying, bool& hasUnsavedChanges);
+	void AddSoundForEditor(const std::string& filePath);
 
 private:
 	static nlohmann::json SerializeAudioEffect(const Audio::MixerEffectSettings& effect);
@@ -25,4 +26,5 @@ private:
 	std::unordered_map<std::string, bool> savedAudioLoopEnabled_;
 	std::unordered_map<std::string, std::vector<Audio::MixerEffectSettings>> savedAudioEffects_;
 	std::unordered_set<std::string> playModeInitializedAudioNames_;
+	std::vector<SoundData> editorLoadedSounds_;
 };
