@@ -16,6 +16,7 @@
 #include "Sprite/SpriteCommon.h"
 #ifdef USE_IMGUI
 #include "externals/imgui/imgui.h"
+#include "externals/imgui/imgui_internal.h"
 #endif
 
 #include <algorithm>
@@ -623,6 +624,32 @@ bool Hierarchy::LoadObjectEditorsFromJson(const std::string& filePath) {
 	loadedSnapshotFilePath_ = filePath;
 	return true;
 }
+void Hierarchy::HandleHierarchyAssetDrop() {
+#ifdef USE_IMGUI
+	const ImVec2 min = ImGui::GetWindowPos();
+	const ImVec2 max(min.x + ImGui::GetWindowSize().x, min.y + ImGui::GetWindowSize().y);
+	const ImGuiID dropTargetId = ImGui::GetID("##HierarchyWindowAssetDropTarget");
+	if (!ImGui::BeginDragDropTargetCustom(ImRect(min, max), dropTargetId)) {
+		return;
+	}
+	if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload(kDragDropPayloadType)) {
+		const std::string payloadText(static_cast<const char*>(payload->Data));
+		const size_t separator = payloadText.find('|');
+		if (separator != std::string::npos) {
+			const std::string category = payloadText.substr(0, separator);
+			const std::string name = payloadText.substr(separator + 1);
+			if (category == "Primitive") {
+				AddPrimitiveAssetToHierarchy(name);
+			} else if (category == "Object3d") {
+				AddObject3dAssetToHierarchy(name);
+			} else if (category == "Audio") {
+				AddAudioAssetToHierarchy(name);
+			}
+		}
+	}
+	ImGui::EndDragDropTarget();
+#endif
+}
 void Hierarchy::DrawSceneSelector() {
 #ifdef USE_IMGUI
 	SceneManager* sceneManager = SceneManager::GetInstance();
@@ -881,24 +908,7 @@ void Hierarchy::DrawObjectEditors() {
 	if (ImGui::Begin("Hierarchy", nullptr, ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_HorizontalScrollbar)) {
 		ImGui::Text("Auto Object Editor");
 		ImGui::Separator();
-		if (ImGui::BeginDragDropTarget()) {
-			if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload(kDragDropPayloadType)) {
-				const std::string payloadText(static_cast<const char*>(payload->Data));
-				const size_t separator = payloadText.find('|');
-				if (separator != std::string::npos) {
-					const std::string category = payloadText.substr(0, separator);
-					const std::string name = payloadText.substr(separator + 1);
-					if (category == "Primitive") {
-						AddPrimitiveAssetToHierarchy(name);
-					} else if (category == "Object3d") {
-						AddObject3dAssetToHierarchy(name);
-					} else if (category == "Audio") {
-						AddAudioAssetToHierarchy(name);
-					}
-				}
-			}
-			ImGui::EndDragDropTarget();
-		}
+		HandleHierarchyAssetDrop();
 		ImGui::TextDisabled("Assetからここへドラッグ&ドロップでHierarchyへ追加");
 		ImGui::Separator();
 		ImGui::SeparatorText("Scene Switch");

@@ -57,6 +57,7 @@ private:
 	void DrawSelectionBoxEditor();
 	void DrawCameraEditor();
 	void DrawCameraBillboards();
+	void HandleHierarchyAssetDrop();
 	void SyncSelectionBoxToTarget();
 	Transform GetSelectedTransform() const;
 	bool IsObjectSelected() const;
