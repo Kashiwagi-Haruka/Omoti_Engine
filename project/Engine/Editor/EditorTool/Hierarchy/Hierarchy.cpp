@@ -806,49 +806,60 @@ void Hierarchy::DrawObjectEditors() {
 		ImGui::Separator();
 		ImGui::SeparatorText("Scene Switch");
 		DrawSceneSelector();
-		ImGui::SeparatorText("Light");
-		DrawLightEditor();
-		ImGui::SeparatorText("Camera");
-		DrawCameraEditor();
-		ImGui::SeparatorText("Audio");
-		editorAudio_.DrawEditor(isPlaying_, hasUnsavedChanges_);
+		if (ImGui::TreeNodeEx("Light", ImGuiTreeNodeFlags_DefaultOpen)) {
+			DrawLightEditor();
+			ImGui::TreePop();
+		}
+		ImGui::Separator();
+		if (ImGui::TreeNodeEx("Camera", ImGuiTreeNodeFlags_DefaultOpen)) {
+			DrawCameraEditor();
+			ImGui::TreePop();
+		}
+		ImGui::Separator();
+		if (ImGui::TreeNodeEx("Audio", ImGuiTreeNodeFlags_DefaultOpen)) {
+			editorAudio_.DrawEditor(isPlaying_, hasUnsavedChanges_);
+			ImGui::TreePop();
+		}
 		ImGui::SeparatorText("Selection");
 		DrawSelectionBoxEditor();
 		ImGui::Separator();
-
 
 		if (!saveStatusMessage_.empty()) {
 			ImGui::Text("%s", saveStatusMessage_.c_str());
 		}
 
-		ImGui::SeparatorText("Object3d");
-		for (size_t i = 0; i < objects_.size(); ++i) {
-			Object3d* object = objects_[i];
-			if (!object) {
-				continue;
+		if (ImGui::TreeNodeEx("Object3d", ImGuiTreeNodeFlags_DefaultOpen)) {
+			for (size_t i = 0; i < objects_.size(); ++i) {
+				Object3d* object = objects_[i];
+				if (!object) {
+					continue;
+				}
+				std::string displayName = objectNames_[i].empty() ? ("Object " + std::to_string(i)) : objectNames_[i];
+				const bool selected = (!selectedIsPrimitive_ && selectedObjectIndex_ == i);
+				if (ImGui::Selectable((displayName + "##object_select_" + std::to_string(i)).c_str(), selected)) {
+					selectedObjectIndex_ = i;
+					selectedIsPrimitive_ = false;
+					selectionBoxDirty_ = true;
+				}
 			}
-			std::string displayName = objectNames_[i].empty() ? ("Object " + std::to_string(i)) : objectNames_[i];
-			const bool selected = (!selectedIsPrimitive_ && selectedObjectIndex_ == i);
-			if (ImGui::Selectable((displayName + "##object_select_" + std::to_string(i)).c_str(), selected)) {
-				selectedObjectIndex_ = i;
-				selectedIsPrimitive_ = false;
-				selectionBoxDirty_ = true;
-			}
+			ImGui::TreePop();
 		}
 
-		ImGui::SeparatorText("Primitive");
-		for (size_t i = 0; i < primitives_.size(); ++i) {
-			Primitive* primitive = primitives_[i];
-			if (!primitive) {
-				continue;
+		if (ImGui::TreeNodeEx("Primitive", ImGuiTreeNodeFlags_DefaultOpen)) {
+			for (size_t i = 0; i < primitives_.size(); ++i) {
+				Primitive* primitive = primitives_[i];
+				if (!primitive) {
+					continue;
+				}
+				std::string displayName = primitiveNames_[i].empty() ? ("Primitive " + std::to_string(i)) : primitiveNames_[i];
+				const bool selected = (selectedIsPrimitive_ && selectedObjectIndex_ == i);
+				if (ImGui::Selectable((displayName + "##primitive_select_" + std::to_string(i)).c_str(), selected)) {
+					selectedObjectIndex_ = i;
+					selectedIsPrimitive_ = true;
+					selectionBoxDirty_ = true;
+				}
 			}
-			std::string displayName = primitiveNames_[i].empty() ? ("Primitive " + std::to_string(i)) : primitiveNames_[i];
-			const bool selected = (selectedIsPrimitive_ && selectedObjectIndex_ == i);
-			if (ImGui::Selectable((displayName + "##primitive_select_" + std::to_string(i)).c_str(), selected)) {
-				selectedObjectIndex_ = i;
-				selectedIsPrimitive_ = true;
-				selectionBoxDirty_ = true;
-			}
+			ImGui::TreePop();
 		}
 	}
 	ImGui::End();
