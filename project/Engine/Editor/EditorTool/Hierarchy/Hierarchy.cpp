@@ -30,6 +30,7 @@
 
 namespace {
 constexpr const char* kDragDropPayloadType = "OMOTI_EDITOR_ASSET";
+constexpr const char* kDefaultObjectModelName = "debugBox";
 constexpr float kDegreesToRadians = 3.14159265358979323846f / 180.0f;
 std::filesystem::path ResolveObjectEditorJsonPath(const std::string& filePath) { return std::filesystem::path("Resources") / "JSON" / std::filesystem::path(filePath).filename(); }
 
@@ -109,6 +110,7 @@ void Hierarchy::Finalize() {
 	objectNames_.clear();
 	editorTransforms_.clear();
 	editorMaterials_.clear();
+	objectModelNames_.clear();
 
 	primitives_.clear();
 	primitiveNames_.clear();
@@ -180,6 +182,7 @@ Hierarchy::EditorSnapshot Hierarchy::CreateCurrentSnapshot() const {
 	snapshot.objectTransforms = editorTransforms_;
 	snapshot.objectMaterials = editorMaterials_;
 	snapshot.objectNames = objectNames_;
+	snapshot.objectModelNames = objectModelNames_;
 	snapshot.primitiveTransforms = primitiveEditorTransforms_;
 	snapshot.primitiveMaterials = primitiveEditorMaterials_;
 	snapshot.primitiveNames = primitiveNames_;
@@ -246,6 +249,7 @@ void Hierarchy::ApplyEditorSnapshot(const EditorSnapshot& snapshot) {
 	editorTransforms_ = snapshot.objectTransforms;
 	editorMaterials_ = snapshot.objectMaterials;
 	objectNames_ = snapshot.objectNames;
+	objectModelNames_ = snapshot.objectModelNames;
 	primitiveEditorTransforms_ = snapshot.primitiveTransforms;
 	primitiveEditorMaterials_ = snapshot.primitiveMaterials;
 	primitiveNames_ = snapshot.primitiveNames;
@@ -253,6 +257,10 @@ void Hierarchy::ApplyEditorSnapshot(const EditorSnapshot& snapshot) {
 	for (size_t i = 0; i < objects_.size(); ++i) {
 		if (!objects_[i] || i >= editorTransforms_.size() || i >= editorMaterials_.size()) {
 			continue;
+		}
+		if (i < objectModelNames_.size() && objects_[i]->GetModelFilePath() != objectModelNames_[i]) {
+			ModelManager::GetInstance()->LoadModel("Resources/3d", objectModelNames_[i]);
+			objects_[i]->SetModel(objectModelNames_[i]);
 		}
 		EditorObject3d::ApplyEditorValues(objects_[i], editorTransforms_[i], editorMaterials_[i]);
 	}
@@ -280,11 +288,14 @@ void Hierarchy::AddPrimitiveAssetToHierarchy(const std::string& primitiveName) {
 }
 
 void Hierarchy::AddObject3dAssetToHierarchy(const std::string& modelName) {
-	Object3d* rawObject = CreateEditorOwnedObject(editorOwnedObjects_, modelName, "");
+	Object3d* rawObject = CreateEditorOwnedObject(editorOwnedObjects_, kDefaultObjectModelName, "");
 	RegisterObject3d(rawObject);
 	const size_t index = editorTransforms_.empty() ? 0 : editorTransforms_.size() - 1;
 	if (index < objectNames_.size()) {
 		objectNames_[index] = modelName;
+	}
+	if (index < objectModelNames_.size()) {
+		objectModelNames_[index] = kDefaultObjectModelName;
 	}
 	selectedObjectIndex_ = index;
 	selectedIsPrimitive_ = false;
@@ -347,12 +358,14 @@ void Hierarchy::RegisterObject3d(Object3d* object) {
 	if (emptyIt != objects_.end()) {
 		const size_t index = static_cast<size_t>(std::distance(objects_.begin(), emptyIt));
 		objects_[index] = object;
+		objectModelNames_[index] = object->GetModelFilePath();
 		EditorObject3d::ApplyEditorValues(object, editorTransforms_[index], editorMaterials_[index]);
 		return;
 	}
 	const size_t index = objects_.size();
 	objects_.push_back(object);
 	objectNames_.push_back("Object " + std::to_string(index));
+	objectModelNames_.push_back(object->GetModelFilePath());
 	editorTransforms_.push_back(object->GetTransform());
 	editorMaterials_.push_back(EditorObject3d::CaptureMaterial(object));
 }
@@ -460,7 +473,7 @@ bool Hierarchy::SaveObjectEditorsToJson(const std::string& filePath) const {
 		objectJson["index"] = i;
 		objectJson["name"] = objectNames_[i];
 		objectJson["editorId"] = object->GetEditorId();
-		objectJson["modelName"] = object->GetModelFilePath();
+		objectJson["modelName"] = i < objectModelNames_.size() ? objectModelNames_[i] : object->GetModelFilePath();
 		objectJson["transform"] = {
 		    {"scale",     {transform.scale.x, transform.scale.y, transform.scale.z}            },
 		    {"rotate",    {transform.rotate.x, transform.rotate.y, transform.rotate.z}         },
@@ -581,6 +594,17 @@ bool Hierarchy::LoadObjectEditorsFromJson(const std::string& filePath) {
 			}
 			if (objectJson.contains("name") && objectJson["name"].is_string()) {
 				objectNames_[index] = objectJson["name"].get<std::string>();
+			}
+			if (objectJson.contains("modelName") && objectJson["modelName"].is_string()) {
+				const std::string modelName = objectJson["modelName"].get<std::string>();
+				if (!modelName.empty()) {
+					if (index >= objectModelNames_.size()) {
+						objectModelNames_.resize(index + 1);
+					}
+					objectModelNames_[index] = modelName;
+					ModelManager::GetInstance()->LoadModel("Resources/3d", modelName);
+					objects_[index]->SetModel(modelName);
+				}
 			}
 			if (objectJson.contains("transform") && objectJson["transform"].is_object()) {
 				const auto& transformJson = objectJson["transform"];
@@ -1243,12 +1267,14 @@ void Hierarchy::DrawObjectEditors() {
 			beforeEdit.objectTransforms = editorTransforms_;
 			beforeEdit.objectMaterials = editorMaterials_;
 			beforeEdit.objectNames = objectNames_;
+			beforeEdit.objectModelNames = objectModelNames_;
 			beforeEdit.primitiveTransforms = primitiveEditorTransforms_;
 			beforeEdit.primitiveMaterials = primitiveEditorMaterials_;
 			beforeEdit.primitiveNames = primitiveNames_;
 			bool transformChanged = false;
 			bool materialChanged = false;
 			bool nameChanged = false;
+			bool modelChanged = false;
 			if (selectedIsPrimitive_) {
 				Primitive* primitive = primitives_[selectedObjectIndex_];
 				if (primitive) {
@@ -1270,7 +1296,14 @@ void Hierarchy::DrawObjectEditors() {
 					Transform& transform = editorTransforms_[selectedObjectIndex_];
 					InspectorMaterial& material = editorMaterials_[selectedObjectIndex_];
 					std::string& name = objectNames_[selectedObjectIndex_];
-					Inspector::DrawObjectInspector(selectedObjectIndex_, name, transform, material, isPlaying_, transformChanged, materialChanged, nameChanged);
+					if (selectedObjectIndex_ >= objectModelNames_.size()) {
+						objectModelNames_.resize(selectedObjectIndex_ + 1);
+					}
+					if (objectModelNames_[selectedObjectIndex_].empty()) {
+						objectModelNames_[selectedObjectIndex_] = object->GetModelFilePath();
+					}
+					std::string& modelName = objectModelNames_[selectedObjectIndex_];
+					Inspector::DrawObjectInspector(selectedObjectIndex_, name, modelName, transform, material, isPlaying_, transformChanged, materialChanged, nameChanged, modelChanged);
 					if (transformChanged) {
 						selectionBoxDirty_ = true;
 						object->SetTransform(transform);
@@ -1278,9 +1311,14 @@ void Hierarchy::DrawObjectEditors() {
 					if (materialChanged) {
 						EditorObject3d::ApplyEditorValues(object, transform, material);
 					}
+					if (modelChanged && !modelName.empty()) {
+						ModelManager::GetInstance()->LoadModel("Resources/3d", modelName);
+						object->SetModel(modelName);
+						selectionBoxDirty_ = true;
+					}
 				}
 			}
-			if (transformChanged || materialChanged || nameChanged) {
+			if (transformChanged || materialChanged || nameChanged || modelChanged) {
 				undoStack_.push_back(std::move(beforeEdit));
 				redoStack_.clear();
 				hasUnsavedChanges_ = true;

@@ -34,7 +34,8 @@ bool DrawTransformAxisRow(const char* label, const std::string& idSuffix, Vector
 } // namespace
 #endif
 bool Inspector::DrawObjectInspector(
-    size_t index, std::string& objectName, Transform& transform, InspectorMaterial& material, bool isPlaying, bool& transformChanged, bool& materialChanged, bool& nameChanged) {
+    size_t index, std::string& objectName, std::string& modelName, Transform& transform, InspectorMaterial& material, bool isPlaying, bool& transformChanged, bool& materialChanged, bool& nameChanged,
+    bool& modelChanged) {
 #ifdef USE_IMGUI
 	ImGui::Text("Object3d #%zu", index);
 	if (isPlaying) {
@@ -48,18 +49,28 @@ bool Inspector::DrawObjectInspector(
 		objectName = nameBuffer.data();
 		nameChanged = true;
 	}
+	std::array<char, 128> modelBuffer{};
+	const size_t modelCopyLength = std::min(modelBuffer.size() - 1, modelName.size());
+	std::copy_n(modelName.begin(), modelCopyLength, modelBuffer.begin());
+	if (ImGui::InputText(("Model##object_" + std::to_string(index)).c_str(), modelBuffer.data(), modelBuffer.size(), ImGuiInputTextFlags_EnterReturnsTrue)) {
+		modelName = modelBuffer.data();
+		modelChanged = true;
+	}
+	ImGui::TextUnformatted("Press Enter to apply model name (without extension).");
 	transformChanged |= DrawTransformEditor("object_" + std::to_string(index), transform);
 	materialChanged |= DrawMaterialEditor("object_" + std::to_string(index), material);
-	return transformChanged || materialChanged || nameChanged;
+	return transformChanged || materialChanged || nameChanged || modelChanged;
 #else
 	(void)index;
 	(void)objectName;
+	(void)modelName;
 	(void)transform;
 	(void)material;
 	(void)isPlaying;
 	(void)transformChanged;
 	(void)materialChanged;
 	(void)nameChanged;
+	(void)modelChanged;
 	return false;
 #endif
 }

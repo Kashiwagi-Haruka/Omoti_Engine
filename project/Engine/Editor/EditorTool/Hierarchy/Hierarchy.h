@@ -48,6 +48,7 @@ private:
 		std::vector<Transform> objectTransforms;
 		std::vector<InspectorMaterial> objectMaterials;
 		std::vector<std::string> objectNames;
+		std::vector<std::string> objectModelNames;
 		std::vector<Transform> primitiveTransforms;
 		std::vector<InspectorMaterial> primitiveMaterials;
 		std::vector<std::string> primitiveNames;
@@ -91,6 +92,7 @@ private:
 
 	std::vector<Object3d*> objects_;
 	std::vector<std::string> objectNames_;
+	std::vector<std::string> objectModelNames_;
 	std::vector<Transform> editorTransforms_;
 	std::vector<InspectorMaterial> editorMaterials_;
 
