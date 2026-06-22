@@ -37,6 +37,60 @@ bool HasObjectEditorJsonFile(const std::string& filePath) { return std::filesyst
 
 bool IsNearlyEqual(float lhs, float rhs) { return std::fabs(lhs - rhs) <= 0.0001f; }
 
+Primitive::PrimitiveName PrimitiveTypeFromName(const std::string& primitiveName) {
+	if (primitiveName == "Plane") {
+		return Primitive::Plane;
+	}
+	if (primitiveName == "Sphere") {
+		return Primitive::Sphere;
+	}
+	if (primitiveName == "Cylinder") {
+		return Primitive::Cylinder;
+	}
+	if (primitiveName == "Cone") {
+		return Primitive::Cone;
+	}
+	return Primitive::Box;
+}
+
+std::string PrimitiveTypeToName(Primitive::PrimitiveName primitiveName) {
+	switch (primitiveName) {
+	case Primitive::Plane:
+		return "Plane";
+	case Primitive::Sphere:
+		return "Sphere";
+	case Primitive::Cylinder:
+		return "Cylinder";
+	case Primitive::Cone:
+		return "Cone";
+	case Primitive::Box:
+	default:
+		return "Box";
+	}
+}
+
+Object3d* CreateEditorOwnedObject(std::vector<std::unique_ptr<Object3d>>& ownedObjects, const std::string& modelName, const std::string& editorId) {
+	ModelManager::GetInstance()->LoadModel("Resources/3d", modelName);
+	std::unique_ptr<Object3d> object = std::make_unique<Object3d>();
+	object->Initialize();
+	object->SetModel(modelName);
+	object->SetCamera(Object3dCommon::GetInstance()->GetDefaultCamera());
+	object->SetEditorId(editorId);
+	Object3d* rawObject = object.get();
+	ownedObjects.push_back(std::move(object));
+	return rawObject;
+}
+
+Primitive* CreateEditorOwnedPrimitive(std::vector<std::unique_ptr<Primitive>>& ownedPrimitives, Primitive::PrimitiveName type, const std::string& editorId) {
+	std::unique_ptr<Primitive> primitive = std::make_unique<Primitive>();
+	primitive->Initialize(type);
+	primitive->SetCamera(Object3dCommon::GetInstance()->GetDefaultCamera());
+	primitive->SetEditorId(editorId);
+	Primitive* rawPrimitive = primitive.get();
+	ownedPrimitives.push_back(std::move(primitive));
+	return rawPrimitive;
+}
+
 bool IsTransformNearlyEqual(const Transform& lhs, const Transform& rhs) {
 	return IsNearlyEqual(lhs.scale.x, rhs.scale.x) && IsNearlyEqual(lhs.scale.y, rhs.scale.y) && IsNearlyEqual(lhs.scale.z, rhs.scale.z) && IsNearlyEqual(lhs.rotate.x, rhs.rotate.x) &&
 	       IsNearlyEqual(lhs.rotate.y, rhs.rotate.y) && IsNearlyEqual(lhs.rotate.z, rhs.rotate.z) && IsNearlyEqual(lhs.translate.x, rhs.translate.x) &&
@@ -213,23 +267,7 @@ void Hierarchy::ApplyEditorSnapshot(const EditorSnapshot& snapshot) {
 	selectionBoxDirty_ = true;
 }
 void Hierarchy::AddPrimitiveAssetToHierarchy(const std::string& primitiveName) {
-	std::unique_ptr<Primitive> primitive = std::make_unique<Primitive>();
-	Primitive::PrimitiveName type = Primitive::Box;
-	if (primitiveName == "Plane") {
-		type = Primitive::Plane;
-	} else if (primitiveName == "Sphere") {
-		type = Primitive::Sphere;
-	} else if (primitiveName == "Cylinder") {
-		type = Primitive::Cylinder;
-	} else if (primitiveName == "Cone") {
-		type = Primitive::Cone;
-	} else if (primitiveName == "Box") {
-		type = Primitive::Box;
-	}
-	primitive->Initialize(type);
-	primitive->SetCamera(Object3dCommon::GetInstance()->GetDefaultCamera());
-	Primitive* rawPrimitive = primitive.get();
-	editorOwnedPrimitives_.push_back(std::move(primitive));
+	Primitive* rawPrimitive = CreateEditorOwnedPrimitive(editorOwnedPrimitives_, PrimitiveTypeFromName(primitiveName), "");
 	RegisterPrimitive(rawPrimitive);
 	const size_t index = primitiveEditorTransforms_.empty() ? 0 : primitiveEditorTransforms_.size() - 1;
 	if (index < primitiveNames_.size()) {
@@ -242,13 +280,7 @@ void Hierarchy::AddPrimitiveAssetToHierarchy(const std::string& primitiveName) {
 }
 
 void Hierarchy::AddObject3dAssetToHierarchy(const std::string& modelName) {
-	ModelManager::GetInstance()->LoadModel("Resources/3d", modelName);
-	std::unique_ptr<Object3d> object = std::make_unique<Object3d>();
-	object->Initialize();
-	object->SetModel(modelName);
-	object->SetCamera(Object3dCommon::GetInstance()->GetDefaultCamera());
-	Object3d* rawObject = object.get();
-	editorOwnedObjects_.push_back(std::move(object));
+	Object3d* rawObject = CreateEditorOwnedObject(editorOwnedObjects_, modelName, "");
 	RegisterObject3d(rawObject);
 	const size_t index = editorTransforms_.empty() ? 0 : editorTransforms_.size() - 1;
 	if (index < objectNames_.size()) {
@@ -428,6 +460,7 @@ bool Hierarchy::SaveObjectEditorsToJson(const std::string& filePath) const {
 		objectJson["index"] = i;
 		objectJson["name"] = objectNames_[i];
 		objectJson["editorId"] = object->GetEditorId();
+		objectJson["modelName"] = object->GetModelFilePath();
 		objectJson["transform"] = {
 		    {"scale",     {transform.scale.x, transform.scale.y, transform.scale.z}            },
 		    {"rotate",    {transform.rotate.x, transform.rotate.y, transform.rotate.z}         },
@@ -461,6 +494,7 @@ bool Hierarchy::SaveObjectEditorsToJson(const std::string& filePath) const {
 		primitiveJson["index"] = i;
 		primitiveJson["name"] = primitiveNames_[i];
 		primitiveJson["editorId"] = primitive->GetEditorId();
+		primitiveJson["primitiveType"] = PrimitiveTypeToName(primitive->GetPrimitiveName());
 		primitiveJson["transform"] = {
 		    {"scale",     {transform.scale.x, transform.scale.y, transform.scale.z}            },
 		    {"rotate",    {transform.rotate.x, transform.rotate.y, transform.rotate.z}         },
@@ -528,7 +562,22 @@ bool Hierarchy::LoadObjectEditorsFromJson(const std::string& filePath) {
 				index = objectJson["index"].get<size_t>();
 			}
 			if (index >= objects_.size() || !objects_[index]) {
-				continue;
+				std::string modelName;
+				if (objectJson.contains("modelName") && objectJson["modelName"].is_string()) {
+					modelName = objectJson["modelName"].get<std::string>();
+				} else if (objectJson.contains("name") && objectJson["name"].is_string()) {
+					modelName = objectJson["name"].get<std::string>();
+				}
+				if (modelName.empty()) {
+					continue;
+				}
+				const std::string editorId = objectJson.value("editorId", std::string());
+				Object3d* rawObject = CreateEditorOwnedObject(editorOwnedObjects_, modelName, editorId);
+				RegisterObject3d(rawObject);
+				index = objects_.empty() ? std::numeric_limits<size_t>::max() : objects_.size() - 1;
+				if (index == std::numeric_limits<size_t>::max()) {
+					continue;
+				}
 			}
 			if (objectJson.contains("name") && objectJson["name"].is_string()) {
 				objectNames_[index] = objectJson["name"].get<std::string>();
@@ -618,7 +667,17 @@ bool Hierarchy::LoadObjectEditorsFromJson(const std::string& filePath) {
 				}
 				index = primitiveJson["index"].get<size_t>();
 			}
-			if (index >= primitives_.size() || !primitives_[index] || primitives_[index] == selectionBoxPrimitive_.get()) {
+			std::string primitiveTypeName;
+			if (primitiveJson.contains("primitiveType") && primitiveJson["primitiveType"].is_string()) {
+				primitiveTypeName = primitiveJson["primitiveType"].get<std::string>();
+			} else if (primitiveJson.contains("name") && primitiveJson["name"].is_string()) {
+				primitiveTypeName = primitiveJson["name"].get<std::string>();
+			}
+			const std::string editorId = primitiveJson.value("editorId", std::string());
+			Primitive* rawPrimitive = CreateEditorOwnedPrimitive(editorOwnedPrimitives_, PrimitiveTypeFromName(primitiveTypeName), editorId);
+			RegisterPrimitive(rawPrimitive);
+			index = primitives_.empty() ? std::numeric_limits<size_t>::max() : primitives_.size() - 1;
+			if (index == std::numeric_limits<size_t>::max() || !primitives_[index] || primitives_[index] == selectionBoxPrimitive_.get()) {
 				continue;
 			}
 			if (primitiveJson.contains("name") && primitiveJson["name"].is_string()) {

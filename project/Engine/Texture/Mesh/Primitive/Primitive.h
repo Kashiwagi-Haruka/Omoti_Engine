@@ -142,6 +142,7 @@ public:
 	void SetEditorRegistrationEnabled(bool) {}
 	void SetEditorId(const std::string& id) { editorId_ = id; }
 	const std::string& GetEditorId() const { return editorId_; }
+	PrimitiveName GetPrimitiveName() const { return primitiveName_; }
 	// ポータル投影 UV 用の 2 つのカメラ ViewProjection を設定
 	void SetPortalProjectionMatrices(const Matrix4x4& textureViewProjection0, const Matrix4x4& textureViewProjection1, const Matrix4x4& portalCameraWorld0, const Matrix4x4& portalCameraWorld1);
 	void SetPortalProjectionEnabled(bool enabled);

@@ -195,6 +195,7 @@ void Object3d::Draw() {
 }
 
 void Object3d::SetModel(const std::string& filePath) {
+	modelFilePath_ = filePath;
 	modelInstance_ = ModelManager::GetInstance()->CreateModelInstance(filePath);
 	if (modelInstance_) {
 		model_ = modelInstance_.get();

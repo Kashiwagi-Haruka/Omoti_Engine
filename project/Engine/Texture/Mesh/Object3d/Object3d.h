@@ -57,6 +57,7 @@ class Object3d {
 	Vector3 uvTranslate_ = {0.0f, 0.0f, 0.0f};
 	Vector2 uvAnchor_ = {0.0f, 0.0f};
 	std::string editorId_;
+	std::string modelFilePath_;
 
 public:
 	Object3d() = default;
@@ -73,6 +74,7 @@ public:
 
 	void CreateResources();
 	void SetModel(const std::string& filePath);
+	const std::string& GetModelFilePath() const { return modelFilePath_; }
 
 	void SetCamera(Camera* camera);
 
