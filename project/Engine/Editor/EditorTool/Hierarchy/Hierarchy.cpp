@@ -697,11 +697,13 @@ bool Hierarchy::LoadObjectEditorsFromJson(const std::string& filePath) {
 			} else if (primitiveJson.contains("name") && primitiveJson["name"].is_string()) {
 				primitiveTypeName = primitiveJson["name"].get<std::string>();
 			}
-			const std::string editorId = primitiveJson.value("editorId", std::string());
-			Primitive* rawPrimitive = CreateEditorOwnedPrimitive(editorOwnedPrimitives_, PrimitiveTypeFromName(primitiveTypeName), editorId);
-			RegisterPrimitive(rawPrimitive);
-			index = primitives_.empty() ? std::numeric_limits<size_t>::max() : primitives_.size() - 1;
-			if (index == std::numeric_limits<size_t>::max() || !primitives_[index] || primitives_[index] == selectionBoxPrimitive_.get()) {
+			if (index >= primitives_.size() || !primitives_[index] || primitives_[index] == selectionBoxPrimitive_.get()) {
+				const std::string editorId = primitiveJson.value("editorId", std::string());
+				Primitive* rawPrimitive = CreateEditorOwnedPrimitive(editorOwnedPrimitives_, PrimitiveTypeFromName(primitiveTypeName), editorId);
+				RegisterPrimitive(rawPrimitive);
+				index = primitives_.empty() ? std::numeric_limits<size_t>::max() : primitives_.size() - 1;
+			}
+			if (index == std::numeric_limits<size_t>::max() || index >= primitives_.size() || !primitives_[index] || primitives_[index] == selectionBoxPrimitive_.get()) {
 				continue;
 			}
 			if (primitiveJson.contains("name") && primitiveJson["name"].is_string()) {
