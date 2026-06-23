@@ -1007,15 +1007,15 @@ void Hierarchy::DrawSelectedObjectGuizmo(const ImGuiViewport* viewport, float co
 	ImGui::SetNextWindowPos(operationWindowPos, ImGuiCond_Always);
 	ImGui::SetNextWindowBgAlpha(0.65f);
 	if (ImGui::Begin("##GuizmoOperation", nullptr, ImGuiWindowFlags_NoDecoration | ImGuiWindowFlags_AlwaysAutoResize | ImGuiWindowFlags_NoSavedSettings | ImGuiWindowFlags_NoNav)) {
-		if (ImGui::RadioButton("Move (W)", currentGuizmoOperation_ == 0)) {
+		if (ImGui::RadioButton("Move (T)", currentGuizmoOperation_ == 0)) {
 			currentGuizmoOperation_ = 0;
 		}
 		ImGui::SameLine();
-		if (ImGui::RadioButton("Rotate (E)", currentGuizmoOperation_ == 1)) {
+		if (ImGui::RadioButton("Rotate (R)", currentGuizmoOperation_ == 1)) {
 			currentGuizmoOperation_ = 1;
 		}
 		ImGui::SameLine();
-		if (ImGui::RadioButton("Scale (R)", currentGuizmoOperation_ == 2)) {
+		if (ImGui::RadioButton("Scale (S)", currentGuizmoOperation_ == 2)) {
 			currentGuizmoOperation_ = 2;
 		}
 	}

@@ -7,6 +7,7 @@
 #include "TextureManager.h"
 #include <algorithm>
 #include <cassert>
+#include <utility>
 
 std::unique_ptr<SceneManager> SceneManager::instance_ = nullptr;
 
@@ -125,9 +126,20 @@ void SceneManager::DrawOverlay() {
 void SceneManager::ChangeScene(const std::string& sceneName) {
 
 	assert(sceneFactory_);
-	assert(nextscene_ == nullptr);
+	if (!sceneFactory_ || sceneName.empty()) {
+		return;
+	}
 
-	nextscene_ = sceneFactory_->CreateScene(sceneName);
+	if (sceneName == currentSceneName_ && !nextscene_) {
+		return;
+	}
+
+	std::unique_ptr<BaseScene> requestedScene = sceneFactory_->CreateScene(sceneName);
+	if (!requestedScene) {
+		return;
+	}
+
+	nextscene_ = std::move(requestedScene);
 	nextSceneName_ = sceneName;
 }
 
