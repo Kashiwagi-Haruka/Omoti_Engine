@@ -130,6 +130,30 @@ void Hierarchy::Finalize() {
 	editorCamera_.Reset();
 	ResetForSceneChange();
 }
+void Hierarchy::OnSceneChangeRequested(const std::string& nextSceneName) {
+	PushGuizmoUndoIfNeeded();
+	objects_.clear();
+	objectNames_.clear();
+	editorTransforms_.clear();
+	editorMaterials_.clear();
+	objectModelNames_.clear();
+
+	primitives_.clear();
+	primitiveNames_.clear();
+	primitiveEditorTransforms_.clear();
+	primitiveEditorMaterials_.clear();
+
+	selectionBoxPrimitive_.reset();
+	selectedObjectIndex_ = 0;
+	selectedIsPrimitive_ = false;
+	selectionBoxDirty_ = true;
+	loadedSceneName_ = nextSceneName;
+	ResetForSceneChange();
+#ifdef USE_IMGUI
+	ImGui::CloseCurrentPopup();
+	ImGui::ClearActiveID();
+#endif
+}
 bool Hierarchy::IsEditorPreviewActive() const {
 #ifdef USE_IMGUI
 	return !isPlaying_;

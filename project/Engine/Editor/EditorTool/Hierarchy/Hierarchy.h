@@ -42,6 +42,7 @@ public:
 	void AddObject3dAssetToHierarchy(const std::string& modelName);
 	void AddAudioAssetToHierarchy(const std::filesystem::path& audioPath);
 	void Finalize();
+	void OnSceneChangeRequested(const std::string& nextSceneName);
 
 private:
 	struct EditorSnapshot {

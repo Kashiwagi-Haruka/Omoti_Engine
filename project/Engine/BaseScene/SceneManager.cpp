@@ -141,6 +141,11 @@ void SceneManager::ChangeScene(const std::string& sceneName) {
 
 	nextscene_ = std::move(requestedScene);
 	nextSceneName_ = sceneName;
+#ifdef USE_IMGUI
+	if (Hierarchy* hierarchy = Hierarchy::GetInstance()) {
+		hierarchy->OnSceneChangeRequested(sceneName);
+	}
+#endif
 }
 
 void SceneManager::EnsureFadeSprite() {
