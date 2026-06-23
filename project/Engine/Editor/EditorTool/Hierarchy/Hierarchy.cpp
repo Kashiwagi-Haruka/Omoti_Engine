@@ -860,14 +860,17 @@ void Hierarchy::DrawEditorGridLines() {
 			object3dCommon->DrawCommon();
 		}
 	}
+	Camera* defaultCamera = Object3dCommon::GetInstance()->GetDefaultCamera();
 	for (const auto& object : editorOwnedObjects_) {
 		if (object) {
+			object->SetCamera(defaultCamera);
 			object->Update();
 			object->Draw();
 		}
 	}
 	for (const auto& primitive : editorOwnedPrimitives_) {
 		if (primitive) {
+			primitive->SetCamera(defaultCamera);
 			primitive->Update();
 			primitive->Draw();
 		}
