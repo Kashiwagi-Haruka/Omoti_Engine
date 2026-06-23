@@ -61,6 +61,9 @@ void DirectXCommon::initialize(WinApp* winApp) {
 	SetBoxFilterKernelSize(boxFilterKernelSize_);
 	SetFullscreenFilterType(fullscreenFilterType_);
 	SetGaussianFilterSigma(gaussianFilterSigma_);
+	SetRadialBlurCenter(radialBlurCenter_);
+	SetRadialBlurWidth(radialBlurWidth_);
+	SetRadialBlurSampleCount(radialBlurSampleCount_);
 	SetDissolveEnabled(dissolveEnabled_);
 	SetDissolveThreshold(dissolveThreshold_);
 	SetDissolveEdgeWidth(dissolveEdgeWidth_);
@@ -600,6 +603,10 @@ void DirectXCommon::SceneCopyPipelineCreate() {
 	postEffectParameterMappedData_->dissolveThreshold = dissolveThreshold_;
 	postEffectParameterMappedData_->dissolveEdgeWidth = dissolveEdgeWidth_;
 	postEffectParameterMappedData_->dissolvePadding = 0.0f;
+	postEffectParameterMappedData_->radialBlurCenter[0] = radialBlurCenter_.x;
+	postEffectParameterMappedData_->radialBlurCenter[1] = radialBlurCenter_.y;
+	postEffectParameterMappedData_->radialBlurWidth = radialBlurWidth_;
+	postEffectParameterMappedData_->radialBlurSampleCount = static_cast<float>(radialBlurSampleCount_);
 }
 void DirectXCommon::DepthStencilViewInitialize() {
 
@@ -707,7 +714,7 @@ void DirectXCommon::SetBoxFilterKernelSize(int kernelSize) {
 	}
 }
 void DirectXCommon::SetFullscreenFilterType(int filterType) {
-	fullscreenFilterType_ = std::clamp(filterType, 0, 1);
+	fullscreenFilterType_ = std::clamp(filterType, 0, 2);
 	if (postEffectParameterMappedData_) {
 		postEffectParameterMappedData_->fullscreenFilterType = static_cast<float>(fullscreenFilterType_);
 	}
@@ -716,6 +723,26 @@ void DirectXCommon::SetGaussianFilterSigma(float sigma) {
 	gaussianFilterSigma_ = std::max(sigma, 0.001f);
 	if (postEffectParameterMappedData_) {
 		postEffectParameterMappedData_->gaussianFilterSigma = gaussianFilterSigma_;
+	}
+}
+void DirectXCommon::SetRadialBlurCenter(const Vector2& center) {
+	radialBlurCenter_.x = std::clamp(center.x, 0.0f, 1.0f);
+	radialBlurCenter_.y = std::clamp(center.y, 0.0f, 1.0f);
+	if (postEffectParameterMappedData_) {
+		postEffectParameterMappedData_->radialBlurCenter[0] = radialBlurCenter_.x;
+		postEffectParameterMappedData_->radialBlurCenter[1] = radialBlurCenter_.y;
+	}
+}
+void DirectXCommon::SetRadialBlurWidth(float width) {
+	radialBlurWidth_ = std::clamp(width, 0.0f, 0.2f);
+	if (postEffectParameterMappedData_) {
+		postEffectParameterMappedData_->radialBlurWidth = radialBlurWidth_;
+	}
+}
+void DirectXCommon::SetRadialBlurSampleCount(int sampleCount) {
+	radialBlurSampleCount_ = std::clamp(sampleCount, 1, 32);
+	if (postEffectParameterMappedData_) {
+		postEffectParameterMappedData_->radialBlurSampleCount = static_cast<float>(radialBlurSampleCount_);
 	}
 }
 void DirectXCommon::SetDissolveEnabled(bool enabled) {

@@ -88,6 +88,9 @@ private:
 	float introBlurStartKernelSize_ = 1.0f;
 	int fullscreenFilterType_ = 1;
 	float gaussianFilterSigma_ = 2.0f;
+	Vector2 radialBlurCenter_ = {0.5f, 0.5f};
+	float radialBlurWidth_ = 0.01f;
+	int radialBlurSampleCount_ = 10;
 	bool dissolveEnabled_ = false;
 	float dissolveThreshold_ = 0.0f;
 	float dissolveEdgeWidth_ = 0.02f;

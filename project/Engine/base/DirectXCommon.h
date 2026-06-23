@@ -85,6 +85,9 @@ class DirectXCommon {
 		float dissolveThreshold;
 		float dissolveEdgeWidth;
 		float dissolvePadding;
+		float radialBlurCenter[2];
+		float radialBlurWidth;
+		float radialBlurSampleCount;
 	};
 	PostEffectParameters* postEffectParameterMappedData_ = nullptr;
 	float vignetteStrength_ = 0.0f;
@@ -99,6 +102,9 @@ class DirectXCommon {
 	bool dissolveEnabled_ = false;
 	float dissolveThreshold_ = 0.0f;
 	float dissolveEdgeWidth_ = 0.02f;
+	Vector2 radialBlurCenter_ = {0.5f, 0.5f};
+	float radialBlurWidth_ = 0.01f;
+	int radialBlurSampleCount_ = 10;
 	bool fullscreenGrayscaleEnabled_ = false;
 	bool fullscreenSepiaEnabled_ = false;
 	bool editorLayoutEnabled_ = false;
@@ -162,6 +168,12 @@ public:
 	int GetFullscreenFilterType() const { return fullscreenFilterType_; }
 	void SetGaussianFilterSigma(float sigma);
 	float GetGaussianFilterSigma() const { return gaussianFilterSigma_; }
+	void SetRadialBlurCenter(const Vector2& center);
+	Vector2 GetRadialBlurCenter() const { return radialBlurCenter_; }
+	void SetRadialBlurWidth(float width);
+	float GetRadialBlurWidth() const { return radialBlurWidth_; }
+	void SetRadialBlurSampleCount(int sampleCount);
+	int GetRadialBlurSampleCount() const { return radialBlurSampleCount_; }
 	void SetDissolveEnabled(bool enabled);
 	bool GetDissolveEnabled() const { return dissolveEnabled_; }
 	void SetDissolveThreshold(float threshold);

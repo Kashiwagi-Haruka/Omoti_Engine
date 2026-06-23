@@ -4,6 +4,7 @@
 #include "Light/CommonLight/PointCommonLight.h"
 #include "Light/CommonLight/SpotCommonLight.h"
 #include "Matrix4x4.h"
+#include "Vector2.h"
 #include "PSO/CreatePSO.h"
 #include <Windows.h>
 #include <array>
@@ -367,6 +368,12 @@ public:
 	int GetFullscreenFilterType() const;
 	void SetGaussianFilterSigma(float sigma);
 	float GetGaussianFilterSigma() const;
+	void SetRadialBlurCenter(const Vector2& center);
+	Vector2 GetRadialBlurCenter() const;
+	void SetRadialBlurWidth(float width);
+	float GetRadialBlurWidth() const;
+	void SetRadialBlurSampleCount(int sampleCount);
+	int GetRadialBlurSampleCount() const;
 	void SetDissolveEnabled(bool enabled);
 	void SetDissolveThreshold(float threshold);
 	void SetDissolveEdgeWidth(float width);

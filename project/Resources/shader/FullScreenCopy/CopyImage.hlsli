@@ -21,4 +21,7 @@ cbuffer PostEffectParameters : register(b0)
     float dissolveThreshold;
     float dissolveEdgeWidth;
     float dissolvePadding;
+    float2 radialBlurCenter;
+    float radialBlurWidth;
+    float radialBlurSampleCount;
 };
