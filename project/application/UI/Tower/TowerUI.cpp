@@ -22,7 +22,7 @@ void TowerUI::Initialize() {
 
 	houseHpLabelText_.Initialize(houseHpFontHandle_);
 	houseHpLabelText_.SetSize({300.0f, 60.0f});
-	houseHpLabelText_.SetPosition({houseHpPercentBasePosition.x, houseHpPercentBasePosition.y + houseHpStringOffset.y});
+	houseHpLabelText_.SetPosition({houseHpPercentBasePosition.x+houseHpStringOffset.x, houseHpPercentBasePosition.y + houseHpStringOffset.y});
 	houseHpLabelText_.SetAlign(TextAlign::Left);
 	houseHpLabelText_.SetColor({1.0f, 1.0f, 1.0f, 1.0f});
 	houseHpLabelText_.SetString(U"拠点HP");
