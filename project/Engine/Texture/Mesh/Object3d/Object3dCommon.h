@@ -367,6 +367,9 @@ public:
 	int GetFullscreenFilterType() const;
 	void SetGaussianFilterSigma(float sigma);
 	float GetGaussianFilterSigma() const;
+	void SetDissolveEnabled(bool enabled);
+	void SetDissolveThreshold(float threshold);
+	void SetDissolveEdgeWidth(float width);
 
 	// ランダムノイズ有効化切り替え
 	void SetRandomNoiseEnabled(bool enabled);

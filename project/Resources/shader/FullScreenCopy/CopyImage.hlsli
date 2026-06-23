@@ -17,4 +17,8 @@ cbuffer PostEffectParameters : register(b0)
     float fullscreenSepiaEnabled;
     float fullscreenFilterType;
     float gaussianFilterSigma;
+    float dissolveEnabled;
+    float dissolveThreshold;
+    float dissolveEdgeWidth;
+    float dissolvePadding;
 };

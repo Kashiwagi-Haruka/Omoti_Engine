@@ -245,9 +245,9 @@ void GameScene::Initialize() {
 	hitVinettTimer_ = 0.0f;
 	introBlurStartKernelSize_ = 15.0f;
 	introBlurDelayTimer_ = 0.0f;
-	Object3dCommon::GetInstance()->SetBoxFilterKernelSize(static_cast<int>(introBlurStartKernelSize_));
-	Object3dCommon::GetInstance()->SetFullscreenFilterType(fullscreenFilterType_);
-	Object3dCommon::GetInstance()->SetGaussianFilterSigma(gaussianFilterSigma_);
+	Object3dCommon::GetInstance()->SetDissolveEnabled(dissolveEnabled_);
+	Object3dCommon::GetInstance()->SetDissolveThreshold(dissolveThreshold_);
+	Object3dCommon::GetInstance()->SetDissolveEdgeWidth(dissolveEdgeWidth_);
 }
 
 void GameScene::DebugImGui() {
@@ -262,6 +262,15 @@ void GameScene::DebugImGui() {
 		}
 		if (ImGui::DragFloat("Gaussian Sigma", &gaussianFilterSigma_, 0.01f, 0.001f, 10.0f)) {
 			Object3dCommon::GetInstance()->SetGaussianFilterSigma(gaussianFilterSigma_);
+		}
+		if (ImGui::Checkbox("Dissolve Enabled", &dissolveEnabled_)) {
+			Object3dCommon::GetInstance()->SetDissolveEnabled(dissolveEnabled_);
+		}
+		if (ImGui::SliderFloat("Dissolve Threshold", &dissolveThreshold_, 0.0f, 1.0f)) {
+			Object3dCommon::GetInstance()->SetDissolveThreshold(dissolveThreshold_);
+		}
+		if (ImGui::SliderFloat("Dissolve Edge Width", &dissolveEdgeWidth_, 0.0f, 0.5f)) {
+			Object3dCommon::GetInstance()->SetDissolveEdgeWidth(dissolveEdgeWidth_);
 		}
 		Object3dCommon::GetInstance()->SetVignetteColor(vinettColor_);
 		Object3dCommon::GetInstance()->SetVignetteStrength(vinettStrength_);

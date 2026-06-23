@@ -687,6 +687,12 @@ void Object3dCommon::SetGaussianFilterSigma(float sigma) { dxCommon_->SetGaussia
 
 float Object3dCommon::GetGaussianFilterSigma() const { return dxCommon_->GetGaussianFilterSigma(); }
 
+void Object3dCommon::SetDissolveEnabled(bool enabled) { dxCommon_->SetDissolveEnabled(enabled); }
+
+void Object3dCommon::SetDissolveThreshold(float threshold) { dxCommon_->SetDissolveThreshold(threshold); }
+
+void Object3dCommon::SetDissolveEdgeWidth(float width) { dxCommon_->SetDissolveEdgeWidth(width); }
+
 Microsoft::WRL::ComPtr<ID3D12Resource> Object3dCommon::CreateBufferResource(size_t sizeInBytes) {
 	// バッファの設定(UPLOAD用に変更)
 	D3D12_HEAP_PROPERTIES heapProperties = {};

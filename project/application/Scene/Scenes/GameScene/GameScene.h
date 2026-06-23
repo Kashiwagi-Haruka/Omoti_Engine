@@ -88,6 +88,9 @@ private:
 	float introBlurStartKernelSize_ = 1.0f;
 	int fullscreenFilterType_ = 1;
 	float gaussianFilterSigma_ = 2.0f;
+	bool dissolveEnabled_ = false;
+	float dissolveThreshold_ = 0.0f;
+	float dissolveEdgeWidth_ = 0.02f;
 
 public:
 	GameScene();
