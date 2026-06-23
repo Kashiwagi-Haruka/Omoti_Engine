@@ -50,9 +50,9 @@ void UIManager::Draw() {
 	hpBarUI_->Draw();
 	SpriteCommon::GetInstance()->DrawCommon();
 	attackOperationUI_->Draw();
-	SpriteCommon::GetInstance()->DrawCommon();
 	towerUI_->Draw();
-	/*menuUI_->Draw();*/
+	SpriteCommon::GetInstance()->DrawCommon();
+	menuUI_->Draw();
 	if (PlayCommand::GetCURSOR_DISPLAY()) {
 		if (cursolSprite_) {
 			cursolSprite_->Draw();
