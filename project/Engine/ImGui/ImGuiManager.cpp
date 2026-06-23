@@ -1,6 +1,7 @@
 #define NOMINMAX
 #include "ImGuiManager.h"
 #include "Engine/Editor/EditorManager/EditorManager.h"
+#include "Engine/Editor/EditorTool/Hierarchy/Hierarchy.h"
 #include <dxgi1_6.h>
 #ifdef USE_IMGUI
 #include "externals/imgui/imgui.h"
@@ -113,9 +114,14 @@ void ImGuiManager::Begin() {
 	if (dxCommon_) {
 		dxCommon_->SetEditorLayoutEnabled(isEditorLayoutEnabled);
 	}
-	if (isEditorLayoutEnabled) {
-		Input::GetInstance()->SetIsCursorStability(false);
-		Input::GetInstance()->SetIsCursorVisible(true);
+	const Hierarchy* hierarchy = Hierarchy::GetInstance();
+	const bool isPlayMode = hierarchy && hierarchy->IsPlayMode();
+	if (isEditorLayoutEnabled && !isPlayMode) {
+		Input* input = Input::GetInstance();
+		if (input) {
+			input->SetIsCursorStability(false);
+			input->SetIsCursorVisible(true);
+		}
 	}
 	prevEditorLayoutEnabled_ = isEditorLayoutEnabled;
 #endif
