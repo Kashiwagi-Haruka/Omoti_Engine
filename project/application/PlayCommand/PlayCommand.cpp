@@ -87,31 +87,31 @@ bool PlayCommand::GetCURSOR_DISPLAY(){
 
 }
 bool PlayCommand::GetPause(){ 
-	if (Input::GetInstance()->PushKey(DIK_ESCAPE) || Input::GetInstance()->PushButton(Input::PadButton::kButtonStart)) {
+	if (Input::GetInstance()->TriggerKey(DIK_ESCAPE) || Input::GetInstance()->TriggerButton(Input::PadButton::kButtonStart)) {
 		return true;
 	}
 	return false;
 }
 bool PlayCommand::GetCharacterChange1(){
-	if (Input::GetInstance()->PushKey(DIK_1) || Input::GetInstance()->PushButton(Input::PadButton::kButtonLeft)) {
+	if (Input::GetInstance()->TriggerKey(DIK_1) || Input::GetInstance()->TriggerButton(Input::PadButton::kButtonLeft)) {
 		return true;
 	}
 	return false;
 }
 bool PlayCommand::GetCharacterChange2() {
-	if (Input::GetInstance()->PushKey(DIK_2) || Input::GetInstance()->PushButton(Input::PadButton::kButtonRight)) {
+	if (Input::GetInstance()->TriggerKey(DIK_2) || Input::GetInstance()->TriggerButton(Input::PadButton::kButtonRight)) {
 		return true;
 	}
 	return false;
 }
 bool PlayCommand::GetCharacterChange3() {
-	if (Input::GetInstance()->PushKey(DIK_3) || Input::GetInstance()->PushButton(Input::PadButton::kButtonDown)) {
+	if (Input::GetInstance()->TriggerKey(DIK_3) || Input::GetInstance()->TriggerButton(Input::PadButton::kButtonDown)) {
 		return true;
 	}
 	return false;
 }
 bool PlayCommand::GetCharacterChange4() {
-	if (Input::GetInstance()->PushKey(DIK_4) || Input::GetInstance()->PushButton(Input::PadButton::kButtonUp)) {
+	if (Input::GetInstance()->TriggerKey(DIK_4) || Input::GetInstance()->TriggerButton(Input::PadButton::kButtonUp)) {
 		return true;
 	}
 	return false;
