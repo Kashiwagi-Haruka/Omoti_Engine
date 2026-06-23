@@ -1,6 +1,7 @@
 #define NOMINMAX
 #include "ImGuiManager.h"
 #include "Engine/Editor/EditorManager/EditorManager.h"
+#include "Engine/Editor/EditorTool/Hierarchy/Hierarchy.h"
 #include <dxgi1_6.h>
 #ifdef USE_IMGUI
 #include "externals/imgui/imgui.h"
@@ -8,6 +9,7 @@
 #include "externals/imgui/imgui_impl_win32.h"
 #endif
 #include "DirectXCommon.h"
+#include "Input.h"
 #include "TextureManager.h"
 #include "SrvManager/SrvManager.h"
 #include "WinApp.h"
@@ -107,16 +109,24 @@ void ImGuiManager::Begin() {
 #endif
 	EditorManager* editorManager = EditorManager::GetInstance();
 #ifdef USE_IMGUI
-	const bool isEditorLayoutEnabled = editorManager->HasRegisteredObjects();
+
+	constexpr bool isEditorLayoutEnabled = true;
 	if (dxCommon_) {
 		dxCommon_->SetEditorLayoutEnabled(isEditorLayoutEnabled);
+	}
+	const Hierarchy* hierarchy = Hierarchy::GetInstance();
+	const bool isPlayMode = hierarchy && hierarchy->IsPlayMode();
+	if (isEditorLayoutEnabled && !isPlayMode) {
+		Input* input = Input::GetInstance();
+		if (input) {
+			input->SetIsCursorStability(false);
+			input->SetIsCursorVisible(true);
+		}
 	}
 	prevEditorLayoutEnabled_ = isEditorLayoutEnabled;
 #endif
 	editorManager->DrawObjectEditors();
-	if (editorManager->HasRegisteredObjects()) {
-		editorManager->DrawAssetWindow();
-	}
+	editorManager->DrawAssetWindow();
 }
 
 void ImGuiManager::End() {

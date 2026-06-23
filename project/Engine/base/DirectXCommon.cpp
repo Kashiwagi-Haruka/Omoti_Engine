@@ -2,14 +2,19 @@
 #include "DirectXCommon.h"
 
 #include "Engine/Logger/Logger.h"
+#ifdef USE_IMGUI
+#include "Engine/Editor/EditorTool/Hierarchy/Hierarchy.h"
+#endif
 #include "ParticleManager.h"
 #include "SrvManager/SrvManager.h"
-#include "TextureManager.h"
 #include "StringUtility.h"
+#include "TextureManager.h"
 #include <algorithm>
 #include <cassert>
+#include <d3dx12.h>
 #include <dxcapi.h>
 #include <format>
+#include <random>
 #include <thread>
 
 #pragma comment(lib, "d3d12.lib")
@@ -40,6 +45,8 @@ void DirectXCommon::initialize(WinApp* winApp) {
 	DXCCompilerCreate();
 	// RTVの初期化
 	RenderTargetViewInitialize();
+	// フェンスの生成
+	FenceCreate();
 	// シーンカラーテクスチャの生成
 	SceneColorResourceCreate();
 	// シーンカラー用RTV/SRVの初期化
@@ -54,16 +61,18 @@ void DirectXCommon::initialize(WinApp* winApp) {
 	SetBoxFilterKernelSize(boxFilterKernelSize_);
 	SetFullscreenFilterType(fullscreenFilterType_);
 	SetGaussianFilterSigma(gaussianFilterSigma_);
+	SetRadialBlurCenter(radialBlurCenter_);
+	SetRadialBlurWidth(radialBlurWidth_);
+	SetRadialBlurSampleCount(radialBlurSampleCount_);
+	SetDissolveEnabled(dissolveEnabled_);
+	SetDissolveThreshold(dissolveThreshold_);
+	SetDissolveEdgeWidth(dissolveEdgeWidth_);
 	// DSVの初期化
 	DepthStencilViewInitialize();
-	// フェンスの生成
-	FenceCreate();
 	// ビューポートとシザー矩形の設定
 	ViewportRectInitialize();
 	ScissorRectInitialize();
-
 }
-
 #pragma region FixFPS
 void DirectXCommon::InitializeFixFPS() { reference_ = std::chrono::steady_clock::now(); }
 void DirectXCommon::UpdateFixFPS() {
@@ -291,7 +300,7 @@ void DirectXCommon::DescriptorHeapCreate() {
 	// ディスクリプタヒープの生成
 
 	rtvDescriptorHeap_ = CreateDescriptorHeap(D3D12_DESCRIPTOR_HEAP_TYPE_RTV, 4, false);
-	sceneSrvDescriptorHeap_ = CreateDescriptorHeap(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV, 2, true);
+	sceneSrvDescriptorHeap_ = CreateDescriptorHeap(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV, 3, true);
 
 	dsvDescriptorHeap_ = CreateDescriptorHeap(D3D12_DESCRIPTOR_HEAP_TYPE_DSV, 1, false);
 }
@@ -401,11 +410,93 @@ void DirectXCommon::SceneColorViewCreate() {
 	outlineSrvDesc.ViewDimension = D3D12_SRV_DIMENSION_TEXTURE2D;
 	outlineSrvDesc.Texture2D.MipLevels = 1;
 	device_->CreateShaderResourceView(sceneOutlineResource_.Get(), &outlineSrvDesc, outlineSrvHandleCPU);
+	DissolveMaskTextureCreate();
+}
+void DirectXCommon::DissolveMaskTextureCreate() {
+	constexpr UINT kMaskWidth = 256;
+	constexpr UINT kMaskHeight = 256;
+	std::vector<uint8_t> pixels(kMaskWidth * kMaskHeight * 4);
+	std::mt19937 randomEngine(0);
+	std::uniform_int_distribution<int> randomValue(0, 255);
+	for (UINT y = 0; y < kMaskHeight; ++y) {
+		for (UINT x = 0; x < kMaskWidth; ++x) {
+			const uint8_t value = static_cast<uint8_t>(randomValue(randomEngine));
+			const size_t index = (static_cast<size_t>(y) * kMaskWidth + x) * 4;
+			pixels[index + 0] = value;
+			pixels[index + 1] = value;
+			pixels[index + 2] = value;
+			pixels[index + 3] = 255;
+		}
+	}
+
+	D3D12_RESOURCE_DESC textureDesc{};
+	textureDesc.Dimension = D3D12_RESOURCE_DIMENSION_TEXTURE2D;
+	textureDesc.Width = kMaskWidth;
+	textureDesc.Height = kMaskHeight;
+	textureDesc.DepthOrArraySize = 1;
+	textureDesc.MipLevels = 1;
+	textureDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
+	textureDesc.SampleDesc.Count = 1;
+	textureDesc.Layout = D3D12_TEXTURE_LAYOUT_UNKNOWN;
+	D3D12_HEAP_PROPERTIES defaultHeapProps{};
+	defaultHeapProps.Type = D3D12_HEAP_TYPE_DEFAULT;
+	hr_ = device_->CreateCommittedResource(&defaultHeapProps, D3D12_HEAP_FLAG_NONE, &textureDesc, D3D12_RESOURCE_STATE_COPY_DEST, nullptr, IID_PPV_ARGS(&dissolveMaskResource_));
+	assert(SUCCEEDED(hr_));
+
+	const UINT64 uploadBufferSize = GetRequiredIntermediateSize(dissolveMaskResource_.Get(), 0, 1);
+	D3D12_RESOURCE_DESC uploadDesc{};
+	uploadDesc.Dimension = D3D12_RESOURCE_DIMENSION_BUFFER;
+	uploadDesc.Width = uploadBufferSize;
+	uploadDesc.Height = 1;
+	uploadDesc.DepthOrArraySize = 1;
+	uploadDesc.MipLevels = 1;
+	uploadDesc.SampleDesc.Count = 1;
+	uploadDesc.Layout = D3D12_TEXTURE_LAYOUT_ROW_MAJOR;
+	D3D12_HEAP_PROPERTIES uploadHeapProps{};
+	uploadHeapProps.Type = D3D12_HEAP_TYPE_UPLOAD;
+	hr_ = device_->CreateCommittedResource(&uploadHeapProps, D3D12_HEAP_FLAG_NONE, &uploadDesc, D3D12_RESOURCE_STATE_GENERIC_READ, nullptr, IID_PPV_ARGS(&dissolveMaskUploadResource_));
+	assert(SUCCEEDED(hr_));
+
+	D3D12_SUBRESOURCE_DATA subresource{};
+	subresource.pData = pixels.data();
+	subresource.RowPitch = static_cast<LONG_PTR>(kMaskWidth * 4);
+	subresource.SlicePitch = subresource.RowPitch * kMaskHeight;
+	UpdateSubresources(commandList_.Get(), dissolveMaskResource_.Get(), dissolveMaskUploadResource_.Get(), 0, 0, 1, &subresource);
+	D3D12_RESOURCE_BARRIER barrier{};
+	barrier.Type = D3D12_RESOURCE_BARRIER_TYPE_TRANSITION;
+	barrier.Transition.pResource = dissolveMaskResource_.Get();
+	barrier.Transition.StateBefore = D3D12_RESOURCE_STATE_COPY_DEST;
+	barrier.Transition.StateAfter = D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE;
+	barrier.Transition.Subresource = D3D12_RESOURCE_BARRIER_ALL_SUBRESOURCES;
+	commandList_->ResourceBarrier(1, &barrier);
+	hr_ = commandList_->Close();
+	assert(SUCCEEDED(hr_));
+	Microsoft::WRL::ComPtr<ID3D12CommandList> lists[] = {commandList_.Get()};
+	commandQueue_->ExecuteCommandLists(1, lists->GetAddressOf());
+	fenceValue_++;
+	commandQueue_->Signal(fence_.Get(), fenceValue_);
+	if (fence_->GetCompletedValue() < fenceValue_) {
+		fence_->SetEventOnCompletion(fenceValue_, fenceEvent_);
+		WaitForSingleObject(fenceEvent_, INFINITE);
+	}
+	hr_ = commandAllocators_[frameIndex_]->Reset();
+	assert(SUCCEEDED(hr_));
+	hr_ = commandList_->Reset(commandAllocators_[frameIndex_].Get(), nullptr);
+	assert(SUCCEEDED(hr_));
+
+	D3D12_CPU_DESCRIPTOR_HANDLE maskSrvHandleCPU = sceneSrvHandleCPU_;
+	maskSrvHandleCPU.ptr += descriptorSizeSRV_ * 2;
+	D3D12_SHADER_RESOURCE_VIEW_DESC maskSrvDesc{};
+	maskSrvDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
+	maskSrvDesc.Shader4ComponentMapping = D3D12_DEFAULT_SHADER_4_COMPONENT_MAPPING;
+	maskSrvDesc.ViewDimension = D3D12_SRV_DIMENSION_TEXTURE2D;
+	maskSrvDesc.Texture2D.MipLevels = 1;
+	device_->CreateShaderResourceView(dissolveMaskResource_.Get(), &maskSrvDesc, maskSrvHandleCPU);
 }
 void DirectXCommon::SceneCopyPipelineCreate() {
 	D3D12_DESCRIPTOR_RANGE range{};
 	range.RangeType = D3D12_DESCRIPTOR_RANGE_TYPE_SRV;
-	range.NumDescriptors = 2;
+	range.NumDescriptors = 3;
 	range.BaseShaderRegister = 0;
 	range.OffsetInDescriptorsFromTableStart = D3D12_DESCRIPTOR_RANGE_OFFSET_APPEND;
 
@@ -508,6 +599,14 @@ void DirectXCommon::SceneCopyPipelineCreate() {
 	postEffectParameterMappedData_->fullscreenSepiaEnabled = fullscreenSepiaEnabled_ ? 1.0f : 0.0f;
 	postEffectParameterMappedData_->fullscreenFilterType = static_cast<float>(fullscreenFilterType_);
 	postEffectParameterMappedData_->gaussianFilterSigma = gaussianFilterSigma_;
+	postEffectParameterMappedData_->dissolveEnabled = dissolveEnabled_ ? 1.0f : 0.0f;
+	postEffectParameterMappedData_->dissolveThreshold = dissolveThreshold_;
+	postEffectParameterMappedData_->dissolveEdgeWidth = dissolveEdgeWidth_;
+	postEffectParameterMappedData_->dissolvePadding = 0.0f;
+	postEffectParameterMappedData_->radialBlurCenter[0] = radialBlurCenter_.x;
+	postEffectParameterMappedData_->radialBlurCenter[1] = radialBlurCenter_.y;
+	postEffectParameterMappedData_->radialBlurWidth = radialBlurWidth_;
+	postEffectParameterMappedData_->radialBlurSampleCount = static_cast<float>(radialBlurSampleCount_);
 }
 void DirectXCommon::DepthStencilViewInitialize() {
 
@@ -615,7 +714,7 @@ void DirectXCommon::SetBoxFilterKernelSize(int kernelSize) {
 	}
 }
 void DirectXCommon::SetFullscreenFilterType(int filterType) {
-	fullscreenFilterType_ = std::clamp(filterType, 0, 1);
+	fullscreenFilterType_ = std::clamp(filterType, 0, 2);
 	if (postEffectParameterMappedData_) {
 		postEffectParameterMappedData_->fullscreenFilterType = static_cast<float>(fullscreenFilterType_);
 	}
@@ -626,6 +725,44 @@ void DirectXCommon::SetGaussianFilterSigma(float sigma) {
 		postEffectParameterMappedData_->gaussianFilterSigma = gaussianFilterSigma_;
 	}
 }
+void DirectXCommon::SetRadialBlurCenter(const Vector2& center) {
+	radialBlurCenter_.x = std::clamp(center.x, 0.0f, 1.0f);
+	radialBlurCenter_.y = std::clamp(center.y, 0.0f, 1.0f);
+	if (postEffectParameterMappedData_) {
+		postEffectParameterMappedData_->radialBlurCenter[0] = radialBlurCenter_.x;
+		postEffectParameterMappedData_->radialBlurCenter[1] = radialBlurCenter_.y;
+	}
+}
+void DirectXCommon::SetRadialBlurWidth(float width) {
+	radialBlurWidth_ = std::clamp(width, 0.0f, 0.2f);
+	if (postEffectParameterMappedData_) {
+		postEffectParameterMappedData_->radialBlurWidth = radialBlurWidth_;
+	}
+}
+void DirectXCommon::SetRadialBlurSampleCount(int sampleCount) {
+	radialBlurSampleCount_ = std::clamp(sampleCount, 1, 32);
+	if (postEffectParameterMappedData_) {
+		postEffectParameterMappedData_->radialBlurSampleCount = static_cast<float>(radialBlurSampleCount_);
+	}
+}
+void DirectXCommon::SetDissolveEnabled(bool enabled) {
+	dissolveEnabled_ = enabled;
+	if (postEffectParameterMappedData_) {
+		postEffectParameterMappedData_->dissolveEnabled = dissolveEnabled_ ? 1.0f : 0.0f;
+	}
+}
+void DirectXCommon::SetDissolveThreshold(float threshold) {
+	dissolveThreshold_ = std::clamp(threshold, 0.0f, 1.0f);
+	if (postEffectParameterMappedData_) {
+		postEffectParameterMappedData_->dissolveThreshold = dissolveThreshold_;
+	}
+}
+void DirectXCommon::SetDissolveEdgeWidth(float width) {
+	dissolveEdgeWidth_ = std::clamp(width, 0.0f, 0.5f);
+	if (postEffectParameterMappedData_) {
+		postEffectParameterMappedData_->dissolveEdgeWidth = dissolveEdgeWidth_;
+	}
+}
 void DirectXCommon::PreDraw() {
 	sceneCopiedToBackBufferThisFrame_ = false;
 	randomNoiseTime_ += deltaTime_;
@@ -633,6 +770,9 @@ void DirectXCommon::PreDraw() {
 		postEffectParameterMappedData_->randomNoiseTime = randomNoiseTime_;
 		postEffectParameterMappedData_->fullscreenGrayscaleEnabled = fullscreenGrayscaleEnabled_ ? 1.0f : 0.0f;
 		postEffectParameterMappedData_->fullscreenSepiaEnabled = fullscreenSepiaEnabled_ ? 1.0f : 0.0f;
+		postEffectParameterMappedData_->dissolveEnabled = dissolveEnabled_ ? 1.0f : 0.0f;
+		postEffectParameterMappedData_->dissolveThreshold = dissolveThreshold_;
+		postEffectParameterMappedData_->dissolveEdgeWidth = dissolveEdgeWidth_;
 	}
 	// ① 現在のバックバッファをフレーム毎に更新
 	backBufferIndex_ = swapChain_->GetCurrentBackBufferIndex();
@@ -763,6 +903,19 @@ void DirectXCommon::DrawSceneTextureToBackBuffer() {
 	commandList_->SetPipelineState(copyPipelineState_.Get());
 	commandList_->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 	commandList_->SetGraphicsRootDescriptorTable(0, sceneSrvHandleGPU_);
+	if (postEffectParameterMappedData_) {
+		float effectiveVignetteStrength = vignetteStrength_;
+		int effectiveBoxFilterKernelSize = boxFilterKernelSize_;
+#ifdef USE_IMGUI
+		const Hierarchy* hierarchy = Hierarchy::GetInstance();
+		if (editorLayoutEnabled_ && hierarchy && !hierarchy->IsPlayMode()) {
+			effectiveVignetteStrength = 0.0f;
+			effectiveBoxFilterKernelSize = 1;
+		}
+#endif
+		postEffectParameterMappedData_->vignetteStrength = effectiveVignetteStrength;
+		postEffectParameterMappedData_->boxFilterKernelSize = static_cast<float>(effectiveBoxFilterKernelSize);
+	}
 	commandList_->SetGraphicsRootConstantBufferView(1, postEffectParameterResource_->GetGPUVirtualAddress());
 	commandList_->DrawInstanced(3, 1, 0, 0);
 	commandList_->RSSetViewports(1, &viewport_);
@@ -982,6 +1135,8 @@ void DirectXCommon::Finalize() {
 	// --- Scene color / copy pipeline ---
 	sceneColorResource_.Reset();
 	sceneOutlineResource_.Reset();
+	dissolveMaskResource_.Reset();
+	dissolveMaskUploadResource_.Reset();
 	sceneSrvDescriptorHeap_.Reset();
 	copyRootSignature_.Reset();
 	copyPipelineState_.Reset();

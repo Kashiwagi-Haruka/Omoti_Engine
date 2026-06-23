@@ -7,6 +7,7 @@
 #include "TextureManager.h"
 #include <algorithm>
 #include <cassert>
+#include <utility>
 
 std::unique_ptr<SceneManager> SceneManager::instance_ = nullptr;
 
@@ -87,12 +88,16 @@ void SceneManager::Update() {
 	}
 
 	if (scene_) {
+#ifdef USE_IMGUI
 		Hierarchy* hierarchy = Hierarchy::GetInstance();
 		if (hierarchy && hierarchy->IsEditorPreviewActive()) {
 			hierarchy->UpdateEditorPreview();
-		} else {
+		} else if (!hierarchy || (hierarchy->IsPlayMode() && !hierarchy->IsPaused())) {
 			scene_->Update();
 		}
+#else
+		scene_->Update();
+#endif
 	}
 }
 
@@ -121,10 +126,26 @@ void SceneManager::DrawOverlay() {
 void SceneManager::ChangeScene(const std::string& sceneName) {
 
 	assert(sceneFactory_);
-	assert(nextscene_ == nullptr);
+	if (!sceneFactory_ || sceneName.empty()) {
+		return;
+	}
 
-	nextscene_ = sceneFactory_->CreateScene(sceneName);
+	if (sceneName == currentSceneName_ && !nextscene_) {
+		return;
+	}
+
+	std::unique_ptr<BaseScene> requestedScene = sceneFactory_->CreateScene(sceneName);
+	if (!requestedScene) {
+		return;
+	}
+
+	nextscene_ = std::move(requestedScene);
 	nextSceneName_ = sceneName;
+#ifdef USE_IMGUI
+	if (Hierarchy* hierarchy = Hierarchy::GetInstance()) {
+		hierarchy->OnSceneChangeRequested(sceneName);
+	}
+#endif
 }
 
 void SceneManager::EnsureFadeSprite() {

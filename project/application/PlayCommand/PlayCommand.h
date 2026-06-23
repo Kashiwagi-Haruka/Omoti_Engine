@@ -2,19 +2,117 @@
 class PlayCommand {
 
 	public:
-	static bool GetMOVE_FRONT(); // 前移動
-	static bool GetMOVE_BACK();   // 後移動
-	static bool GetMOVE_LEFT();   // 左移動
-	static bool GetMOVE_RIGHT();   // 右移動
-	static bool GetJUMP();         // ジャンプ
-	static bool GetDASH();          // ダッシュ
-	static bool GetNORMAL_ATTACK_PUSH(); // 通常攻撃長押し
-	static bool GetNORMAL_ATTACK_TRIGGER(); // 通常攻撃単押し
-	static bool GetNORMAL_ATTACK_RELEASE(); // 通常攻撃離したとき
-	static bool GetSKILL_ATTACK();   // スキル攻撃
-	static bool GetSPECIAL_ATTACK(); // 必殺攻撃
-	static bool GetDESIDE();          // 決定
-	static bool GetESCAPE();          // キャンセル
-	static bool GetCURSOR_DISPLAY();  // カーソル表示
+	/// <summary>
+	/// 前移動
+	/// </summary>
+	/// <returns></returns>
+	static bool GetMOVE_FRONT();
 
+	/// <summary>
+	/// 後移動
+	/// </summary>
+	/// <returns></returns>
+	static bool GetMOVE_BACK();
+
+	/// <summary>
+	/// 左移動
+	/// </summary>
+	/// <returns></returns>
+	static bool GetMOVE_LEFT();
+
+	/// <summary>
+	/// 右移動
+	/// </summary>
+	/// <returns></returns>
+	static bool GetMOVE_RIGHT();
+
+	/// <summary>
+	/// ジャンプ
+	/// </summary>
+	/// <returns></returns>
+	static bool GetJUMP();  
+
+	/// <summary>
+	/// ダッシュ
+	/// </summary>
+	/// <returns></returns>
+	static bool GetDASH();
+
+	/// <summary>
+	/// 通常攻撃長押し
+	/// </summary>
+	/// <returns></returns>
+	static bool GetNORMAL_ATTACK_PUSH();
+
+	/// <summary>
+	/// 通常攻撃単押し
+	/// </summary>
+	/// <returns></returns>
+	static bool GetNORMAL_ATTACK_TRIGGER();
+
+	/// <summary>
+	/// 通常攻撃離したとき
+	/// </summary>
+	/// <returns></returns>
+	static bool GetNORMAL_ATTACK_RELEASE();
+
+	/// <summary>
+	/// スキル攻撃
+	/// </summary>
+	/// <returns></returns>
+	static bool GetSKILL_ATTACK();   
+
+	/// <summary>
+	/// 必殺攻撃
+	/// </summary>
+	/// <returns></returns>
+	static bool GetSPECIAL_ATTACK();
+
+	/// <summary>
+	/// 決定
+	/// </summary>
+	/// <returns></returns>
+	static bool GetDESIDE();
+
+	/// <summary>
+	/// キャンセル
+	/// </summary>
+	/// <returns></returns>
+	static bool GetESCAPE();          
+
+	/// <summary>
+	/// キャンセル
+	/// </summary>
+	/// <returns></returns>
+	static bool GetPause();
+
+	/// <summary>
+	/// カーソル表示
+	/// </summary>
+	/// <returns></returns>
+	static bool GetCURSOR_DISPLAY();
+
+	/// <summary>
+	/// キャラクターチェンジ1
+	/// </summary>
+	/// <returns></returns>
+	static bool GetCharacterChange1();
+
+	/// <summary>
+	/// キャラクターチェンジ2
+	/// </summary>
+	/// <returns></returns>
+	static bool GetCharacterChange2();
+
+	/// <summary>
+	/// キャラクターチェンジ3
+	/// </summary>
+	/// <returns></returns>
+	static bool GetCharacterChange3();
+
+	/// <summary>
+	/// キャラクターチェンジ4
+	/// </summary>
+	/// <returns></returns>
+	static bool GetCharacterChange4();
 };

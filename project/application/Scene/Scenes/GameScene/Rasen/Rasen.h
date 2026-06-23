@@ -33,7 +33,6 @@ private:
 	std::unique_ptr<House> house;
 	std::unique_ptr<EnemyManager> enemyManager;
 	std::unique_ptr<ExpCubeManager> expCubeManager;
-	std::unique_ptr<Sprite> levelupIcons[4];
 	std::unique_ptr<Sprite> phaseSprites_[5];
 	std::unique_ptr<Sprite> bossHpBarSprite_;
 	std::unique_ptr<Sprite> bossHpBarBackSprite_;

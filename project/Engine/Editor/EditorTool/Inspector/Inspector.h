@@ -27,8 +27,9 @@ struct InspectorMaterial final {
 
 class Inspector final {
 public:
-	static bool
-	    DrawObjectInspector(size_t index, std::string& objectName, Transform& transform, InspectorMaterial& material, bool isPlaying, bool& transformChanged, bool& materialChanged, bool& nameChanged);
+	static bool DrawObjectInspector(
+	    size_t index, std::string& objectName, std::string& modelName, Transform& transform, InspectorMaterial& material, bool isPlaying, bool& transformChanged, bool& materialChanged,
+	    bool& nameChanged, bool& modelChanged);
 	static bool DrawPrimitiveInspector(
 	    size_t index, std::string& primitiveName, Transform& transform, InspectorMaterial& material, bool isPlaying, bool& transformChanged, bool& materialChanged, bool& nameChanged);
 

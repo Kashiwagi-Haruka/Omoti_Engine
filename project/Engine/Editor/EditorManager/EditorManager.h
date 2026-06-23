@@ -21,7 +21,8 @@ public:
 	ToolBar::Result DrawToolBar(bool isPlaying, bool isPaused, bool hasUnsavedChanges, bool canUndo, bool canRedo, bool& showGridMenu, EditorGrid::Settings& gridSettings) const;
 	std::vector<EditorGridLine> CreateGridLines(int halfLineCount = 50, float spacing = 1.0f, float lineWidth = 1.0f) const;
 	bool DrawObjectInspector(
-	    size_t index, std::string& objectName, Transform& transform, InspectorMaterial& material, bool isPlaying, bool& transformChanged, bool& materialChanged, bool& nameChanged) const;
+	    size_t index, std::string& objectName, std::string& modelName, Transform& transform, InspectorMaterial& material, bool isPlaying, bool& transformChanged, bool& materialChanged,
+	    bool& nameChanged, bool& modelChanged) const;
 	bool DrawPrimitiveInspector(
 	    size_t index, std::string& primitiveName, Transform& transform, InspectorMaterial& material, bool isPlaying, bool& transformChanged, bool& materialChanged, bool& nameChanged) const;
 

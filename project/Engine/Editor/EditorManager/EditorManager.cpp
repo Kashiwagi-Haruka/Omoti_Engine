@@ -38,8 +38,9 @@ ToolBar::Result EditorManager::DrawToolBar(bool isPlaying, bool isPaused, bool h
 std::vector<EditorGridLine> EditorManager::CreateGridLines(int halfLineCount, float spacing, float lineWidth) const { return EditorGrid::CreateLines(halfLineCount, spacing, lineWidth); }
 
 bool EditorManager::DrawObjectInspector(
-    size_t index, std::string& objectName, Transform& transform, InspectorMaterial& material, bool isPlaying, bool& transformChanged, bool& materialChanged, bool& nameChanged) const {
-	return Inspector::DrawObjectInspector(index, objectName, transform, material, isPlaying, transformChanged, materialChanged, nameChanged);
+    size_t index, std::string& objectName, std::string& modelName, Transform& transform, InspectorMaterial& material, bool isPlaying, bool& transformChanged, bool& materialChanged, bool& nameChanged,
+    bool& modelChanged) const {
+	return Inspector::DrawObjectInspector(index, objectName, modelName, transform, material, isPlaying, transformChanged, materialChanged, nameChanged, modelChanged);
 }
 
 bool EditorManager::DrawPrimitiveInspector(

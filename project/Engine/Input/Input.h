@@ -40,9 +40,12 @@ class Input {
 
 	WinApp* winApp_ = nullptr;
 
+	bool isCursorStabilityRequested_ = false;
 	bool isCursorStability = false;
 	bool isCursorVisibleRequested_ = true;
 	bool isCursorVisible_ = true;
+	bool isCursorVisibilityForceEnabled_ = false;
+	bool isCursorVisibilityForced_ = true;
 
 public:
 	static Input* GetInstance();
@@ -147,7 +150,10 @@ public:
 	bool PushMouseButton(MouseButton button) const;    // マウスボタンが押されているか
 	bool TriggerMouseButton(MouseButton button) const; // マウスボタンが押された瞬間か
 	bool ReleaseMouseButton(MouseButton button) const; // マウスボタンが離された瞬間か
-	void SetIsCursorStability(bool isCursor) { isCursorStability = isCursor; }
+	void SetIsCursorStability(bool isCursor) {
+		isCursorStabilityRequested_ = isCursor;
+		isCursorStability = (isCursorVisibilityForceEnabled_ && isCursorVisibilityForced_) ? false : isCursor;
+	}
 	void SetIsCursorVisible(bool isVisible);
 	float GetLeftTrigger() const;
 	float GetRightTrigger() const;
@@ -164,7 +170,7 @@ public:
 
 private:
 	Input() = default;
-
+	void ApplyCursorVisibility(bool isVisible);
 	// デバイス列挙用の static コールバック
 	static BOOL CALLBACK EnumJoysticksCallback(const DIDEVICEINSTANCE* pdidInstance, VOID* pContext);
 };

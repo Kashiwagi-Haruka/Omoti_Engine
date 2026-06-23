@@ -687,6 +687,23 @@ void Object3dCommon::SetGaussianFilterSigma(float sigma) { dxCommon_->SetGaussia
 
 float Object3dCommon::GetGaussianFilterSigma() const { return dxCommon_->GetGaussianFilterSigma(); }
 
+void Object3dCommon::SetRadialBlurCenter(const Vector2& center) { dxCommon_->SetRadialBlurCenter(center); }
+
+Vector2 Object3dCommon::GetRadialBlurCenter() const { return dxCommon_->GetRadialBlurCenter(); }
+
+void Object3dCommon::SetRadialBlurWidth(float width) { dxCommon_->SetRadialBlurWidth(width); }
+
+float Object3dCommon::GetRadialBlurWidth() const { return dxCommon_->GetRadialBlurWidth(); }
+
+void Object3dCommon::SetRadialBlurSampleCount(int sampleCount) { dxCommon_->SetRadialBlurSampleCount(sampleCount); }
+
+int Object3dCommon::GetRadialBlurSampleCount() const { return dxCommon_->GetRadialBlurSampleCount(); }
+void Object3dCommon::SetDissolveEnabled(bool enabled) { dxCommon_->SetDissolveEnabled(enabled); }
+
+void Object3dCommon::SetDissolveThreshold(float threshold) { dxCommon_->SetDissolveThreshold(threshold); }
+
+void Object3dCommon::SetDissolveEdgeWidth(float width) { dxCommon_->SetDissolveEdgeWidth(width); }
+
 Microsoft::WRL::ComPtr<ID3D12Resource> Object3dCommon::CreateBufferResource(size_t sizeInBytes) {
 	// バッファの設定(UPLOAD用に変更)
 	D3D12_HEAP_PROPERTIES heapProperties = {};

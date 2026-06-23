@@ -11,6 +11,7 @@
 
 void EditorAudio::Finalize() {
 	playModeInitializedAudioNames_.clear();
+	editorLoadedSounds_.clear();
 	ResetForSceneChange();
 }
 
@@ -19,6 +20,7 @@ void EditorAudio::ResetForSceneChange() {
 	savedAudioVolumes_.clear();
 	savedAudioLoopEnabled_.clear();
 	savedAudioEffects_.clear();
+	editorLoadedSounds_.clear();
 }
 
 void EditorAudio::OnPlayModeChanged(bool isPlaying, bool wasPlaying) {
@@ -94,7 +96,17 @@ void EditorAudio::LoadFromJson(const nlohmann::json& audioJson) {
 		}
 	}
 }
-
+void EditorAudio::AddSoundForEditor(const std::string& filePath) {
+	Audio* audio = Audio::GetInstance();
+	if (!audio || filePath.empty()) {
+		return;
+	}
+	SoundData sound = audio->SoundLoadFile(filePath.c_str());
+	if (sound.debugName.empty()) {
+		sound.debugName = filePath;
+	}
+	editorLoadedSounds_.push_back(std::move(sound));
+}
 bool EditorAudio::DrawEditor(bool isPlaying, bool& hasUnsavedChanges) {
 #ifdef USE_IMGUI
 	Audio* audio = Audio::GetInstance();

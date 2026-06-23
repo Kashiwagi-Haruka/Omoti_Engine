@@ -9,27 +9,94 @@
 #include "Engine/Loadfile/JSON/JsonManager.h"
 #include "Function.h"
 #include "Input.h"
+#include "Model/ModelManager.h"
 #include "Object3d/Object3d.h"
 #include "Object3d/Object3dCommon.h"
 #include "Primitive/Primitive.h"
 #include "Sprite/SpriteCommon.h"
 #ifdef USE_IMGUI
 #include "externals/imgui/imgui.h"
+#include "externals/imgui/imgui_internal.h"
+#include "externals/ImGuizmo/ImGuizmo.h"
 #endif
 
 #include <algorithm>
 #include <cmath>
 #include <cstdint>
 #include <filesystem>
-#include <string>
 #include <limits>
 #include <string>
 #include <unordered_map>
 
 namespace {
+constexpr const char* kDragDropPayloadType = "OMOTI_EDITOR_ASSET";
+constexpr const char* kDefaultObjectModelName = "debugBox";
+constexpr float kDegreesToRadians = 3.14159265358979323846f / 180.0f;
 std::filesystem::path ResolveObjectEditorJsonPath(const std::string& filePath) { return std::filesystem::path("Resources") / "JSON" / std::filesystem::path(filePath).filename(); }
 
 bool HasObjectEditorJsonFile(const std::string& filePath) { return std::filesystem::exists(ResolveObjectEditorJsonPath(filePath)); }
+
+bool IsNearlyEqual(float lhs, float rhs) { return std::fabs(lhs - rhs) <= 0.0001f; }
+
+Primitive::PrimitiveName PrimitiveTypeFromName(const std::string& primitiveName) {
+	if (primitiveName == "Plane") {
+		return Primitive::Plane;
+	}
+	if (primitiveName == "Sphere") {
+		return Primitive::Sphere;
+	}
+	if (primitiveName == "Cylinder") {
+		return Primitive::Cylinder;
+	}
+	if (primitiveName == "Cone") {
+		return Primitive::Cone;
+	}
+	return Primitive::Box;
+}
+
+std::string PrimitiveTypeToName(Primitive::PrimitiveName primitiveName) {
+	switch (primitiveName) {
+	case Primitive::Plane:
+		return "Plane";
+	case Primitive::Sphere:
+		return "Sphere";
+	case Primitive::Cylinder:
+		return "Cylinder";
+	case Primitive::Cone:
+		return "Cone";
+	case Primitive::Box:
+	default:
+		return "Box";
+	}
+}
+
+Object3d* CreateEditorOwnedObject(std::vector<std::unique_ptr<Object3d>>& ownedObjects, const std::string& modelName, const std::string& editorId) {
+	ModelManager::GetInstance()->LoadModel("Resources/3d", modelName);
+	std::unique_ptr<Object3d> object = std::make_unique<Object3d>();
+	object->Initialize();
+	object->SetModel(modelName);
+	object->SetCamera(Object3dCommon::GetInstance()->GetDefaultCamera());
+	object->SetEditorId(editorId);
+	Object3d* rawObject = object.get();
+	ownedObjects.push_back(std::move(object));
+	return rawObject;
+}
+
+Primitive* CreateEditorOwnedPrimitive(std::vector<std::unique_ptr<Primitive>>& ownedPrimitives, Primitive::PrimitiveName type, const std::string& editorId) {
+	std::unique_ptr<Primitive> primitive = std::make_unique<Primitive>();
+	primitive->Initialize(type);
+	primitive->SetCamera(Object3dCommon::GetInstance()->GetDefaultCamera());
+	primitive->SetEditorId(editorId);
+	Primitive* rawPrimitive = primitive.get();
+	ownedPrimitives.push_back(std::move(primitive));
+	return rawPrimitive;
+}
+
+bool IsTransformNearlyEqual(const Transform& lhs, const Transform& rhs) {
+	return IsNearlyEqual(lhs.scale.x, rhs.scale.x) && IsNearlyEqual(lhs.scale.y, rhs.scale.y) && IsNearlyEqual(lhs.scale.z, rhs.scale.z) && IsNearlyEqual(lhs.rotate.x, rhs.rotate.x) &&
+	       IsNearlyEqual(lhs.rotate.y, rhs.rotate.y) && IsNearlyEqual(lhs.rotate.z, rhs.rotate.z) && IsNearlyEqual(lhs.translate.x, rhs.translate.x) &&
+	       IsNearlyEqual(lhs.translate.y, rhs.translate.y) && IsNearlyEqual(lhs.translate.z, rhs.translate.z);
+}
 
 } // namespace
 
@@ -43,6 +110,7 @@ void Hierarchy::Finalize() {
 	objectNames_.clear();
 	editorTransforms_.clear();
 	editorMaterials_.clear();
+	objectModelNames_.clear();
 
 	primitives_.clear();
 	primitiveNames_.clear();
@@ -51,6 +119,8 @@ void Hierarchy::Finalize() {
 
 	selectionBoxPrimitive_.reset();
 	editorGridPlane_.reset();
+	editorOwnedObjects_.clear();
+	editorOwnedPrimitives_.clear();
 
 	selectedObjectIndex_ = 0;
 	selectedIsPrimitive_ = false;
@@ -60,9 +130,33 @@ void Hierarchy::Finalize() {
 	editorCamera_.Reset();
 	ResetForSceneChange();
 }
+void Hierarchy::OnSceneChangeRequested(const std::string& nextSceneName) {
+	PushGuizmoUndoIfNeeded();
+	objects_.clear();
+	objectNames_.clear();
+	editorTransforms_.clear();
+	editorMaterials_.clear();
+	objectModelNames_.clear();
+
+	primitives_.clear();
+	primitiveNames_.clear();
+	primitiveEditorTransforms_.clear();
+	primitiveEditorMaterials_.clear();
+
+	selectionBoxPrimitive_.reset();
+	selectedObjectIndex_ = 0;
+	selectedIsPrimitive_ = false;
+	selectionBoxDirty_ = true;
+	loadedSceneName_ = nextSceneName;
+	ResetForSceneChange();
+#ifdef USE_IMGUI
+	ImGui::CloseCurrentPopup();
+	ImGui::ClearActiveID();
+#endif
+}
 bool Hierarchy::IsEditorPreviewActive() const {
 #ifdef USE_IMGUI
-	return HasRegisteredObjects() && !isPlaying_;
+	return !isPlaying_;
 #else
 	return false;
 #endif
@@ -95,7 +189,16 @@ void Hierarchy::ResetForSceneChange() {
 	editorLight_.Reset();
 	undoStack_.clear();
 	redoStack_.clear();
+	guizmoWasUsing_ = false;
 	editorCamera_.DeactivatePreview();
+	for (const auto& object : editorOwnedObjects_) {
+		UnregisterObject3d(object.get());
+	}
+	for (const auto& primitive : editorOwnedPrimitives_) {
+		UnregisterPrimitive(primitive.get());
+	}
+	editorOwnedObjects_.clear();
+	editorOwnedPrimitives_.clear();
 }
 
 Hierarchy::EditorSnapshot Hierarchy::CreateCurrentSnapshot() const {
@@ -103,6 +206,7 @@ Hierarchy::EditorSnapshot Hierarchy::CreateCurrentSnapshot() const {
 	snapshot.objectTransforms = editorTransforms_;
 	snapshot.objectMaterials = editorMaterials_;
 	snapshot.objectNames = objectNames_;
+	snapshot.objectModelNames = objectModelNames_;
 	snapshot.primitiveTransforms = primitiveEditorTransforms_;
 	snapshot.primitiveMaterials = primitiveEditorMaterials_;
 	snapshot.primitiveNames = primitiveNames_;
@@ -148,10 +252,28 @@ void Hierarchy::RedoEditorChange() {
 	redoStack_.pop_back();
 	hasUnsavedChanges_ = true;
 }
+void Hierarchy::PushGuizmoUndoIfNeeded() {
+	if (!guizmoWasUsing_) {
+		return;
+	}
+
+	const bool targetExists = guizmoTargetIsPrimitive_ ? guizmoTargetIndex_ < primitiveEditorTransforms_.size() : guizmoTargetIndex_ < editorTransforms_.size();
+	if (targetExists) {
+		const Transform& currentTransform = guizmoTargetIsPrimitive_ ? primitiveEditorTransforms_[guizmoTargetIndex_] : editorTransforms_[guizmoTargetIndex_];
+		if (!IsTransformNearlyEqual(currentTransform, guizmoStartTransform_)) {
+			undoStack_.push_back(std::move(guizmoBeforeEdit_));
+			redoStack_.clear();
+			hasUnsavedChanges_ = true;
+		}
+	}
+
+	guizmoWasUsing_ = false;
+}
 void Hierarchy::ApplyEditorSnapshot(const EditorSnapshot& snapshot) {
 	editorTransforms_ = snapshot.objectTransforms;
 	editorMaterials_ = snapshot.objectMaterials;
 	objectNames_ = snapshot.objectNames;
+	objectModelNames_ = snapshot.objectModelNames;
 	primitiveEditorTransforms_ = snapshot.primitiveTransforms;
 	primitiveEditorMaterials_ = snapshot.primitiveMaterials;
 	primitiveNames_ = snapshot.primitiveNames;
@@ -159,6 +281,10 @@ void Hierarchy::ApplyEditorSnapshot(const EditorSnapshot& snapshot) {
 	for (size_t i = 0; i < objects_.size(); ++i) {
 		if (!objects_[i] || i >= editorTransforms_.size() || i >= editorMaterials_.size()) {
 			continue;
+		}
+		if (i < objectModelNames_.size() && objects_[i]->GetModelFilePath() != objectModelNames_[i]) {
+			ModelManager::GetInstance()->LoadModel("Resources/3d", objectModelNames_[i]);
+			objects_[i]->SetModel(objectModelNames_[i]);
 		}
 		EditorObject3d::ApplyEditorValues(objects_[i], editorTransforms_[i], editorMaterials_[i]);
 	}
@@ -172,6 +298,79 @@ void Hierarchy::ApplyEditorSnapshot(const EditorSnapshot& snapshot) {
 
 	selectionBoxDirty_ = true;
 }
+void Hierarchy::AddPrimitiveAssetToHierarchy(const std::string& primitiveName) {
+	Primitive* rawPrimitive = CreateEditorOwnedPrimitive(editorOwnedPrimitives_, PrimitiveTypeFromName(primitiveName), "");
+	RegisterPrimitive(rawPrimitive);
+	const size_t index = primitiveEditorTransforms_.empty() ? 0 : primitiveEditorTransforms_.size() - 1;
+	if (index < primitiveNames_.size()) {
+		primitiveNames_[index] = primitiveName;
+	}
+	selectedObjectIndex_ = index;
+	selectedIsPrimitive_ = true;
+	selectionBoxDirty_ = true;
+	hasUnsavedChanges_ = true;
+}
+
+void Hierarchy::AddObject3dAssetToHierarchy(const std::string& modelName) {
+	Object3d* rawObject = CreateEditorOwnedObject(editorOwnedObjects_, modelName.empty() ? kDefaultObjectModelName : modelName, "");
+	RegisterObject3d(rawObject);
+	const size_t index = editorTransforms_.empty() ? 0 : editorTransforms_.size() - 1;
+	if (index < objectNames_.size()) {
+		objectNames_[index] = modelName;
+	}
+	if (index < objectModelNames_.size()) {
+		objectModelNames_[index] = modelName.empty() ? kDefaultObjectModelName : modelName;
+	}
+	selectedObjectIndex_ = index;
+	selectedIsPrimitive_ = false;
+	selectionBoxDirty_ = true;
+	hasUnsavedChanges_ = true;
+}
+
+void Hierarchy::AddAudioAssetToHierarchy(const std::filesystem::path& audioPath) {
+	editorAudio_.AddSoundForEditor(audioPath.string());
+	saveStatusMessage_ = "Audio added: " + audioPath.string();
+	hasUnsavedChanges_ = true;
+}
+void Hierarchy::DeleteObjectAtIndex(size_t index) {
+	if (index >= objects_.size() || !objects_[index]) {
+		return;
+	}
+
+	Object3d* object = objects_[index];
+	UnregisterObject3d(object);
+	editorOwnedObjects_.erase(
+	    std::remove_if(editorOwnedObjects_.begin(), editorOwnedObjects_.end(), [object](const std::unique_ptr<Object3d>& ownedObject) { return ownedObject.get() == object; }),
+	    editorOwnedObjects_.end());
+
+	if (!selectedIsPrimitive_ && selectedObjectIndex_ == index) {
+		selectedObjectIndex_ = 0;
+	}
+	selectionBoxDirty_ = true;
+	redoStack_.clear();
+	hasUnsavedChanges_ = true;
+	saveStatusMessage_ = "Deleted object";
+}
+
+void Hierarchy::DeletePrimitiveAtIndex(size_t index) {
+	if (index >= primitives_.size() || !primitives_[index] || primitives_[index] == selectionBoxPrimitive_.get()) {
+		return;
+	}
+
+	Primitive* primitive = primitives_[index];
+	UnregisterPrimitive(primitive);
+	editorOwnedPrimitives_.erase(
+	    std::remove_if(editorOwnedPrimitives_.begin(), editorOwnedPrimitives_.end(), [primitive](const std::unique_ptr<Primitive>& ownedPrimitive) { return ownedPrimitive.get() == primitive; }),
+	    editorOwnedPrimitives_.end());
+
+	if (selectedIsPrimitive_ && selectedObjectIndex_ == index) {
+		selectedObjectIndex_ = 0;
+	}
+	selectionBoxDirty_ = true;
+	redoStack_.clear();
+	hasUnsavedChanges_ = true;
+	saveStatusMessage_ = "Deleted primitive";
+}
 void Hierarchy::RegisterObject3d(Object3d* object) {
 	if (!object) {
 		return;
@@ -183,12 +382,14 @@ void Hierarchy::RegisterObject3d(Object3d* object) {
 	if (emptyIt != objects_.end()) {
 		const size_t index = static_cast<size_t>(std::distance(objects_.begin(), emptyIt));
 		objects_[index] = object;
+		objectModelNames_[index] = object->GetModelFilePath();
 		EditorObject3d::ApplyEditorValues(object, editorTransforms_[index], editorMaterials_[index]);
 		return;
 	}
 	const size_t index = objects_.size();
 	objects_.push_back(object);
 	objectNames_.push_back("Object " + std::to_string(index));
+	objectModelNames_.push_back(object->GetModelFilePath());
 	editorTransforms_.push_back(object->GetTransform());
 	editorMaterials_.push_back(EditorObject3d::CaptureMaterial(object));
 }
@@ -296,6 +497,7 @@ bool Hierarchy::SaveObjectEditorsToJson(const std::string& filePath) const {
 		objectJson["index"] = i;
 		objectJson["name"] = objectNames_[i];
 		objectJson["editorId"] = object->GetEditorId();
+		objectJson["modelName"] = i < objectModelNames_.size() ? objectModelNames_[i] : object->GetModelFilePath();
 		objectJson["transform"] = {
 		    {"scale",     {transform.scale.x, transform.scale.y, transform.scale.z}            },
 		    {"rotate",    {transform.rotate.x, transform.rotate.y, transform.rotate.z}         },
@@ -329,6 +531,7 @@ bool Hierarchy::SaveObjectEditorsToJson(const std::string& filePath) const {
 		primitiveJson["index"] = i;
 		primitiveJson["name"] = primitiveNames_[i];
 		primitiveJson["editorId"] = primitive->GetEditorId();
+		primitiveJson["primitiveType"] = PrimitiveTypeToName(primitive->GetPrimitiveName());
 		primitiveJson["transform"] = {
 		    {"scale",     {transform.scale.x, transform.scale.y, transform.scale.z}            },
 		    {"rotate",    {transform.rotate.x, transform.rotate.y, transform.rotate.z}         },
@@ -396,10 +599,36 @@ bool Hierarchy::LoadObjectEditorsFromJson(const std::string& filePath) {
 				index = objectJson["index"].get<size_t>();
 			}
 			if (index >= objects_.size() || !objects_[index]) {
-				continue;
+				std::string modelName;
+				if (objectJson.contains("modelName") && objectJson["modelName"].is_string()) {
+					modelName = objectJson["modelName"].get<std::string>();
+				} else if (objectJson.contains("name") && objectJson["name"].is_string()) {
+					modelName = objectJson["name"].get<std::string>();
+				}
+				if (modelName.empty()) {
+					continue;
+				}
+				const std::string editorId = objectJson.value("editorId", std::string());
+				Object3d* rawObject = CreateEditorOwnedObject(editorOwnedObjects_, modelName, editorId);
+				RegisterObject3d(rawObject);
+				index = objects_.empty() ? std::numeric_limits<size_t>::max() : objects_.size() - 1;
+				if (index == std::numeric_limits<size_t>::max()) {
+					continue;
+				}
 			}
 			if (objectJson.contains("name") && objectJson["name"].is_string()) {
 				objectNames_[index] = objectJson["name"].get<std::string>();
+			}
+			if (objectJson.contains("modelName") && objectJson["modelName"].is_string()) {
+				const std::string modelName = objectJson["modelName"].get<std::string>();
+				if (!modelName.empty()) {
+					if (index >= objectModelNames_.size()) {
+						objectModelNames_.resize(index + 1);
+					}
+					objectModelNames_[index] = modelName;
+					ModelManager::GetInstance()->LoadModel("Resources/3d", modelName);
+					objects_[index]->SetModel(modelName);
+				}
 			}
 			if (objectJson.contains("transform") && objectJson["transform"].is_object()) {
 				const auto& transformJson = objectJson["transform"];
@@ -486,7 +715,19 @@ bool Hierarchy::LoadObjectEditorsFromJson(const std::string& filePath) {
 				}
 				index = primitiveJson["index"].get<size_t>();
 			}
+			std::string primitiveTypeName;
+			if (primitiveJson.contains("primitiveType") && primitiveJson["primitiveType"].is_string()) {
+				primitiveTypeName = primitiveJson["primitiveType"].get<std::string>();
+			} else if (primitiveJson.contains("name") && primitiveJson["name"].is_string()) {
+				primitiveTypeName = primitiveJson["name"].get<std::string>();
+			}
 			if (index >= primitives_.size() || !primitives_[index] || primitives_[index] == selectionBoxPrimitive_.get()) {
+				const std::string editorId = primitiveJson.value("editorId", std::string());
+				Primitive* rawPrimitive = CreateEditorOwnedPrimitive(editorOwnedPrimitives_, PrimitiveTypeFromName(primitiveTypeName), editorId);
+				RegisterPrimitive(rawPrimitive);
+				index = primitives_.empty() ? std::numeric_limits<size_t>::max() : primitives_.size() - 1;
+			}
+			if (index == std::numeric_limits<size_t>::max() || index >= primitives_.size() || !primitives_[index] || primitives_[index] == selectionBoxPrimitive_.get()) {
 				continue;
 			}
 			if (primitiveJson.contains("name") && primitiveJson["name"].is_string()) {
@@ -559,6 +800,32 @@ bool Hierarchy::LoadObjectEditorsFromJson(const std::string& filePath) {
 	loadedSnapshotFilePath_ = filePath;
 	return true;
 }
+void Hierarchy::HandleHierarchyAssetDrop() {
+#ifdef USE_IMGUI
+	const ImVec2 min = ImGui::GetWindowPos();
+	const ImVec2 max(min.x + ImGui::GetWindowSize().x, min.y + ImGui::GetWindowSize().y);
+	const ImGuiID dropTargetId = ImGui::GetID("##HierarchyWindowAssetDropTarget");
+	if (!ImGui::BeginDragDropTargetCustom(ImRect(min, max), dropTargetId)) {
+		return;
+	}
+	if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload(kDragDropPayloadType)) {
+		const std::string payloadText(static_cast<const char*>(payload->Data));
+		const size_t separator = payloadText.find('|');
+		if (separator != std::string::npos) {
+			const std::string category = payloadText.substr(0, separator);
+			const std::string name = payloadText.substr(separator + 1);
+			if (category == "Primitive") {
+				AddPrimitiveAssetToHierarchy(name);
+			} else if (category == "Object3d") {
+				AddObject3dAssetToHierarchy(name);
+			} else if (category == "Audio") {
+				AddAudioAssetToHierarchy(name);
+			}
+		}
+	}
+	ImGui::EndDragDropTarget();
+#endif
+}
 void Hierarchy::DrawSceneSelector() {
 #ifdef USE_IMGUI
 	SceneManager* sceneManager = SceneManager::GetInstance();
@@ -611,6 +878,29 @@ void Hierarchy::SetPlayMode(bool isPlaying) {
 void Hierarchy::DrawEditorGridLines() {
 #ifdef USE_IMGUI
 	DrawCameraBillboards();
+	Object3dCommon* object3dCommon = Object3dCommon::GetInstance();
+	if (object3dCommon) {
+		const bool hasEditorOwnedObject = std::any_of(editorOwnedObjects_.begin(), editorOwnedObjects_.end(), [](const auto& object) { return object != nullptr; });
+		const bool hasEditorOwnedPrimitive = std::any_of(editorOwnedPrimitives_.begin(), editorOwnedPrimitives_.end(), [](const auto& primitive) { return primitive != nullptr; });
+		if (hasEditorOwnedObject || hasEditorOwnedPrimitive) {
+			object3dCommon->DrawCommon();
+		}
+	}
+	Camera* defaultCamera = Object3dCommon::GetInstance()->GetDefaultCamera();
+	for (const auto& object : editorOwnedObjects_) {
+		if (object) {
+			object->SetCamera(defaultCamera);
+			object->Update();
+			object->Draw();
+		}
+	}
+	for (const auto& primitive : editorOwnedPrimitives_) {
+		if (primitive) {
+			primitive->SetCamera(defaultCamera);
+			primitive->Update();
+			primitive->Draw();
+		}
+	}
 	EditorGrid::DrawEditorGridLines(gridSettings_, editorGridPlane_);
 	if (!showSelectionBox_ || !IsObjectSelected()) {
 		return;
@@ -679,6 +969,122 @@ void Hierarchy::DrawSelectionBoxEditor() {
 	if (ImGui::Checkbox("Draw Selection Box", &showSelectionBox_)) {
 		selectionBoxDirty_ = true;
 	}
+#endif
+}
+void Hierarchy::DrawSelectedObjectGuizmo(const ImGuiViewport* viewport, float contentStartY, float leftPanelWidth, float rightPanelWidth, float availableHeight) {
+#ifdef USE_IMGUI
+	if (isPlaying_ || !IsObjectSelected()) {
+		PushGuizmoUndoIfNeeded();
+		return;
+	}
+
+	(void)contentStartY;
+	(void)availableHeight;
+
+	Camera* camera = Object3dCommon::GetInstance()->GetDefaultCamera();
+	if (!camera) {
+		PushGuizmoUndoIfNeeded();
+		return;
+	}
+
+	ImGuizmo::BeginFrame();
+	ImGuizmo::SetOrthographic(false);
+	ImGuizmo::SetDrawlist(ImGui::GetForegroundDrawList(const_cast<ImGuiViewport*>(viewport)));
+
+	constexpr float kRenderedToolbarHeight = 44.0f;
+	constexpr float kGameAspect = 16.0f / 9.0f;
+	const float availableWidth = std::max(1.0f, viewport->WorkSize.x - leftPanelWidth - rightPanelWidth);
+	const float renderedAvailableHeight = std::max(1.0f, viewport->WorkSize.y - kRenderedToolbarHeight);
+
+	float sceneWidth = availableWidth;
+	float sceneHeight = sceneWidth / kGameAspect;
+	if (sceneHeight > renderedAvailableHeight) {
+		sceneHeight = renderedAvailableHeight;
+		sceneWidth = sceneHeight * kGameAspect;
+	}
+
+	const float scenePosX = viewport->WorkPos.x + leftPanelWidth + (availableWidth - sceneWidth) * 0.5f;
+	const float scenePosY = viewport->WorkPos.y + kRenderedToolbarHeight;
+	ImGuizmo::SetRect(scenePosX, scenePosY, std::max(1.0f, sceneWidth), std::max(1.0f, sceneHeight));
+
+	Transform& transform = selectedIsPrimitive_ ? primitiveEditorTransforms_[selectedObjectIndex_] : editorTransforms_[selectedObjectIndex_];
+	Matrix4x4 worldMatrix = Function::MakeAffineMatrix(transform.scale, transform.rotate, transform.translate);
+	const EditorSnapshot beforeGuizmoEdit = CreateCurrentSnapshot();
+	const Transform startTransform = transform;
+
+	if (ImGui::IsKeyPressed(ImGuiKey_W, false)) {
+		currentGuizmoOperation_ = 0;
+	} else if (ImGui::IsKeyPressed(ImGuiKey_E, false)) {
+		currentGuizmoOperation_ = 1;
+	} else if (ImGui::IsKeyPressed(ImGuiKey_R, false)) {
+		currentGuizmoOperation_ = 2;
+	}
+
+	ImGuizmo::OPERATION operation = ImGuizmo::TRANSLATE;
+	if (currentGuizmoOperation_ == 1) {
+		operation = ImGuizmo::ROTATE;
+	} else if (currentGuizmoOperation_ == 2) {
+		operation = ImGuizmo::SCALE;
+	}
+
+	const ImVec2 operationWindowPos{scenePosX + 12.0f, scenePosY + 12.0f};
+	ImGui::SetNextWindowPos(operationWindowPos, ImGuiCond_Always);
+	ImGui::SetNextWindowBgAlpha(0.65f);
+	if (ImGui::Begin("##GuizmoOperation", nullptr, ImGuiWindowFlags_NoDecoration | ImGuiWindowFlags_AlwaysAutoResize | ImGuiWindowFlags_NoSavedSettings | ImGuiWindowFlags_NoNav)) {
+		if (ImGui::RadioButton("Move (T)", currentGuizmoOperation_ == 0)) {
+			currentGuizmoOperation_ = 0;
+		}
+		ImGui::SameLine();
+		if (ImGui::RadioButton("Rotate (R)", currentGuizmoOperation_ == 1)) {
+			currentGuizmoOperation_ = 1;
+		}
+		ImGui::SameLine();
+		if (ImGui::RadioButton("Scale (S)", currentGuizmoOperation_ == 2)) {
+			currentGuizmoOperation_ = 2;
+		}
+	}
+	ImGui::End();
+
+	const ImGuizmo::MODE gizmoMode = operation == ImGuizmo::TRANSLATE ? ImGuizmo::WORLD : ImGuizmo::LOCAL;
+	if (ImGuizmo::Manipulate(&camera->GetViewMatrix().m[0][0], &camera->GetProjectionMatrix().m[0][0], operation, gizmoMode, &worldMatrix.m[0][0])) {
+		float translation[3]{};
+		float rotationDegrees[3]{};
+		float scale[3]{};
+		ImGuizmo::DecomposeMatrixToComponents(&worldMatrix.m[0][0], translation, rotationDegrees, scale);
+
+		transform.translate = {translation[0], translation[1], translation[2]};
+		transform.rotate = {rotationDegrees[0] * kDegreesToRadians, rotationDegrees[1] * kDegreesToRadians, rotationDegrees[2] * kDegreesToRadians};
+		transform.scale = {scale[0], scale[1], scale[2]};
+
+		if (selectedIsPrimitive_) {
+			if (Primitive* primitive = primitives_[selectedObjectIndex_]) {
+				primitive->SetTransform(transform);
+			}
+		} else {
+			if (Object3d* object = objects_[selectedObjectIndex_]) {
+				object->SetTransform(transform);
+			}
+		}
+		selectionBoxDirty_ = true;
+		hasUnsavedChanges_ = true;
+	}
+
+	const bool isUsingGuizmo = ImGuizmo::IsUsing();
+	if (isUsingGuizmo && !guizmoWasUsing_) {
+		guizmoBeforeEdit_ = beforeGuizmoEdit;
+		guizmoStartTransform_ = startTransform;
+		guizmoTargetIndex_ = selectedObjectIndex_;
+		guizmoTargetIsPrimitive_ = selectedIsPrimitive_;
+		guizmoWasUsing_ = true;
+	} else if (!isUsingGuizmo) {
+		PushGuizmoUndoIfNeeded();
+	}
+#else
+	(void)viewport;
+	(void)contentStartY;
+	(void)leftPanelWidth;
+	(void)rightPanelWidth;
+	(void)availableHeight;
 #endif
 }
 void Hierarchy::DrawObjectEditors() {
@@ -792,8 +1198,9 @@ void Hierarchy::DrawObjectEditors() {
 			ImGui::EndPopup();
 		}
 		if (toolbarResult.stopRequested) {
+			SceneManager::GetInstance()->RequestReinitializeCurrentScene();
 			SetPlayMode(false);
-			saveStatusMessage_ = "Stopped: applied editor values";
+			saveStatusMessage_ = "Stopped: restored editor state";
 		}
 	}
 	ImGui::End();
@@ -804,51 +1211,77 @@ void Hierarchy::DrawObjectEditors() {
 	if (ImGui::Begin("Hierarchy", nullptr, ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_HorizontalScrollbar)) {
 		ImGui::Text("Auto Object Editor");
 		ImGui::Separator();
+		HandleHierarchyAssetDrop();
+		ImGui::TextDisabled("Assetからここへドラッグ&ドロップでHierarchyへ追加");
+		ImGui::Separator();
 		ImGui::SeparatorText("Scene Switch");
 		DrawSceneSelector();
-		ImGui::SeparatorText("Light");
-		DrawLightEditor();
-		ImGui::SeparatorText("Camera");
-		DrawCameraEditor();
-		ImGui::SeparatorText("Audio");
-		editorAudio_.DrawEditor(isPlaying_, hasUnsavedChanges_);
+		if (ImGui::TreeNodeEx("Light", ImGuiTreeNodeFlags_DefaultOpen)) {
+			DrawLightEditor();
+			ImGui::TreePop();
+		}
+		ImGui::Separator();
+		if (ImGui::TreeNodeEx("Camera", ImGuiTreeNodeFlags_DefaultOpen)) {
+			DrawCameraEditor();
+			ImGui::TreePop();
+		}
+		ImGui::Separator();
+		if (ImGui::TreeNodeEx("Audio", ImGuiTreeNodeFlags_DefaultOpen)) {
+			editorAudio_.DrawEditor(isPlaying_, hasUnsavedChanges_);
+			ImGui::TreePop();
+		}
 		ImGui::SeparatorText("Selection");
 		DrawSelectionBoxEditor();
 		ImGui::Separator();
-
 
 		if (!saveStatusMessage_.empty()) {
 			ImGui::Text("%s", saveStatusMessage_.c_str());
 		}
 
-		ImGui::SeparatorText("Object3d");
-		for (size_t i = 0; i < objects_.size(); ++i) {
-			Object3d* object = objects_[i];
-			if (!object) {
-				continue;
+		if (ImGui::TreeNodeEx("Object3d", ImGuiTreeNodeFlags_DefaultOpen)) {
+			for (size_t i = 0; i < objects_.size(); ++i) {
+				Object3d* object = objects_[i];
+				if (!object) {
+					continue;
+				}
+				std::string displayName = objectNames_[i].empty() ? ("Object " + std::to_string(i)) : objectNames_[i];
+				const bool selected = (!selectedIsPrimitive_ && selectedObjectIndex_ == i);
+				if (ImGui::Selectable((displayName + "##object_select_" + std::to_string(i)).c_str(), selected)) {
+					selectedObjectIndex_ = i;
+					selectedIsPrimitive_ = false;
+					selectionBoxDirty_ = true;
+				}
+				if (ImGui::BeginPopupContextItem(("##object_context_" + std::to_string(i)).c_str())) {
+					if (ImGui::MenuItem("delete")) {
+						DeleteObjectAtIndex(i);
+					}
+					ImGui::EndPopup();
+				}
 			}
-			std::string displayName = objectNames_[i].empty() ? ("Object " + std::to_string(i)) : objectNames_[i];
-			const bool selected = (!selectedIsPrimitive_ && selectedObjectIndex_ == i);
-			if (ImGui::Selectable((displayName + "##object_select_" + std::to_string(i)).c_str(), selected)) {
-				selectedObjectIndex_ = i;
-				selectedIsPrimitive_ = false;
-				selectionBoxDirty_ = true;
-			}
+			ImGui::TreePop();
 		}
 
-		ImGui::SeparatorText("Primitive");
-		for (size_t i = 0; i < primitives_.size(); ++i) {
-			Primitive* primitive = primitives_[i];
-			if (!primitive) {
-				continue;
+		if (ImGui::TreeNodeEx("Primitive", ImGuiTreeNodeFlags_DefaultOpen)) {
+			for (size_t i = 0; i < primitives_.size(); ++i) {
+				Primitive* primitive = primitives_[i];
+				if (!primitive) {
+					continue;
+				}
+				std::string displayName = primitiveNames_[i].empty() ? ("Primitive " + std::to_string(i)) : primitiveNames_[i];
+				const bool selected = (selectedIsPrimitive_ && selectedObjectIndex_ == i);
+				if (ImGui::Selectable((displayName + "##primitive_select_" + std::to_string(i)).c_str(), selected)) {
+					selectedObjectIndex_ = i;
+					selectedIsPrimitive_ = true;
+					selectionBoxDirty_ = true;
+				}
+				if (ImGui::BeginPopupContextItem(("##primitive_context_" + std::to_string(i)).c_str())) {
+					if (ImGui::MenuItem("delete")) {
+						DeletePrimitiveAtIndex(i);
+					}
+					ImGui::EndPopup();
+				}
 			}
-			std::string displayName = primitiveNames_[i].empty() ? ("Primitive " + std::to_string(i)) : primitiveNames_[i];
-			const bool selected = (selectedIsPrimitive_ && selectedObjectIndex_ == i);
-			if (ImGui::Selectable((displayName + "##primitive_select_" + std::to_string(i)).c_str(), selected)) {
-				selectedObjectIndex_ = i;
-				selectedIsPrimitive_ = true;
-				selectionBoxDirty_ = true;
-			}
+			ImGui::TreePop();
 		}
 	}
 	ImGui::End();
@@ -863,12 +1296,14 @@ void Hierarchy::DrawObjectEditors() {
 			beforeEdit.objectTransforms = editorTransforms_;
 			beforeEdit.objectMaterials = editorMaterials_;
 			beforeEdit.objectNames = objectNames_;
+			beforeEdit.objectModelNames = objectModelNames_;
 			beforeEdit.primitiveTransforms = primitiveEditorTransforms_;
 			beforeEdit.primitiveMaterials = primitiveEditorMaterials_;
 			beforeEdit.primitiveNames = primitiveNames_;
 			bool transformChanged = false;
 			bool materialChanged = false;
 			bool nameChanged = false;
+			bool modelChanged = false;
 			if (selectedIsPrimitive_) {
 				Primitive* primitive = primitives_[selectedObjectIndex_];
 				if (primitive) {
@@ -890,7 +1325,14 @@ void Hierarchy::DrawObjectEditors() {
 					Transform& transform = editorTransforms_[selectedObjectIndex_];
 					InspectorMaterial& material = editorMaterials_[selectedObjectIndex_];
 					std::string& name = objectNames_[selectedObjectIndex_];
-					Inspector::DrawObjectInspector(selectedObjectIndex_, name, transform, material, isPlaying_, transformChanged, materialChanged, nameChanged);
+					if (selectedObjectIndex_ >= objectModelNames_.size()) {
+						objectModelNames_.resize(selectedObjectIndex_ + 1);
+					}
+					if (objectModelNames_[selectedObjectIndex_].empty()) {
+						objectModelNames_[selectedObjectIndex_] = object->GetModelFilePath();
+					}
+					std::string& modelName = objectModelNames_[selectedObjectIndex_];
+					Inspector::DrawObjectInspector(selectedObjectIndex_, name, modelName, transform, material, isPlaying_, transformChanged, materialChanged, nameChanged, modelChanged);
 					if (transformChanged) {
 						selectionBoxDirty_ = true;
 						object->SetTransform(transform);
@@ -898,9 +1340,14 @@ void Hierarchy::DrawObjectEditors() {
 					if (materialChanged) {
 						EditorObject3d::ApplyEditorValues(object, transform, material);
 					}
+					if (modelChanged && !modelName.empty()) {
+						ModelManager::GetInstance()->LoadModel("Resources/3d", modelName);
+						object->SetModel(modelName);
+						selectionBoxDirty_ = true;
+					}
 				}
 			}
-			if (transformChanged || materialChanged || nameChanged) {
+			if (transformChanged || materialChanged || nameChanged || modelChanged) {
 				undoStack_.push_back(std::move(beforeEdit));
 				redoStack_.clear();
 				hasUnsavedChanges_ = true;
@@ -908,5 +1355,7 @@ void Hierarchy::DrawObjectEditors() {
 		}
 	}
 	ImGui::End();
+
+	DrawSelectedObjectGuizmo(viewport, contentStartY, leftPanelWidth, rightPanelWidth, availableHeight);
 #endif
 }

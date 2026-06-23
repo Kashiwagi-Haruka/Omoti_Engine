@@ -125,6 +125,9 @@
     <ClCompile Include="externals\imgui\imgui_tables.cpp">
       <Filter>Extarnals</Filter>
     </ClCompile>
+    <ClCompile Include="externals\ImGuizmo\ImGuizmo.cpp">
+      <Filter>Extarnals</Filter>
+    </ClCompile>
     <ClCompile Include="externals\imgui\imgui_widgets.cpp">
       <Filter>Extarnals</Filter>
     </ClCompile>
@@ -327,6 +330,7 @@
     <ClCompile Include="application\Option\Option.cpp" />
     <ClCompile Include="application\UI\Menu\Menu.cpp" />
     <ClCompile Include="application\UI\Tower\TowerUI.cpp" />
+    <ClCompile Include="Engine\Editor\EditorTool\Command\EditorCommand.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Engine\Texture\RenderTexture2D.h" />
@@ -627,6 +631,7 @@
     <ClInclude Include="application\Option\Option.h" />
     <ClInclude Include="application\UI\Menu\Menu.h" />
     <ClInclude Include="application\UI\Tower\TowerUI.h" />
+    <ClInclude Include="Engine\Editor\EditorTool\Command\EditorCommand.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include=".editorconfig" />

@@ -31,8 +31,6 @@ void Object3d::Initialize() {
 	SetDistortionFalloff(1.0f);
 	SetOutlineColor({0.0f, 0.0f, 0.0f, 1.0f});
 	SetOutlineWidth(1.0f);
-	Hierarchy* Hierarchy = Hierarchy::GetInstance();
-	Hierarchy->RegisterObject3d(this);
 }
 namespace {
 bool IsIdentityMatrix(const Matrix4x4& matrix) {
@@ -197,6 +195,7 @@ void Object3d::Draw() {
 }
 
 void Object3d::SetModel(const std::string& filePath) {
+	modelFilePath_ = filePath;
 	modelInstance_ = ModelManager::GetInstance()->CreateModelInstance(filePath);
 	if (modelInstance_) {
 		model_ = modelInstance_.get();

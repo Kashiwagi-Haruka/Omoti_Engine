@@ -245,9 +245,9 @@ void GameScene::Initialize() {
 	hitVinettTimer_ = 0.0f;
 	introBlurStartKernelSize_ = 15.0f;
 	introBlurDelayTimer_ = 0.0f;
-	Object3dCommon::GetInstance()->SetBoxFilterKernelSize(static_cast<int>(introBlurStartKernelSize_));
-	Object3dCommon::GetInstance()->SetFullscreenFilterType(fullscreenFilterType_);
-	Object3dCommon::GetInstance()->SetGaussianFilterSigma(gaussianFilterSigma_);
+	Object3dCommon::GetInstance()->SetDissolveEnabled(dissolveEnabled_);
+	Object3dCommon::GetInstance()->SetDissolveThreshold(dissolveThreshold_);
+	Object3dCommon::GetInstance()->SetDissolveEdgeWidth(dissolveEdgeWidth_);
 }
 
 void GameScene::DebugImGui() {
@@ -256,12 +256,30 @@ void GameScene::DebugImGui() {
 	if (ImGui::Begin("vinett")) {
 		ImGui::ColorEdit3("vinettcolor", &vinettColor_.x);
 		ImGui::DragFloat("vinnettstrength", &vinettStrength_, 0.1f);
-		const char* filterTypes[] = {"Box", "Gaussian"};
+		const char* filterTypes[] = {"Box", "Gaussian", "Radial"};
 		if (ImGui::Combo("Fullscreen Filter", &fullscreenFilterType_, filterTypes, IM_ARRAYSIZE(filterTypes))) {
 			Object3dCommon::GetInstance()->SetFullscreenFilterType(fullscreenFilterType_);
 		}
 		if (ImGui::DragFloat("Gaussian Sigma", &gaussianFilterSigma_, 0.01f, 0.001f, 10.0f)) {
 			Object3dCommon::GetInstance()->SetGaussianFilterSigma(gaussianFilterSigma_);
+		}
+		if (ImGui::DragFloat2("Radial Blur Center", &radialBlurCenter_.x, 0.01f, 0.0f, 1.0f)) {
+			Object3dCommon::GetInstance()->SetRadialBlurCenter(radialBlurCenter_);
+		}
+		if (ImGui::DragFloat("Radial Blur Width", &radialBlurWidth_, 0.001f, 0.0f, 0.2f)) {
+			Object3dCommon::GetInstance()->SetRadialBlurWidth(radialBlurWidth_);
+		}
+		if (ImGui::DragInt("Radial Blur Samples", &radialBlurSampleCount_, 1, 1, 32)) {
+			Object3dCommon::GetInstance()->SetRadialBlurSampleCount(radialBlurSampleCount_);
+		}
+		if (ImGui::Checkbox("Dissolve Enabled", &dissolveEnabled_)) {
+			Object3dCommon::GetInstance()->SetDissolveEnabled(dissolveEnabled_);
+		}
+		if (ImGui::SliderFloat("Dissolve Threshold", &dissolveThreshold_, 0.0f, 1.0f)) {
+			Object3dCommon::GetInstance()->SetDissolveThreshold(dissolveThreshold_);
+		}
+		if (ImGui::SliderFloat("Dissolve Edge Width", &dissolveEdgeWidth_, 0.0f, 0.5f)) {
+			Object3dCommon::GetInstance()->SetDissolveEdgeWidth(dissolveEdgeWidth_);
 		}
 		Object3dCommon::GetInstance()->SetVignetteColor(vinettColor_);
 		Object3dCommon::GetInstance()->SetVignetteStrength(vinettStrength_);

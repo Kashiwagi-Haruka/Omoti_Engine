@@ -1,6 +1,9 @@
 #include "SpriteCommon.h"
 #include "DirectXCommon.h"
 #include "Engine/Logger/Logger.h"
+#ifdef USE_IMGUI
+#include "Engine/Editor/EditorTool/Hierarchy/Hierarchy.h"
+#endif
 #include <cassert>
 
 std::unique_ptr<SpriteCommon> SpriteCommon::instance_ = nullptr;
@@ -43,7 +46,20 @@ void SpriteCommon::DrawCommonFont() {
 
 	dxCommon_->GetCommandList()->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 }
+bool SpriteCommon::ShouldDrawSprites() const {
+	if (!dxCommon_ || !dxCommon_->IsEditorLayoutEnabled()) {
+		return true;
+	}
 
+#ifdef USE_IMGUI
+	const Hierarchy* hierarchy = Hierarchy::GetInstance();
+	if (hierarchy && !hierarchy->IsPlayMode()) {
+		return false;
+	}
+#endif
+
+	return isSpriteVisible_;
+}
 void SpriteCommon::SetBlendMode(const BlendMode& blendMode) {
 	blendMode_ = blendMode;
 	ApplyBlendMode();

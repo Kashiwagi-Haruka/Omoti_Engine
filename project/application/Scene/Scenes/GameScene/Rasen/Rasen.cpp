@@ -17,26 +17,13 @@ Rasen::Rasen() {
 }
 
 void Rasen::Finalize() {
-	for (int i = 0; i < 4; i++) {
-		levelupIcons[i].reset();
-	}
+
 }
 
 void Rasen::Initialize(Camera* camera) {
 	enemyManager->Initialize(camera);
 	expCubeManager->Initialize(camera);
 	house->Initialize(camera);
-
-	int handle[4]{};
-	handle[0] = TextureManager::GetInstance()->GetTextureIndexByfilePath("Resources/2d/levelup_attack.png");
-	handle[1] = TextureManager::GetInstance()->GetTextureIndexByfilePath("Resources/2d/levelup_speed.png");
-	handle[2] = TextureManager::GetInstance()->GetTextureIndexByfilePath("Resources/2d/levelup_hp.png");
-	handle[3] = TextureManager::GetInstance()->GetTextureIndexByfilePath("Resources/2d/levelup_allow.png");
-	for (int i = 0; i < 4; i++) {
-		levelupIcons[i] = std::make_unique<Sprite>();
-		levelupIcons[i]->Initialize(handle[i]);
-		levelupIcons[i]->SetScale({256, 256});
-	}
 
 	uint32_t phaseHandles[5] = {
 	    TextureManager::GetInstance()->GetTextureIndexByfilePath("Resources/2d/phase1.png"), TextureManager::GetInstance()->GetTextureIndexByfilePath("Resources/2d/phase2.png"),
@@ -271,19 +258,5 @@ void Rasen::Draw(Boss* boss) {
 	}
 	if (isWarningActive_) {
 		warningSprite_->Draw();
-	}
-	if (isLevelSelecting) {
-		int leftID = selectChoices[0];
-		int rightID = selectChoices[1];
-		Vector2 leftPos = {350, 300};
-		Vector2 rightPos = {750, 300};
-		levelupIcons[leftID]->SetPosition(leftPos);
-		levelupIcons[leftID]->SetColor(cursorIndex == 0 ? Vector4(1, 1, 0, 1) : Vector4(1, 1, 1, 1));
-		levelupIcons[leftID]->Update();
-		levelupIcons[leftID]->Draw();
-		levelupIcons[rightID]->SetPosition(rightPos);
-		levelupIcons[rightID]->SetColor(cursorIndex == 1 ? Vector4(1, 1, 0, 1) : Vector4(1, 1, 1, 1));
-		levelupIcons[rightID]->Update();
-		levelupIcons[rightID]->Draw();
 	}
 }

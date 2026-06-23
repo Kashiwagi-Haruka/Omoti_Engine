@@ -139,9 +139,10 @@ public:
 	// サブテクスチャの SRV インデックスを設定 (portal shader の t4)
 	void SetSecondaryTextureIndex(uint32_t textureIndex);
 	void ClearSecondaryTextureIndex();
-	void SetEditorRegistrationEnabled(bool enable) { editorRegistrationEnabled_ = enable; }
+	void SetEditorRegistrationEnabled(bool) {}
 	void SetEditorId(const std::string& id) { editorId_ = id; }
 	const std::string& GetEditorId() const { return editorId_; }
+	PrimitiveName GetPrimitiveName() const { return primitiveName_; }
 	// ポータル投影 UV 用の 2 つのカメラ ViewProjection を設定
 	void SetPortalProjectionMatrices(const Matrix4x4& textureViewProjection0, const Matrix4x4& textureViewProjection1, const Matrix4x4& portalCameraWorld0, const Matrix4x4& portalCameraWorld1);
 	void SetPortalProjectionEnabled(bool enabled);
@@ -157,7 +158,8 @@ public:
 	float GetDistortionStrength() const;
 	float GetDistortionFalloff() const;
 	Vector2 GetUvAnchor() const { return uvAnchor_; }
-	const Matrix4x4& GetWorldMatrix()const { return worldMatrix; };
+	const Matrix4x4& GetWorldMatrix() const { return worldMatrix; };
+
 private:
 	// Line 描画時に使う始点
 	Vector3 lineStart_ = {0.0f, 0.0f, 0.0f};
@@ -165,7 +167,6 @@ private:
 	Vector3 lineEnd_ = {0.0f, 0.0f, 0.0f};
 	// true の場合は lineStart_/lineEnd_ を優先して線を更新
 	bool useLinePositions_ = false;
-	bool editorRegistrationEnabled_ = true;
 	// 曲面系プリミティブの分割数
 	uint32_t slices_ = 32;
 	// Sphere/Torus の縦分割数

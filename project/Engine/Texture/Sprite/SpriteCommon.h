@@ -38,6 +38,7 @@ public:
 	void SetBlendMode(const BlendMode& blendMode = BlendMode::kBlendModeAlpha);
 	void SetSpriteVisible(bool isVisible) { isSpriteVisible_ = isVisible; }
 	bool IsSpriteVisible() const { return isSpriteVisible_; }
+	bool ShouldDrawSprites() const;
 	Microsoft::WRL::ComPtr<ID3D12Resource> CreateBufferResource(size_t sizeInBytes);
 
 	DirectXCommon* GetDxCommon() const { return dxCommon_; };

@@ -2,6 +2,7 @@
 
 Texture2D<float4> gTexture : register(t0);
 Texture2D<float4> gOutlineTexture : register(t1);
+Texture2D<float4> gMaskTexture : register(t2);
 SamplerState gSampler : register(s0);
 
 struct PixelShaderOutput
@@ -47,13 +48,40 @@ float Gauss(float x, float y, float sigma)
     return exp(exponent) * rcp(denominator);
 }
 
+float3 ApplyRadialBlur(float2 texcoord)
+{
+    const int kMaxSamples = 32;
+    int sampleCount = clamp((int) radialBlurSampleCount, 1, kMaxSamples);
+    float2 direction = texcoord - radialBlurCenter;
+    float3 blurredColor = float3(0.0f, 0.0f, 0.0f);
+
+    [loop]
+    for (int sampleIndex = 0; sampleIndex < kMaxSamples; ++sampleIndex)
+    {
+        if (sampleIndex >= sampleCount)
+        {
+            break;
+        }
+
+        float2 sampleTexcoord = saturate(texcoord - direction * radialBlurWidth * (float) sampleIndex);
+        blurredColor += gTexture.Sample(gSampler, sampleTexcoord).rgb;
+    }
+
+    return blurredColor * rcp((float) sampleCount);
+}
+
 PixelShaderOutput main(VertexShaderOutput input)
 {
     PixelShaderOutput output;
     output.color = gTexture.Sample(gSampler, input.texcoord);
 
+    if (fullscreenFilterType > 1.5f)
+    {
+        output.color.rgb = ApplyRadialBlur(input.texcoord);
+    }
+
     int kernelSize = max((int) (boxFilterKernelSize), 1);
-    if (kernelSize > 1)
+    if (fullscreenFilterType < 1.5f && kernelSize > 1)
     {
         if ((kernelSize & 1) == 0)
         {
@@ -92,6 +120,17 @@ PixelShaderOutput main(VertexShaderOutput input)
             }
         }
         output.color.rgb = filteredColor / max(weight, 0.0001f);
+    }
+
+    if (dissolveEnabled > 0.5f)
+    {
+        float mask = gMaskTexture.Sample(gSampler, input.texcoord).r;
+        if (mask <= dissolveThreshold)
+        {
+            discard;
+        }
+        float edge = 1.0f - smoothstep(dissolveThreshold, dissolveThreshold + max(dissolveEdgeWidth, 0.0001f), mask);
+        output.color.rgb = lerp(output.color.rgb, float3(1.0f, 0.45f, 0.0f), edge);
     }
     
     float2 centeredUv = input.texcoord * (1.0f - input.texcoord.yx);

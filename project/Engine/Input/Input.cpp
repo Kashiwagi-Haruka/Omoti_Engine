@@ -166,23 +166,35 @@ void Input::Initialize(WinApp* winApp) {
 }
 
 void Input::SetIsCursorVisible(bool isVisible) { isCursorVisibleRequested_ = isVisible; }
-void Input::Update() {
-	if (isCursorVisible_ != isCursorVisibleRequested_) {
-		if (isCursorVisibleRequested_) {
-			while (ShowCursor(TRUE) < 0) {
-			}
-		} else {
-			while (ShowCursor(FALSE) >= 0) {
-			}
-		}
-		isCursorVisible_ = isCursorVisibleRequested_;
+void Input::ApplyCursorVisibility(bool isVisible) {
+	if (isCursorVisible_ == isVisible) {
+		return;
 	}
+
+	if (isVisible) {
+		while (ShowCursor(TRUE) < 0) {
+		}
+	} else {
+		while (ShowCursor(FALSE) >= 0) {
+		}
+	}
+	isCursorVisible_ = isVisible;
+}
+
+void Input::Update() {
 	// 前のフレームのキー入力を保存
 	memcpy(preKey, key, sizeof(key));
 
 	// キーボードの状態を取得
 	keyboard->Acquire();
 	keyboard->GetDeviceState(sizeof(key), key);
+
+	if (IsForegroundWindow(winApp_) && key[DIK_F1] && !preKey[DIK_F1]) {
+		isCursorVisibilityForceEnabled_ = true;
+		isCursorVisibilityForced_ = !isCursorVisible_;
+	}
+	isCursorStability = (isCursorVisibilityForceEnabled_ && isCursorVisibilityForced_) ? false : isCursorStabilityRequested_;
+	ApplyCursorVisibility(isCursorVisibilityForceEnabled_ ? isCursorVisibilityForced_ : isCursorVisibleRequested_);
 
 	// ゲームパッド
 	prePadState_ = padState_;

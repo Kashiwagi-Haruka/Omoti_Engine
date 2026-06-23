@@ -1,4 +1,4 @@
-#pragma once
+ #pragma once
 #include <Windows.h>
 #include <d3d12.h>
 #include <dxgi1_6.h>
@@ -63,6 +63,8 @@ class DirectXCommon {
 	D3D12_CPU_DESCRIPTOR_HANDLE sceneOutlineRtvHandle_{};
 	D3D12_CPU_DESCRIPTOR_HANDLE sceneSrvHandleCPU_{};
 	D3D12_GPU_DESCRIPTOR_HANDLE sceneSrvHandleGPU_{};
+	Microsoft::WRL::ComPtr<ID3D12Resource> dissolveMaskResource_ = nullptr;
+	Microsoft::WRL::ComPtr<ID3D12Resource> dissolveMaskUploadResource_ = nullptr;
 
 	Microsoft::WRL::ComPtr<ID3D12RootSignature> copyRootSignature_ = nullptr;
 	Microsoft::WRL::ComPtr<ID3D12PipelineState> copyPipelineState_ = nullptr;
@@ -79,6 +81,13 @@ class DirectXCommon {
 		float fullscreenSepiaEnabled;
 		float fullscreenFilterType;
 		float gaussianFilterSigma;
+		float dissolveEnabled;
+		float dissolveThreshold;
+		float dissolveEdgeWidth;
+		float dissolvePadding;
+		float radialBlurCenter[2];
+		float radialBlurWidth;
+		float radialBlurSampleCount;
 	};
 	PostEffectParameters* postEffectParameterMappedData_ = nullptr;
 	float vignetteStrength_ = 0.0f;
@@ -90,6 +99,12 @@ class DirectXCommon {
 	int boxFilterKernelSize_ = 1;
 	int fullscreenFilterType_ = 0;
 	float gaussianFilterSigma_ = 2.0f;
+	bool dissolveEnabled_ = false;
+	float dissolveThreshold_ = 0.0f;
+	float dissolveEdgeWidth_ = 0.02f;
+	Vector2 radialBlurCenter_ = {0.5f, 0.5f};
+	float radialBlurWidth_ = 0.01f;
+	int radialBlurSampleCount_ = 10;
 	bool fullscreenGrayscaleEnabled_ = false;
 	bool fullscreenSepiaEnabled_ = false;
 	bool editorLayoutEnabled_ = false;
@@ -153,11 +168,23 @@ public:
 	int GetFullscreenFilterType() const { return fullscreenFilterType_; }
 	void SetGaussianFilterSigma(float sigma);
 	float GetGaussianFilterSigma() const { return gaussianFilterSigma_; }
+	void SetRadialBlurCenter(const Vector2& center);
+	Vector2 GetRadialBlurCenter() const { return radialBlurCenter_; }
+	void SetRadialBlurWidth(float width);
+	float GetRadialBlurWidth() const { return radialBlurWidth_; }
+	void SetRadialBlurSampleCount(int sampleCount);
+	int GetRadialBlurSampleCount() const { return radialBlurSampleCount_; }
+	void SetDissolveEnabled(bool enabled);
+	bool GetDissolveEnabled() const { return dissolveEnabled_; }
+	void SetDissolveThreshold(float threshold);
+	float GetDissolveThreshold() const { return dissolveThreshold_; }
+	void SetDissolveEdgeWidth(float width);
+	float GetDissolveEdgeWidth() const { return dissolveEdgeWidth_; }
 	void SetFullscreenGrayscaleEnabled(bool enabled) { fullscreenGrayscaleEnabled_ = enabled; }
 	bool IsFullscreenGrayscaleEnabled() const { return fullscreenGrayscaleEnabled_; }
 	void SetFullscreenSepiaEnabled(bool enabled) { fullscreenSepiaEnabled_ = enabled; }
 	bool IsFullscreenSepiaEnabled() const { return fullscreenSepiaEnabled_; }
-	
+
 	void SetEditorLayoutEnabled(bool enabled) { editorLayoutEnabled_ = enabled; }
 	bool IsEditorLayoutEnabled() const { return editorLayoutEnabled_; }
 	void BeginOutlineRenderTarget();
@@ -195,6 +222,7 @@ private:
 	void DescriptorHeapCreate();
 	void SceneColorResourceCreate();
 	void SceneColorViewCreate();
+	void DissolveMaskTextureCreate();
 	void SceneCopyPipelineCreate();
 
 	void RenderTargetViewInitialize();

@@ -1,6 +1,7 @@
 #pragma once
 
 #include <memory>
+#include <filesystem>
 #include <string>
 #include <vector>
 
@@ -18,6 +19,7 @@
 class Object3d;
 class Primitive;
 class Camera;
+struct ImGuiViewport;
 
 class Hierarchy {
 public:
@@ -36,13 +38,18 @@ public:
 	bool IsPaused() const { return isPaused_; }
 	bool IsEditorPreviewActive() const;
 	bool LoadObjectEditorsFromJsonIfExists(const std::string& filePath);
+	void AddPrimitiveAssetToHierarchy(const std::string& primitiveName);
+	void AddObject3dAssetToHierarchy(const std::string& modelName);
+	void AddAudioAssetToHierarchy(const std::filesystem::path& audioPath);
 	void Finalize();
+	void OnSceneChangeRequested(const std::string& nextSceneName);
 
 private:
 	struct EditorSnapshot {
 		std::vector<Transform> objectTransforms;
 		std::vector<InspectorMaterial> objectMaterials;
 		std::vector<std::string> objectNames;
+		std::vector<std::string> objectModelNames;
 		std::vector<Transform> primitiveTransforms;
 		std::vector<InspectorMaterial> primitiveMaterials;
 		std::vector<std::string> primitiveNames;
@@ -51,8 +58,10 @@ private:
 	void DrawSceneSelector();
 	void DrawLightEditor();
 	void DrawSelectionBoxEditor();
+	void DrawSelectedObjectGuizmo(const ImGuiViewport* viewport, float contentStartY, float leftPanelWidth, float rightPanelWidth, float availableHeight);
 	void DrawCameraEditor();
 	void DrawCameraBillboards();
+	void HandleHierarchyAssetDrop();
 	void SyncSelectionBoxToTarget();
 	Transform GetSelectedTransform() const;
 	bool IsObjectSelected() const;
@@ -63,18 +72,28 @@ private:
 	bool ResetToLoadedSnapshot();
 	void UndoEditorChange();
 	void RedoEditorChange();
+	void PushGuizmoUndoIfNeeded();
+	void DeleteObjectAtIndex(size_t index);
+	void DeletePrimitiveAtIndex(size_t index);
 
 	bool SaveObjectEditorsToJson(const std::string& filePath) const;
 	bool LoadObjectEditorsFromJson(const std::string& filePath);
 
 	std::vector<EditorSnapshot> undoStack_;
 	std::vector<EditorSnapshot> redoStack_;
+	EditorSnapshot guizmoBeforeEdit_{};
+	Transform guizmoStartTransform_{};
+	size_t guizmoTargetIndex_ = 0;
+	bool guizmoTargetIsPrimitive_ = false;
+	bool guizmoWasUsing_ = false;
+	int currentGuizmoOperation_ = 0;
 	EditorSnapshot loadedSnapshot_{};
 	bool hasLoadedSnapshot_ = false;
 	std::string loadedSnapshotFilePath_;
 
 	std::vector<Object3d*> objects_;
 	std::vector<std::string> objectNames_;
+	std::vector<std::string> objectModelNames_;
 	std::vector<Transform> editorTransforms_;
 	std::vector<InspectorMaterial> editorMaterials_;
 
@@ -98,6 +117,8 @@ private:
 	EditorGrid::Settings gridSettings_{};
 	bool showGridWindow_ = true;
 	std::unique_ptr<Primitive> editorGridPlane_;
+	std::vector<std::unique_ptr<Object3d>> editorOwnedObjects_;
+	std::vector<std::unique_ptr<Primitive>> editorOwnedPrimitives_;
 	EditorLight editorLight_{};
 	EditorAudio editorAudio_{};
 	EditorCamera editorCamera_{};
