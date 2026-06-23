@@ -1,6 +1,7 @@
 #pragma once
 #include "Vector2.h"
 #include <memory>
+#include "Text/Text.h"
 class Sprite;
 class TowerUI {
 
