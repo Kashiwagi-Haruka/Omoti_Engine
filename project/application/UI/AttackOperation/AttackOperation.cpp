@@ -105,6 +105,9 @@ void AttackOperation::Draw() {
 	if (specialAttackSPData_.sprite) {
 		specialAttackSPData_.sprite->Draw();
 	}
+	if (keyboardDashSPData_.sprite) {
+		keyboardDashSPData_.sprite->Draw();
+	}
 	if (keyboardSkillIconSPData_.sprite) {
 		keyboardSkillIconSPData_.sprite->Draw();
 	}

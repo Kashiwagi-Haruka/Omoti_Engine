@@ -52,7 +52,7 @@ void UIManager::Draw() {
 	attackOperationUI_->Draw();
 	SpriteCommon::GetInstance()->DrawCommon();
 	towerUI_->Draw();
-	menuUI_->Draw();
+	/*menuUI_->Draw();*/
 	if (PlayCommand::GetCURSOR_DISPLAY()) {
 		if (cursolSprite_) {
 			cursolSprite_->Draw();
