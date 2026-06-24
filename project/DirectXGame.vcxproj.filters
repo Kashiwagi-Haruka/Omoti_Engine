@@ -1,7 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <FxCompile Include="Resources\shader\Sprite\Font.PS.hlsl" />
     <FxCompile Include="Resources\shader\FullScreenCopy\CopyImage.PS.hlsl">
       <Filter>Resources</Filter>
     </FxCompile>
@@ -65,15 +64,29 @@
     <FxCompile Include="Resources\shader\Particle\UpdateParticle.CS.hlsl">
       <Filter>Resources</Filter>
     </FxCompile>
-    <FxCompile Include="Resources\shader\Object3d\VS_Shader\SkinningObject3dOutline.VS.hlsl" />
-    <FxCompile Include="Resources\shader\Object3d\VS_Shader\SkinningObject3dToonOutline.VS.hlsl" />
-    <FxCompile Include="Resources\shader\Object3d\PS_Shader\SkinningObject3dToonOutline.PS.hlsl" />
-    <FxCompile Include="Resources\shader\Object3d\PS_Shader\MaterialColorOnlyObject3d.PS.hlsl" />
-    <FxCompile Include="Resources\shader\Skybox\Skybox.PS.hlsl" />
-    <FxCompile Include="Resources\shader\Skybox\Skybox.VS.hlsl" />
+    <FxCompile Include="Resources\shader\Sprite\Font.PS.hlsl">
+      <Filter>Resources</Filter>
+    </FxCompile>
+    <FxCompile Include="Resources\shader\Object3d\PS_Shader\MaterialColorOnlyObject3d.PS.hlsl">
+      <Filter>Resources</Filter>
+    </FxCompile>
+    <FxCompile Include="Resources\shader\Object3d\VS_Shader\SkinningObject3dOutline.VS.hlsl">
+      <Filter>Resources</Filter>
+    </FxCompile>
+    <FxCompile Include="Resources\shader\Object3d\PS_Shader\SkinningObject3dToonOutline.PS.hlsl">
+      <Filter>Resources</Filter>
+    </FxCompile>
+    <FxCompile Include="Resources\shader\Object3d\VS_Shader\SkinningObject3dToonOutline.VS.hlsl">
+      <Filter>Resources</Filter>
+    </FxCompile>
+    <FxCompile Include="Resources\shader\Skybox\Skybox.VS.hlsl">
+      <Filter>Resources</Filter>
+    </FxCompile>
+    <FxCompile Include="Resources\shader\Skybox\Skybox.PS.hlsl">
+      <Filter>Resources</Filter>
+    </FxCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="Engine\Texture\RenderTexture2D.cpp" />
     <ClCompile Include="Engine\Camera\Camera.cpp">
       <Filter>Engine\Camera</Filter>
     </ClCompile>
@@ -245,95 +258,269 @@
     <ClCompile Include="application\SceneTransition\SceneTransition.cpp">
       <Filter>Application\SceneTransition</Filter>
     </ClCompile>
-    <ClCompile Include="application\CameraController\CameraController.cpp" />
-    <ClCompile Include="application\CollisionManager\CollisionManager.cpp" />
-    <ClCompile Include="application\Object\Background\Sky.cpp" />
-    <ClCompile Include="application\Object\Boss\Boss.cpp" />
-    <ClCompile Include="application\Object\Characters\CharacterDisplay\CharacterDisplay.cpp" />
-    <ClCompile Include="application\Object\Characters\CharacterDisplay\CharacterDisplaySkyDome.cpp" />
-    <ClCompile Include="application\Object\Characters\Model\CharacterModel.cpp" />
-    <ClCompile Include="application\Object\Characters\Playable\Individual\Sizuku\Sizuku.cpp" />
-    <ClCompile Include="application\Object\Characters\Enemy\Enemy.cpp" />
-    <ClCompile Include="application\Object\Characters\Enemy\EnemyAttack.cpp" />
-    <ClCompile Include="application\Object\Characters\Enemy\EnemyHitEffect.cpp" />
-    <ClCompile Include="application\Object\Characters\Enemy\EnemyManager.cpp" />
-    <ClCompile Include="application\Object\Characters\Enemy\EnemyStun.cpp" />
-    <ClCompile Include="application\Object\ExpCube\ExpCube.cpp" />
-    <ClCompile Include="application\Object\ExpCube\ExpCubeManager.cpp" />
-    <ClCompile Include="application\Object\House\House.cpp" />
-    <ClCompile Include="application\Object\House\HouseHP.cpp" />
-    <ClCompile Include="application\Object\Player\Attack\Skill\PlayerSkill.cpp" />
-    <ClCompile Include="application\Object\Player\Attack\Special\PlayerSpecialAttack.cpp" />
-    <ClCompile Include="application\Object\Player\Attack\PlayerAttack.cpp" />
-    <ClCompile Include="application\Object\Player\Attack\PlayerFallAttack.cpp" />
-    <ClCompile Include="application\Object\Player\Player.cpp" />
-    <ClCompile Include="application\Object\Player\PlayerModels.cpp" />
-    <ClCompile Include="application\Object\Player\PlayerParameters.cpp" />
-    <ClCompile Include="application\Object\Player\Weapon\PlayerSword.cpp" />
-    <ClCompile Include="application\Object\Player\Weapon\playerSwordTrail.cpp" />
-    <ClCompile Include="application\Object\MapchipField.cpp" />
-    <ClCompile Include="application\Scene\Scenes\TutorialScene\TutorialScene.cpp" />
-    <ClCompile Include="application\Team\Team.cpp" />
-    <ClCompile Include="application\TutorialUI\TutorialUI.cpp" />
-    <ClCompile Include="application\UI\UIManager\UIManager.cpp" />
-    <ClCompile Include="application\Scene\Scenes\GameScene\OpenWorld\OpenWorld.cpp" />
-    <ClCompile Include="application\Scene\Scenes\GameScene\Rasen\Rasen.cpp" />
-    <ClCompile Include="Engine\ScreenShot\ScreenShot.cpp" />
-    <ClCompile Include="Engine\Editor\EditorManager\EditorManager.cpp" />
-    <ClCompile Include="Engine\Editor\EditorData\Camera\EditorCamera.cpp" />
-    <ClCompile Include="Engine\Editor\EditorData\Audio\EditorAudio.cpp" />
-    <ClCompile Include="Engine\Editor\EditorData\Light\EditorLight.cpp" />
-    <ClCompile Include="Engine\Editor\EditorData\Object3d\EditorObject3d.cpp" />
-    <ClCompile Include="Engine\Editor\EditorData\Primitive\EditorPrimitive.cpp" />
-    <ClCompile Include="Engine\Editor\EditorTool\Asset\EditorAsset.cpp" />
-    <ClCompile Include="Engine\Editor\EditorTool\Grid\EditorGrid.cpp" />
-    <ClCompile Include="Engine\Editor\EditorTool\Hierarchy\Hierarchy.cpp" />
-    <ClCompile Include="Engine\Editor\EditorTool\Inspector\Inspector.cpp" />
-    <ClCompile Include="Engine\Editor\EditorTool\SaveTemplate\SaveTemplate.cpp" />
-    <ClCompile Include="Engine\Editor\EditorTool\ToolBar\ToolBar.cpp" />
-    <ClCompile Include="Engine\Audio\AudioMixer.cpp" />
-    <ClCompile Include="Engine\Texture\Mesh\Object3d\InstancedObject3d\InstancedObject3d.cpp" />
-    <ClCompile Include="Engine\Texture\Text\FreetypeManager\Font\Font.cpp" />
-    <ClCompile Include="Engine\Texture\Text\Text.cpp" />
-    <ClCompile Include="Engine\Texture\Text\FreetypeManager\FreeTypeManager.cpp" />
-    <ClCompile Include="Engine\Texture\Mesh\SkyBox\SkyBox.cpp" />
-    <ClCompile Include="application\PlayCommand\PlayCommand.cpp" />
-    <ClCompile Include="application\Object\Player\PlayerKey\PlayerKey.cpp" />
-    <ClCompile Include="application\Object\Characters\CharacterDisplay\Text\CharacterDisplayText.cpp" />
-    <ClCompile Include="application\Object\Damage\Damage.cpp" />
-    <ClCompile Include="application\Object\Characters\Playable\Individual\Mei\Mei.cpp" />
-    <ClCompile Include="application\Object\Characters\Playable\Individual\Arte\Arte.cpp" />
-    <ClCompile Include="Engine\Loadfile\TXT\TxtManager.cpp" />
-    <ClCompile Include="application\Object\Characters\Playable\Individual\Yuzuki\Yuzuki.cpp" />
-    <ClCompile Include="application\Object\Player\Weapon\PlayerWeapon.cpp" />
-    <ClCompile Include="application\Object\Characters\Playable\Base\Equipment.h" />
-    <ClCompile Include="application\Object\Characters\Enemy\Adhesion\Adhesion.cpp" />
-    <ClCompile Include="Engine\Texture\Data\Color.cpp" />
-    <ClCompile Include="application\Object\Characters\Playable\PlayableManager.cpp" />
-    <ClCompile Include="application\Object\Characters\CharacterDisplay\Text\CharacterDisplayMenuText.cpp" />
-    <ClCompile Include="application\CameraController\PlayerCamera\PlayerCamera.cpp" />
-    <ClCompile Include="application\CameraController\NormalAttackCamera\NormalAttackCamera.cpp" />
-    <ClCompile Include="application\CameraController\LockOnCamera\LockOnCamera.cpp" />
-    <ClCompile Include="application\Object\Characters\Playable\Individual\Sizuku\SizukuSkill.cpp" />
-    <ClCompile Include="application\Object\Damage\DamageMath.cpp" />
-    <ClCompile Include="application\UI\HPBar\HPBarUI.cpp" />
-    <ClCompile Include="application\UI\AttackOperation\AttackOperation.cpp" />
-    <ClCompile Include="application\Object\Characters\Playable\Individual\Sizuku\SizukuSpecial.cpp" />
-    <ClCompile Include="application\Object\Characters\Playable\Individual\Yuzuki\YuzukiSpecial.cpp" />
-    <ClCompile Include="application\Object\Characters\Playable\Weapon\Spear\Spear.cpp" />
-    <ClCompile Include="application\Object\Characters\Playable\Weapon\Sword\Sword.cpp" />
-    <ClCompile Include="application\Object\Characters\Playable\Weapon\Gun\Gun.cpp" />
-    <ClCompile Include="application\Object\Characters\Playable\Weapon\BigSword\BigSword.cpp" />
-    <ClCompile Include="application\Object\Characters\Playable\Weapon\Allow\Allow.cpp" />
-    <ClCompile Include="application\AudioManager\SEManager\SEManager.cpp" />
-    <ClCompile Include="application\AudioManager\BGMManager\BGMManager.cpp" />
-    <ClCompile Include="application\Option\Option.cpp" />
-    <ClCompile Include="application\UI\Menu\Menu.cpp" />
-    <ClCompile Include="application\UI\Tower\TowerUI.cpp" />
-    <ClCompile Include="Engine\Editor\EditorTool\Command\EditorCommand.cpp" />
+    <ClCompile Include="application\AudioManager\BGMManager\BGMManager.cpp">
+      <Filter>Application</Filter>
+    </ClCompile>
+    <ClCompile Include="application\Object\Characters\Model\CharacterModel.cpp">
+      <Filter>Application</Filter>
+    </ClCompile>
+    <ClCompile Include="application\CollisionManager\CollisionManager.cpp">
+      <Filter>Application</Filter>
+    </ClCompile>
+    <ClCompile Include="application\Object\Damage\Damage.cpp">
+      <Filter>Application</Filter>
+    </ClCompile>
+    <ClCompile Include="application\Object\Damage\DamageMath.cpp">
+      <Filter>Application</Filter>
+    </ClCompile>
+    <ClCompile Include="Engine\Audio\AudioMixer.cpp">
+      <Filter>Engine</Filter>
+    </ClCompile>
+    <ClCompile Include="Engine\Texture\Data\Color.cpp">
+      <Filter>Engine</Filter>
+    </ClCompile>
+    <ClCompile Include="Engine\Editor\EditorTool\Asset\EditorAsset.cpp">
+      <Filter>Engine</Filter>
+    </ClCompile>
+    <ClCompile Include="Engine\Editor\EditorData\Audio\EditorAudio.cpp">
+      <Filter>Engine</Filter>
+    </ClCompile>
+    <ClCompile Include="Engine\Editor\EditorData\Camera\EditorCamera.cpp">
+      <Filter>Engine</Filter>
+    </ClCompile>
+    <ClCompile Include="Engine\Editor\EditorTool\Command\EditorCommand.cpp">
+      <Filter>Engine</Filter>
+    </ClCompile>
+    <ClCompile Include="Engine\Editor\EditorTool\Grid\EditorGrid.cpp">
+      <Filter>Engine</Filter>
+    </ClCompile>
+    <ClCompile Include="Engine\Editor\EditorData\Light\EditorLight.cpp">
+      <Filter>Engine</Filter>
+    </ClCompile>
+    <ClCompile Include="Engine\Editor\EditorManager\EditorManager.cpp">
+      <Filter>Engine</Filter>
+    </ClCompile>
+    <ClCompile Include="Engine\Editor\EditorData\Object3d\EditorObject3d.cpp">
+      <Filter>Engine</Filter>
+    </ClCompile>
+    <ClCompile Include="Engine\Editor\EditorData\Primitive\EditorPrimitive.cpp">
+      <Filter>Engine</Filter>
+    </ClCompile>
+    <ClCompile Include="application\Object\Characters\Playable\Base\Equipment.h">
+      <Filter>Application</Filter>
+    </ClCompile>
+    <ClCompile Include="application\Object\ExpCube\ExpCube.cpp">
+      <Filter>Application</Filter>
+    </ClCompile>
+    <ClCompile Include="application\Object\ExpCube\ExpCubeManager.cpp">
+      <Filter>Application</Filter>
+    </ClCompile>
+    <ClCompile Include="Engine\Texture\Text\FreetypeManager\Font\Font.cpp">
+      <Filter>Engine</Filter>
+    </ClCompile>
+    <ClCompile Include="Engine\Texture\Text\FreetypeManager\FreeTypeManager.cpp">
+      <Filter>Engine</Filter>
+    </ClCompile>
+    <ClCompile Include="Engine\Editor\EditorTool\Hierarchy\Hierarchy.cpp">
+      <Filter>Engine</Filter>
+    </ClCompile>
+    <ClCompile Include="application\Object\House\House.cpp">
+      <Filter>Application</Filter>
+    </ClCompile>
+    <ClCompile Include="application\Object\House\HouseHP.cpp">
+      <Filter>Application</Filter>
+    </ClCompile>
+    <ClCompile Include="application\UI\HPBar\HPBarUI.cpp">
+      <Filter>Application</Filter>
+    </ClCompile>
+    <ClCompile Include="application\CameraController\LockOnCamera\LockOnCamera.cpp">
+      <Filter>Application</Filter>
+    </ClCompile>
+    <ClCompile Include="application\Object\MapchipField.cpp">
+      <Filter>Application</Filter>
+    </ClCompile>
+    <ClCompile Include="Engine\Editor\EditorTool\Inspector\Inspector.cpp">
+      <Filter>Engine</Filter>
+    </ClCompile>
+    <ClCompile Include="Engine\Texture\Mesh\Object3d\InstancedObject3d\InstancedObject3d.cpp">
+      <Filter>Engine</Filter>
+    </ClCompile>
+    <ClCompile Include="application\Object\Characters\Playable\Individual\Mei\Mei.cpp">
+      <Filter>Application</Filter>
+    </ClCompile>
+    <ClCompile Include="application\UI\Menu\Menu.cpp">
+      <Filter>Application</Filter>
+    </ClCompile>
+    <ClCompile Include="application\CameraController\NormalAttackCamera\NormalAttackCamera.cpp">
+      <Filter>Application</Filter>
+    </ClCompile>
+    <ClCompile Include="application\Scene\Scenes\GameScene\OpenWorld\OpenWorld.cpp">
+      <Filter>Application</Filter>
+    </ClCompile>
+    <ClCompile Include="application\Option\Option.cpp">
+      <Filter>Application</Filter>
+    </ClCompile>
+    <ClCompile Include="application\Object\Characters\Playable\PlayableManager.cpp">
+      <Filter>Application</Filter>
+    </ClCompile>
+    <ClCompile Include="application\PlayCommand\PlayCommand.cpp">
+      <Filter>Application</Filter>
+    </ClCompile>
+    <ClCompile Include="application\CameraController\PlayerCamera\PlayerCamera.cpp">
+      <Filter>Application</Filter>
+    </ClCompile>
+    <ClCompile Include="application\Object\Player\Attack\PlayerFallAttack.cpp">
+      <Filter>Application</Filter>
+    </ClCompile>
+    <ClCompile Include="application\Object\Player\PlayerKey\PlayerKey.cpp">
+      <Filter>Application</Filter>
+    </ClCompile>
+    <ClCompile Include="application\Object\Player\PlayerModels.cpp">
+      <Filter>Application</Filter>
+    </ClCompile>
+    <ClCompile Include="application\Object\Player\PlayerParameters.cpp">
+      <Filter>Application</Filter>
+    </ClCompile>
+    <ClCompile Include="application\Object\Player\Attack\Skill\PlayerSkill.cpp">
+      <Filter>Application</Filter>
+    </ClCompile>
+    <ClCompile Include="application\Object\Player\Attack\Special\PlayerSpecialAttack.cpp">
+      <Filter>Application</Filter>
+    </ClCompile>
+    <ClCompile Include="application\Object\Player\Weapon\PlayerSword.cpp">
+      <Filter>Application</Filter>
+    </ClCompile>
+    <ClCompile Include="application\Object\Player\Weapon\playerSwordTrail.cpp">
+      <Filter>Application</Filter>
+    </ClCompile>
+    <ClCompile Include="application\Object\Player\Weapon\PlayerWeapon.cpp">
+      <Filter>Application</Filter>
+    </ClCompile>
+    <ClCompile Include="application\Scene\Scenes\GameScene\Rasen\Rasen.cpp">
+      <Filter>Application</Filter>
+    </ClCompile>
+    <ClCompile Include="Engine\Editor\EditorTool\SaveTemplate\SaveTemplate.cpp">
+      <Filter>Application</Filter>
+    </ClCompile>
+    <ClCompile Include="application\AudioManager\SEManager\SEManager.cpp">
+      <Filter>Application</Filter>
+    </ClCompile>
+    <ClCompile Include="application\Object\Characters\Playable\Individual\Sizuku\Sizuku.cpp">
+      <Filter>Application</Filter>
+    </ClCompile>
+    <ClCompile Include="application\Object\Characters\Playable\Individual\Sizuku\SizukuSkill.cpp">
+      <Filter>Application</Filter>
+    </ClCompile>
+    <ClCompile Include="application\Object\Characters\Playable\Individual\Sizuku\SizukuSpecial.cpp">
+      <Filter>Application</Filter>
+    </ClCompile>
+    <ClCompile Include="application\Object\Background\Sky.cpp">
+      <Filter>Application</Filter>
+    </ClCompile>
+    <ClCompile Include="application\Object\Characters\Playable\Individual\Yuzuki\Yuzuki.cpp">
+      <Filter>Application</Filter>
+    </ClCompile>
+    <ClCompile Include="application\Object\Characters\Playable\Individual\Yuzuki\YuzukiSpecial.cpp">
+      <Filter>Application</Filter>
+    </ClCompile>
+    <ClCompile Include="application\Object\Player\Player.cpp">
+      <Filter>Application\Player</Filter>
+    </ClCompile>
+    <ClCompile Include="application\Object\Player\Attack\PlayerAttack.cpp">
+      <Filter>Application\Player</Filter>
+    </ClCompile>
+    <ClCompile Include="application\Object\Characters\Playable\Weapon\Spear\Spear.cpp">
+      <Filter>Application</Filter>
+    </ClCompile>
+    <ClCompile Include="Engine\Editor\EditorTool\ToolBar\ToolBar.cpp">
+      <Filter>Application</Filter>
+    </ClCompile>
+    <ClCompile Include="application\UI\Tower\TowerUI.cpp">
+      <Filter>Application</Filter>
+    </ClCompile>
+    <ClCompile Include="application\Scene\Scenes\TutorialScene\TutorialScene.cpp">
+      <Filter>Application</Filter>
+    </ClCompile>
+    <ClCompile Include="application\TutorialUI\TutorialUI.cpp">
+      <Filter>Application</Filter>
+    </ClCompile>
+    <ClCompile Include="Engine\Texture\RenderTexture2D.cpp">
+      <Filter>Engine</Filter>
+    </ClCompile>
+    <ClCompile Include="Engine\ScreenShot\ScreenShot.cpp">
+      <Filter>Engine</Filter>
+    </ClCompile>
+    <ClCompile Include="Engine\Texture\Mesh\SkyBox\SkyBox.cpp">
+      <Filter>Engine</Filter>
+    </ClCompile>
+    <ClCompile Include="Engine\Texture\Text\Text.cpp">
+      <Filter>Engine</Filter>
+    </ClCompile>
+    <ClCompile Include="Engine\Loadfile\TXT\TxtManager.cpp">
+      <Filter>Engine</Filter>
+    </ClCompile>
+    <ClCompile Include="application\Object\Characters\Playable\Weapon\Sword\Sword.cpp">
+      <Filter>Application</Filter>
+    </ClCompile>
+    <ClCompile Include="application\Team\Team.cpp">
+      <Filter>Application</Filter>
+    </ClCompile>
+    <ClCompile Include="application\Object\Characters\Playable\Weapon\Allow\Allow.cpp">
+      <Filter>Application\Weapon</Filter>
+    </ClCompile>
+    <ClCompile Include="application\Object\Characters\Playable\Individual\Arte\Arte.cpp">
+      <Filter>Application\Character\Playable</Filter>
+    </ClCompile>
+    <ClCompile Include="application\Object\Characters\Enemy\Adhesion\Adhesion.cpp">
+      <Filter>Application\Character\Enemy</Filter>
+    </ClCompile>
+    <ClCompile Include="application\UI\AttackOperation\AttackOperation.cpp">
+      <Filter>Application\UI</Filter>
+    </ClCompile>
+    <ClCompile Include="application\Object\Characters\Playable\Weapon\BigSword\BigSword.cpp">
+      <Filter>Application\Weapon</Filter>
+    </ClCompile>
+    <ClCompile Include="application\CameraController\CameraController.cpp">
+      <Filter>Application\Camera</Filter>
+    </ClCompile>
+    <ClCompile Include="application\Object\Characters\CharacterDisplay\CharacterDisplay.cpp">
+      <Filter>Application\CharacterDisplay</Filter>
+    </ClCompile>
+    <ClCompile Include="application\Object\Characters\CharacterDisplay\Text\CharacterDisplayMenuText.cpp">
+      <Filter>Application\CharacterDisplay</Filter>
+    </ClCompile>
+    <ClCompile Include="application\Object\Characters\CharacterDisplay\CharacterDisplaySkyDome.cpp">
+      <Filter>Application\CharacterDisplay</Filter>
+    </ClCompile>
+    <ClCompile Include="application\Object\Characters\CharacterDisplay\Text\CharacterDisplayText.cpp">
+      <Filter>Application\CharacterDisplay</Filter>
+    </ClCompile>
+    <ClCompile Include="application\Object\Boss\Boss.cpp">
+      <Filter>Application\Character\Enemy</Filter>
+    </ClCompile>
+    <ClCompile Include="application\Object\Characters\Enemy\Enemy.cpp">
+      <Filter>Application\Character\Enemy</Filter>
+    </ClCompile>
+    <ClCompile Include="application\Object\Characters\Enemy\EnemyAttack.cpp">
+      <Filter>Application\Character\Enemy</Filter>
+    </ClCompile>
+    <ClCompile Include="application\Object\Characters\Enemy\EnemyHitEffect.cpp">
+      <Filter>Application\Character\Enemy</Filter>
+    </ClCompile>
+    <ClCompile Include="application\Object\Characters\Enemy\EnemyManager.cpp">
+      <Filter>Application\Character\Enemy</Filter>
+    </ClCompile>
+    <ClCompile Include="application\Object\Characters\Enemy\EnemyStun.cpp">
+      <Filter>Application\Character\Enemy</Filter>
+    </ClCompile>
+    <ClCompile Include="application\Object\Characters\Playable\Weapon\Gun\Gun.cpp">
+      <Filter>Application\Weapon</Filter>
+    </ClCompile>
+    <ClCompile Include="application\UI\UIManager\UIManager.cpp">
+      <Filter>Application\Weapon</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Engine\Texture\RenderTexture2D.h" />
     <ClInclude Include="Engine\Camera\Camera.h">
       <Filter>Engine\Camera</Filter>
     </ClInclude>
@@ -529,109 +716,318 @@
     <ClInclude Include="Engine\math\QuaternionTransform.h">
       <Filter>Engine\Math</Filter>
     </ClInclude>
-    <ClInclude Include="application\CameraController\CameraController.h" />
-    <ClInclude Include="application\CollisionManager\CollisionManager.h" />
-    <ClInclude Include="application\Object\Background\Sky.h" />
-    <ClInclude Include="application\Object\Boss\Boss.h" />
-    <ClInclude Include="application\Object\Characters\CharacterDisplay\CharacterDisplay.h" />
-    <ClInclude Include="application\Object\Characters\CharacterDisplay\CharacterDisplaySkyDome.h" />
-    <ClInclude Include="application\Object\Characters\Model\CharacterModel.h" />
-    <ClInclude Include="application\Object\Characters\Playable\Individual\Sizuku\Sizuku.h" />
-    <ClInclude Include="application\Object\Characters\Enemy\Enemy.h" />
-    <ClInclude Include="application\Object\Characters\Enemy\EnemyAttack.h" />
-    <ClInclude Include="application\Object\Characters\Enemy\EnemyHitEffect.h" />
-    <ClInclude Include="application\Object\Characters\Enemy\EnemyManager.h" />
-    <ClInclude Include="application\Object\Characters\Enemy\EnemyStun.h" />
-    <ClInclude Include="application\Object\ExpCube\ExpCube.h" />
-    <ClInclude Include="application\Object\ExpCube\ExpCubeManager.h" />
-    <ClInclude Include="application\Object\House\House.h" />
-    <ClInclude Include="application\Object\House\HouseHP.h" />
-    <ClInclude Include="application\Object\Player\Attack\Skill\PlayerSkill.h" />
-    <ClInclude Include="application\Object\Player\Attack\Special\PlayerSpecialAttack.h" />
-    <ClInclude Include="application\Object\Player\Attack\PlayerAttack.h" />
-    <ClInclude Include="application\Object\Player\Attack\PlayerFallAttack.h" />
-    <ClInclude Include="application\Object\Player\Player.h" />
-    <ClInclude Include="application\Object\Player\PlayerModels.h" />
-    <ClInclude Include="application\Object\Player\PlayerParameters.h" />
-    <ClInclude Include="application\Object\Player\Weapon\PlayerSword.h" />
-    <ClInclude Include="application\Object\Player\Weapon\playerSwordTrail.h" />
-    <ClInclude Include="application\Object\MapchipField.h" />
-    <ClInclude Include="application\Scene\Scenes\TutorialScene\TutorialScene.h" />
-    <ClInclude Include="application\Team\Team.h" />
-    <ClInclude Include="application\TutorialUI\TutorialUI.h" />
-    <ClInclude Include="application\UI\UIManager\UIManager.h" />
-    <ClInclude Include="application\Scene\Scenes\GameScene\OpenWorld\OpenWorld.h" />
-    <ClInclude Include="application\Scene\Scenes\GameScene\Rasen\Rasen.h" />
-    <ClInclude Include="Engine\ScreenShot\ScreenShot.h" />
-    <ClInclude Include="Engine\Editor\EditorManager\EditorManager.h" />
-    <ClInclude Include="Engine\Editor\EditorData\Camera\EditorCamera.h" />
-    <ClInclude Include="Engine\Editor\EditorData\Audio\EditorAudio.h" />
-    <ClInclude Include="Engine\Editor\EditorData\Light\EditorLight.h" />
-    <ClInclude Include="Engine\Editor\EditorData\Object3d\EditorObject3d.h" />
-    <ClInclude Include="Engine\Editor\EditorData\Primitive\EditorPrimitive.h" />
-    <ClInclude Include="Engine\Editor\EditorTool\Asset\EditorAsset.h" />
-    <ClInclude Include="Engine\Editor\EditorTool\Grid\EditorGrid.h" />
-    <ClInclude Include="Engine\Editor\EditorTool\Hierarchy\Hierarchy.h" />
-    <ClInclude Include="Engine\Editor\EditorTool\Inspector\Inspector.h" />
-    <ClInclude Include="Engine\Editor\EditorTool\SaveTemplate\SaveTemplate.h" />
-    <ClInclude Include="Engine\Editor\EditorTool\ToolBar\ToolBar.h" />
-    <ClInclude Include="Engine\Audio\AudioMixer.h" />
-    <ClInclude Include="Engine\Texture\Data\Color.h" />
-    <ClInclude Include="Engine\Texture\Data\Material.h" />
-    <ClInclude Include="Engine\Texture\Data\SkinningData.h" />
-    <ClInclude Include="Engine\Texture\Data\VertexData.h" />
-    <ClInclude Include="Engine\Texture\Light\CommonLight\AreaCommonLight.h" />
-    <ClInclude Include="Engine\Texture\Light\CommonLight\DirectionalCommonLight.h" />
-    <ClInclude Include="Engine\Texture\Light\CommonLight\PointCommonLight.h" />
-    <ClInclude Include="Engine\Texture\Light\CommonLight\SpotCommonLight.h" />
-    <ClInclude Include="Engine\Texture\Light\SoloLight\AreaLight.h" />
-    <ClInclude Include="Engine\Texture\Light\SoloLight\DirectionalLight.h" />
-    <ClInclude Include="Engine\Texture\Light\SoloLight\PointLight.h" />
-    <ClInclude Include="Engine\Texture\Light\SoloLight\SpotLight.h" />
-    <ClInclude Include="Engine\Texture\Mesh\Object3d\InstancedObject3d\InstancedObject3d.h" />
-    <ClInclude Include="Engine\base\ScreenSize.h" />
-    <ClInclude Include="Engine\Texture\Text\FreetypeManager\Font\Font.h" />
-    <ClInclude Include="Engine\Texture\Text\Text.h" />
-    <ClInclude Include="Engine\Texture\Text\FreetypeManager\FreeTypeManager.h" />
-    <ClInclude Include="application\Object\Characters\Playable\Base\PlayableBase.h" />
-    <ClInclude Include="application\Object\Characters\Base\Attribute.h" />
-    <ClInclude Include="Engine\Texture\Mesh\SkyBox\SkyBox.h" />
-    <ClInclude Include="application\PlayCommand\PlayCommand.h" />
-    <ClInclude Include="application\Object\Player\PlayerKey\PlayerKey.h" />
-    <ClInclude Include="application\Object\Characters\CharacterDisplay\Text\CharacterDisplayText.h" />
-    <ClInclude Include="application\Object\Damage\Damage.h" />
-    <ClInclude Include="application\Object\Characters\Playable\Individual\Mei\Mei.h" />
-    <ClInclude Include="application\Object\Characters\Playable\Base\WeaponTypes.h" />
-    <ClInclude Include="application\Object\Characters\Playable\Individual\Arte\Arte.h" />
-    <ClInclude Include="Engine\Loadfile\TXT\TxtManager.h" />
-    <ClInclude Include="application\Object\Characters\Playable\Individual\Yuzuki\Yuzuki.h" />
-    <ClInclude Include="application\Object\Characters\Base\CharacterParameters.h" />
-    <ClInclude Include="application\Object\Player\Weapon\PlayerWeapon.h" />
-    <ClInclude Include="application\Object\Characters\Enemy\BaseEnemy.h" />
-    <ClInclude Include="application\Object\Characters\Enemy\Adhesion\Adhesion.h" />
-    <ClInclude Include="application\Object\Characters\Playable\PlayableManager.h" />
-    <ClInclude Include="application\Object\Characters\CharacterDisplay\Text\CharacterDisplayMenuText.h" />
-    <ClInclude Include="application\CameraController\PlayerCamera\PlayerCamera.h" />
-    <ClInclude Include="application\CameraController\NormalAttackCamera\NormalAttackCamera.h" />
-    <ClInclude Include="application\CameraController\LockOnCamera\LockOnCamera.h" />
-    <ClInclude Include="application\Object\Characters\Playable\Individual\Sizuku\SizukuSkill.h" />
-    <ClInclude Include="application\Object\Damage\DamageMath.h" />
-    <ClInclude Include="application\UI\HPBar\HPBarUI.h" />
-    <ClInclude Include="application\UI\AttackOperation\AttackOperation.h" />
-    <ClInclude Include="application\Object\Characters\Playable\Individual\Sizuku\SizukuSpecial.h" />
-    <ClInclude Include="application\Object\Characters\Playable\Individual\Yuzuki\YuzukiSpecial.h" />
-    <ClInclude Include="application\Object\Characters\Playable\Weapon\Spear\Spear.h" />
-    <ClInclude Include="application\Object\Characters\Playable\Weapon\Sword\Sword.h" />
-    <ClInclude Include="application\Object\Characters\Playable\Weapon\Gun\Gun.h" />
-    <ClInclude Include="application\Object\Characters\Playable\Weapon\BigSword\BigSword.h" />
-    <ClInclude Include="application\Object\Characters\Playable\Weapon\Allow\Allow.h" />
-    <ClInclude Include="application\Object\Characters\Playable\Weapon\BaseWeapon.h" />
-    <ClInclude Include="application\AudioManager\SEManager\SEManager.h" />
-    <ClInclude Include="application\AudioManager\BGMManager\BGMManager.h" />
-    <ClInclude Include="application\Option\Option.h" />
-    <ClInclude Include="application\UI\Menu\Menu.h" />
-    <ClInclude Include="application\UI\Tower\TowerUI.h" />
-    <ClInclude Include="Engine\Editor\EditorTool\Command\EditorCommand.h" />
+    <ClInclude Include="Engine\Texture\Light\CommonLight\AreaCommonLight.h">
+      <Filter>Engine</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\Texture\Light\SoloLight\AreaLight.h">
+      <Filter>Engine</Filter>
+    </ClInclude>
+    <ClInclude Include="application\Object\Characters\Base\Attribute.h">
+      <Filter>Application</Filter>
+    </ClInclude>
+    <ClInclude Include="application\AudioManager\BGMManager\BGMManager.h">
+      <Filter>Application</Filter>
+    </ClInclude>
+    <ClInclude Include="application\Object\Characters\Model\CharacterModel.h">
+      <Filter>Application</Filter>
+    </ClInclude>
+    <ClInclude Include="application\Object\Characters\Base\CharacterParameters.h">
+      <Filter>Application</Filter>
+    </ClInclude>
+    <ClInclude Include="application\CollisionManager\CollisionManager.h">
+      <Filter>Application</Filter>
+    </ClInclude>
+    <ClInclude Include="application\Object\Damage\Damage.h">
+      <Filter>Application</Filter>
+    </ClInclude>
+    <ClInclude Include="application\Object\Damage\DamageMath.h">
+      <Filter>Application</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\Audio\AudioMixer.h">
+      <Filter>Engine</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\Texture\Data\Color.h">
+      <Filter>Engine</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\Texture\Light\CommonLight\DirectionalCommonLight.h">
+      <Filter>Engine</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\Texture\Light\SoloLight\DirectionalLight.h">
+      <Filter>Engine</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\Editor\EditorTool\Asset\EditorAsset.h">
+      <Filter>Engine</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\Editor\EditorData\Audio\EditorAudio.h">
+      <Filter>Engine</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\Editor\EditorData\Camera\EditorCamera.h">
+      <Filter>Engine</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\Editor\EditorTool\Command\EditorCommand.h">
+      <Filter>Engine</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\Editor\EditorTool\Grid\EditorGrid.h">
+      <Filter>Engine</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\Editor\EditorData\Light\EditorLight.h">
+      <Filter>Engine</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\Editor\EditorManager\EditorManager.h">
+      <Filter>Engine</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\Editor\EditorData\Object3d\EditorObject3d.h">
+      <Filter>Engine</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\Editor\EditorData\Primitive\EditorPrimitive.h">
+      <Filter>Engine</Filter>
+    </ClInclude>
+    <ClInclude Include="application\Object\ExpCube\ExpCube.h">
+      <Filter>Application</Filter>
+    </ClInclude>
+    <ClInclude Include="application\Object\ExpCube\ExpCubeManager.h">
+      <Filter>Application</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\Texture\Text\FreetypeManager\Font\Font.h">
+      <Filter>Engine</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\Texture\Text\FreetypeManager\FreeTypeManager.h">
+      <Filter>Engine</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\Editor\EditorTool\Hierarchy\Hierarchy.h">
+      <Filter>Engine</Filter>
+    </ClInclude>
+    <ClInclude Include="application\Object\House\House.h">
+      <Filter>Application</Filter>
+    </ClInclude>
+    <ClInclude Include="application\Object\House\HouseHP.h">
+      <Filter>Application</Filter>
+    </ClInclude>
+    <ClInclude Include="application\UI\HPBar\HPBarUI.h">
+      <Filter>Application</Filter>
+    </ClInclude>
+    <ClInclude Include="application\CameraController\LockOnCamera\LockOnCamera.h">
+      <Filter>Application</Filter>
+    </ClInclude>
+    <ClInclude Include="application\Object\MapchipField.h">
+      <Filter>Application</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\Editor\EditorTool\Inspector\Inspector.h">
+      <Filter>Engine</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\Texture\Mesh\Object3d\InstancedObject3d\InstancedObject3d.h">
+      <Filter>Engine</Filter>
+    </ClInclude>
+    <ClInclude Include="application\Object\Characters\Playable\Individual\Mei\Mei.h">
+      <Filter>Application</Filter>
+    </ClInclude>
+    <ClInclude Include="application\UI\Menu\Menu.h">
+      <Filter>Application</Filter>
+    </ClInclude>
+    <ClInclude Include="application\CameraController\NormalAttackCamera\NormalAttackCamera.h">
+      <Filter>Application</Filter>
+    </ClInclude>
+    <ClInclude Include="application\Scene\Scenes\GameScene\OpenWorld\OpenWorld.h">
+      <Filter>Application</Filter>
+    </ClInclude>
+    <ClInclude Include="application\Option\Option.h">
+      <Filter>Application</Filter>
+    </ClInclude>
+    <ClInclude Include="application\Object\Characters\Playable\Base\PlayableBase.h">
+      <Filter>Application</Filter>
+    </ClInclude>
+    <ClInclude Include="application\Object\Characters\Playable\PlayableManager.h">
+      <Filter>Application</Filter>
+    </ClInclude>
+    <ClInclude Include="application\PlayCommand\PlayCommand.h">
+      <Filter>Application</Filter>
+    </ClInclude>
+    <ClInclude Include="application\CameraController\PlayerCamera\PlayerCamera.h">
+      <Filter>Application</Filter>
+    </ClInclude>
+    <ClInclude Include="application\Object\Player\Attack\PlayerFallAttack.h">
+      <Filter>Application</Filter>
+    </ClInclude>
+    <ClInclude Include="application\Object\Player\PlayerKey\PlayerKey.h">
+      <Filter>Application</Filter>
+    </ClInclude>
+    <ClInclude Include="application\Object\Player\PlayerModels.h">
+      <Filter>Application</Filter>
+    </ClInclude>
+    <ClInclude Include="application\Object\Player\PlayerParameters.h">
+      <Filter>Application</Filter>
+    </ClInclude>
+    <ClInclude Include="application\Object\Player\Attack\Skill\PlayerSkill.h">
+      <Filter>Application</Filter>
+    </ClInclude>
+    <ClInclude Include="application\Object\Player\Attack\Special\PlayerSpecialAttack.h">
+      <Filter>Application</Filter>
+    </ClInclude>
+    <ClInclude Include="application\Object\Player\Weapon\PlayerSword.h">
+      <Filter>Application</Filter>
+    </ClInclude>
+    <ClInclude Include="application\Object\Player\Weapon\playerSwordTrail.h">
+      <Filter>Application</Filter>
+    </ClInclude>
+    <ClInclude Include="application\Object\Player\Weapon\PlayerWeapon.h">
+      <Filter>Application</Filter>
+    </ClInclude>
+    <ClInclude Include="application\Scene\Scenes\GameScene\Rasen\Rasen.h">
+      <Filter>Application</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\Editor\EditorTool\SaveTemplate\SaveTemplate.h">
+      <Filter>Application</Filter>
+    </ClInclude>
+    <ClInclude Include="application\AudioManager\SEManager\SEManager.h">
+      <Filter>Application</Filter>
+    </ClInclude>
+    <ClInclude Include="application\Object\Characters\Playable\Individual\Sizuku\Sizuku.h">
+      <Filter>Application</Filter>
+    </ClInclude>
+    <ClInclude Include="application\Object\Characters\Playable\Individual\Sizuku\SizukuSkill.h">
+      <Filter>Application</Filter>
+    </ClInclude>
+    <ClInclude Include="application\Object\Characters\Playable\Individual\Sizuku\SizukuSpecial.h">
+      <Filter>Application</Filter>
+    </ClInclude>
+    <ClInclude Include="application\Object\Background\Sky.h">
+      <Filter>Application</Filter>
+    </ClInclude>
+    <ClInclude Include="application\Object\Characters\Playable\Base\WeaponTypes.h">
+      <Filter>Application</Filter>
+    </ClInclude>
+    <ClInclude Include="application\Object\Characters\Playable\Individual\Yuzuki\Yuzuki.h">
+      <Filter>Application</Filter>
+    </ClInclude>
+    <ClInclude Include="application\Object\Characters\Playable\Individual\Yuzuki\YuzukiSpecial.h">
+      <Filter>Application</Filter>
+    </ClInclude>
+    <ClInclude Include="application\Object\Player\Player.h">
+      <Filter>Application\Player</Filter>
+    </ClInclude>
+    <ClInclude Include="application\Object\Player\Attack\PlayerAttack.h">
+      <Filter>Application\Player</Filter>
+    </ClInclude>
+    <ClInclude Include="application\Object\Characters\Playable\Weapon\Spear\Spear.h">
+      <Filter>Application</Filter>
+    </ClInclude>
+    <ClInclude Include="application\TutorialUI\TutorialUI.h">
+      <Filter>Application</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\Editor\EditorTool\ToolBar\ToolBar.h">
+      <Filter>Application</Filter>
+    </ClInclude>
+    <ClInclude Include="application\UI\Tower\TowerUI.h">
+      <Filter>Application</Filter>
+    </ClInclude>
+    <ClInclude Include="application\Scene\Scenes\TutorialScene\TutorialScene.h">
+      <Filter>Application</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\Texture\Data\Material.h">
+      <Filter>Engine</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\Texture\Light\CommonLight\PointCommonLight.h">
+      <Filter>Engine</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\Texture\Light\SoloLight\PointLight.h">
+      <Filter>Engine</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\Texture\RenderTexture2D.h">
+      <Filter>Engine</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\ScreenShot\ScreenShot.h">
+      <Filter>Engine</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\base\ScreenSize.h">
+      <Filter>Engine</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\Texture\Data\SkinningData.h">
+      <Filter>Engine</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\Texture\Mesh\SkyBox\SkyBox.h">
+      <Filter>Engine</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\Texture\Light\CommonLight\SpotCommonLight.h">
+      <Filter>Engine</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\Texture\Light\SoloLight\SpotLight.h">
+      <Filter>Engine</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\Texture\Text\Text.h">
+      <Filter>Engine</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\Loadfile\TXT\TxtManager.h">
+      <Filter>Engine</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\Texture\Data\VertexData.h">
+      <Filter>Engine</Filter>
+    </ClInclude>
+    <ClInclude Include="application\Team\Team.h">
+      <Filter>Application</Filter>
+    </ClInclude>
+    <ClInclude Include="application\Object\Characters\Playable\Weapon\Sword\Sword.h">
+      <Filter>Application</Filter>
+    </ClInclude>
+    <ClInclude Include="application\Object\Characters\Playable\Weapon\Allow\Allow.h">
+      <Filter>Application\Weapon</Filter>
+    </ClInclude>
+    <ClInclude Include="application\Object\Characters\Playable\Individual\Arte\Arte.h">
+      <Filter>Application\Character\Playable</Filter>
+    </ClInclude>
+    <ClInclude Include="application\Object\Characters\Enemy\Adhesion\Adhesion.h">
+      <Filter>Application\Character\Enemy</Filter>
+    </ClInclude>
+    <ClInclude Include="application\UI\AttackOperation\AttackOperation.h">
+      <Filter>Application\UI</Filter>
+    </ClInclude>
+    <ClInclude Include="application\Object\Characters\Enemy\BaseEnemy.h">
+      <Filter>Application\Character\Enemy</Filter>
+    </ClInclude>
+    <ClInclude Include="application\Object\Characters\Playable\Weapon\BaseWeapon.h">
+      <Filter>Application\Weapon</Filter>
+    </ClInclude>
+    <ClInclude Include="application\Object\Characters\Playable\Weapon\BigSword\BigSword.h">
+      <Filter>Application\Weapon</Filter>
+    </ClInclude>
+    <ClInclude Include="application\CameraController\CameraController.h">
+      <Filter>Application\Camera</Filter>
+    </ClInclude>
+    <ClInclude Include="application\Object\Characters\CharacterDisplay\CharacterDisplay.h">
+      <Filter>Application\CharacterDisplay</Filter>
+    </ClInclude>
+    <ClInclude Include="application\Object\Characters\CharacterDisplay\Text\CharacterDisplayMenuText.h">
+      <Filter>Application\CharacterDisplay</Filter>
+    </ClInclude>
+    <ClInclude Include="application\Object\Characters\CharacterDisplay\CharacterDisplaySkyDome.h">
+      <Filter>Application\CharacterDisplay</Filter>
+    </ClInclude>
+    <ClInclude Include="application\Object\Characters\CharacterDisplay\Text\CharacterDisplayText.h">
+      <Filter>Application\CharacterDisplay</Filter>
+    </ClInclude>
+    <ClInclude Include="application\Object\Boss\Boss.h">
+      <Filter>Application\Character\Enemy</Filter>
+    </ClInclude>
+    <ClInclude Include="application\Object\Characters\Enemy\Enemy.h">
+      <Filter>Application\Character\Enemy</Filter>
+    </ClInclude>
+    <ClInclude Include="application\Object\Characters\Enemy\EnemyAttack.h">
+      <Filter>Application\Character\Enemy</Filter>
+    </ClInclude>
+    <ClInclude Include="application\Object\Characters\Enemy\EnemyHitEffect.h">
+      <Filter>Application\Character\Enemy</Filter>
+    </ClInclude>
+    <ClInclude Include="application\Object\Characters\Enemy\EnemyManager.h">
+      <Filter>Application\Character\Enemy</Filter>
+    </ClInclude>
+    <ClInclude Include="application\Object\Characters\Enemy\EnemyStun.h">
+      <Filter>Application\Character\Enemy</Filter>
+    </ClInclude>
+    <ClInclude Include="application\Object\Characters\Playable\Weapon\Gun\Gun.h">
+      <Filter>Application\Weapon</Filter>
+    </ClInclude>
+    <ClInclude Include="application\UI\UIManager\UIManager.h">
+      <Filter>Application\Weapon</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include=".editorconfig" />
@@ -647,7 +1043,9 @@
     <None Include="Resources\shader\Sprite\Sprite.hlsli">
       <Filter>Resources</Filter>
     </None>
-    <None Include="Resources\shader\Skybox\Skybox.hlsli" />
+    <None Include="Resources\shader\Skybox\Skybox.hlsli">
+      <Filter>Resources</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <Text Include="externals\imgui\LICENSE.txt" />
@@ -757,6 +1155,30 @@
     </Filter>
     <Filter Include="Application\SceneTransition">
       <UniqueIdentifier>{81bd65f6-00f1-4ea4-b17c-b7de9eaaa9ef}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Application\Player">
+      <UniqueIdentifier>{f16fa387-b596-48eb-a804-2a08944916a0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Application\Weapon">
+      <UniqueIdentifier>{19c83e8d-82df-431a-8194-92f3aff6a495}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Application\Character">
+      <UniqueIdentifier>{4541cb26-5959-44cf-91c4-74c4326fa23c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Application\Character\Playable">
+      <UniqueIdentifier>{f23b5a7d-5383-4fd6-bbc0-26504f61d855}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Application\Character\Enemy">
+      <UniqueIdentifier>{7af7a6b7-6482-479f-a1ed-01f1500b77f4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Application\UI">
+      <UniqueIdentifier>{222195c7-86d8-4023-85bc-930f2e351a65}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Application\Camera">
+      <UniqueIdentifier>{170652b7-86a4-4bf6-a44a-302917f66bde}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Application\CharacterDisplay">
+      <UniqueIdentifier>{254d3d93-5394-44dd-abe0-fc06580f013e}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>
