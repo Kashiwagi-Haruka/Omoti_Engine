@@ -202,6 +202,7 @@ copy "$(WindowsSdkDir)\bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)\
     <ClCompile Include="application\UI\AttackOperation\AttackOperation.cpp" />
     <ClCompile Include="application\Object\Characters\Playable\Weapon\BigSword\BigSword.cpp" />
     <ClCompile Include="application\AudioManager\BGMManager\BGMManager.cpp" />
+    <ClCompile Include="application\Object\Characters\Enemy\Individual\brain\brain.cpp" />
     <ClCompile Include="Engine\Editor\EditorTool\Command\EditorCommand.cpp" />
     <ClCompile Include="Engine\Audio\AudioMixer.cpp" />
     <ClCompile Include="Engine\Editor\EditorData\Audio\EditorAudio.cpp" />
@@ -387,6 +388,7 @@ copy "$(WindowsSdkDir)\bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)\
     <ClInclude Include="application\UI\AttackOperation\AttackOperation.h" />
     <ClInclude Include="application\Object\Characters\Playable\Weapon\BigSword\BigSword.h" />
     <ClInclude Include="application\AudioManager\BGMManager\BGMManager.h" />
+    <ClInclude Include="application\Object\Characters\Enemy\Individual\brain\brain.h" />
     <ClInclude Include="Engine\Editor\EditorTool\Command\EditorCommand.h" />
     <ClInclude Include="Engine\Audio\AudioMixer.h" />
     <ClInclude Include="Engine\base\ScreenSize.h" />

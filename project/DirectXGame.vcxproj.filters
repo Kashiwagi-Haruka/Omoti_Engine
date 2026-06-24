@@ -519,6 +519,7 @@
     <ClCompile Include="application\UI\UIManager\UIManager.cpp">
       <Filter>Application\Weapon</Filter>
     </ClCompile>
+    <ClCompile Include="application\Object\Characters\Enemy\Individual\brain\brain.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Engine\Camera\Camera.h">
@@ -1028,6 +1029,7 @@
     <ClInclude Include="application\UI\UIManager\UIManager.h">
       <Filter>Application\Weapon</Filter>
     </ClInclude>
+    <ClInclude Include="application\Object\Characters\Enemy\Individual\brain\brain.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include=".editorconfig" />
