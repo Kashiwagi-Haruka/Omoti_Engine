@@ -370,3 +370,6 @@ void TeamDisplay::DrawTeamDisplayMembers(const Team& team) {
 		teamDisplayModels_[characterIndex]->Draw();
 	}
 }
+bool TeamDisplay::IsInsideRect(const Vector2& point, const Vector2& pos, const Vector2& size) const {
+	return point.x >= pos.x && point.x <= pos.x + size.x && point.y >= pos.y && point.y <= pos.y + size.y;
+}
