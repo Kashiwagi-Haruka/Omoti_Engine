@@ -522,6 +522,7 @@
     <ClCompile Include="application\Object\Characters\Enemy\Individual\brain\brain.cpp" />
     <ClCompile Include="application\Menu\TeamDisplay\TeamDisplay.cpp" />
     <ClCompile Include="application\Object\Characters\Enemy\Base\BaseEnemy.cpp" />
+    <ClCompile Include="application\Menu\TeamDisplayLoad.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Engine\Camera\Camera.h">
@@ -1033,6 +1034,7 @@
     </ClInclude>
     <ClInclude Include="application\Object\Characters\Enemy\Individual\brain\brain.h" />
     <ClInclude Include="application\Menu\TeamDisplay\TeamDisplay.h" />
+    <ClInclude Include="application\Menu\TeamDisplayLoad.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include=".editorconfig" />
