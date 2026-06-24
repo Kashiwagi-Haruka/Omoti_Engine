@@ -520,6 +520,7 @@
       <Filter>Application\Weapon</Filter>
     </ClCompile>
     <ClCompile Include="application\Object\Characters\Enemy\Individual\brain\brain.cpp" />
+    <ClCompile Include="application\Menu\TeamDisplay\TeamDisplay.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Engine\Camera\Camera.h">
@@ -1030,6 +1031,7 @@
       <Filter>Application\Weapon</Filter>
     </ClInclude>
     <ClInclude Include="application\Object\Characters\Enemy\Individual\brain\brain.h" />
+    <ClInclude Include="application\Menu\TeamDisplay\TeamDisplay.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include=".editorconfig" />
