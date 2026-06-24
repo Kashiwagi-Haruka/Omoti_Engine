@@ -159,6 +159,7 @@ copy "$(WindowsSdkDir)\bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)\
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="application\Object\Characters\Enemy\Base\BaseEnemy.cpp" />
     <ClCompile Include="application\Object\Characters\Playable\Weapon\Allow\Allow.cpp" />
     <ClCompile Include="application\CameraController\LockOnCamera\LockOnCamera.cpp" />
     <ClCompile Include="application\Object\Characters\Enemy\Adhesion\Adhesion.cpp" />
@@ -355,7 +356,7 @@ copy "$(WindowsSdkDir)\bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)\
     <ClInclude Include="application\Object\Characters\CharacterDisplay\CharacterDisplaySkyDome.h" />
     <ClInclude Include="application\Object\Characters\Model\CharacterModel.h" />
     <ClInclude Include="application\Object\Characters\Playable\Individual\Sizuku\Sizuku.h" />
-    <ClInclude Include="application\Object\Characters\Enemy\BaseEnemy.h" />
+    <ClInclude Include="application\Object\Characters\Enemy\Base\BaseEnemy.h" />
     <ClInclude Include="application\Object\Characters\Enemy\Enemy.h" />
     <ClInclude Include="application\Object\Characters\Enemy\EnemyAttack.h" />
     <ClInclude Include="application\Object\Characters\Enemy\EnemyHitEffect.h" />
