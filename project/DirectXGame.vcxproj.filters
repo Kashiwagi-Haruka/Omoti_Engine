@@ -258,21 +258,6 @@
     <ClCompile Include="application\SceneTransition\SceneTransition.cpp">
       <Filter>Application\SceneTransition</Filter>
     </ClCompile>
-    <ClCompile Include="application\AudioManager\BGMManager\BGMManager.cpp">
-      <Filter>Application</Filter>
-    </ClCompile>
-    <ClCompile Include="application\Object\Characters\Model\CharacterModel.cpp">
-      <Filter>Application</Filter>
-    </ClCompile>
-    <ClCompile Include="application\CollisionManager\CollisionManager.cpp">
-      <Filter>Application</Filter>
-    </ClCompile>
-    <ClCompile Include="application\Object\Damage\Damage.cpp">
-      <Filter>Application</Filter>
-    </ClCompile>
-    <ClCompile Include="application\Object\Damage\DamageMath.cpp">
-      <Filter>Application</Filter>
-    </ClCompile>
     <ClCompile Include="Engine\Audio\AudioMixer.cpp">
       <Filter>Engine</Filter>
     </ClCompile>
@@ -306,15 +291,6 @@
     <ClCompile Include="Engine\Editor\EditorData\Primitive\EditorPrimitive.cpp">
       <Filter>Engine</Filter>
     </ClCompile>
-    <ClCompile Include="application\Object\Characters\Playable\Base\Equipment.h">
-      <Filter>Application</Filter>
-    </ClCompile>
-    <ClCompile Include="application\Object\ExpCube\ExpCube.cpp">
-      <Filter>Application</Filter>
-    </ClCompile>
-    <ClCompile Include="application\Object\ExpCube\ExpCubeManager.cpp">
-      <Filter>Application</Filter>
-    </ClCompile>
     <ClCompile Include="Engine\Texture\Text\FreetypeManager\Font\Font.cpp">
       <Filter>Engine</Filter>
     </ClCompile>
@@ -324,35 +300,11 @@
     <ClCompile Include="Engine\Editor\EditorTool\Hierarchy\Hierarchy.cpp">
       <Filter>Engine</Filter>
     </ClCompile>
-    <ClCompile Include="application\Object\House\House.cpp">
-      <Filter>Application</Filter>
-    </ClCompile>
-    <ClCompile Include="application\Object\House\HouseHP.cpp">
-      <Filter>Application</Filter>
-    </ClCompile>
-    <ClCompile Include="application\UI\HPBar\HPBarUI.cpp">
-      <Filter>Application</Filter>
-    </ClCompile>
-    <ClCompile Include="application\CameraController\LockOnCamera\LockOnCamera.cpp">
-      <Filter>Application</Filter>
-    </ClCompile>
-    <ClCompile Include="application\Object\MapchipField.cpp">
-      <Filter>Application</Filter>
-    </ClCompile>
     <ClCompile Include="Engine\Editor\EditorTool\Inspector\Inspector.cpp">
       <Filter>Engine</Filter>
     </ClCompile>
     <ClCompile Include="Engine\Texture\Mesh\Object3d\InstancedObject3d\InstancedObject3d.cpp">
       <Filter>Engine</Filter>
-    </ClCompile>
-    <ClCompile Include="application\Object\Characters\Playable\Individual\Mei\Mei.cpp">
-      <Filter>Application</Filter>
-    </ClCompile>
-    <ClCompile Include="application\UI\Menu\Menu.cpp">
-      <Filter>Application</Filter>
-    </ClCompile>
-    <ClCompile Include="application\CameraController\NormalAttackCamera\NormalAttackCamera.cpp">
-      <Filter>Application</Filter>
     </ClCompile>
     <ClCompile Include="application\Scene\Scenes\GameScene\OpenWorld\OpenWorld.cpp">
       <Filter>Application</Filter>
@@ -360,40 +312,7 @@
     <ClCompile Include="application\Option\Option.cpp">
       <Filter>Application</Filter>
     </ClCompile>
-    <ClCompile Include="application\Object\Characters\Playable\PlayableManager.cpp">
-      <Filter>Application</Filter>
-    </ClCompile>
     <ClCompile Include="application\PlayCommand\PlayCommand.cpp">
-      <Filter>Application</Filter>
-    </ClCompile>
-    <ClCompile Include="application\CameraController\PlayerCamera\PlayerCamera.cpp">
-      <Filter>Application</Filter>
-    </ClCompile>
-    <ClCompile Include="application\Object\Player\Attack\PlayerFallAttack.cpp">
-      <Filter>Application</Filter>
-    </ClCompile>
-    <ClCompile Include="application\Object\Player\PlayerKey\PlayerKey.cpp">
-      <Filter>Application</Filter>
-    </ClCompile>
-    <ClCompile Include="application\Object\Player\PlayerModels.cpp">
-      <Filter>Application</Filter>
-    </ClCompile>
-    <ClCompile Include="application\Object\Player\PlayerParameters.cpp">
-      <Filter>Application</Filter>
-    </ClCompile>
-    <ClCompile Include="application\Object\Player\Attack\Skill\PlayerSkill.cpp">
-      <Filter>Application</Filter>
-    </ClCompile>
-    <ClCompile Include="application\Object\Player\Attack\Special\PlayerSpecialAttack.cpp">
-      <Filter>Application</Filter>
-    </ClCompile>
-    <ClCompile Include="application\Object\Player\Weapon\PlayerSword.cpp">
-      <Filter>Application</Filter>
-    </ClCompile>
-    <ClCompile Include="application\Object\Player\Weapon\playerSwordTrail.cpp">
-      <Filter>Application</Filter>
-    </ClCompile>
-    <ClCompile Include="application\Object\Player\Weapon\PlayerWeapon.cpp">
       <Filter>Application</Filter>
     </ClCompile>
     <ClCompile Include="application\Scene\Scenes\GameScene\Rasen\Rasen.cpp">
@@ -402,25 +321,7 @@
     <ClCompile Include="Engine\Editor\EditorTool\SaveTemplate\SaveTemplate.cpp">
       <Filter>Application</Filter>
     </ClCompile>
-    <ClCompile Include="application\AudioManager\SEManager\SEManager.cpp">
-      <Filter>Application</Filter>
-    </ClCompile>
-    <ClCompile Include="application\Object\Characters\Playable\Individual\Sizuku\Sizuku.cpp">
-      <Filter>Application</Filter>
-    </ClCompile>
-    <ClCompile Include="application\Object\Characters\Playable\Individual\Sizuku\SizukuSkill.cpp">
-      <Filter>Application</Filter>
-    </ClCompile>
-    <ClCompile Include="application\Object\Characters\Playable\Individual\Sizuku\SizukuSpecial.cpp">
-      <Filter>Application</Filter>
-    </ClCompile>
     <ClCompile Include="application\Object\Background\Sky.cpp">
-      <Filter>Application</Filter>
-    </ClCompile>
-    <ClCompile Include="application\Object\Characters\Playable\Individual\Yuzuki\Yuzuki.cpp">
-      <Filter>Application</Filter>
-    </ClCompile>
-    <ClCompile Include="application\Object\Characters\Playable\Individual\Yuzuki\YuzukiSpecial.cpp">
       <Filter>Application</Filter>
     </ClCompile>
     <ClCompile Include="application\Object\Player\Player.cpp">
@@ -428,21 +329,6 @@
     </ClCompile>
     <ClCompile Include="application\Object\Player\Attack\PlayerAttack.cpp">
       <Filter>Application\Player</Filter>
-    </ClCompile>
-    <ClCompile Include="application\Object\Characters\Playable\Weapon\Spear\Spear.cpp">
-      <Filter>Application</Filter>
-    </ClCompile>
-    <ClCompile Include="Engine\Editor\EditorTool\ToolBar\ToolBar.cpp">
-      <Filter>Application</Filter>
-    </ClCompile>
-    <ClCompile Include="application\UI\Tower\TowerUI.cpp">
-      <Filter>Application</Filter>
-    </ClCompile>
-    <ClCompile Include="application\Scene\Scenes\TutorialScene\TutorialScene.cpp">
-      <Filter>Application</Filter>
-    </ClCompile>
-    <ClCompile Include="application\TutorialUI\TutorialUI.cpp">
-      <Filter>Application</Filter>
     </ClCompile>
     <ClCompile Include="Engine\Texture\RenderTexture2D.cpp">
       <Filter>Engine</Filter>
@@ -458,9 +344,6 @@
     </ClCompile>
     <ClCompile Include="Engine\Loadfile\TXT\TxtManager.cpp">
       <Filter>Engine</Filter>
-    </ClCompile>
-    <ClCompile Include="application\Object\Characters\Playable\Weapon\Sword\Sword.cpp">
-      <Filter>Application</Filter>
     </ClCompile>
     <ClCompile Include="application\Team\Team.cpp">
       <Filter>Application</Filter>
@@ -519,10 +402,132 @@
     <ClCompile Include="application\UI\UIManager\UIManager.cpp">
       <Filter>Application\Weapon</Filter>
     </ClCompile>
-    <ClCompile Include="application\Object\Characters\Enemy\Individual\brain\brain.cpp" />
-    <ClCompile Include="application\Menu\TeamDisplay\TeamDisplay.cpp" />
-    <ClCompile Include="application\Object\Characters\Enemy\Base\BaseEnemy.cpp" />
-    <ClCompile Include="application\Menu\TeamDisplayLoad.cpp" />
+    <ClCompile Include="application\Menu\TeamDisplay\TeamDisplay.cpp">
+      <Filter>Application</Filter>
+    </ClCompile>
+    <ClCompile Include="application\Object\Characters\Enemy\Base\BaseEnemy.cpp">
+      <Filter>Application\Character\Enemy</Filter>
+    </ClCompile>
+    <ClCompile Include="application\AudioManager\BGMManager\BGMManager.cpp">
+      <Filter>Application\AudioManager</Filter>
+    </ClCompile>
+    <ClCompile Include="application\Object\Characters\Enemy\Individual\brain\brain.cpp">
+      <Filter>Application\Character\Enemy</Filter>
+    </ClCompile>
+    <ClCompile Include="application\Object\Characters\Model\CharacterModel.cpp">
+      <Filter>Application\Character</Filter>
+    </ClCompile>
+    <ClCompile Include="application\CollisionManager\CollisionManager.cpp">
+      <Filter>Application\CollisionManager</Filter>
+    </ClCompile>
+    <ClCompile Include="application\Object\Damage\Damage.cpp">
+      <Filter>Application\Character</Filter>
+    </ClCompile>
+    <ClCompile Include="application\Object\Damage\DamageMath.cpp">
+      <Filter>Application\Character</Filter>
+    </ClCompile>
+    <ClCompile Include="application\Object\Characters\Playable\Base\Equipment.h">
+      <Filter>Application\Character\Playable</Filter>
+    </ClCompile>
+    <ClCompile Include="application\Object\ExpCube\ExpCube.cpp">
+      <Filter>Application\ExpCube</Filter>
+    </ClCompile>
+    <ClCompile Include="application\Object\ExpCube\ExpCubeManager.cpp">
+      <Filter>Application\ExpCube</Filter>
+    </ClCompile>
+    <ClCompile Include="application\Object\House\House.cpp">
+      <Filter>Application\House</Filter>
+    </ClCompile>
+    <ClCompile Include="application\Object\House\HouseHP.cpp">
+      <Filter>Application\House</Filter>
+    </ClCompile>
+    <ClCompile Include="application\UI\HPBar\HPBarUI.cpp">
+      <Filter>Application\UI</Filter>
+    </ClCompile>
+    <ClCompile Include="application\CameraController\LockOnCamera\LockOnCamera.cpp">
+      <Filter>Application\Camera</Filter>
+    </ClCompile>
+    <ClCompile Include="application\Object\MapchipField.cpp">
+      <Filter>Application\field</Filter>
+    </ClCompile>
+    <ClCompile Include="application\UI\Menu\Menu.cpp">
+      <Filter>Application\UI</Filter>
+    </ClCompile>
+    <ClCompile Include="application\CameraController\NormalAttackCamera\NormalAttackCamera.cpp">
+      <Filter>Application\Camera</Filter>
+    </ClCompile>
+    <ClCompile Include="application\Object\Characters\Playable\PlayableManager.cpp">
+      <Filter>Application\Character</Filter>
+    </ClCompile>
+    <ClCompile Include="application\Object\Player\Attack\PlayerFallAttack.cpp">
+      <Filter>Application\Player</Filter>
+    </ClCompile>
+    <ClCompile Include="application\Object\Player\PlayerKey\PlayerKey.cpp">
+      <Filter>Application\Player</Filter>
+    </ClCompile>
+    <ClCompile Include="application\Object\Player\PlayerModels.cpp">
+      <Filter>Application\Player</Filter>
+    </ClCompile>
+    <ClCompile Include="application\Object\Player\PlayerParameters.cpp">
+      <Filter>Application\Player</Filter>
+    </ClCompile>
+    <ClCompile Include="application\Object\Player\Attack\Skill\PlayerSkill.cpp">
+      <Filter>Application\Player</Filter>
+    </ClCompile>
+    <ClCompile Include="application\Object\Player\Attack\Special\PlayerSpecialAttack.cpp">
+      <Filter>Application\Player</Filter>
+    </ClCompile>
+    <ClCompile Include="application\Object\Player\Weapon\PlayerSword.cpp">
+      <Filter>Application\Player</Filter>
+    </ClCompile>
+    <ClCompile Include="application\Object\Player\Weapon\playerSwordTrail.cpp">
+      <Filter>Application\Player</Filter>
+    </ClCompile>
+    <ClCompile Include="application\Object\Player\Weapon\PlayerWeapon.cpp">
+      <Filter>Application\Player</Filter>
+    </ClCompile>
+    <ClCompile Include="Engine\Editor\EditorTool\ToolBar\ToolBar.cpp">
+      <Filter>Engine</Filter>
+    </ClCompile>
+    <ClCompile Include="application\Object\Characters\Playable\Individual\Yuzuki\Yuzuki.cpp">
+      <Filter>Application\Character</Filter>
+    </ClCompile>
+    <ClCompile Include="application\Object\Characters\Playable\Individual\Yuzuki\YuzukiSpecial.cpp">
+      <Filter>Application\Character</Filter>
+    </ClCompile>
+    <ClCompile Include="application\Scene\Scenes\TutorialScene\TutorialScene.cpp">
+      <Filter>Application\Scene</Filter>
+    </ClCompile>
+    <ClCompile Include="application\Object\Characters\Playable\Individual\Mei\Mei.cpp">
+      <Filter>Application\Character</Filter>
+    </ClCompile>
+    <ClCompile Include="application\CameraController\PlayerCamera\PlayerCamera.cpp">
+      <Filter>Application\Camera</Filter>
+    </ClCompile>
+    <ClCompile Include="application\AudioManager\SEManager\SEManager.cpp">
+      <Filter>Application\AudioManager</Filter>
+    </ClCompile>
+    <ClCompile Include="application\Object\Characters\Playable\Individual\Sizuku\Sizuku.cpp">
+      <Filter>Application\Character</Filter>
+    </ClCompile>
+    <ClCompile Include="application\Object\Characters\Playable\Individual\Sizuku\SizukuSkill.cpp">
+      <Filter>Application\Character</Filter>
+    </ClCompile>
+    <ClCompile Include="application\Object\Characters\Playable\Individual\Sizuku\SizukuSpecial.cpp">
+      <Filter>Application\Character</Filter>
+    </ClCompile>
+    <ClCompile Include="application\Object\Characters\Playable\Weapon\Spear\Spear.cpp">
+      <Filter>Application\Weapon</Filter>
+    </ClCompile>
+    <ClCompile Include="application\Object\Characters\Playable\Weapon\Sword\Sword.cpp">
+      <Filter>Application\Weapon</Filter>
+    </ClCompile>
+    <ClCompile Include="application\UI\Tower\TowerUI.cpp">
+      <Filter>Application\UI</Filter>
+    </ClCompile>
+    <ClCompile Include="application\TutorialUI\TutorialUI.cpp">
+      <Filter>Application\UI</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Engine\Camera\Camera.h">
@@ -726,27 +731,6 @@
     <ClInclude Include="Engine\Texture\Light\SoloLight\AreaLight.h">
       <Filter>Engine</Filter>
     </ClInclude>
-    <ClInclude Include="application\Object\Characters\Base\Attribute.h">
-      <Filter>Application</Filter>
-    </ClInclude>
-    <ClInclude Include="application\AudioManager\BGMManager\BGMManager.h">
-      <Filter>Application</Filter>
-    </ClInclude>
-    <ClInclude Include="application\Object\Characters\Model\CharacterModel.h">
-      <Filter>Application</Filter>
-    </ClInclude>
-    <ClInclude Include="application\Object\Characters\Base\CharacterParameters.h">
-      <Filter>Application</Filter>
-    </ClInclude>
-    <ClInclude Include="application\CollisionManager\CollisionManager.h">
-      <Filter>Application</Filter>
-    </ClInclude>
-    <ClInclude Include="application\Object\Damage\Damage.h">
-      <Filter>Application</Filter>
-    </ClInclude>
-    <ClInclude Include="application\Object\Damage\DamageMath.h">
-      <Filter>Application</Filter>
-    </ClInclude>
     <ClInclude Include="Engine\Audio\AudioMixer.h">
       <Filter>Engine</Filter>
     </ClInclude>
@@ -786,12 +770,6 @@
     <ClInclude Include="Engine\Editor\EditorData\Primitive\EditorPrimitive.h">
       <Filter>Engine</Filter>
     </ClInclude>
-    <ClInclude Include="application\Object\ExpCube\ExpCube.h">
-      <Filter>Application</Filter>
-    </ClInclude>
-    <ClInclude Include="application\Object\ExpCube\ExpCubeManager.h">
-      <Filter>Application</Filter>
-    </ClInclude>
     <ClInclude Include="Engine\Texture\Text\FreetypeManager\Font\Font.h">
       <Filter>Engine</Filter>
     </ClInclude>
@@ -801,35 +779,11 @@
     <ClInclude Include="Engine\Editor\EditorTool\Hierarchy\Hierarchy.h">
       <Filter>Engine</Filter>
     </ClInclude>
-    <ClInclude Include="application\Object\House\House.h">
-      <Filter>Application</Filter>
-    </ClInclude>
-    <ClInclude Include="application\Object\House\HouseHP.h">
-      <Filter>Application</Filter>
-    </ClInclude>
-    <ClInclude Include="application\UI\HPBar\HPBarUI.h">
-      <Filter>Application</Filter>
-    </ClInclude>
-    <ClInclude Include="application\CameraController\LockOnCamera\LockOnCamera.h">
-      <Filter>Application</Filter>
-    </ClInclude>
-    <ClInclude Include="application\Object\MapchipField.h">
-      <Filter>Application</Filter>
-    </ClInclude>
     <ClInclude Include="Engine\Editor\EditorTool\Inspector\Inspector.h">
       <Filter>Engine</Filter>
     </ClInclude>
     <ClInclude Include="Engine\Texture\Mesh\Object3d\InstancedObject3d\InstancedObject3d.h">
       <Filter>Engine</Filter>
-    </ClInclude>
-    <ClInclude Include="application\Object\Characters\Playable\Individual\Mei\Mei.h">
-      <Filter>Application</Filter>
-    </ClInclude>
-    <ClInclude Include="application\UI\Menu\Menu.h">
-      <Filter>Application</Filter>
-    </ClInclude>
-    <ClInclude Include="application\CameraController\NormalAttackCamera\NormalAttackCamera.h">
-      <Filter>Application</Filter>
     </ClInclude>
     <ClInclude Include="application\Scene\Scenes\GameScene\OpenWorld\OpenWorld.h">
       <Filter>Application</Filter>
@@ -837,43 +791,7 @@
     <ClInclude Include="application\Option\Option.h">
       <Filter>Application</Filter>
     </ClInclude>
-    <ClInclude Include="application\Object\Characters\Playable\Base\PlayableBase.h">
-      <Filter>Application</Filter>
-    </ClInclude>
-    <ClInclude Include="application\Object\Characters\Playable\PlayableManager.h">
-      <Filter>Application</Filter>
-    </ClInclude>
     <ClInclude Include="application\PlayCommand\PlayCommand.h">
-      <Filter>Application</Filter>
-    </ClInclude>
-    <ClInclude Include="application\CameraController\PlayerCamera\PlayerCamera.h">
-      <Filter>Application</Filter>
-    </ClInclude>
-    <ClInclude Include="application\Object\Player\Attack\PlayerFallAttack.h">
-      <Filter>Application</Filter>
-    </ClInclude>
-    <ClInclude Include="application\Object\Player\PlayerKey\PlayerKey.h">
-      <Filter>Application</Filter>
-    </ClInclude>
-    <ClInclude Include="application\Object\Player\PlayerModels.h">
-      <Filter>Application</Filter>
-    </ClInclude>
-    <ClInclude Include="application\Object\Player\PlayerParameters.h">
-      <Filter>Application</Filter>
-    </ClInclude>
-    <ClInclude Include="application\Object\Player\Attack\Skill\PlayerSkill.h">
-      <Filter>Application</Filter>
-    </ClInclude>
-    <ClInclude Include="application\Object\Player\Attack\Special\PlayerSpecialAttack.h">
-      <Filter>Application</Filter>
-    </ClInclude>
-    <ClInclude Include="application\Object\Player\Weapon\PlayerSword.h">
-      <Filter>Application</Filter>
-    </ClInclude>
-    <ClInclude Include="application\Object\Player\Weapon\playerSwordTrail.h">
-      <Filter>Application</Filter>
-    </ClInclude>
-    <ClInclude Include="application\Object\Player\Weapon\PlayerWeapon.h">
       <Filter>Application</Filter>
     </ClInclude>
     <ClInclude Include="application\Scene\Scenes\GameScene\Rasen\Rasen.h">
@@ -882,28 +800,7 @@
     <ClInclude Include="Engine\Editor\EditorTool\SaveTemplate\SaveTemplate.h">
       <Filter>Application</Filter>
     </ClInclude>
-    <ClInclude Include="application\AudioManager\SEManager\SEManager.h">
-      <Filter>Application</Filter>
-    </ClInclude>
-    <ClInclude Include="application\Object\Characters\Playable\Individual\Sizuku\Sizuku.h">
-      <Filter>Application</Filter>
-    </ClInclude>
-    <ClInclude Include="application\Object\Characters\Playable\Individual\Sizuku\SizukuSkill.h">
-      <Filter>Application</Filter>
-    </ClInclude>
-    <ClInclude Include="application\Object\Characters\Playable\Individual\Sizuku\SizukuSpecial.h">
-      <Filter>Application</Filter>
-    </ClInclude>
     <ClInclude Include="application\Object\Background\Sky.h">
-      <Filter>Application</Filter>
-    </ClInclude>
-    <ClInclude Include="application\Object\Characters\Playable\Base\WeaponTypes.h">
-      <Filter>Application</Filter>
-    </ClInclude>
-    <ClInclude Include="application\Object\Characters\Playable\Individual\Yuzuki\Yuzuki.h">
-      <Filter>Application</Filter>
-    </ClInclude>
-    <ClInclude Include="application\Object\Characters\Playable\Individual\Yuzuki\YuzukiSpecial.h">
       <Filter>Application</Filter>
     </ClInclude>
     <ClInclude Include="application\Object\Player\Player.h">
@@ -911,21 +808,6 @@
     </ClInclude>
     <ClInclude Include="application\Object\Player\Attack\PlayerAttack.h">
       <Filter>Application\Player</Filter>
-    </ClInclude>
-    <ClInclude Include="application\Object\Characters\Playable\Weapon\Spear\Spear.h">
-      <Filter>Application</Filter>
-    </ClInclude>
-    <ClInclude Include="application\TutorialUI\TutorialUI.h">
-      <Filter>Application</Filter>
-    </ClInclude>
-    <ClInclude Include="Engine\Editor\EditorTool\ToolBar\ToolBar.h">
-      <Filter>Application</Filter>
-    </ClInclude>
-    <ClInclude Include="application\UI\Tower\TowerUI.h">
-      <Filter>Application</Filter>
-    </ClInclude>
-    <ClInclude Include="application\Scene\Scenes\TutorialScene\TutorialScene.h">
-      <Filter>Application</Filter>
     </ClInclude>
     <ClInclude Include="Engine\Texture\Data\Material.h">
       <Filter>Engine</Filter>
@@ -967,9 +849,6 @@
       <Filter>Engine</Filter>
     </ClInclude>
     <ClInclude Include="application\Team\Team.h">
-      <Filter>Application</Filter>
-    </ClInclude>
-    <ClInclude Include="application\Object\Characters\Playable\Weapon\Sword\Sword.h">
       <Filter>Application</Filter>
     </ClInclude>
     <ClInclude Include="application\Object\Characters\Playable\Weapon\Allow\Allow.h">
@@ -1032,9 +911,138 @@
     <ClInclude Include="application\UI\UIManager\UIManager.h">
       <Filter>Application\Weapon</Filter>
     </ClInclude>
-    <ClInclude Include="application\Object\Characters\Enemy\Individual\brain\brain.h" />
-    <ClInclude Include="application\Menu\TeamDisplay\TeamDisplay.h" />
-    <ClInclude Include="application\Menu\TeamDisplayLoad.h" />
+    <ClInclude Include="application\Object\Characters\Base\Attribute.h">
+      <Filter>Application\Character</Filter>
+    </ClInclude>
+    <ClInclude Include="application\AudioManager\BGMManager\BGMManager.h">
+      <Filter>Application\AudioManager</Filter>
+    </ClInclude>
+    <ClInclude Include="application\Object\Characters\Enemy\Individual\brain\brain.h">
+      <Filter>Application\Character\Enemy</Filter>
+    </ClInclude>
+    <ClInclude Include="application\Object\Characters\Model\CharacterModel.h">
+      <Filter>Application\Character</Filter>
+    </ClInclude>
+    <ClInclude Include="application\Object\Characters\Base\CharacterParameters.h">
+      <Filter>Application\Character</Filter>
+    </ClInclude>
+    <ClInclude Include="application\CollisionManager\CollisionManager.h">
+      <Filter>Application\CollisionManager</Filter>
+    </ClInclude>
+    <ClInclude Include="application\Object\Damage\Damage.h">
+      <Filter>Application\Character</Filter>
+    </ClInclude>
+    <ClInclude Include="application\Object\Damage\DamageMath.h">
+      <Filter>Application\Character</Filter>
+    </ClInclude>
+    <ClInclude Include="application\Object\ExpCube\ExpCube.h">
+      <Filter>Application\ExpCube</Filter>
+    </ClInclude>
+    <ClInclude Include="application\Object\ExpCube\ExpCubeManager.h">
+      <Filter>Application\ExpCube</Filter>
+    </ClInclude>
+    <ClInclude Include="application\Object\House\House.h">
+      <Filter>Application\House</Filter>
+    </ClInclude>
+    <ClInclude Include="application\Object\House\HouseHP.h">
+      <Filter>Application\House</Filter>
+    </ClInclude>
+    <ClInclude Include="application\UI\HPBar\HPBarUI.h">
+      <Filter>Application\UI</Filter>
+    </ClInclude>
+    <ClInclude Include="application\CameraController\LockOnCamera\LockOnCamera.h">
+      <Filter>Application\Camera</Filter>
+    </ClInclude>
+    <ClInclude Include="application\Object\MapchipField.h">
+      <Filter>Application\field</Filter>
+    </ClInclude>
+    <ClInclude Include="application\UI\Menu\Menu.h">
+      <Filter>Application\UI</Filter>
+    </ClInclude>
+    <ClInclude Include="application\CameraController\NormalAttackCamera\NormalAttackCamera.h">
+      <Filter>Application\Camera</Filter>
+    </ClInclude>
+    <ClInclude Include="application\Object\Characters\Playable\Base\PlayableBase.h">
+      <Filter>Application\Character</Filter>
+    </ClInclude>
+    <ClInclude Include="application\Object\Characters\Playable\PlayableManager.h">
+      <Filter>Application\Character</Filter>
+    </ClInclude>
+    <ClInclude Include="application\Object\Player\Weapon\PlayerWeapon.h">
+      <Filter>Application\Player</Filter>
+    </ClInclude>
+    <ClInclude Include="application\Object\Player\Attack\PlayerFallAttack.h">
+      <Filter>Application\Player</Filter>
+    </ClInclude>
+    <ClInclude Include="application\Object\Player\PlayerKey\PlayerKey.h">
+      <Filter>Application\Player</Filter>
+    </ClInclude>
+    <ClInclude Include="application\Object\Player\PlayerModels.h">
+      <Filter>Application\Player</Filter>
+    </ClInclude>
+    <ClInclude Include="application\Object\Player\PlayerParameters.h">
+      <Filter>Application\Player</Filter>
+    </ClInclude>
+    <ClInclude Include="application\Object\Player\Attack\Skill\PlayerSkill.h">
+      <Filter>Application\Player</Filter>
+    </ClInclude>
+    <ClInclude Include="application\Object\Player\Attack\Special\PlayerSpecialAttack.h">
+      <Filter>Application\Player</Filter>
+    </ClInclude>
+    <ClInclude Include="application\Object\Player\Weapon\PlayerSword.h">
+      <Filter>Application\Player</Filter>
+    </ClInclude>
+    <ClInclude Include="application\Object\Player\Weapon\playerSwordTrail.h">
+      <Filter>Application\Player</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\Editor\EditorTool\ToolBar\ToolBar.h">
+      <Filter>Engine</Filter>
+    </ClInclude>
+    <ClInclude Include="application\Object\Characters\Playable\Individual\Yuzuki\YuzukiSpecial.h">
+      <Filter>Application\Character</Filter>
+    </ClInclude>
+    <ClInclude Include="application\Object\Characters\Playable\Individual\Yuzuki\Yuzuki.h">
+      <Filter>Application\Character</Filter>
+    </ClInclude>
+    <ClInclude Include="application\Scene\Scenes\TutorialScene\TutorialScene.h">
+      <Filter>Application\Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="application\Object\Characters\Playable\Individual\Mei\Mei.h">
+      <Filter>Application\Character</Filter>
+    </ClInclude>
+    <ClInclude Include="application\CameraController\PlayerCamera\PlayerCamera.h">
+      <Filter>Application\Camera</Filter>
+    </ClInclude>
+    <ClInclude Include="application\AudioManager\SEManager\SEManager.h">
+      <Filter>Application\AudioManager</Filter>
+    </ClInclude>
+    <ClInclude Include="application\Object\Characters\Playable\Individual\Sizuku\Sizuku.h">
+      <Filter>Application\Character</Filter>
+    </ClInclude>
+    <ClInclude Include="application\Object\Characters\Playable\Individual\Sizuku\SizukuSkill.h">
+      <Filter>Application\Character</Filter>
+    </ClInclude>
+    <ClInclude Include="application\Object\Characters\Playable\Individual\Sizuku\SizukuSpecial.h">
+      <Filter>Application\Character</Filter>
+    </ClInclude>
+    <ClInclude Include="application\Object\Characters\Playable\Weapon\Sword\Sword.h">
+      <Filter>Application\Weapon</Filter>
+    </ClInclude>
+    <ClInclude Include="application\Object\Characters\Playable\Weapon\Spear\Spear.h">
+      <Filter>Application\Weapon</Filter>
+    </ClInclude>
+    <ClInclude Include="application\Object\Characters\Playable\Base\WeaponTypes.h">
+      <Filter>Application\Weapon</Filter>
+    </ClInclude>
+    <ClInclude Include="application\Menu\TeamDisplay\TeamDisplay.h">
+      <Filter>Application</Filter>
+    </ClInclude>
+    <ClInclude Include="application\UI\Tower\TowerUI.h">
+      <Filter>Application\UI</Filter>
+    </ClInclude>
+    <ClInclude Include="application\TutorialUI\TutorialUI.h">
+      <Filter>Application\UI</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include=".editorconfig" />
@@ -1186,6 +1194,24 @@
     </Filter>
     <Filter Include="Application\CharacterDisplay">
       <UniqueIdentifier>{254d3d93-5394-44dd-abe0-fc06580f013e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Application\AudioManager">
+      <UniqueIdentifier>{46164c88-7358-4a42-b826-194004f27ca6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Application\CollisionManager">
+      <UniqueIdentifier>{2b7a084d-f72a-4c30-988c-80339d24d69b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Application\ExpCube">
+      <UniqueIdentifier>{e0102c7d-3cc5-49a2-bc27-f691b702412c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Application\Object">
+      <UniqueIdentifier>{033457e1-7eac-4c4e-96a1-d72ecc361a8a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Application\House">
+      <UniqueIdentifier>{3746db78-f34a-4f00-8787-0df94e62efaa}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Application\field">
+      <UniqueIdentifier>{c73665e6-1c08-4329-aaa6-7a2f4319f131}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>

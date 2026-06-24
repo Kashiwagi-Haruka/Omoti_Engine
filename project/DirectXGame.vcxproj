@@ -321,7 +321,6 @@ copy "$(WindowsSdkDir)\bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)\
     <ClCompile Include="application\UI\Menu\Menu.cpp" />
     <ClCompile Include="application\UI\Tower\TowerUI.cpp" />
     <ClCompile Include="application\Menu\TeamDisplay\TeamDisplay.cpp" />
-    <ClCompile Include="application\Menu\TeamDisplayLoad.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include=".editorconfig" />
@@ -513,7 +512,6 @@ copy "$(WindowsSdkDir)\bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)\
     <ClInclude Include="application\UI\Menu\Menu.h" />
     <ClInclude Include="application\UI\Tower\TowerUI.h" />
     <ClInclude Include="application\Menu\TeamDisplay\TeamDisplay.h" />
-    <ClInclude Include="application\Menu\TeamDisplayLoad.h" />
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="Resources\shader\FullScreenCopy\CopyImage.PS.hlsl">
