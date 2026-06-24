@@ -16,6 +16,7 @@
 #include "SceneTransition/SceneTransition.h"
 #include "Sprite.h"
 #include "Team/Team.h"
+#include "Menu/TeamDisplay/TeamDisplay.h"
 #include "UI/UIManager/UIManager.h"
 #include "Vector2.h"
 #include <array>
@@ -56,6 +57,7 @@ private:
 	CharacterModel characterModel;
 	std::unique_ptr<CharacterDisplay> characterDisplay_;
 	std::unique_ptr<Team> team_;
+	std::unique_ptr<TeamDisplay> teamDisplay_;
 
 	enum class PlayAreaMode { kSpiral, kOpenWorld };
 
@@ -105,4 +107,6 @@ public:
 	void Finalize() override;
 
 	void DebugImGui();
+	void LoadTeamDisplay();
+	void UnloadTeamDisplay();
 };

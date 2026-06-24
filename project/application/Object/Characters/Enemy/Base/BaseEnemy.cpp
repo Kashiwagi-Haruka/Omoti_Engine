@@ -1,5 +1,6 @@
 #include "BaseEnemy.h"
 #include "Camera.h"
+#include "Function.h"
 #include "Object3d/Object3d.h"
 
 BaseEnemy::BaseEnemy() { object_ = std::make_unique<Object3d>(); }

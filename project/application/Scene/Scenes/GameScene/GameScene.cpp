@@ -164,6 +164,7 @@ GameScene::GameScene() {
 GameScene::~GameScene() {}
 
 void GameScene::Finalize() {
+	UnloadTeamDisplay();
 	rasen_->Finalize();
 	openWorld_->Finalize();
 }
@@ -231,6 +232,7 @@ void GameScene::Initialize() {
 	characterDisplay_->Initialize();
 	characterDisplay_->SetActive(false);
 	team_->Initialize();
+	UnloadTeamDisplay();
 	
 	vinettColor_ = {255, 255, 255};
 	vinettStrength_ = 10.0f;
@@ -377,7 +379,21 @@ void GameScene::DebugImGui() {
 
 #endif // USE_IMGUI
 }
+void GameScene::LoadTeamDisplay() {
+	if (teamDisplay_) {
+		return;
+	}
+	teamDisplay_ = std::make_unique<TeamDisplay>();
+	teamDisplay_->Initialize(*team_);
+}
 
+void GameScene::UnloadTeamDisplay() {
+	if (!teamDisplay_) {
+		return;
+	}
+	teamDisplay_->Unload();
+	teamDisplay_.reset();
+}
 void GameScene::Update() {
 	GameTimer::GetInstance()->Update();
 	const float deltaTime = GameBase::GetInstance()->GetDeltaTime();
@@ -413,6 +429,10 @@ void GameScene::Update() {
 			isCharacterDisplayMode_ = !isCharacterDisplayMode_;
 			if (isCharacterDisplayMode_) {
 				isPause = false;
+				if (isPartyMode_) {
+					isPartyMode_ = false;
+					UnloadTeamDisplay();
+				}
 			}
 			characterDisplay_->SetActive(isCharacterDisplayMode_);
 			if (isCharacterDisplayMode_) {
@@ -425,8 +445,11 @@ void GameScene::Update() {
 				isPartyMode_ = !isPartyMode_;
 				isPause = false;
 				if (isPartyMode_) {
+					LoadTeamDisplay();
 					Input::GetInstance()->SetIsCursorStability(false);
 					Input::GetInstance()->SetIsCursorVisible(true);
+				} else {
+					UnloadTeamDisplay();
 				}
 			}
 
@@ -439,7 +462,10 @@ void GameScene::Update() {
 		}
 	}
 	DebugImGui();
-	team_->Update(isPartyMode_);
+	team_->Update();
+	if (isPartyMode_ && teamDisplay_) {
+		teamDisplay_->Update(*team_);
+	}
 	if (team_->ConsumeCharacterSwitchTriggered()) {
 		player->SetCharacterType(team_->GetActiveCharacterName());
 		pause->SetCurrentCharacterObj(player->GetCharacterObject3d());
@@ -592,7 +618,9 @@ void GameScene::Draw() {
 	}
 	if (isPartyMode_) {
 		SpriteCommon::GetInstance()->DrawCommon();
-		team_->Draw();
+		if (teamDisplay_) {
+			teamDisplay_->Draw(*team_);
+		}
 		if (isTransitionIn || isTransitionOut) {
 			sceneTransition->Draw();
 		}
@@ -619,7 +647,6 @@ void GameScene::Draw() {
 		hitVinettSprite_->Draw();
 	}
 	uimanager->Draw();
-	team_->DrawInGameMemberList();
 	pause->Draw();
 	if (isTransitionIn || isTransitionOut) {
 		sceneTransition->Draw();
