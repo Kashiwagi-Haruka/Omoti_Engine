@@ -3,7 +3,6 @@
 #include "Input.h"
 #include "Object/Boss/Boss.h"
 #include "Object/Characters/Enemy/EnemyManager.h"
-#include "Object/ExpCube/ExpCubeManager.h"
 #include "Object/Player/Player.h"
 #include "TextureManager.h"
 #include <algorithm>
@@ -13,7 +12,6 @@
 Rasen::Rasen() {
 	house = std::make_unique<House>();
 	enemyManager = std::make_unique<EnemyManager>();
-	expCubeManager = std::make_unique<ExpCubeManager>();
 }
 
 void Rasen::Finalize() {
@@ -22,7 +20,6 @@ void Rasen::Finalize() {
 
 void Rasen::Initialize(Camera* camera) {
 	enemyManager->Initialize(camera);
-	expCubeManager->Initialize(camera);
 	house->Initialize(camera);
 
 	uint32_t phaseHandles[5] = {
@@ -163,7 +160,6 @@ void Rasen::Update(Camera* camera, Player* player, Boss* boss) {
 	}
 
 	enemyManager->Update(camera, house->GetPosition(), house->GetScale(), player->GetPosition(), player->GetIsAlive());
-	expCubeManager->Update(camera, player->GetMovementLimitCenter(), player->GetMovementLimitRadius());
 
 	int currentWave = enemyManager->GetCurrentWave();
 	if (currentWave != lastWave_) {
@@ -246,7 +242,6 @@ void Rasen::Draw(Boss* boss) {
 	if (isBossActive_) {
 		boss->Draw();
 	}
-	expCubeManager->Draw();
 	house->Draw();
 
 	if (isPhaseSpriteActive_ && !isBossActive_) {

@@ -3,11 +3,9 @@
 #include "AudioManager/BGMManager/BGMManager.h"
 #include "CameraController/CameraController.h"
 #include "GameTimer/GameTimer.h"
-#include "Model/ModelManager.h"
 #include "Object/Background/Sky.h"
 #include "Object/Boss/Boss.h"
 #include "Object/Characters/Enemy/EnemyManager.h"
-#include "Object/ExpCube/ExpCubeManager.h"
 #include "Object/Player/Player.h"
 #include "Object3d/Object3dCommon.h"
 #include "OpenWorld/OpenWorld.h"
@@ -84,7 +82,6 @@ GameScene::GameScene() {
 	field = std::make_unique<MapchipField>();
 	sceneTransition = std::make_unique<SceneTransition>();
 	uimanager = std::make_unique<UIManager>();
-	/*BG = std::make_unique<Background>();*/
 
 	pause = std::make_unique<Pause>();
 	GameTimer::GetInstance()->Reset();
@@ -438,7 +435,7 @@ void GameScene::Update() {
 		Vector3 hitEnemyPos{};
 		bool didPlayerAttackHitEnemy = false;
 		const bool didNormalAttackHitEnemy =
-		    collisionManager_.HandleGameSceneCollisions(*player, *rasen_->GetEnemyManager(), *rasen_->GetExpCubeManager(), *rasen_->GetHouse(), activeBoss, &hitEnemyPos, &didPlayerAttackHitEnemy);
+		    collisionManager_.HandleGameSceneCollisions(*player, *rasen_->GetEnemyManager(), *rasen_->GetHouse(), activeBoss, &hitEnemyPos, &didPlayerAttackHitEnemy);
 		if (didPlayerAttackHitEnemy) {
 			hitVinettTimer_ = kHitVinettDuration_;
 		}

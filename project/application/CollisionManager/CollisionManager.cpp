@@ -30,7 +30,7 @@ void ApplyAttributeDamage(Enemy& enemy, EnemyManager& enemyManager, Attribute at
 } // namespace
 
 bool CollisionManager::HandleGameSceneCollisions(
-    Player& player, EnemyManager& enemyManager, ExpCubeManager& expCubeManager, House& house, Boss* boss, Vector3* outHitEnemyPos, bool* outDidPlayerAttackHitEnemy) {
+    Player& player, EnemyManager& enemyManager, House& house, Boss* boss, Vector3* outHitEnemyPos, bool* outDidPlayerAttackHitEnemy) {
 	bool didNormalAttackHitEnemy = false;
 	bool didPlayerAttackHitEnemy = false;
 	AABB playerAabb = MakeAabb(player.GetPosition(), player.GetScale());
@@ -88,9 +88,6 @@ bool CollisionManager::HandleGameSceneCollisions(
 				ApplyAttributeDamage(*enemy, enemyManager, playerAttackAttribute);
 				enemy->TriggerDamageInvincibility();
 				tryEnemyFlinch(enemy.get());
-				if (!enemy->GetIsAlive()) {
-					expCubeManager.SpawnDrops(enemy->GetPosition(), 3);
-				}
 			}
 		}
 
@@ -107,9 +104,6 @@ bool CollisionManager::HandleGameSceneCollisions(
 				ApplyAttributeDamage(*enemy, enemyManager, playerAttackAttribute);
 				enemy->SetLastSkillDamageId(skillDamageId);
 				tryEnemyFlinch(enemy.get());
-				if (!enemy->GetIsAlive()) {
-					expCubeManager.SpawnDrops(enemy->GetPosition(), 3);
-				}
 			}
 		}
 
@@ -133,9 +127,6 @@ bool CollisionManager::HandleGameSceneCollisions(
 					ApplyAttributeDamage(*enemy, enemyManager, playerAttackAttribute);
 					enemy->TriggerDamageInvincibility();
 					tryEnemyFlinch(enemy.get());
-					if (!enemy->GetIsAlive()) {
-						expCubeManager.SpawnDrops(enemy->GetPosition(), 3);
-					}
 				}
 			}
 		}
@@ -216,25 +207,7 @@ bool CollisionManager::HandleGameSceneCollisions(
 			}
 		}
 	}
-	if (player.GetIsAlive()) {
-		for (auto& cube : expCubeManager.GetCubes()) {
-			if (cube->IsCollected()) {
-				continue;
-			}
-			const Vector3 cubePos = cube->GetPosition();
-			Vector3 toCube = player.GetPosition() - cubePos;
-			toCube.y = 0.0f;
-			const Vector3 playerScale = player.GetScale();
-			const Vector3 cubeScale = cube->GetScale();
-			const float playerRadius = std::max(playerScale.x, playerScale.z);
-			const float cubeRadius = std::max(cubeScale.x, cubeScale.z);
-			const float pickupRadius = playerRadius + cubeRadius;
-			if (Function::LengthSquared(toCube) <= pickupRadius * pickupRadius) {
-				cube->Collect();
-				player.EXPMath();
-			}
-		}
-	}
+
 	if (outDidPlayerAttackHitEnemy) {
 		*outDidPlayerAttackHitEnemy = didPlayerAttackHitEnemy;
 	}

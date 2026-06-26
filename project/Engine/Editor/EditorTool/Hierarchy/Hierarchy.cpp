@@ -97,7 +97,7 @@ void DrawBaseParameterEditor(const char* label, BaseParameter& parameter) {
 void DrawParameterEditor(const char* label, Parameter& parameter) {
 	ImGui::PushID(label);
 	ImGui::SeparatorText(label);
-	ImGui::DragInt("Level", &parameter.level, 1.0f, 1, 999);
+	ImGui::DragInt("Level", &parameter.level, 1.0f, 1, 100);
 	ImGui::DragFloat("HP", &parameter.HP, 1.0f, 1.0f, 99999.0f);
 	ImGui::DragFloat("Attack", &parameter.Attack, 0.1f, 0.0f, 9999.0f);
 	ImGui::DragFloat("Deffence", &parameter.Deffence, 0.1f, 0.0f, 9999.0f);
