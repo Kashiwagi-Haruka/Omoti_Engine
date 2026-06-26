@@ -1,17 +1,18 @@
 #define NOMINMAX
 #include "GameScene.h"
+#include "AudioManager/BGMManager/BGMManager.h"
 #include "CameraController/CameraController.h"
 #include "GameTimer/GameTimer.h"
 #include "Model/ModelManager.h"
 #include "Object/Background/Sky.h"
 #include "Object/Boss/Boss.h"
-#include "Object/Characters/Base/CharacterParameters.h"
 #include "Object/Characters/Enemy/EnemyManager.h"
 #include "Object/ExpCube/ExpCubeManager.h"
 #include "Object/Player/Player.h"
 #include "Object3d/Object3dCommon.h"
 #include "OpenWorld/OpenWorld.h"
 #include "ParticleManager.h"
+#include "PlayCommand/PlayCommand.h"
 #include "Rasen/Rasen.h"
 #include "SceneManager.h"
 #include "Sprite/SpriteCommon.h"
@@ -19,77 +20,9 @@
 #include "WinApp.h"
 #include <algorithm>
 #include <cmath>
-#include <filesystem>
-#include <fstream>
-#include <nlohmann/json.hpp>
 #include <numbers>
-#include "AudioManager/BGMManager/BGMManager.h"
 
 namespace {
-using json = nlohmann::json;
-
-struct CharacterTuningData {
-	BaseParameter lv1Base{};
-	Parameter lv1Parameter{};
-	BaseParameter currentBase{};
-	Parameter currentParameter{};
-};
-
-CharacterTuningData CreateDefaultCharacterTuningData() {
-	CharacterTuningData data{};
-	data.lv1Base = {100.0f, 20.0f, 10.0f};
-	data.lv1Parameter.level = 1;
-	data.lv1Parameter.HP = 100.0f;
-	data.lv1Parameter.Attack = 20.0f;
-	data.lv1Parameter.Deffence = 10.0f;
-	data.lv1Parameter.Speed = 1.0f;
-	data.lv1Parameter.CriticalRate = 0.05f;
-	data.lv1Parameter.CriticalDamage = 1.5f;
-	data.currentBase = data.lv1Base;
-	data.currentParameter = data.lv1Parameter;
-	return data;
-}
-
-json ToJson(const Parameter& p) {
-	json param;
-	param["Level"] = p.level;
-	param["HP"] = p.HP;
-	param["Attack"] = p.Attack;
-	param["Deffence"] = p.Deffence;
-	param["Speed"] = p.Speed;
-	param["CriticalRate"] = p.CriticalRate;
-	param["CriticalDamage"] = p.CriticalDamage;
-	for (size_t i = 0; i < p.AttributeDamageRate.size(); ++i) {
-		param["AttributeDamageRate"].push_back(p.AttributeDamageRate[i]);
-		param["AttributeResistanceRate"].push_back(p.AttributeResistanceRate[i]);
-	}
-	return param;
-}
-
-void SaveJson(const std::string& path, const json& j) {
-	std::ofstream ofs(path);
-	if (ofs.is_open()) {
-		ofs << j.dump(2);
-	}
-}
-
-void SaveCharacterTuningJson(const std::string& characterName, const CharacterTuningData& data) {
-	const std::string directory = "Resources/JSON/Character/" + characterName;
-	std::filesystem::create_directories(directory);
-
-	SaveJson(
-	    directory + "/lv1_parameters.json", json{
-	                                            {"base",      {{"HP", data.lv1Base.HP}, {"Attack", data.lv1Base.Attack}, {"Deffence", data.lv1Base.Deffence}}},
-                                                {"parameter", ToJson(data.lv1Parameter)                                                                      }
-    });
-	SaveJson(
-	    directory + "/current_parameters.json",
-	    json{
-	        {"base",      {{"HP", data.currentBase.HP}, {"Attack", data.currentBase.Attack}, {"Deffence", data.currentBase.Deffence}}},
-            {"parameter", ToJson(data.currentParameter)                                                                              }
-    });
-}
-
 constexpr float kLockOnTargetMaxAngle = std::numbers::pi_v<float> / 4.0f;
 
 bool TryFindNearestEnemyInPlayerFront(Player& player, EnemyManager& enemyManager, Vector3* outEnemyPos) {
@@ -322,56 +255,7 @@ void GameScene::DebugImGui() {
 			ImGui::TreePop();
 		}
 	}
-	if (ImGui::TreeNode("Character Parameters Json")) {
-		static std::array<std::string, 4> characterNames = {"Arte", "Sizuku", "Yuzuki", "Mei"};
-		static std::array<CharacterTuningData, 4> tuningDatas = {
-		    CreateDefaultCharacterTuningData(),
-		    CreateDefaultCharacterTuningData(),
-		    CreateDefaultCharacterTuningData(),
-		    CreateDefaultCharacterTuningData(),
-		};
 
-		for (size_t i = 0; i < characterNames.size(); ++i) {
-			ImGui::PushID(static_cast<int>(i));
-			if (ImGui::TreeNode(characterNames[i].c_str())) {
-				ImGui::Text("LV1 (base+param): Resources/3d/%s/lv1_parameters.json", characterNames[i].c_str());
-				ImGui::Text("Now (base+param): Resources/3d/%s/current_parameters.json", characterNames[i].c_str());
-				ImGui::SeparatorText("LV1 Base Parameters");
-				ImGui::DragFloat("LV1 Base HP", &tuningDatas[i].lv1Base.HP, 1.0f, 1.0f, 99999.0f);
-				ImGui::DragFloat("LV1 Base Attack", &tuningDatas[i].lv1Base.Attack, 0.1f, 0.0f, 9999.0f);
-				ImGui::DragFloat("LV1 Base Deffence", &tuningDatas[i].lv1Base.Deffence, 0.1f, 0.0f, 9999.0f);
-
-				ImGui::SeparatorText("Current Base Parameters");
-				ImGui::DragFloat("Current Base HP", &tuningDatas[i].currentBase.HP, 1.0f, 1.0f, 99999.0f);
-				ImGui::DragFloat("Current Base Attack", &tuningDatas[i].currentBase.Attack, 0.1f, 0.0f, 9999.0f);
-				ImGui::DragFloat("Current Base Deffence", &tuningDatas[i].currentBase.Deffence, 0.1f, 0.0f, 9999.0f);
-
-				auto drawParameterEditor = [](const char* label, Parameter& p) {
-					ImGui::PushID(label);
-					ImGui::SeparatorText(label);
-					ImGui::DragInt("Level", &p.level, 1.0f, 1, 999);
-					ImGui::DragFloat("HP", &p.HP, 1.0f, 1.0f, 99999.0f);
-					ImGui::DragFloat("Attack", &p.Attack, 0.1f, 0.0f, 9999.0f);
-					ImGui::DragFloat("Deffence", &p.Deffence, 0.1f, 0.0f, 9999.0f);
-					ImGui::DragFloat("Speed", &p.Speed, 0.01f, 0.0f, 100.0f);
-					ImGui::DragFloat("CriticalRate", &p.CriticalRate, 0.001f, 0.0f, 1.0f);
-					ImGui::DragFloat("CriticalDamage", &p.CriticalDamage, 0.01f, 1.0f, 10.0f);
-					ImGui::PopID();
-				};
-
-				drawParameterEditor("LV1 Parameter", tuningDatas[i].lv1Parameter);
-				drawParameterEditor("Current Level Parameter", tuningDatas[i].currentParameter);
-
-				if (ImGui::Button("Save Character Json")) {
-					SaveCharacterTuningJson(characterNames[i], tuningDatas[i]);
-				}
-
-				ImGui::TreePop();
-			}
-			ImGui::PopID();
-		}
-		ImGui::TreePop();
-	}
 	ImGui::Text("Play Area: %s", playAreaMode_ == PlayAreaMode::kSpiral ? "Spiral" : "OpenWorld");
 	ImGui::Text("Press TAB to switch area mode");
 	ImGui::End();
@@ -425,7 +309,7 @@ void GameScene::Update() {
 	}
 
 	if ((playAreaMode_ != PlayAreaMode::kSpiral || !rasen_->IsLevelSelecting()) && !isTransitionIn && !isTransitionOut) {
-		if (Input::GetInstance()->TriggerKey(DIK_C)) {
+		if (PlayCommand::GetCharacterDisplay()) {
 			isCharacterDisplayMode_ = !isCharacterDisplayMode_;
 			if (isCharacterDisplayMode_) {
 				isPause = false;
@@ -441,7 +325,7 @@ void GameScene::Update() {
 		}
 
 		if (!isCharacterDisplayMode_) {
-			if (Input::GetInstance()->TriggerKey(DIK_L)) {
+			if (PlayCommand::GetTeamSelectDisplay()) {
 				isPartyMode_ = !isPartyMode_;
 				isPause = false;
 				if (isPartyMode_) {

@@ -24,12 +24,89 @@
 #include <cmath>
 #include <cstdint>
 #include <filesystem>
+#include <fstream>
 #include <limits>
+#include <nlohmann/json.hpp>
 #include <string>
 #include <unordered_map>
 
 namespace {
 constexpr const char* kDragDropPayloadType = "OMOTI_EDITOR_ASSET";
+
+using json = nlohmann::json;
+
+Parameter CreateDefaultCharacterParameter() {
+	Parameter parameter{};
+	parameter.level = 1;
+	parameter.HP = 100.0f;
+	parameter.Attack = 20.0f;
+	parameter.Deffence = 10.0f;
+	parameter.Speed = 1.0f;
+	parameter.CriticalRate = 0.05f;
+	parameter.CriticalDamage = 1.5f;
+	return parameter;
+}
+
+json ToJson(const Parameter& p) {
+	json param;
+	param["Level"] = p.level;
+	param["HP"] = p.HP;
+	param["Attack"] = p.Attack;
+	param["Deffence"] = p.Deffence;
+	param["Speed"] = p.Speed;
+	param["CriticalRate"] = p.CriticalRate;
+	param["CriticalDamage"] = p.CriticalDamage;
+	for (size_t i = 0; i < p.AttributeDamageRate.size(); ++i) {
+		param["AttributeDamageRate"].push_back(p.AttributeDamageRate[i]);
+		param["AttributeResistanceRate"].push_back(p.AttributeResistanceRate[i]);
+	}
+	return param;
+}
+
+void SaveJson(const std::string& path, const json& j) {
+	std::ofstream ofs(path);
+	if (ofs.is_open()) {
+		ofs << j.dump(2);
+	}
+}
+
+void SaveCharacterTuningJson(const std::string& name, const BaseParameter& lv1Base, const Parameter& lv1Parameter, const BaseParameter& currentBase, const Parameter& currentParameter) {
+	const std::string directory = "Resources/JSON/Character/" + name;
+	std::filesystem::create_directories(directory);
+
+	SaveJson(
+	    directory + "/lv1_parameters.json", json{
+	                                            {"base",      {{"HP", lv1Base.HP}, {"Attack", lv1Base.Attack}, {"Deffence", lv1Base.Deffence}}},
+                                                {"parameter", ToJson(lv1Parameter)                                                            }
+    });
+	SaveJson(
+	    directory + "/current_parameters.json", json{
+	                                                {"base",      {{"HP", currentBase.HP}, {"Attack", currentBase.Attack}, {"Deffence", currentBase.Deffence}}},
+                                                    {"parameter", ToJson(currentParameter)                                                                    }
+    });
+}
+
+#ifdef USE_IMGUI
+void DrawBaseParameterEditor(const char* label, BaseParameter& parameter) {
+	ImGui::SeparatorText(label);
+	ImGui::DragFloat("HP", &parameter.HP, 1.0f, 1.0f, 99999.0f);
+	ImGui::DragFloat("Attack", &parameter.Attack, 0.1f, 0.0f, 9999.0f);
+	ImGui::DragFloat("Deffence", &parameter.Deffence, 0.1f, 0.0f, 9999.0f);
+}
+
+void DrawParameterEditor(const char* label, Parameter& parameter) {
+	ImGui::PushID(label);
+	ImGui::SeparatorText(label);
+	ImGui::DragInt("Level", &parameter.level, 1.0f, 1, 999);
+	ImGui::DragFloat("HP", &parameter.HP, 1.0f, 1.0f, 99999.0f);
+	ImGui::DragFloat("Attack", &parameter.Attack, 0.1f, 0.0f, 9999.0f);
+	ImGui::DragFloat("Deffence", &parameter.Deffence, 0.1f, 0.0f, 9999.0f);
+	ImGui::DragFloat("Speed", &parameter.Speed, 0.01f, 0.0f, 100.0f);
+	ImGui::DragFloat("CriticalRate", &parameter.CriticalRate, 0.001f, 0.0f, 1.0f);
+	ImGui::DragFloat("CriticalDamage", &parameter.CriticalDamage, 0.01f, 1.0f, 10.0f);
+	ImGui::PopID();
+}
+#endif
 constexpr const char* kDefaultObjectModelName = "debugBox";
 constexpr float kDegreesToRadians = 3.14159265358979323846f / 180.0f;
 std::filesystem::path ResolveObjectEditorJsonPath(const std::string& filePath) { return std::filesystem::path("Resources") / "JSON" / std::filesystem::path(filePath).filename(); }
@@ -124,6 +201,7 @@ void Hierarchy::Finalize() {
 
 	selectedObjectIndex_ = 0;
 	selectedIsPrimitive_ = false;
+	selectedIsCharacterParameter_ = false;
 	selectionBoxDirty_ = true;
 	gridSettings_.dirty = true;
 	loadedSceneName_.clear();
@@ -146,6 +224,7 @@ void Hierarchy::OnSceneChangeRequested(const std::string& nextSceneName) {
 	selectionBoxPrimitive_.reset();
 	selectedObjectIndex_ = 0;
 	selectedIsPrimitive_ = false;
+	selectedIsCharacterParameter_ = false;
 	selectionBoxDirty_ = true;
 	loadedSceneName_ = nextSceneName;
 	ResetForSceneChange();
@@ -307,6 +386,7 @@ void Hierarchy::AddPrimitiveAssetToHierarchy(const std::string& primitiveName) {
 	}
 	selectedObjectIndex_ = index;
 	selectedIsPrimitive_ = true;
+	selectedIsCharacterParameter_ = false;
 	selectionBoxDirty_ = true;
 	hasUnsavedChanges_ = true;
 }
@@ -323,6 +403,7 @@ void Hierarchy::AddObject3dAssetToHierarchy(const std::string& modelName) {
 	}
 	selectedObjectIndex_ = index;
 	selectedIsPrimitive_ = false;
+	selectedIsCharacterParameter_ = false;
 	selectionBoxDirty_ = true;
 	hasUnsavedChanges_ = true;
 }
@@ -920,6 +1001,61 @@ void Hierarchy::DrawEditorGridLines() {
 }
 void Hierarchy::DrawCameraBillboards() { editorCamera_.DrawCameraBillboards(isPlaying_); }
 void Hierarchy::DrawCameraEditor() { editorCamera_.DrawCameraEditor(); }
+void Hierarchy::DrawCharacterParameterHierarchy() {
+#ifdef USE_IMGUI
+	if (characterParameterEditorDatas_[0].name.empty()) {
+		const std::array<std::string, 4> names = {"Arte", "Sizuku", "Yuzuki", "Mei"};
+		for (size_t i = 0; i < characterParameterEditorDatas_.size(); ++i) {
+			characterParameterEditorDatas_[i].name = names[i];
+			characterParameterEditorDatas_[i].lv1Base = {100.0f, 20.0f, 10.0f};
+			characterParameterEditorDatas_[i].lv1Parameter = CreateDefaultCharacterParameter();
+			characterParameterEditorDatas_[i].currentBase = characterParameterEditorDatas_[i].lv1Base;
+			characterParameterEditorDatas_[i].currentParameter = characterParameterEditorDatas_[i].lv1Parameter;
+		}
+	}
+
+	ImGui::SeparatorText("Character Parameters");
+	for (size_t i = 0; i < characterParameterEditorDatas_.size(); ++i) {
+		const auto& data = characterParameterEditorDatas_[i];
+		const bool selected = selectedIsCharacterParameter_ && selectedCharacterParameterIndex_ == i;
+		if (ImGui::Selectable((data.name + "##character_parameter_select_" + std::to_string(i)).c_str(), selected)) {
+			selectedCharacterParameterIndex_ = i;
+			selectedIsCharacterParameter_ = true;
+			selectedIsPrimitive_ = false;
+		}
+	}
+#endif
+}
+
+void Hierarchy::DrawCharacterParameterInspector() {
+#ifdef USE_IMGUI
+	if (!IsCharacterParameterSelected()) {
+		return;
+	}
+	CharacterParameterEditorData& data = characterParameterEditorDatas_[selectedCharacterParameterIndex_];
+	ImGui::Text("Character Parameter: %s", data.name.c_str());
+	ImGui::Text("LV1: Resources/JSON/Character/%s/lv1_parameters.json", data.name.c_str());
+	ImGui::Text("Current: Resources/JSON/Character/%s/current_parameters.json", data.name.c_str());
+
+	ImGui::PushID("lv1_base");
+	DrawBaseParameterEditor("LV1 Base Parameters", data.lv1Base);
+	ImGui::PopID();
+	ImGui::PushID("current_base");
+	DrawBaseParameterEditor("Current Base Parameters", data.currentBase);
+	ImGui::PopID();
+	DrawParameterEditor("LV1 Parameter", data.lv1Parameter);
+	DrawParameterEditor("Current Level Parameter", data.currentParameter);
+
+	if (ImGui::Button("Save Character Json")) {
+		SaveCharacterTuningJson(data.name, data.lv1Base, data.lv1Parameter, data.currentBase, data.currentParameter);
+		saveStatusMessage_ = "Saved character parameters: " + data.name;
+	}
+#endif
+}
+
+bool Hierarchy::IsCharacterParameterSelected() const {
+	return selectedIsCharacterParameter_ && selectedCharacterParameterIndex_ < characterParameterEditorDatas_.size() && !characterParameterEditorDatas_[selectedCharacterParameterIndex_].name.empty();
+}
 void Hierarchy::DrawLightEditor() {
 #ifdef USE_IMGUI
 	if (editorLight_.DrawEditor(isPlaying_)) {
@@ -929,6 +1065,9 @@ void Hierarchy::DrawLightEditor() {
 }
 
 bool Hierarchy::IsObjectSelected() const {
+	if (selectedIsCharacterParameter_) {
+		return false;
+	}
 	if (selectedIsPrimitive_) {
 		return selectedObjectIndex_ < primitives_.size() && primitives_[selectedObjectIndex_] != nullptr;
 	}
@@ -1245,10 +1384,11 @@ void Hierarchy::DrawObjectEditors() {
 					continue;
 				}
 				std::string displayName = objectNames_[i].empty() ? ("Object " + std::to_string(i)) : objectNames_[i];
-				const bool selected = (!selectedIsPrimitive_ && selectedObjectIndex_ == i);
+				const bool selected = (!selectedIsCharacterParameter_ && !selectedIsPrimitive_ && selectedObjectIndex_ == i);
 				if (ImGui::Selectable((displayName + "##object_select_" + std::to_string(i)).c_str(), selected)) {
 					selectedObjectIndex_ = i;
 					selectedIsPrimitive_ = false;
+					selectedIsCharacterParameter_ = false;
 					selectionBoxDirty_ = true;
 				}
 				if (ImGui::BeginPopupContextItem(("##object_context_" + std::to_string(i)).c_str())) {
@@ -1268,10 +1408,11 @@ void Hierarchy::DrawObjectEditors() {
 					continue;
 				}
 				std::string displayName = primitiveNames_[i].empty() ? ("Primitive " + std::to_string(i)) : primitiveNames_[i];
-				const bool selected = (selectedIsPrimitive_ && selectedObjectIndex_ == i);
+				const bool selected = (!selectedIsCharacterParameter_ && selectedIsPrimitive_ && selectedObjectIndex_ == i);
 				if (ImGui::Selectable((displayName + "##primitive_select_" + std::to_string(i)).c_str(), selected)) {
 					selectedObjectIndex_ = i;
 					selectedIsPrimitive_ = true;
+					selectedIsCharacterParameter_ = false;
 					selectionBoxDirty_ = true;
 				}
 				if (ImGui::BeginPopupContextItem(("##primitive_context_" + std::to_string(i)).c_str())) {
@@ -1283,13 +1424,16 @@ void Hierarchy::DrawObjectEditors() {
 			}
 			ImGui::TreePop();
 		}
+		DrawCharacterParameterHierarchy();
 	}
 	ImGui::End();
 	const float inspectorPosX = viewport->WorkPos.x + viewport->WorkSize.x - rightPanelWidth;
 	ImGui::SetNextWindowPos(ImVec2(inspectorPosX, contentStartY), ImGuiCond_Always);
 	ImGui::SetNextWindowSize(ImVec2(rightPanelWidth, availableHeight), ImGuiCond_Always);
 	if (ImGui::Begin("Inspector", nullptr, ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_HorizontalScrollbar)) {
-		if (!IsObjectSelected()) {
+		if (IsCharacterParameterSelected()) {
+			DrawCharacterParameterInspector();
+		} else if (!IsObjectSelected()) {
 			ImGui::TextUnformatted("No object selected.");
 		} else {
 			EditorSnapshot beforeEdit{};

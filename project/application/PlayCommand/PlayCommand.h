@@ -115,4 +115,10 @@ class PlayCommand {
 	/// </summary>
 	/// <returns></returns>
 	static bool GetCharacterChange4();
+
+	static bool GetTeamSelectDisplay();
+
+	static bool GetCharacterDisplay();
+
+
 };
