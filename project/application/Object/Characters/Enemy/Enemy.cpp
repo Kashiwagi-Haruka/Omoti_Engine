@@ -80,10 +80,12 @@ void Enemy::Update(const Vector3& housePos, const Vector3& houseScale, const Vec
 	}
 	object_->SetColor(damageInvincibleTimer_ > 0.0f ? kDamageInvincibleColor : kDefaultColor);
 	Vector3 targetPosition = housePos;
+	bool isTargetingPlayer = false;
 	if (isPlayerAlive) {
 		Vector3 toPlayer = playerPos - transform_.translate;
 		if (Function::LengthSquared(toPlayer) <= playerChaseRange_ * playerChaseRange_) {
 			targetPosition = playerPos;
+			isTargetingPlayer = true;
 		}
 	}
 
@@ -132,7 +134,9 @@ void Enemy::Update(const Vector3& housePos, const Vector3& houseScale, const Vec
 		float houseRadius = std::max({houseScale.x, houseScale.y, houseScale.z});
 		float enemyRadius = std::max({transform_.scale.x, transform_.scale.y, transform_.scale.z});
 		float houseAttackRange = attackRange_ + houseRadius + enemyRadius;
-		inAttackRange = Function::LengthSquared(toTarget) <= attackRange_ * attackRange_ || Function::LengthSquared(toHouse) <= houseAttackRange * houseAttackRange;
+		float playerAttackStartRange = attackRange_ + enemyRadius;
+		float targetAttackRange = isTargetingPlayer ? playerAttackStartRange : attackRange_;
+		inAttackRange = Function::LengthSquared(toTarget) <= targetAttackRange * targetAttackRange || Function::LengthSquared(toHouse) <= houseAttackRange * houseAttackRange;
 	}
 	if (!isStun_ && !IsAttacking() && inAttackRange && IsAttackReady()) {
 		enemyAttack_->Start(transform_);
