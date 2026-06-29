@@ -23,7 +23,7 @@ void Field::Initialize(Camera* camera) {
 	field_->Initialize(Primitive::Cylinder, "Resources/2d/field/map.png");
 	field_->SetTransform(transform_);
 	field_->SetCamera(camera_);
-	field_->SetEnvironmentCoefficient(0.4f);
+	field_->SetEnvironmentCoefficient(0.2f);
 }
 void Field::Update() { 
 	field_->SetCamera(camera_);
