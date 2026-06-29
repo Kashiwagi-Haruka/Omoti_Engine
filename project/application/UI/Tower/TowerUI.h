@@ -11,10 +11,10 @@ class TowerUI {
 	// 家HP表示に使うフォントハンドル。
 	uint32_t houseHpFontHandle_ = 0;
 
-	// 家HPの%表示基準位置。
-	Vector2 houseHpPercentBasePosition = {220, 360};
+	// 家HP表示の基準位置。
+	Vector2 houseHpPercentBasePosition = {220, 400};
 	// 家HPラベルのオフセット。
-	Vector2 houseHpStringOffset = {-100, 0};
+	Vector2 houseHpStringOffset = {-100, -40};
 
 public:
 	// 生成時にUIリソースを読み込む。
