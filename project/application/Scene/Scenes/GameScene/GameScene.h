@@ -8,7 +8,7 @@
 #include "Light/CommonLight/SpotCommonLight.h"
 #include "Object/Characters/CharacterDisplay/CharacterDisplay.h"
 #include "Object/Characters/Model/CharacterModel.h"
-#include "Object/MapchipField.h"
+#include "Object/Field/Field.h"
 #include "Object3d/Object3d.h"
 #include "OpenWorld/OpenWorld.h"
 #include "Pause/Pause.h"
@@ -16,6 +16,7 @@
 #include "SceneTransition/SceneTransition.h"
 #include "Sprite.h"
 #include "Team/Team.h"
+#include "Menu/TeamDisplay/TeamDisplay.h"
 #include "UI/UIManager/UIManager.h"
 #include "Vector2.h"
 #include <array>
@@ -41,7 +42,7 @@ private:
 	std::unique_ptr<Player> player;
 	std::unique_ptr<Sky> skyDome;
 	std::unique_ptr<CameraController> cameraController;
-	std::unique_ptr<MapchipField> field;
+	std::unique_ptr<Field> field;
 	std::unique_ptr<Pause> pause;
 
 	CollisionManager collisionManager_;
@@ -56,6 +57,7 @@ private:
 	CharacterModel characterModel;
 	std::unique_ptr<CharacterDisplay> characterDisplay_;
 	std::unique_ptr<Team> team_;
+	std::unique_ptr<TeamDisplay> teamDisplay_;
 
 	enum class PlayAreaMode { kSpiral, kOpenWorld };
 
@@ -105,4 +107,6 @@ public:
 	void Finalize() override;
 
 	void DebugImGui();
+	void LoadTeamDisplay();
+	void UnloadTeamDisplay();
 };

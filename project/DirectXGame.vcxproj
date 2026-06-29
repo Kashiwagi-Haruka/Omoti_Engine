@@ -159,6 +159,7 @@ copy "$(WindowsSdkDir)\bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)\
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="application\Object\Characters\Enemy\Base\BaseEnemy.cpp" />
     <ClCompile Include="application\Object\Characters\Playable\Weapon\Allow\Allow.cpp" />
     <ClCompile Include="application\CameraController\LockOnCamera\LockOnCamera.cpp" />
     <ClCompile Include="application\Object\Characters\Enemy\Adhesion\Adhesion.cpp" />
@@ -180,7 +181,7 @@ copy "$(WindowsSdkDir)\bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)\
     <ClCompile Include="application\Object\ExpCube\ExpCubeManager.cpp" />
     <ClCompile Include="application\Object\House\House.cpp" />
     <ClCompile Include="application\Object\House\HouseHP.cpp" />
-    <ClCompile Include="application\Object\MapchipField.cpp" />
+    <ClCompile Include="application\Object\Field\Field.cpp" />
     <ClCompile Include="application\Object\Player\Attack\PlayerAttack.cpp" />
     <ClCompile Include="application\Object\Player\Attack\PlayerFallAttack.cpp" />
     <ClCompile Include="application\Object\Player\Attack\Skill\PlayerSkill.cpp" />
@@ -202,6 +203,7 @@ copy "$(WindowsSdkDir)\bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)\
     <ClCompile Include="application\UI\AttackOperation\AttackOperation.cpp" />
     <ClCompile Include="application\Object\Characters\Playable\Weapon\BigSword\BigSword.cpp" />
     <ClCompile Include="application\AudioManager\BGMManager\BGMManager.cpp" />
+    <ClCompile Include="application\Object\Characters\Enemy\Individual\brain\brain.cpp" />
     <ClCompile Include="Engine\Editor\EditorTool\Command\EditorCommand.cpp" />
     <ClCompile Include="Engine\Audio\AudioMixer.cpp" />
     <ClCompile Include="Engine\Editor\EditorData\Audio\EditorAudio.cpp" />
@@ -318,6 +320,7 @@ copy "$(WindowsSdkDir)\bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)\
     <ClCompile Include="application\Option\Option.cpp" />
     <ClCompile Include="application\UI\Menu\Menu.cpp" />
     <ClCompile Include="application\UI\Tower\TowerUI.cpp" />
+    <ClCompile Include="application\Menu\TeamDisplay\TeamDisplay.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include=".editorconfig" />
@@ -353,7 +356,7 @@ copy "$(WindowsSdkDir)\bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)\
     <ClInclude Include="application\Object\Characters\CharacterDisplay\CharacterDisplaySkyDome.h" />
     <ClInclude Include="application\Object\Characters\Model\CharacterModel.h" />
     <ClInclude Include="application\Object\Characters\Playable\Individual\Sizuku\Sizuku.h" />
-    <ClInclude Include="application\Object\Characters\Enemy\BaseEnemy.h" />
+    <ClInclude Include="application\Object\Characters\Enemy\Base\BaseEnemy.h" />
     <ClInclude Include="application\Object\Characters\Enemy\Enemy.h" />
     <ClInclude Include="application\Object\Characters\Enemy\EnemyAttack.h" />
     <ClInclude Include="application\Object\Characters\Enemy\EnemyHitEffect.h" />
@@ -364,7 +367,7 @@ copy "$(WindowsSdkDir)\bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)\
     <ClInclude Include="application\Object\ExpCube\ExpCubeManager.h" />
     <ClInclude Include="application\Object\House\House.h" />
     <ClInclude Include="application\Object\House\HouseHP.h" />
-    <ClInclude Include="application\Object\MapchipField.h" />
+    <ClInclude Include="application\Object\Field\Field.h" />
     <ClInclude Include="application\Object\Player\Attack\PlayerAttack.h" />
     <ClInclude Include="application\Object\Player\Attack\PlayerFallAttack.h" />
     <ClInclude Include="application\Object\Player\Attack\Skill\PlayerSkill.h" />
@@ -387,6 +390,7 @@ copy "$(WindowsSdkDir)\bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)\
     <ClInclude Include="application\UI\AttackOperation\AttackOperation.h" />
     <ClInclude Include="application\Object\Characters\Playable\Weapon\BigSword\BigSword.h" />
     <ClInclude Include="application\AudioManager\BGMManager\BGMManager.h" />
+    <ClInclude Include="application\Object\Characters\Enemy\Individual\brain\brain.h" />
     <ClInclude Include="Engine\Editor\EditorTool\Command\EditorCommand.h" />
     <ClInclude Include="Engine\Audio\AudioMixer.h" />
     <ClInclude Include="Engine\base\ScreenSize.h" />
@@ -507,6 +511,7 @@ copy "$(WindowsSdkDir)\bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)\
     <ClInclude Include="application\Option\Option.h" />
     <ClInclude Include="application\UI\Menu\Menu.h" />
     <ClInclude Include="application\UI\Tower\TowerUI.h" />
+    <ClInclude Include="application\Menu\TeamDisplay\TeamDisplay.h" />
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="Resources\shader\FullScreenCopy\CopyImage.PS.hlsl">

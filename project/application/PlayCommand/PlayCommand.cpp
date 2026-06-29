@@ -116,3 +116,16 @@ bool PlayCommand::GetCharacterChange4() {
 	}
 	return false;
 }
+bool PlayCommand::GetTeamSelectDisplay(){
+	if (Input::GetInstance()->TriggerKey(DIK_L)) {
+		return true;
+	}
+	return false;
+}
+
+bool PlayCommand::GetCharacterDisplay(){
+	if (Input::GetInstance()->TriggerKey(DIK_C)) {
+		return true;
+	}
+	return false;
+}

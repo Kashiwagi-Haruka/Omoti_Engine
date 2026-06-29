@@ -47,10 +47,13 @@ void SizukuSpecial::Draw() {
 	if (!isStarted_) {
 		return;
 	}
-	Object3dCommon::GetInstance()->DrawCommon();
+	Object3dCommon::GetInstance()->DrawCommonNoCullDepth();
+	Object3dCommon::GetInstance()->SetBlendMode(BlendMode::kBlendModeAdd);
 	if (fieldPlane_) {
 		fieldPlane_->Draw();
 	}
+	Object3dCommon::GetInstance()->SetBlendMode(BlendMode::kBlendModeAlpha);
+	Object3dCommon::GetInstance()->DrawCommon();
 	//for (const auto& iceRain : iceRains_) {
 	//	if (iceRain) {
 	//		iceRain->Draw();

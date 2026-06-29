@@ -20,11 +20,22 @@ void ModelManager::LoadModel(const std::string& directionalPath, const std::stri
 		return;
 	}
 
+	namespace fs = std::filesystem;
+	fs::path directoryPath = directionalPath;
+	std::string filename = filePath;
+	const fs::path requestedPath = fs::path(directionalPath) / filePath;
+	if (requestedPath.has_extension() || fs::path(filePath).has_parent_path()) {
+		directoryPath = requestedPath.parent_path();
+		filename = requestedPath.filename().string();
+	} else {
+		filename = filePath + ".obj";
+	}
+
 	std::unique_ptr<Model> model = std::make_unique<Model>();
-	model->LoadObjFileAssimp(directionalPath, filePath + ".obj");
+	model->LoadObjFileAssimp(directoryPath.string(), filename);
 	model->Initialize();
 	models.insert(std::make_pair(filePath, std::move(model)));
-	modelSources[filePath] = ModelSource{directionalPath, filePath + ".obj", false};
+	modelSources[filePath] = ModelSource{directoryPath.string(), filename, false};
 }
 void ModelManager::LoadGltfModel(const std::string& directionalPath, const std::string& filePath) {
 	if (models.contains(filePath)) {

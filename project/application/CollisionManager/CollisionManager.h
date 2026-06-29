@@ -4,7 +4,6 @@
 #include <string>
 #include <vector>
 class EnemyManager;
-class ExpCubeManager;
 class House;
 class Player;
 class Boss;
@@ -17,5 +16,5 @@ public:
 	bool CheckCollision(std::string name, std::string name2);
 
 	bool HandleGameSceneCollisions(
-	    Player& player, EnemyManager& enemyManager, ExpCubeManager& expCubeManager, House& house, Boss* boss, Vector3* outHitEnemyPos = nullptr, bool* outDidPlayerAttackHitEnemy = nullptr);
+	    Player& player, EnemyManager& enemyManager,House& house, Boss* boss, Vector3* outHitEnemyPos = nullptr, bool* outDidPlayerAttackHitEnemy = nullptr);
 };

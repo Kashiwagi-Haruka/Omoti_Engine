@@ -6,7 +6,7 @@
 #include "Object/Background/Sky.h"
 #include "Object/Characters/Model/CharacterModel.h"
 #include "Object/ExpCube/ExpCubeManager.h"
-#include "Object/MapchipField.h"
+#include "Object/Field/Field.h"
 #include "Object/Player/Player.h"
 #include "Object3d/Object3dCommon.h"
 #include "Pause/Pause.h"
@@ -29,7 +29,7 @@ void TutorialScene::Initialize() {
 	cameraController_ = std::make_unique<CameraController>();
 	skyDome_ = std::make_unique<Sky>();
 	player_ = std::make_unique<Player>();
-	field_ = std::make_unique<MapchipField>();
+	field_ = std::make_unique<Field>();
 	pause_ = std::make_unique<Pause>();
 	tutorialUI_ = std::make_unique<TutorialUI>();
 	expCubeManager_ = std::make_unique<ExpCubeManager>();

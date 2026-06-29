@@ -6,7 +6,6 @@
 #include <memory>
 
 class EnemyManager;
-class ExpCubeManager;
 class Boss;
 class Player;
 class Camera;
@@ -24,7 +23,6 @@ public:
 
 	House* GetHouse() const { return house.get(); }
 	EnemyManager* GetEnemyManager() const { return enemyManager.get(); }
-	ExpCubeManager* GetExpCubeManager() const { return expCubeManager.get(); }
 	bool IsBossActive() const { return isBossActive_; }
 	bool IsGoalActive() const { return goalActive; }
 	bool IsLevelSelecting() const { return isLevelSelecting; }
@@ -32,7 +30,6 @@ public:
 private:
 	std::unique_ptr<House> house;
 	std::unique_ptr<EnemyManager> enemyManager;
-	std::unique_ptr<ExpCubeManager> expCubeManager;
 	std::unique_ptr<Sprite> phaseSprites_[5];
 	std::unique_ptr<Sprite> bossHpBarSprite_;
 	std::unique_ptr<Sprite> bossHpBarBackSprite_;

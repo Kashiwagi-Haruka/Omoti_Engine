@@ -1,14 +1,19 @@
+#define NOMINMAX
 #include "EditorAsset.h"
-
 #include "Engine/BaseScene/SceneManager.h"
 #include "Engine/Texture/TextureManager.h"
 #include <algorithm>
 #include <fstream>
 #include <imgui.h>
+#ifdef _WIN32
+#include <Windows.h>
+#include <commdlg.h>
+#endif
 
 namespace {
 constexpr const char* kDragDropPayloadType = "OMOTI_EDITOR_ASSET";
 constexpr const char* kAssetExtension = ".asset";
+constexpr const char* kDefaultObjectModelName = "debugBox";
 
 std::string SanitizeFileName(std::string name) {
 	for (char& c : name) {
@@ -56,13 +61,41 @@ void EditorAsset::EnsureSceneAssetFolders() {
 	}
 }
 
-void EditorAsset::WriteAssetFile(const std::filesystem::path& path, AssetCategory category, const std::string& name) {
+void EditorAsset::WriteAssetFile(const std::filesystem::path& path, AssetCategory category, const std::string& name, const std::string& source) {
 	std::ofstream file(path);
 	if (!file.is_open()) {
 		return;
 	}
 	file << "category=" << CategoryToLabel(category) << '\n';
 	file << "name=" << name << '\n';
+	if (!source.empty()) {
+		file << "source=" << source << '\n';
+	}
+}
+
+std::string EditorAsset::MakeUniqueAssetName(AssetCategory category, const std::string& baseName) {
+	const std::string fallback = baseName.empty() ? "Asset" : baseName;
+	std::string uniqueName = fallback;
+	int suffix = 1;
+	while (std::filesystem::exists(GetCategoryPath(category) / (SanitizeFileName(uniqueName) + kAssetExtension))) {
+		uniqueName = fallback + std::to_string(suffix++);
+	}
+	return uniqueName;
+}
+
+std::string EditorAsset::ToResourceRelativeObjPath(const std::filesystem::path& objPath) {
+	if (objPath.empty()) {
+		return {};
+	}
+	std::filesystem::path normalized = objPath.lexically_normal();
+	std::filesystem::path resources = std::filesystem::absolute("Resources").lexically_normal();
+	std::filesystem::path absolute = std::filesystem::absolute(normalized).lexically_normal();
+	std::error_code errorCode;
+	std::filesystem::path relative = std::filesystem::relative(absolute, resources, errorCode);
+	if (!errorCode && !relative.empty() && *relative.begin() != "..") {
+		return relative.generic_string();
+	}
+	return normalized.generic_string();
 }
 
 std::vector<EditorAsset::AssetEntry> EditorAsset::CollectEntries(AssetCategory category) {
@@ -75,16 +108,19 @@ std::vector<EditorAsset::AssetEntry> EditorAsset::CollectEntries(AssetCategory c
 			continue;
 		}
 		std::string assetName = entry.path().stem().string();
+		std::string source;
 		std::ifstream file(entry.path());
 		std::string line;
 		while (std::getline(file, line)) {
 			constexpr const char* kNamePrefix = "name=";
+			constexpr const char* kSourcePrefix = "source=";
 			if (line.rfind(kNamePrefix, 0) == 0) {
 				assetName = line.substr(std::char_traits<char>::length(kNamePrefix));
-				break;
+			} else if (line.rfind(kSourcePrefix, 0) == 0) {
+				source = line.substr(std::char_traits<char>::length(kSourcePrefix));
 			}
 		}
-		entries.push_back({category, assetName, entry.path()});
+		entries.push_back({category, assetName, source.empty() ? assetName : source, entry.path()});
 	}
 	std::sort(entries.begin(), entries.end(), [](const AssetEntry& a, const AssetEntry& b) { return a.name < b.name; });
 	return entries;
@@ -92,21 +128,26 @@ std::vector<EditorAsset::AssetEntry> EditorAsset::CollectEntries(AssetCategory c
 
 void EditorAsset::CreatePrimitiveAsset(const std::string& primitiveName) {
 	EnsureSceneAssetFolders();
-	const std::filesystem::path path = GetCategoryPath(AssetCategory::Primitive) / (SanitizeFileName(primitiveName) + kAssetExtension);
-	WriteAssetFile(path, AssetCategory::Primitive, primitiveName);
+	const std::string assetName = MakeUniqueAssetName(AssetCategory::Primitive, primitiveName);
+	const std::filesystem::path path = GetCategoryPath(AssetCategory::Primitive) / (SanitizeFileName(assetName) + kAssetExtension);
+	WriteAssetFile(path, AssetCategory::Primitive, assetName, primitiveName);
 }
 
 void EditorAsset::CreateObject3dAsset(const std::string& modelName) {
 	EnsureSceneAssetFolders();
-	const std::filesystem::path path = GetCategoryPath(AssetCategory::Object3d) / (SanitizeFileName(modelName) + kAssetExtension);
-	WriteAssetFile(path, AssetCategory::Object3d, modelName);
+	const std::string modelPath = modelName.empty() ? kDefaultObjectModelName : modelName;
+	const std::string baseName = std::filesystem::path(modelPath).stem().string().empty() ? modelPath : std::filesystem::path(modelPath).stem().string();
+	const std::string assetName = MakeUniqueAssetName(AssetCategory::Object3d, baseName);
+	const std::filesystem::path path = GetCategoryPath(AssetCategory::Object3d) / (SanitizeFileName(assetName) + kAssetExtension);
+	WriteAssetFile(path, AssetCategory::Object3d, assetName, modelPath);
 }
 
 void EditorAsset::CreateAudioAsset(const std::filesystem::path& audioPath) {
 	EnsureSceneAssetFolders();
 	const std::string assetName = audioPath.stem().string().empty() ? audioPath.filename().string() : audioPath.stem().string();
-	const std::filesystem::path path = GetCategoryPath(AssetCategory::Audio) / (SanitizeFileName(assetName) + kAssetExtension);
-	WriteAssetFile(path, AssetCategory::Audio, audioPath.string());
+	const std::string uniqueName = MakeUniqueAssetName(AssetCategory::Audio, assetName);
+	const std::filesystem::path path = GetCategoryPath(AssetCategory::Audio) / (SanitizeFileName(uniqueName) + kAssetExtension);
+	WriteAssetFile(path, AssetCategory::Audio, uniqueName, audioPath.string());
 }
 
 void EditorAsset::DrawBreadcrumb() {
@@ -139,7 +180,7 @@ void EditorAsset::DrawAssetTile(const AssetEntry& entry) {
 	drawList->AddText(labelPos, IM_COL32(255, 255, 255, 255), entry.name.c_str());
 
 	if (ImGui::BeginDragDropSource(ImGuiDragDropFlags_SourceAllowNullID)) {
-		const std::string payload = std::string(CategoryToLabel(entry.category)) + "|" + entry.name;
+		const std::string payload = std::string(CategoryToLabel(entry.category)) + "|" + (entry.source.empty() ? entry.name : entry.source);
 		ImGui::SetDragDropPayload(kDragDropPayloadType, payload.c_str(), payload.size() + 1);
 		ImGui::Text("Add %s/%s to Hierarchy", CategoryToLabel(entry.category), entry.name.c_str());
 		ImGui::EndDragDropSource();
@@ -193,7 +234,35 @@ void EditorAsset::DrawAddPopup() {
 				}
 				ImGui::EndMenu();
 			}
-			ImGui::InputText("Object3d Model", object3dModelName_, sizeof(object3dModelName_));
+			ImGui::Text("Object3d Model: %s", object3dModelName_[0] == '\0' ? "debugBox (default)" : object3dModelName_);
+			if (ImGui::Button("Select Object3d Obj")) {
+#ifdef _WIN32
+				char fileName[MAX_PATH] = {};
+				OPENFILENAMEA openFileName = {};
+				openFileName.lStructSize = sizeof(openFileName);
+				openFileName.hwndOwner = nullptr;
+				openFileName.lpstrFilter = "Wavefront OBJ (*.obj)\0*.obj\0All Files (*.*)\0*.*\0";
+				openFileName.lpstrFile = fileName;
+				openFileName.nMaxFile = MAX_PATH;
+				const std::filesystem::path initialDir = std::filesystem::absolute("Resources");
+				const std::string initialDirString = initialDir.string();
+				openFileName.lpstrInitialDir = initialDirString.c_str();
+				openFileName.Flags = OFN_FILEMUSTEXIST | OFN_PATHMUSTEXIST | OFN_NOCHANGEDIR;
+				if (GetOpenFileNameA(&openFileName)) {
+					const std::string selectedPath = ToResourceRelativeObjPath(fileName);
+					std::copy_n(selectedPath.c_str(), std::min(selectedPath.size(), sizeof(object3dModelName_) - 1), object3dModelName_);
+					object3dModelName_[std::min(selectedPath.size(), sizeof(object3dModelName_) - 1)] = '\0';
+				}
+#else
+				ImGui::OpenPopup("Object3d Obj Select Unsupported");
+#endif
+			}
+#ifndef _WIN32
+			if (ImGui::BeginPopup("Object3d Obj Select Unsupported")) {
+				ImGui::TextUnformatted("OBJ file dialog is only available on Windows builds.");
+				ImGui::EndPopup();
+			}
+#endif
 			if (ImGui::MenuItem("Add Object3d")) {
 				CreateObject3dAsset(object3dModelName_);
 				selectedCategory_ = AssetCategory::Object3d;
@@ -208,6 +277,7 @@ void EditorAsset::DrawAddPopup() {
 		ImGui::EndPopup();
 	}
 }
+
 
 void EditorAsset::EditorDraw() {
 #ifdef USE_IMGUI

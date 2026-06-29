@@ -6,7 +6,7 @@
 #include <memory>
 
 class CameraController;
-class MapchipField;
+class Field;
 class Player;
 class Sky;
 class Sprite;
@@ -36,7 +36,7 @@ private:
 	std::unique_ptr<CameraController> cameraController_;
 	std::unique_ptr<Sky> skyDome_;
 	std::unique_ptr<Player> player_;
-	std::unique_ptr<MapchipField> field_;
+	std::unique_ptr<Field> field_;
 	std::unique_ptr<ExpCubeManager> expCubeManager_;
 	std::unique_ptr<Sprite> controlSprite_;
 	std::unique_ptr<TutorialUI> tutorialUI_;
