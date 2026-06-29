@@ -48,6 +48,25 @@ bool CollisionManager::HandleGameSceneCollisions(
 
 		Vector3 enemyPos = enemy->GetPosition();
 		AABB enemyAabb = MakeAabb(enemyPos, enemy->GetScale());
+		bool hitPlayerBody = player.GetIsAlive() && RigidBody::isCollision(enemyAabb, playerAabb);
+		if (hitPlayerBody) {
+			Vector3 toEnemy = enemyPos - player.GetPosition();
+			toEnemy.y = 0.0f;
+			if (Function::LengthSquared(toEnemy) < 0.0001f) {
+				toEnemy = {1.0f, 0.0f, 0.0f};
+			}
+			Vector3 pushDir = Function::Normalize(toEnemy);
+			Vector3 playerScale = player.GetScale();
+			Vector3 enemyScale = enemy->GetScale();
+			float playerRadius = std::max(playerScale.x, playerScale.z);
+			float enemyRadius = std::max(enemyScale.x, enemyScale.z);
+			float minDistance = playerRadius + enemyRadius;
+			Vector3 correctedPos = player.GetPosition() + pushDir * minDistance;
+			correctedPos.y = enemyPos.y;
+			enemy->SetPosition(correctedPos);
+			enemyPos = correctedPos;
+			enemyAabb = MakeAabb(enemyPos, enemy->GetScale());
+		}
 		bool hitHouseBody = RigidBody::isCollision(enemyAabb, houseAabb);
 		if (hitHouseBody) {
 			Vector3 toEnemy = enemyPos - house.GetPosition();

@@ -4,6 +4,7 @@
 #include "Engine/BaseScene/SceneManager.h"
 #include "Engine/Editor/EditorData/Object3d/EditorObject3d.h"
 #include "Engine/Editor/EditorData/Primitive/EditorPrimitive.h"
+#include "Engine/Editor/EditorTool/Command/EditorCommand.h"
 #include "Engine/Editor/EditorTool/Grid/EditorGrid.h"
 #include "Engine/Editor/EditorTool/ToolBar/ToolBar.h"
 #include "Engine/Loadfile/JSON/JsonManager.h"
@@ -1241,7 +1242,16 @@ void Hierarchy::DrawSelectedObjectGuizmo(const ImGuiViewport* viewport, float co
 void Hierarchy::DrawObjectEditors() {
 	LoadObjectEditorsFromJsonIfExists("objectEditors.json");
 #ifdef USE_IMGUI
-
+	if (!isPlaying_ && !ImGui::IsAnyItemActive()) {
+		if (EditorCommand::GetUndo()) {
+			UndoEditorChange();
+			saveStatusMessage_ = "Undo";
+		}
+		if (EditorCommand::GetRedo()) {
+			RedoEditorChange();
+			saveStatusMessage_ = "Redo";
+		}
+	}
 	if (!isPlaying_) {
 		for (size_t i = 0; i < objects_.size(); ++i) {
 			Object3d* object = objects_[i];

@@ -187,7 +187,15 @@ void Enemy::StartDeathAnimation() {
 	object_->SetColor(kDeathColor);
 }
 void Enemy::BulletCollision() {}
-
+void Enemy::SetPosition(const Vector3& position) {
+	transform_.translate = position;
+	if (object_) {
+		object_->SetTransform(transform_);
+	}
+	if (adhesion_) {
+		adhesion_->SetTransform(transform_);
+	}
+}
 void Enemy::SetIsStun(bool IsStun) { isStun_ = IsStun; }
 
 float Enemy::GetAttackHitSize() const {

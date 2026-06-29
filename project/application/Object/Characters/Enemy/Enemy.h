@@ -79,7 +79,7 @@ public:
 	}
 	Vector3 GetPosition() { return transform_.translate; }
 	Vector3 GetScale() { return transform_.scale; }
-	void SetPosition(const Vector3& position) { transform_.translate = position; }
+	void SetPosition(const Vector3& position);
 	float GetAttackRange() const { return attackRange_; }
 	float GetAttackHitSize() const;
 	Vector3 GetAttackPosition() const;
