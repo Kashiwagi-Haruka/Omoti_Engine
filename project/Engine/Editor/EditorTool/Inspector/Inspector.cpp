@@ -33,7 +33,7 @@ std::string ToProjectRelativePath(const char* fileName) {
 	std::filesystem::path current = std::filesystem::current_path().lexically_normal();
 	std::error_code errorCode;
 	std::filesystem::path relative = std::filesystem::relative(selected, current, errorCode);
-	if (!errorCode && !relative.empty() && relative.native().find("..") != 0) {
+	if (!errorCode && !relative.empty() && relative.generic_string().find("..") != 0) {
 		return relative.generic_string();
 	}
 	return selected.generic_string();
