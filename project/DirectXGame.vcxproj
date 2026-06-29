@@ -181,7 +181,7 @@ copy "$(WindowsSdkDir)\bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)\
     <ClCompile Include="application\Object\ExpCube\ExpCubeManager.cpp" />
     <ClCompile Include="application\Object\House\House.cpp" />
     <ClCompile Include="application\Object\House\HouseHP.cpp" />
-    <ClCompile Include="application\Object\MapchipField.cpp" />
+    <ClCompile Include="application\Object\Field\Field.cpp" />
     <ClCompile Include="application\Object\Player\Attack\PlayerAttack.cpp" />
     <ClCompile Include="application\Object\Player\Attack\PlayerFallAttack.cpp" />
     <ClCompile Include="application\Object\Player\Attack\Skill\PlayerSkill.cpp" />
@@ -367,7 +367,7 @@ copy "$(WindowsSdkDir)\bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)\
     <ClInclude Include="application\Object\ExpCube\ExpCubeManager.h" />
     <ClInclude Include="application\Object\House\House.h" />
     <ClInclude Include="application\Object\House\HouseHP.h" />
-    <ClInclude Include="application\Object\MapchipField.h" />
+    <ClInclude Include="application\Object\Field\Field.h" />
     <ClInclude Include="application\Object\Player\Attack\PlayerAttack.h" />
     <ClInclude Include="application\Object\Player\Attack\PlayerFallAttack.h" />
     <ClInclude Include="application\Object\Player\Attack\Skill\PlayerSkill.h" />

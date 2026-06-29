@@ -193,6 +193,14 @@ private:
 	// ルートシグネチャ・DescriptorHeap共通設定
 	void DrawSet();
 
+	enum DrawCommons {
+		DEFAULT,
+		TOON,
+		EMMISIVE,
+		NOCULL,
+
+	};
+
 public:
 	// シングルトン取得
 	static Object3dCommon* GetInstance();

@@ -447,7 +447,7 @@
     <ClCompile Include="application\CameraController\LockOnCamera\LockOnCamera.cpp">
       <Filter>Application\Camera</Filter>
     </ClCompile>
-    <ClCompile Include="application\Object\MapchipField.cpp">
+    <ClCompile Include="application\Object\Field\Field.cpp">
       <Filter>Application\field</Filter>
     </ClCompile>
     <ClCompile Include="application\UI\Menu\Menu.cpp">
@@ -953,7 +953,7 @@
     <ClInclude Include="application\CameraController\LockOnCamera\LockOnCamera.h">
       <Filter>Application\Camera</Filter>
     </ClInclude>
-    <ClInclude Include="application\Object\MapchipField.h">
+    <ClInclude Include="application\Object\Field\Field.h">
       <Filter>Application\field</Filter>
     </ClInclude>
     <ClInclude Include="application\UI\Menu\Menu.h">

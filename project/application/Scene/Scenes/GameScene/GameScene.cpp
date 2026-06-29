@@ -79,7 +79,7 @@ GameScene::GameScene() {
 	rasen_ = std::make_unique<Rasen>();
 	openWorld_ = std::make_unique<OpenWorld>();
 
-	field = std::make_unique<MapchipField>();
+	field = std::make_unique<Field>();
 	sceneTransition = std::make_unique<SceneTransition>();
 	uimanager = std::make_unique<UIManager>();
 
@@ -112,7 +112,6 @@ void GameScene::Initialize() {
 	skyDome->Initialize(cameraController->GetCamera());
 	player->Initialize(cameraController->GetCamera());
 
-	field->LoadFromCSV("Resources/CSV/MapChip_stage1.csv");
 	field->Initialize(cameraController->GetCamera());
 	sceneTransition->Initialize(false);
 	isTransitionIn = true;

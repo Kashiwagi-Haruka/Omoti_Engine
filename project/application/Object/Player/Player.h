@@ -13,7 +13,7 @@
 #include "Attack/PlayerAttack.h"
 class Camera;
 class PlayerBullet;
-class MapchipField;
+class Field;
 
 class Player {
 
@@ -52,7 +52,7 @@ class Player {
 
 	Camera* camera_;
 
-	MapchipField* map_ = nullptr;
+	Field* map_ = nullptr;
 
 	bool isSelect_;
 	bool isLevelUP;
@@ -77,7 +77,7 @@ public:
 	PlayerSkill* GetSkill() { return attack_->GetSkill(); }
 
 	void SetCamera(Camera* camera) { camera_ = camera; }
-	void SetMap(MapchipField* map) { map_ = map; }
+	void SetMap(Field* map) { map_ = map; }
 	Vector3 GetPosition() { return transform_.translate; }
 	Vector3 GetVelocity() { return velocity_; }
 	bool GetIsAlive() { return isAlive; }

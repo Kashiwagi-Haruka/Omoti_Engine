@@ -8,7 +8,7 @@
 #include "Light/CommonLight/SpotCommonLight.h"
 #include "Object/Characters/CharacterDisplay/CharacterDisplay.h"
 #include "Object/Characters/Model/CharacterModel.h"
-#include "Object/MapchipField.h"
+#include "Object/Field/Field.h"
 #include "Object3d/Object3d.h"
 #include "OpenWorld/OpenWorld.h"
 #include "Pause/Pause.h"
@@ -42,7 +42,7 @@ private:
 	std::unique_ptr<Player> player;
 	std::unique_ptr<Sky> skyDome;
 	std::unique_ptr<CameraController> cameraController;
-	std::unique_ptr<MapchipField> field;
+	std::unique_ptr<Field> field;
 	std::unique_ptr<Pause> pause;
 
 	CollisionManager collisionManager_;
