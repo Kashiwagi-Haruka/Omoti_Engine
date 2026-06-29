@@ -183,14 +183,14 @@
           0.0
         ],
         "scale": [
-          1.0,
-          1.0,
-          1.0
+          5.0,
+          5.0,
+          5.0
         ],
         "translate": [
           0.0,
           0.0,
-          16.167261123657227
+          75.0
         ]
       }
     }
@@ -302,6 +302,63 @@
           1.0,
           1.0,
           1.0
+        ],
+        "translate": [
+          0.0,
+          0.0,
+          0.0
+        ]
+      }
+    },
+    {
+      "editorId": "",
+      "index": 2,
+      "material": {
+        "color": [
+          1.0,
+          1.0,
+          1.0,
+          1.0
+        ],
+        "distortionFalloff": 1.0,
+        "distortionStrength": 0.0,
+        "enableLighting": true,
+        "environmentCoefficient": 0.0,
+        "grayscaleEnabled": false,
+        "sepiaEnabled": false,
+        "shininess": 40.0,
+        "uvAnchor": [
+          0.0,
+          0.0
+        ],
+        "uvRotate": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "uvScale": [
+          1.0,
+          1.0,
+          1.0
+        ],
+        "uvTranslate": [
+          0.0,
+          0.0,
+          0.0
+        ]
+      },
+      "name": "Cylinder",
+      "primitiveType": "Cylinder",
+      "transform": {
+        "rotate": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "scale": [
+          100.0,
+          1.0,
+          100.0
         ],
         "translate": [
           0.0,
