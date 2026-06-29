@@ -34,7 +34,7 @@ void Enemy::Initialize(Camera* camera, Vector3 translates) {
 	object_->SetModel("Enemy");
 	camera_ = camera;
 	transform_ = {
-	    .scale{1.0f, 1.0f, 1.0f},
+	    .scale{3.0f, 3.0f, 3.0f},
         .rotate{0.0f, 0.0f, 0.0f},
         .translate = translates
     };
