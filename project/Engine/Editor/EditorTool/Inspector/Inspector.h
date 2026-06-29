@@ -23,6 +23,7 @@ struct InspectorMaterial final {
 	Vector3 uvRotate = {0.0f, 0.0f, 0.0f};
 	Vector3 uvTranslate = {0.0f, 0.0f, 0.0f};
 	Vector2 uvAnchor = {0.0f, 0.0f};
+	std::string texturePath;
 };
 
 class Inspector final {

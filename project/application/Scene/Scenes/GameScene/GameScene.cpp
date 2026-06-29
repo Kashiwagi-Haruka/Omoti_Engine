@@ -70,7 +70,7 @@ bool TryFindNearestEnemyInPlayerFront(Player& player, EnemyManager& enemyManager
 } // namespace
 
 GameScene::GameScene() {
-	Object3dCommon::GetInstance()->SetEnvironmentMapTexture("Resources/Skybox/sky.dds");
+	Object3dCommon::GetInstance()->SetEnvironmentMapTexture("Resources/SkyBox/sky.dds");
 	characterModel.LoadModel();
 	cameraController = std::make_unique<CameraController>();
 	skyDome = std::make_unique<Sky>();

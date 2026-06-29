@@ -601,6 +601,7 @@ bool Hierarchy::SaveObjectEditorsToJson(const std::string& filePath) const {
 		    {"uvRotate",               {material.uvRotate.x, material.uvRotate.y, material.uvRotate.z}         },
 		    {"uvTranslate",            {material.uvTranslate.x, material.uvTranslate.y, material.uvTranslate.z}},
 		    {"uvAnchor",               {material.uvAnchor.x, material.uvAnchor.y}                              },
+		    {"texturePath",            material.texturePath		                                            },
 		};
 		root["objects"].push_back(objectJson);
 	}
@@ -635,6 +636,7 @@ bool Hierarchy::SaveObjectEditorsToJson(const std::string& filePath) const {
 		    {"uvRotate",               {material.uvRotate.x, material.uvRotate.y, material.uvRotate.z}         },
 		    {"uvTranslate",            {material.uvTranslate.x, material.uvTranslate.y, material.uvTranslate.z}},
 		    {"uvAnchor",               {material.uvAnchor.x, material.uvAnchor.y}                              },
+		    {"texturePath",            material.texturePath		                                            },
 		};
 		root["primitives"].push_back(primitiveJson);
 	}
@@ -767,6 +769,9 @@ bool Hierarchy::LoadObjectEditorsFromJson(const std::string& filePath) {
 				if (materialJson.contains("uvAnchor") && materialJson["uvAnchor"].is_array() && materialJson["uvAnchor"].size() == 2) {
 					material.uvAnchor = {materialJson["uvAnchor"][0].get<float>(), materialJson["uvAnchor"][1].get<float>()};
 				}
+				if (materialJson.contains("texturePath") && materialJson["texturePath"].is_string()) {
+					material.texturePath = materialJson["texturePath"].get<std::string>();
+				}
 			}
 			editorMaterials_[index] = material;
 			EditorObject3d::ApplyEditorValues(objects_[index], editorTransforms_[index], material);
@@ -869,6 +874,9 @@ bool Hierarchy::LoadObjectEditorsFromJson(const std::string& filePath) {
 				}
 				if (materialJson.contains("uvAnchor") && materialJson["uvAnchor"].is_array() && materialJson["uvAnchor"].size() == 2) {
 					material.uvAnchor = {materialJson["uvAnchor"][0].get<float>(), materialJson["uvAnchor"][1].get<float>()};
+				}
+				if (materialJson.contains("texturePath") && materialJson["texturePath"].is_string()) {
+					material.texturePath = materialJson["texturePath"].get<std::string>();
 				}
 			}
 			primitiveEditorMaterials_[index] = material;
@@ -1341,8 +1349,8 @@ void Hierarchy::DrawObjectEditors() {
 			ImGui::EndPopup();
 		}
 		if (toolbarResult.stopRequested) {
-			SceneManager::GetInstance()->RequestReinitializeCurrentScene();
 			SetPlayMode(false);
+			SceneManager::GetInstance()->RequestReinitializeCurrentScene();
 			saveStatusMessage_ = "Stopped: restored editor state";
 		}
 	}

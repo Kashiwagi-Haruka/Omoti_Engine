@@ -78,6 +78,7 @@ private:
 	Matrix4x4 portalCameraWorld1_{};
 	bool usePortalProjection_ = false;
 	std::string editorId_;
+	std::string texturePath_;
 
 public:
 	~Primitive();
@@ -136,6 +137,7 @@ public:
 	void SetDistortionFalloff(float falloff);
 	// 使用テクスチャの SRV インデックスを直接設定
 	void SetTextureIndex(uint32_t textureIndex);
+	void SetTexturePath(const std::string& texturePath);
 	// サブテクスチャの SRV インデックスを設定 (portal shader の t4)
 	void SetSecondaryTextureIndex(uint32_t textureIndex);
 	void ClearSecondaryTextureIndex();
@@ -157,7 +159,11 @@ public:
 	bool IsSepiaEnabled() const;
 	float GetDistortionStrength() const;
 	float GetDistortionFalloff() const;
+	Vector3 GetUvScale() const { return uvScale_; }
+	Vector3 GetUvRotate() const { return uvRotate_; }
+	Vector3 GetUvTranslate() const { return uvTranslate_; }
 	Vector2 GetUvAnchor() const { return uvAnchor_; }
+	const std::string& GetTexturePath() const { return texturePath_; }
 	const Matrix4x4& GetWorldMatrix() const { return worldMatrix; };
 
 private:
