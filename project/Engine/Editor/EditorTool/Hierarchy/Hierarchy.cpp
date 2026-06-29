@@ -366,7 +366,7 @@ void Hierarchy::ApplyEditorSnapshot(const EditorSnapshot& snapshot) {
 			continue;
 		}
 		if (i < objectModelNames_.size() && objects_[i]->GetModelFilePath() != objectModelNames_[i]) {
-			LoadEditorObjectModel(modelName);
+			LoadEditorObjectModel(objectModelNames_[i]);
 			objects_[i]->SetModel(objectModelNames_[i]);
 		}
 		EditorObject3d::ApplyEditorValues(objects_[i], editorTransforms_[i], editorMaterials_[i]);

@@ -1,13 +1,11 @@
+#define NOMINMAX
 #include "EditorAsset.h"
-
 #include "Engine/BaseScene/SceneManager.h"
 #include "Engine/Texture/TextureManager.h"
 #include <algorithm>
-#include <cstring>
 #include <fstream>
 #include <imgui.h>
 #ifdef _WIN32
-#define NOMINMAX
 #include <Windows.h>
 #include <commdlg.h>
 #endif
@@ -252,8 +250,8 @@ void EditorAsset::DrawAddPopup() {
 				openFileName.Flags = OFN_FILEMUSTEXIST | OFN_PATHMUSTEXIST | OFN_NOCHANGEDIR;
 				if (GetOpenFileNameA(&openFileName)) {
 					const std::string selectedPath = ToResourceRelativeObjPath(fileName);
-					std::strncpy(object3dModelName_, selectedPath.c_str(), sizeof(object3dModelName_) - 1);
-					object3dModelName_[sizeof(object3dModelName_) - 1] = '\0';
+					std::copy_n(selectedPath.c_str(), std::min(selectedPath.size(), sizeof(object3dModelName_) - 1), object3dModelName_);
+					object3dModelName_[std::min(selectedPath.size(), sizeof(object3dModelName_) - 1)] = '\0';
 				}
 #else
 				ImGui::OpenPopup("Object3d Obj Select Unsupported");
