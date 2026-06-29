@@ -146,9 +146,13 @@ std::string PrimitiveTypeToName(Primitive::PrimitiveName primitiveName) {
 		return "Box";
 	}
 }
-
+void LoadEditorObjectModel(const std::string& modelName) {
+	const std::filesystem::path modelPath(modelName);
+	const std::string directoryPath = (modelPath.has_extension() || modelPath.has_parent_path()) ? "Resources" : "Resources/3d";
+	ModelManager::GetInstance()->LoadModel(directoryPath, modelName);
+}
 Object3d* CreateEditorOwnedObject(std::vector<std::unique_ptr<Object3d>>& ownedObjects, const std::string& modelName, const std::string& editorId) {
-	ModelManager::GetInstance()->LoadModel("Resources/3d", modelName);
+	LoadEditorObjectModel(modelName);
 	std::unique_ptr<Object3d> object = std::make_unique<Object3d>();
 	object->Initialize();
 	object->SetModel(modelName);
@@ -362,7 +366,7 @@ void Hierarchy::ApplyEditorSnapshot(const EditorSnapshot& snapshot) {
 			continue;
 		}
 		if (i < objectModelNames_.size() && objects_[i]->GetModelFilePath() != objectModelNames_[i]) {
-			ModelManager::GetInstance()->LoadModel("Resources/3d", objectModelNames_[i]);
+			LoadEditorObjectModel(modelName);
 			objects_[i]->SetModel(objectModelNames_[i]);
 		}
 		EditorObject3d::ApplyEditorValues(objects_[i], editorTransforms_[i], editorMaterials_[i]);
@@ -707,7 +711,7 @@ bool Hierarchy::LoadObjectEditorsFromJson(const std::string& filePath) {
 						objectModelNames_.resize(index + 1);
 					}
 					objectModelNames_[index] = modelName;
-					ModelManager::GetInstance()->LoadModel("Resources/3d", modelName);
+					LoadEditorObjectModel(modelName);
 					objects_[index]->SetModel(modelName);
 				}
 			}
@@ -1485,7 +1489,7 @@ void Hierarchy::DrawObjectEditors() {
 						EditorObject3d::ApplyEditorValues(object, transform, material);
 					}
 					if (modelChanged && !modelName.empty()) {
-						ModelManager::GetInstance()->LoadModel("Resources/3d", modelName);
+						LoadEditorObjectModel(modelName);
 						object->SetModel(modelName);
 						selectionBoxDirty_ = true;
 					}

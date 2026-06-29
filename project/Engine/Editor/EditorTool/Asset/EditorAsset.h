@@ -22,6 +22,7 @@ private:
 	struct AssetEntry {
 		AssetCategory category = AssetCategory::None;
 		std::string name;
+		std::string source;
 		std::filesystem::path path;
 	};
 
@@ -29,7 +30,9 @@ private:
 	static std::filesystem::path GetSceneAssetRootPath();
 	static std::filesystem::path GetCategoryPath(AssetCategory category);
 	static void EnsureSceneAssetFolders();
-	static void WriteAssetFile(const std::filesystem::path& path, AssetCategory category, const std::string& name);
+	static void WriteAssetFile(const std::filesystem::path& path, AssetCategory category, const std::string& name, const std::string& source = std::string());
+	static std::string MakeUniqueAssetName(AssetCategory category, const std::string& baseName);
+	static std::string ToResourceRelativeObjPath(const std::filesystem::path& objPath);
 	static std::vector<AssetEntry> CollectEntries(AssetCategory category);
 
 	void DrawBreadcrumb();
@@ -43,6 +46,6 @@ private:
 
 	AssetCategory selectedCategory_ = AssetCategory::None;
 	bool sceneFileOpened_ = true;
-	char object3dModelName_[128] = "debugBox";
+	char object3dModelName_[260] = "";
 	char audioFilePath_[260] = "Resources/Audio/";
 };
