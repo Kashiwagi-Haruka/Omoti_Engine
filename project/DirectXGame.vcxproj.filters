@@ -528,6 +528,7 @@
     <ClCompile Include="application\TutorialUI\TutorialUI.cpp">
       <Filter>Application\UI</Filter>
     </ClCompile>
+    <ClCompile Include="application\UI\Team\TeamUI.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Engine\Camera\Camera.h">
@@ -1043,6 +1044,7 @@
     <ClInclude Include="application\TutorialUI\TutorialUI.h">
       <Filter>Application\UI</Filter>
     </ClInclude>
+    <ClInclude Include="application\UI\Team\TeamUI.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include=".editorconfig" />

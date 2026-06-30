@@ -720,6 +720,64 @@
           0.0
         ]
       }
+    },
+    {
+      "editorId": "",
+      "index": 3,
+      "material": {
+        "color": [
+          1.0,
+          1.0,
+          1.0,
+          1.0
+        ],
+        "distortionFalloff": 1.0,
+        "distortionStrength": 0.0,
+        "enableLighting": true,
+        "environmentCoefficient": 0.0,
+        "grayscaleEnabled": false,
+        "sepiaEnabled": false,
+        "shininess": 40.0,
+        "texturePath": "Resources/2d/field/sea.png",
+        "uvAnchor": [
+          0.0,
+          0.0
+        ],
+        "uvRotate": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "uvScale": [
+          1.0,
+          1.0,
+          1.0
+        ],
+        "uvTranslate": [
+          0.0,
+          0.0,
+          0.0
+        ]
+      },
+      "name": "sea",
+      "primitiveType": "Plane",
+      "transform": {
+        "rotate": [
+          1.5609999895095825,
+          0.0,
+          0.0
+        ],
+        "scale": [
+          200.0,
+          200.0,
+          1.0
+        ],
+        "translate": [
+          0.0,
+          -23.639999389648438,
+          0.0
+        ]
+      }
     }
   ]
 }
