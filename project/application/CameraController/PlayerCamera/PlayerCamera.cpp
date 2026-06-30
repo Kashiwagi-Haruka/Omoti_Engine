@@ -31,8 +31,9 @@ void PlayerCamera::Update() {
 
 #endif
 	const Vector2 mouseMove = Input::GetInstance()->GetMouseMove();
-	orbitYaw_ += mouseMove.x * mouseSensitivity_;
-	orbitPitch_ += mouseMove.y * mouseSensitivity_;
+	const Vector2 rightStick = Input::GetInstance()->GetJoyStickRXY();
+	orbitYaw_ += mouseMove.x * mouseSensitivity_ + rightStick.x * stickSensitivity_;
+	orbitPitch_ += mouseMove.y * mouseSensitivity_ + rightStick.y * stickSensitivity_;
 
 	const float maxPitch = 1.2f;
 	const float minPitch = -1.2f;

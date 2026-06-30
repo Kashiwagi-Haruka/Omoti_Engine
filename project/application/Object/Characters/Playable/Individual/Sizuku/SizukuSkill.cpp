@@ -63,7 +63,7 @@ void SizukuSkill::Initialize() {
 	skillEmitter_->SetAcceleration(Vector3{0, 0.01f, 0});
 	skillEmitter_->SetAreaMin(Vector3{-transform_.scale.x, 0, -transform_.scale.z});
 	skillEmitter_->SetAreaMax(Vector3{transform_.scale.x, 1.0f, transform_.scale.z});
-	skillEmitter_->SetLife(20.0f);
+	skillEmitter_->SetLife(1.0f);
 	iceFlowers_ = std::make_unique<std::vector<Object3d>>();
 	iceFlowers_->clear();
 	iceFlowerTransforms_.clear();
