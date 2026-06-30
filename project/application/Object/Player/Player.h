@@ -81,6 +81,7 @@ public:
 	Vector3 GetPosition() { return transform_.translate; }
 	Vector3 GetVelocity() { return velocity_; }
 	bool GetIsAlive() { return isAlive; }
+	bool IsDashing() const { return isDash; }
 	bool GetIsSkillAttack() { return attack_->isSkillAttacking(); }
 	Vector3 GetSkillPosition() { return attack_->GetSkillDamagePosition(); }
 	Parameters GetParameters() { return parameters_; }

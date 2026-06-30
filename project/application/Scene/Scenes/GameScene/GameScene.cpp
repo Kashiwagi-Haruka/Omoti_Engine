@@ -22,6 +22,11 @@
 
 namespace {
 constexpr float kLockOnTargetMaxAngle = std::numbers::pi_v<float> / 4.0f;
+constexpr int kDefaultFullscreenFilterType = 1;
+constexpr int kRadialBlurFullscreenFilterType = 2;
+constexpr Vector2 kDashRadialBlurCenter = {0.5f, 0.5f};
+constexpr float kDashRadialBlurWidth = 0.04f;
+constexpr int kDashRadialBlurSampleCount = 16;
 
 bool TryFindNearestEnemyInPlayerFront(Player& player, EnemyManager& enemyManager, Vector3* outEnemyPos) {
 	if (!outEnemyPos) {
@@ -122,7 +127,7 @@ void GameScene::Initialize() {
 	uimanager->Initialize();
 	rasen_->Initialize(cameraController->GetCamera());
 	openWorld_->Initialize(cameraController->GetCamera());
-	playAreaMode_ = PlayAreaMode::kOpenWorld;
+	playAreaMode_ = PlayAreaMode::kSpiral;
 
 	activePointLightCount_ = 3;
 	pointLights_[0].color = {1.0f, 1.0f, 1.0f, 1.0f};
@@ -176,6 +181,14 @@ void GameScene::Initialize() {
 	hitVinettTimer_ = 0.0f;
 	introBlurStartKernelSize_ = 15.0f;
 	introBlurDelayTimer_ = 0.0f;
+	fullscreenFilterType_ = kDefaultFullscreenFilterType;
+	radialBlurCenter_ = kDashRadialBlurCenter;
+	radialBlurWidth_ = kDashRadialBlurWidth;
+	radialBlurSampleCount_ = kDashRadialBlurSampleCount;
+	Object3dCommon::GetInstance()->SetFullscreenFilterType(fullscreenFilterType_);
+	Object3dCommon::GetInstance()->SetRadialBlurCenter(radialBlurCenter_);
+	Object3dCommon::GetInstance()->SetRadialBlurWidth(radialBlurWidth_);
+	Object3dCommon::GetInstance()->SetRadialBlurSampleCount(radialBlurSampleCount_);
 	Object3dCommon::GetInstance()->SetDissolveEnabled(dissolveEnabled_);
 	Object3dCommon::GetInstance()->SetDissolveThreshold(dissolveThreshold_);
 	Object3dCommon::GetInstance()->SetDissolveEdgeWidth(dissolveEdgeWidth_);
@@ -366,12 +379,18 @@ void GameScene::Update() {
 	}
 
 	if (isPause && !isTransitionOut) {
+		fullscreenFilterType_ = kDefaultFullscreenFilterType;
+		Object3dCommon::GetInstance()->SetFullscreenFilterType(fullscreenFilterType_);
 		return;
 	}
 	if (isPartyMode_ && !isTransitionOut) {
+		fullscreenFilterType_ = kDefaultFullscreenFilterType;
+		Object3dCommon::GetInstance()->SetFullscreenFilterType(fullscreenFilterType_);
 		return;
 	}
 	if (isCharacterDisplayMode_ && !isTransitionOut) {
+		fullscreenFilterType_ = kDefaultFullscreenFilterType;
+		Object3dCommon::GetInstance()->SetFullscreenFilterType(fullscreenFilterType_);
 		characterDisplay_->Update();
 		return;
 	}
@@ -397,6 +416,8 @@ void GameScene::Update() {
 	skyDome->Update();
 	field->Update();
 	player->Update();
+	fullscreenFilterType_ = player->IsDashing() ? kRadialBlurFullscreenFilterType : kDefaultFullscreenFilterType;
+	Object3dCommon::GetInstance()->SetFullscreenFilterType(fullscreenFilterType_);
 	if (playAreaMode_ == PlayAreaMode::kSpiral) {
 		rasen_->Update(cameraController->GetCamera(), player.get(), boss_.get());
 		if (rasen_->IsLevelSelecting()) {
