@@ -30,7 +30,7 @@ class Enemy {
 	float attackHitSize_ = 1.2f;
 	float damageInvincibleTimer_ = 0.0f;
 	float damageInvincibleDuration_ = 0.3f;
-	float finalComboBackStepDistance_ = 0.8f;
+	float finalComboBackStepDistance_ = 5.0f;
 	int lastSkillDamageId_ = -1;
 
 	Vector3 direction_;
