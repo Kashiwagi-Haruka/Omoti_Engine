@@ -10,6 +10,8 @@ class TeamUI {
 
 
 public:
+	TeamUI();
+	~TeamUI();
 	void Initialize();
 	void Update();
 	void Draw();
