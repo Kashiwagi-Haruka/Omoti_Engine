@@ -6,6 +6,7 @@
 #include "Object3d/Object3d.h"
 #include "Vector4.h"
 #include <algorithm>
+#include <cmath>
 
 namespace {
 const Vector4 kDamageInvincibleColor = {1.0f, 0.0f, 0.0f, 1.0f};
@@ -95,6 +96,8 @@ void Enemy::Update(const Vector3& housePos, const Vector3& houseScale, const Vec
 		toTarget.y = 0.0f;
 		if (Function::LengthSquared(toTarget) > 0.0001f) {
 			Vector3 direction = Function::Normalize(toTarget);
+			direction_ = direction;
+			transform_.rotate.y = std::atan2(direction.x, direction.z);
 			velocity_ = direction * maxSpeed_;
 		} else {
 			velocity_ = {0.0f, 0.0f, 0.0f};
@@ -208,7 +211,22 @@ float Enemy::GetAttackHitSize() const {
 	}
 	return attackHitSize_;
 }
-
+void Enemy::ApplyFinalComboBackStep() {
+	if (isDying_ || !isAlive) {
+		return;
+	}
+	Vector3 forward = {std::sin(transform_.rotate.y), 0.0f, std::cos(transform_.rotate.y)};
+	if (Function::LengthSquared(forward) < 0.0001f) {
+		forward = {0.0f, 0.0f, 1.0f};
+	}
+	transform_.translate -= Function::Normalize(forward) * finalComboBackStepDistance_;
+	if (object_) {
+		object_->SetTransform(transform_);
+	}
+	if (adhesion_) {
+		adhesion_->SetTransform(transform_);
+	}
+}
 Vector3 Enemy::GetAttackPosition() const {
 	if (enemyAttack_) {
 		return enemyAttack_->GetPosition();

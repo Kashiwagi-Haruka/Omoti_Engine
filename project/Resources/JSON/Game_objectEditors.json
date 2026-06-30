@@ -254,6 +254,238 @@
           -70.0
         ]
       }
+    },
+    {
+      "editorId": "",
+      "index": 4,
+      "material": {
+        "color": [
+          1.0,
+          1.0,
+          1.0,
+          1.0
+        ],
+        "distortionFalloff": 1.0,
+        "distortionStrength": 0.0,
+        "enableLighting": true,
+        "environmentCoefficient": 0.0,
+        "grayscaleEnabled": false,
+        "sepiaEnabled": false,
+        "shininess": 40.0,
+        "texturePath": "",
+        "uvAnchor": [
+          0.0,
+          0.0
+        ],
+        "uvRotate": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "uvScale": [
+          1.0,
+          1.0,
+          1.0
+        ],
+        "uvTranslate": [
+          0.0,
+          0.0,
+          0.0
+        ]
+      },
+      "modelName": "3d/field/Pillar/Pillar.obj",
+      "name": "3d/field/Pillar/Pillar.obj",
+      "transform": {
+        "rotate": [
+          0.0,
+          0.8899999856948853,
+          0.0
+        ],
+        "scale": [
+          5.0,
+          5.0,
+          5.0
+        ],
+        "translate": [
+          54.0,
+          -20.0,
+          54.0
+        ]
+      }
+    },
+    {
+      "editorId": "",
+      "index": 5,
+      "material": {
+        "color": [
+          1.0,
+          1.0,
+          1.0,
+          1.0
+        ],
+        "distortionFalloff": 1.0,
+        "distortionStrength": 0.0,
+        "enableLighting": true,
+        "environmentCoefficient": 0.0,
+        "grayscaleEnabled": false,
+        "sepiaEnabled": false,
+        "shininess": 40.0,
+        "texturePath": "",
+        "uvAnchor": [
+          0.0,
+          0.0
+        ],
+        "uvRotate": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "uvScale": [
+          1.0,
+          1.0,
+          1.0
+        ],
+        "uvTranslate": [
+          0.0,
+          0.0,
+          0.0
+        ]
+      },
+      "modelName": "3d/field/Pillar/Pillar.obj",
+      "name": "3d/field/Pillar/Pillar.obj",
+      "transform": {
+        "rotate": [
+          0.0,
+          -0.6100000143051147,
+          0.0
+        ],
+        "scale": [
+          5.0,
+          5.0,
+          5.0
+        ],
+        "translate": [
+          -54.0,
+          -20.0,
+          54.0
+        ]
+      }
+    },
+    {
+      "editorId": "",
+      "index": 6,
+      "material": {
+        "color": [
+          1.0,
+          1.0,
+          1.0,
+          1.0
+        ],
+        "distortionFalloff": 1.0,
+        "distortionStrength": 0.0,
+        "enableLighting": true,
+        "environmentCoefficient": 0.0,
+        "grayscaleEnabled": false,
+        "sepiaEnabled": false,
+        "shininess": 40.0,
+        "texturePath": "",
+        "uvAnchor": [
+          0.0,
+          0.0
+        ],
+        "uvRotate": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "uvScale": [
+          1.0,
+          1.0,
+          1.0
+        ],
+        "uvTranslate": [
+          0.0,
+          0.0,
+          0.0
+        ]
+      },
+      "modelName": "3d/field/Pillar/Pillar.obj",
+      "name": "3d/field/Pillar/Pillar.obj",
+      "transform": {
+        "rotate": [
+          0.0,
+          -2.359999895095825,
+          0.0
+        ],
+        "scale": [
+          5.0,
+          5.0,
+          5.0
+        ],
+        "translate": [
+          -54.0,
+          -20.0,
+          -54.0
+        ]
+      }
+    },
+    {
+      "editorId": "",
+      "index": 7,
+      "material": {
+        "color": [
+          1.0,
+          1.0,
+          1.0,
+          1.0
+        ],
+        "distortionFalloff": 1.0,
+        "distortionStrength": 0.0,
+        "enableLighting": true,
+        "environmentCoefficient": 0.0,
+        "grayscaleEnabled": false,
+        "sepiaEnabled": false,
+        "shininess": 40.0,
+        "texturePath": "",
+        "uvAnchor": [
+          0.0,
+          0.0
+        ],
+        "uvRotate": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "uvScale": [
+          1.0,
+          1.0,
+          1.0
+        ],
+        "uvTranslate": [
+          0.0,
+          0.0,
+          0.0
+        ]
+      },
+      "modelName": "3d/field/Pillar/Pillar.obj",
+      "name": "3d/field/Pillar/Pillar.obj",
+      "transform": {
+        "rotate": [
+          0.0,
+          2.119999885559082,
+          0.0
+        ],
+        "scale": [
+          5.0,
+          5.0,
+          5.0
+        ],
+        "translate": [
+          54.0,
+          -20.0,
+          -54.0
+        ]
+      }
     }
   ],
   "primitives": [

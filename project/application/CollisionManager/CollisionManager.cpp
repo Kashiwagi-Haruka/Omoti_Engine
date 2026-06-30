@@ -94,7 +94,8 @@ bool CollisionManager::HandleGameSceneCollisions(
 			bool hitSword = RigidBody::isCollision(swordAabb, enemyAabb);
 			if (hitSword && enemy->CanTakeDamage()) {
 				didPlayerAttackHitEnemy = true;
-				if (IsNormalAttackComboStep(player.GetSword()->GetComboStep())) {
+				const int swordComboStep = player.GetSword()->GetComboStep();
+				if (IsNormalAttackComboStep(swordComboStep)) {
 					didNormalAttackHitEnemy = true;
 					if (outHitEnemyPos) {
 						*outHitEnemyPos = enemy->GetPosition();
@@ -105,6 +106,9 @@ bool CollisionManager::HandleGameSceneCollisions(
 				enemy->SetHPSubtract(damage);
 				enemyManager.OnEnemyDamaged(enemy.get(), damage, playerAttackAttribute);
 				ApplyAttributeDamage(*enemy, enemyManager, playerAttackAttribute);
+				if (swordComboStep == 4) {
+					enemy->ApplyFinalComboBackStep();
+				}
 				enemy->TriggerDamageInvincibility();
 				tryEnemyFlinch(enemy.get());
 			}

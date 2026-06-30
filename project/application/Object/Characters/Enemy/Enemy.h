@@ -30,6 +30,7 @@ class Enemy {
 	float attackHitSize_ = 1.2f;
 	float damageInvincibleTimer_ = 0.0f;
 	float damageInvincibleDuration_ = 0.3f;
+	float finalComboBackStepDistance_ = 0.8f;
 	int lastSkillDamageId_ = -1;
 
 	Vector3 direction_;
@@ -80,6 +81,7 @@ public:
 	Vector3 GetPosition() { return transform_.translate; }
 	Vector3 GetScale() { return transform_.scale; }
 	void SetPosition(const Vector3& position);
+	void ApplyFinalComboBackStep();
 	float GetAttackRange() const { return attackRange_; }
 	float GetAttackHitSize() const;
 	Vector3 GetAttackPosition() const;
