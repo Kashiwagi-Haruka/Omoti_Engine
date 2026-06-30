@@ -26,7 +26,7 @@ constexpr int kDefaultFullscreenFilterType = 1;
 constexpr int kRadialBlurFullscreenFilterType = 2;
 constexpr Vector2 kDashRadialBlurCenter = {0.5f, 0.5f};
 constexpr float kDashRadialBlurWidth = 0.04f;
-constexpr int kDashRadialBlurSampleCount = 16;
+constexpr int kDashRadialBlurSampleCount = 2;
 
 bool TryFindNearestEnemyInPlayerFront(Player& player, EnemyManager& enemyManager, Vector3* outEnemyPos) {
 	if (!outEnemyPos) {
