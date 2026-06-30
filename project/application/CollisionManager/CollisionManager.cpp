@@ -106,7 +106,7 @@ bool CollisionManager::HandleGameSceneCollisions(
 				enemy->SetHPSubtract(damage);
 				enemyManager.OnEnemyDamaged(enemy.get(), damage, playerAttackAttribute);
 				ApplyAttributeDamage(*enemy, enemyManager, playerAttackAttribute);
-				if (swordComboStep == 4) {
+				if (swordComboStep == 3) {
 					enemy->ApplyFinalComboBackStep();
 				}
 				enemy->TriggerDamageInvincibility();
