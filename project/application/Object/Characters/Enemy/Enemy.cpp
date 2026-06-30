@@ -30,6 +30,10 @@ void Enemy::Initialize(Camera* camera, Vector3 translates) {
 	lastSkillDamageId_ = -1;
 	isDying_ = false;
 	deathTimer_ = 0.0f;
+	finalComboBackStepTimer_ = 0.0f;
+	isFinalComboBackStepping_ = false;
+	finalComboBackStepStart_ = translates;
+	finalComboBackStepTarget_ = translates;
 
 	object_->Initialize();
 	object_->SetModel("Enemy");
@@ -80,6 +84,29 @@ void Enemy::Update(const Vector3& housePos, const Vector3& houseScale, const Vec
 		}
 	}
 	object_->SetColor(damageInvincibleTimer_ > 0.0f ? kDamageInvincibleColor : kDefaultColor);
+	if (isFinalComboBackStepping_) {
+		finalComboBackStepTimer_ += deltaTime;
+		float backStepProgress = std::clamp(finalComboBackStepTimer_ / finalComboBackStepDuration_, 0.0f, 1.0f);
+		transform_.translate = Function::Lerp(finalComboBackStepStart_, finalComboBackStepTarget_, backStepProgress);
+		velocity_ = {0.0f, 0.0f, 0.0f};
+		if (enemyAttack_) {
+			enemyAttack_->Cancel();
+			enemyAttack_->Update();
+		}
+		if (backStepProgress >= 1.0f) {
+			isFinalComboBackStepping_ = false;
+			finalComboBackStepTimer_ = 0.0f;
+		}
+		object_->SetCamera(camera_);
+		object_->SetTransform(transform_);
+		object_->Update();
+		if (adhesion_) {
+			adhesion_->SetCamera(camera_);
+			adhesion_->SetTransform(transform_);
+			adhesion_->Update();
+		}
+		return;
+	}
 	Vector3 targetPosition = housePos;
 	bool isTargetingPlayer = false;
 	if (isPlayerAlive) {
@@ -187,6 +214,8 @@ void Enemy::StartDeathAnimation() {
 	isDying_ = true;
 	deathTimer_ = 0.0f;
 	isStun_ = false;
+	isFinalComboBackStepping_ = false;
+	finalComboBackStepTimer_ = 0.0f;
 	velocity_ = {0.0f, 0.0f, 0.0f};
 	if (enemyAttack_) {
 		enemyAttack_->Cancel();
@@ -219,12 +248,13 @@ void Enemy::ApplyFinalComboBackStep() {
 	if (Function::LengthSquared(forward) < 0.0001f) {
 		forward = {0.0f, 0.0f, 1.0f};
 	}
-	transform_.translate -= Function::Normalize(forward) * finalComboBackStepDistance_;
-	if (object_) {
-		object_->SetTransform(transform_);
-	}
-	if (adhesion_) {
-		adhesion_->SetTransform(transform_);
+	finalComboBackStepStart_ = transform_.translate;
+	finalComboBackStepTarget_ = transform_.translate - Function::Normalize(forward) * finalComboBackStepDistance_;
+	finalComboBackStepTimer_ = 0.0f;
+	isFinalComboBackStepping_ = true;
+	velocity_ = {0.0f, 0.0f, 0.0f};
+	if (enemyAttack_) {
+		enemyAttack_->Cancel();
 	}
 }
 Vector3 Enemy::GetAttackPosition() const {

@@ -31,6 +31,11 @@ class Enemy {
 	float damageInvincibleTimer_ = 0.0f;
 	float damageInvincibleDuration_ = 0.3f;
 	float finalComboBackStepDistance_ = 5.0f;
+	float finalComboBackStepDuration_ = 0.18f;
+	float finalComboBackStepTimer_ = 0.0f;
+	bool isFinalComboBackStepping_ = false;
+	Vector3 finalComboBackStepStart_{};
+	Vector3 finalComboBackStepTarget_{};
 	int lastSkillDamageId_ = -1;
 
 	Vector3 direction_;
