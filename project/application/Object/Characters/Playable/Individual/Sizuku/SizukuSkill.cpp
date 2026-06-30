@@ -110,6 +110,9 @@ void SizukuSkill::Update() {
 				endTime++;
 			} else {
 				isSkillEnd = true;
+				if (skillEmitter_) {
+					skillEmitter_->ResetTimer();
+				}
 			}
 		}
 		break;
@@ -136,7 +139,10 @@ void SizukuSkill::Update() {
 	skillUnderObject_->SetTransform(damageTransform2_);
 	skillUnderObject_->Update();
 	skillUnderObject_->SetTransform(damageTransform2_);
-	skillEmitter_->Update(particle_);
+
+	if (state == State::damage && !isSkillEnd) {
+		skillEmitter_->Update(particle_);
+	}
 }
 void SizukuSkill::EnsureIceFlowerCount(int count) {
 	if (count < 0) {
@@ -213,6 +219,9 @@ void SizukuSkill::StartAttack(const Transform& playerTransform) {
 	downTime = 0;
 	damageTime = 0;
 	endTime = 0;
+	if (skillEmitter_) {
+		skillEmitter_->ResetTimer();
+	}
 	skillDamageId_++;
 }
 

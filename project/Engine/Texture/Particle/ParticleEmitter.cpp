@@ -36,7 +36,7 @@ void ParticleEmitter::Draw() {
 // EmitVisible
 // -----------------------------------------
 void ParticleEmitter::EmitVisible(bool v) { emitVisible_ = v; }
-
+void ParticleEmitter::ResetTimer() { timer = 0.0f; }
 // -----------------------------------------
 // Emit
 // -----------------------------------------
