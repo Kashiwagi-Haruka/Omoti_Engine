@@ -186,10 +186,10 @@ void EnemyHitEffect::Update() {
 		}
 	}
 	for (auto& shard : iceShards_) {
-		shard.transform.translate += shard.velocity * deltaTime*enemyScale_.x;
+		shard.transform.translate += shard.velocity * deltaTime;
 		shard.transform.rotate += shard.angularVelocity * deltaTime;
 		const float currentScale = shard.baseScale * scaleRatio;
-		shard.transform.scale = {currentScale+enemyScale_.x, currentScale+enemyScale_.y, currentScale+enemyScale_.z};
+		shard.transform.scale = {currentScale, currentScale, currentScale};
 		if (shard.object) {
 			shard.object->SetCamera(camera_);
 			shard.object->SetTransform(shard.transform);
@@ -223,7 +223,7 @@ void EnemyHitEffect::Draw() {
 		}
 	}
 	Object3dCommon::GetInstance()->SetBlendMode(BlendMode::kBlendModeAlpha);
-	Object3dCommon::GetInstance()->DrawCommon();
+	Object3dCommon::GetInstance()->DrawCommonNoCullDepth();
 	for (auto& shard : iceShards_) {
 		if (shard.object) {
 			shard.object->Draw();
@@ -231,6 +231,6 @@ void EnemyHitEffect::Draw() {
 	}
 	if (hitParticleEmitter_) {
 		hitParticleEmitter_->Draw();
-		Object3dCommon::GetInstance()->DrawCommonNoCullDepth();
 	}
+	Object3dCommon::GetInstance()->DrawCommonNoCullDepth();
 }
