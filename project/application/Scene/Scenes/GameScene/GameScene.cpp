@@ -335,9 +335,8 @@ void GameScene::Update() {
 		}
 
 		if (!isCharacterDisplayMode_) {
-			if (PlayCommand::GetTeamSelectDisplay()) {
+			if (PlayCommand::GetTeamSelectDisplay()&&!isPause) {
 				isPartyMode_ = !isPartyMode_;
-				isPause = false;
 				if (isPartyMode_) {
 					LoadTeamDisplay();
 					Input::GetInstance()->SetIsCursorStability(false);
@@ -346,11 +345,16 @@ void GameScene::Update() {
 					UnloadTeamDisplay();
 				}
 			}
-
 			if (!isPartyMode_) {
 				bool togglePause = Input::GetInstance()->TriggerKey(DIK_ESCAPE) || Input::GetInstance()->TriggerButton(Input::PadButton::kButtonStart);
 				if (togglePause) {
 					isPause = !isPause;
+				}
+			}
+			if (isPartyMode_ && !PlayCommand::GetTeamSelectDisplay()) {
+				if (Input::GetInstance()->TriggerKey(DIK_ESCAPE)) {
+					isPartyMode_ = false;
+					UnloadTeamDisplay();
 				}
 			}
 		}
