@@ -8,7 +8,7 @@ const float kRotateSpeed = 0.03f;
 const float kReturnSpeed = 0.2f;
 } // namespace
 
-void ExpCube::Initialize(Camera* camera, const Vector3& position) {
+void SpecialGaugeBall::Initialize(Camera* camera, const Vector3& position) {
 	camera_ = camera;
 	isCollected_ = false;
 	primitive_ = std::make_unique<Primitive>();
@@ -23,7 +23,7 @@ void ExpCube::Initialize(Camera* camera, const Vector3& position) {
 	primitive_->SetTransform(transform_);
 }
 
-void ExpCube::Update(const Vector3& movementLimitCenter, float movementLimitRadius) {
+void SpecialGaugeBall::Update(const Vector3& movementLimitCenter, float movementLimitRadius) {
 	if (isCollected_) {
 		return;
 	}
@@ -58,7 +58,7 @@ void ExpCube::Update(const Vector3& movementLimitCenter, float movementLimitRadi
 	primitive_->Update();
 }
 
-void ExpCube::Draw() {
+void SpecialGaugeBall::Draw() {
 	if (isCollected_) {
 		return;
 	}

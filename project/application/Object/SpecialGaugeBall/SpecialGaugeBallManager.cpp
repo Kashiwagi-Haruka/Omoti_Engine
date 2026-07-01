@@ -1,4 +1,4 @@
-#include "ExpCubeManager.h"
+#include "SpecialGaugeBallManager.h"
 #include "Camera.h"
 #include "Object3d/Object3dCommon.h"
 #include <algorithm>
@@ -9,14 +9,14 @@ const float kDropSpread = 0.8f;
 const float kDropLift = 0.2f;
 } // namespace
 
-void ExpCubeManager::Initialize(Camera* camera) {
+void SpecialGaugeBallManager::Initialize(Camera* camera) {
 	camera_ = camera;
-	expCubes_.clear();
+	specialGaugeBalls_.clear();
 }
 
-void ExpCubeManager::Update(Camera* camera, const Vector3& movementLimitCenter, float movementLimitRadius) {
+void SpecialGaugeBallManager::Update(Camera* camera, const Vector3& movementLimitCenter, float movementLimitRadius) {
 	camera_ = camera;
-	for (auto& cube : expCubes_) {
+	for (auto& cube : SpecialGaugeBalls_) {
 		if (!cube->IsCollected()) {
 			cube->SetCamera(camera_);
 			cube->Update(movementLimitCenter, movementLimitRadius);
@@ -25,15 +25,15 @@ void ExpCubeManager::Update(Camera* camera, const Vector3& movementLimitCenter, 
 	RemoveCollected();
 }
 
-void ExpCubeManager::Draw() {
+void SpecialGaugeBallManager::Draw() {
 	Object3dCommon::GetInstance()->DrawCommonEmissive();
-	for (auto& cube : expCubes_) {
+	for (auto& cube : SpecialGaugeBalls_) {
 		cube->Draw();
 	}
 	Object3dCommon::GetInstance()->DrawCommon();
 }
 
-void ExpCubeManager::SpawnDrops(const Vector3& position, int count) {
+void SpecialGaugeBallManager::SpawnDrops(const Vector3& position, int count) {
 	for (int i = 0; i < count; ++i) {
 		float offsetX = ((static_cast<float>(rand()) / RAND_MAX) * 2.0f - 1.0f) * kDropSpread;
 		float offsetZ = ((static_cast<float>(rand()) / RAND_MAX) * 2.0f - 1.0f) * kDropSpread;
@@ -42,12 +42,12 @@ void ExpCubeManager::SpawnDrops(const Vector3& position, int count) {
 		spawnPos.y += kDropLift;
 		spawnPos.z += offsetZ;
 
-		auto cube = std::make_unique<ExpCube>();
+		auto cube = std::make_unique<SpecialGaugeBall>();
 		cube->Initialize(camera_, spawnPos);
-		expCubes_.push_back(std::move(cube));
+		SpecialGaugeBalls_.push_back(std::move(cube));
 	}
 }
 
-void ExpCubeManager::RemoveCollected() {
-	expCubes_.erase(std::remove_if(expCubes_.begin(), expCubes_.end(), [](const std::unique_ptr<ExpCube>& cube) { return cube->IsCollected(); }), expCubes_.end());
+void SpecialGaugeBallManager::RemoveCollected() {
+	SpecialGaugeBalls_.erase(std::remove_if(SpecialGaugeBalls_.begin(), SpecialGaugeBalls_.end(), [](const std::unique_ptr<SpecialGaugeBall>& cube) { return cube->IsCollected(); }), SpecialGaugeBalls_.end());
 }

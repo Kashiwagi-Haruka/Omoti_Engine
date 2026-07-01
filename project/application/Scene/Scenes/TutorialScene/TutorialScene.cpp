@@ -32,7 +32,7 @@ void TutorialScene::Initialize() {
 	field_ = std::make_unique<Field>();
 	pause_ = std::make_unique<Pause>();
 	tutorialUI_ = std::make_unique<TutorialUI>();
-	expCubeManager_ = std::make_unique<ExpCubeManager>();
+	expCubeManager_ = std::make_unique<SpecialGaugeBallManager>();
 
 	cameraController_->Initialize();
 	Object3dCommon::GetInstance()->SetDefaultCamera(cameraController_->GetCamera());
@@ -108,7 +108,7 @@ void TutorialScene::Update() {
 		field_->Update();
 		player_->Update();
 		if (player_->GetIsAlive()) {
-			for (auto& cube : expCubeManager_->GetCubes()) {
+			for (auto& cube : expCubeManager_->SpecialGaugeBalls()) {
 				if (!cube || cube->IsCollected()) {
 					continue;
 				}

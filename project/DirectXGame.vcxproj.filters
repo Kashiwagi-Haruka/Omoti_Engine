@@ -429,10 +429,10 @@
     <ClCompile Include="application\Object\Characters\Playable\Base\Equipment.h">
       <Filter>Application\Character\Playable</Filter>
     </ClCompile>
-    <ClCompile Include="application\Object\ExpCube\ExpCube.cpp">
+    <ClCompile Include="application\Object\SpecialGaugeBall\SpecialGaugeBall.cpp">
       <Filter>Application\ExpCube</Filter>
     </ClCompile>
-    <ClCompile Include="application\Object\ExpCube\ExpCubeManager.cpp">
+    <ClCompile Include="application\Object\SpecialGaugeBall\SpecialGaugeBallManager.cpp">
       <Filter>Application\ExpCube</Filter>
     </ClCompile>
     <ClCompile Include="application\Object\House\House.cpp">
@@ -936,10 +936,10 @@
     <ClInclude Include="application\Object\Damage\DamageMath.h">
       <Filter>Application\Character</Filter>
     </ClInclude>
-    <ClInclude Include="application\Object\ExpCube\ExpCube.h">
+    <ClInclude Include="application\Object\SpecialGaugeBall\SpecialGaugeBall.h">
       <Filter>Application\ExpCube</Filter>
     </ClInclude>
-    <ClInclude Include="application\Object\ExpCube\ExpCubeManager.h">
+    <ClInclude Include="application\Object\SpecialGaugeBall\SpecialGaugeBallManager.h">
       <Filter>Application\ExpCube</Filter>
     </ClInclude>
     <ClInclude Include="application\Object\House\House.h">

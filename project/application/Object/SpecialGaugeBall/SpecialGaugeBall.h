@@ -7,7 +7,7 @@
 
 class Camera;
 
-class ExpCube {
+class SpecialGaugeBall {
 public:
 	void Initialize(Camera* camera, const Vector3& position);
 	void Update(const Vector3& movementLimitCenter, float movementLimitRadius);
