@@ -124,6 +124,8 @@ void GameScene::Initialize() {
 	nextSceneName.clear();
 	uimanager->SetPlayerHPMax(player->GetHPMax());
 	uimanager->SetPlayerHP(player->GetHP());
+	team_->Initialize();
+	uimanager->SetTeam(team_.get());
 	uimanager->Initialize();
 	rasen_->Initialize(cameraController->GetCamera());
 	openWorld_->Initialize(cameraController->GetCamera());
@@ -165,7 +167,6 @@ void GameScene::Initialize() {
 	pause->SetCurrentAttribute(player->GetCurrentAttribute());
 	characterDisplay_->Initialize();
 	characterDisplay_->SetActive(false);
-	team_->Initialize();
 	UnloadTeamDisplay();
 	
 	vinettColor_ = {255, 255, 255};

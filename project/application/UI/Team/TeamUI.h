@@ -1,19 +1,22 @@
 #pragma once
 #include "Sprite/Sprite.h"
-#include <memory>
+#include "Team/Team.h"
+#include "Vector2.h"
 #include <array>
+#include <memory>
+
 class TeamUI {
-
-	std::array<std::unique_ptr<Sprite>, 4> iconSprite_;
-	std::array<Vector2, 3> iconPos_;
-	std::array<uint32_t, 4> teamMemberIndex_;
-
-
 public:
 	TeamUI();
 	~TeamUI();
-	void Initialize();
-	void Update();
+	void Initialize(const Team& team);
+	void Update(const Team& team);
 	void Draw();
-	void ChangeMenber(uint32_t prePlayerMemberIndex,uint32_t playerMemberIndex);
+
+private:
+	static constexpr int kMaxMembersCount = Team::kMaxMembersCount;
+
+	std::array<std::unique_ptr<Sprite>, kMaxMembersCount> iconSprites_;
+	std::array<Vector2, kMaxMembersCount> iconPositions_{};
+	std::array<int, kMaxMembersCount> displayedCharacterIndices_{};
 };
