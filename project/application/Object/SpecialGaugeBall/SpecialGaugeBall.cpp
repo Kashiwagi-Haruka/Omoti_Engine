@@ -24,7 +24,7 @@ void SpecialGaugeBall::Initialize(Camera* camera, const Vector3& position) {
 	};
 	for (int i = 0; i < 3; i++) {
 		primitive_[i] = std::make_unique<Primitive>();
-		primitive_[i]->Initialize(Primitive::Box, "Resources/2d/ExpGauge.png");
+		primitive_[i]->Initialize(Primitive::Box, "Resources/2d/defaultParticle.png");
 		primitive_[i]->SetEnableLighting(false);
 		primitive_[i]->SetColor(kExpCubeColor);
 		primitive_[i]->SetTransform(baseTransform_);
