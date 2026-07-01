@@ -11,7 +11,7 @@ const float kDropLift = 0.2f;
 
 void SpecialGaugeBallManager::Initialize(Camera* camera) {
 	camera_ = camera;
-	specialGaugeBalls_.clear();
+	SpecialGaugeBalls_.clear();
 }
 
 void SpecialGaugeBallManager::Update(Camera* camera, const Vector3& movementLimitCenter, float movementLimitRadius) {
