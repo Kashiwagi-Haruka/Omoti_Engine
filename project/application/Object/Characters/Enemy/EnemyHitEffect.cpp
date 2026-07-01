@@ -4,6 +4,7 @@
 #include "Model/ModelManager.h"
 #include "Object3d/Object3dCommon.h"
 #include "ParticleManager.h"
+#include "Camera.h"
 #include <algorithm>
 #include <cmath>
 #include <cstdint>

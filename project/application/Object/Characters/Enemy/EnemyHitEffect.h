@@ -36,6 +36,7 @@ class EnemyHitEffect {
 	Transform hitParticleTransform_;
 	Camera* camera_ = nullptr;
 	Vector3 enemyPosition_;
+	Vector3 enemyScale_;
 	bool isActive_ = false;
 	float activeTimer_ = 0.0f;
 	float activeDuration_ = 0.35f;
@@ -44,6 +45,7 @@ public:
 	void Initialize();
 	void SetCamera(Camera* camera) { camera_ = camera; };
 	void SetPosition(const Vector3& position) { enemyPosition_ = position; };
+	void SetScale(const Vector3& scale) { enemyScale_ = scale; };
 	void Activate(const Vector3& position);
 	bool IsActive() const { return isActive_; }
 	void Update();

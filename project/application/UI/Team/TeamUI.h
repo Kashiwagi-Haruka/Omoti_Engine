@@ -21,4 +21,6 @@ private:
 	std::array<int, kMaxMembersCount> displayedCharacterIndices_{};
 	std::array<std::unique_ptr<Sprite>, kMaxMembersCount> hpBarSprites_;
 	std::array<std::unique_ptr<Sprite>, kMaxMembersCount> hpBarBackgroundSprites_;
+	std::array<std::unique_ptr<Sprite>, kMaxMembersCount> specialGaugeSprites_;
+	std::array<std::unique_ptr<Sprite>, kMaxMembersCount> specialGaugeFlameSprites_;
 };
