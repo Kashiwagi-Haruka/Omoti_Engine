@@ -5,7 +5,7 @@
 #include "Object/Characters/Base/Attribute.h"
 #include "Object/Characters/Enemy/EnemyManager.h"
 #include "Object/Damage/DamageMath.h"
-#include "Object/ExpCube/ExpCubeManager.h"
+#include "Object/SpecialGaugeBall/SpecialGaugeBallManager.h"
 #include "Object/House/House.h"
 #include "Object/Player/Player.h"
 #include "RigidBody.h"

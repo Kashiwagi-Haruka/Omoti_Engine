@@ -1,5 +1,6 @@
 #define NOMINMAX
 #include "EnemyHitEffect.h"
+#include "Function.h"
 #include "GameBase.h"
 #include "Model/ModelManager.h"
 #include "Object3d/Object3dCommon.h"
@@ -117,9 +118,9 @@ void EnemyHitEffect::Activate(const Vector3& position) {
 
 	for (auto& billboard : hitBillboards_) {
 		const float scale = RandomRange(kHitBillboardMinScale, kHitBillboardMaxScale);
-		billboard.baseScale = scale;
+		billboard.baseScale = scale+enemyScale_.x;
 		billboard.randomAngle = RandomRange(0.0f, std::numbers::pi_v<float> * 2.0f);
-		billboard.transform.scale = {scale, scale, scale};
+		billboard.transform.scale = {scale+enemyScale_.x, scale+enemyScale_.y, scale+enemyScale_.z};
 		billboard.transform.rotate = {0.0f, 0.0f, billboard.randomAngle};
 		billboard.transform.translate = enemyPosition_;
 		if (billboard.primitive) {
@@ -132,8 +133,8 @@ void EnemyHitEffect::Activate(const Vector3& position) {
 		const Vector3 direction = MakeRandomUnitVector();
 		const float speed = RandomRange(kIceShardMinSpeed, kIceShardMaxSpeed);
 		const float scale = RandomRange(kIceShardMinScale, kIceShardMaxScale);
-		shard.baseScale = scale;
-		shard.transform.scale = {scale, scale, scale};
+		shard.baseScale = scale+enemyScale_.x;
+		shard.transform.scale = {scale+enemyScale_.x, scale+enemyScale_.y, scale+enemyScale_.z};
 		shard.transform.rotate = {RandomRange(0.0f, std::numbers::pi_v<float> * 2.0f), RandomRange(0.0f, std::numbers::pi_v<float> * 2.0f), RandomRange(0.0f, std::numbers::pi_v<float> * 2.0f)};
 		shard.transform.translate = enemyPosition_ + direction * kIceShardSpawnRadius;
 		shard.velocity = direction * speed;
@@ -185,10 +186,10 @@ void EnemyHitEffect::Update() {
 		}
 	}
 	for (auto& shard : iceShards_) {
-		shard.transform.translate += shard.velocity * deltaTime;
+		shard.transform.translate += shard.velocity * deltaTime*enemyScale_.x;
 		shard.transform.rotate += shard.angularVelocity * deltaTime;
 		const float currentScale = shard.baseScale * scaleRatio;
-		shard.transform.scale = {currentScale, currentScale, currentScale};
+		shard.transform.scale = {currentScale+enemyScale_.x, currentScale+enemyScale_.y, currentScale+enemyScale_.z};
 		if (shard.object) {
 			shard.object->SetCamera(camera_);
 			shard.object->SetTransform(shard.transform);

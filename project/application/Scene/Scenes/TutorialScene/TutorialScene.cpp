@@ -5,7 +5,7 @@
 #include "Input.h"
 #include "Object/Background/Sky.h"
 #include "Object/Characters/Model/CharacterModel.h"
-#include "Object/ExpCube/ExpCubeManager.h"
+#include "Object/SpecialGaugeBall/SpecialGaugeBallManager.h"
 #include "Object/Field/Field.h"
 #include "Object/Player/Player.h"
 #include "Object3d/Object3dCommon.h"
