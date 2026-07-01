@@ -58,7 +58,7 @@ void UIManager::Draw() {
 	attackOperationUI_->Draw();
 	towerUI_->Draw();
 	SpriteCommon::GetInstance()->DrawCommon();
-	/*menuUI_->Draw();*/
+	menuUI_->Draw();
 	if (team_) {
 		teamUI_->Draw();
 	}
