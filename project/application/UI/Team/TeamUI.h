@@ -19,4 +19,6 @@ private:
 	std::array<std::unique_ptr<Sprite>, kMaxMembersCount> iconSprites_;
 	std::array<Vector2, kMaxMembersCount> iconPositions_{};
 	std::array<int, kMaxMembersCount> displayedCharacterIndices_{};
+	std::array<std::unique_ptr<Sprite>, kMaxMembersCount> hpBarSprites_;
+	std::array<std::unique_ptr<Sprite>, kMaxMembersCount> hpBarBackgroundSprites_;
 };

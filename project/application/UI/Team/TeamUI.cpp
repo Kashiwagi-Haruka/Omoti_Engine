@@ -1,9 +1,12 @@
 #include "TeamUI.h"
 #include "WinApp.h"
-
+#include "TextureManager.h"
+#include "Function.h"
 namespace {
 constexpr Vector2 kIconSize{64.0f, 64.0f};
 constexpr Vector2 kActiveIconSize{78.0f, 78.0f};
+constexpr Vector2 kHpBarMaxSize{64.0f, 8.0f};
+constexpr Vector2 kHpBarOffset{-kIconSize.x*1.3f, kIconSize.y * 0.5f};
 constexpr float kRightMargin = 20.0f;
 constexpr float kTopMargin = 160.0f;
 constexpr float kIconSpacing = 14.0f;
@@ -17,6 +20,8 @@ TeamUI::TeamUI() { displayedCharacterIndices_.fill(-1); }
 TeamUI::~TeamUI() = default;
 
 void TeamUI::Initialize(const Team& team) {
+	uint32_t hpBarTextureHandle = TextureManager::GetInstance()->GetTextureIndexByfilePath("Resources/2d/Team/UI/HPBar.png");
+	uint32_t hpBarBackgroundTextureHandle = TextureManager::GetInstance()->GetTextureIndexByfilePath("Resources/2d/Team/UI/HPBarBackground.png");
 	for (int i = 0; i < kMaxMembersCount; ++i) {
 		iconPositions_[i] = {
 		    static_cast<float>(WinApp::kClientWidth) - kRightMargin,
@@ -27,6 +32,8 @@ void TeamUI::Initialize(const Team& team) {
 		displayedCharacterIndices_[i] = characterIndex;
 		if (!team.GetHasMember(i) || characterIndex < 0) {
 			iconSprites_[i].reset();
+			hpBarSprites_[i].reset();
+			hpBarBackgroundSprites_[i].reset();
 			continue;
 		}
 
@@ -37,6 +44,21 @@ void TeamUI::Initialize(const Team& team) {
 		iconSprites_[i]->SetScale(i == team.GetActiveSlot() ? kActiveIconSize : kIconSize);
 		iconSprites_[i]->SetColor(i == team.GetActiveSlot() ? kActiveColor : kInactiveColor);
 		iconSprites_[i]->Update();
+
+		hpBarSprites_[i] = std::make_unique<Sprite>();
+		hpBarSprites_[i]->Initialize(hpBarTextureHandle);
+		hpBarSprites_[i]->SetAnchorPoint({1.0f, 0.5f});
+		hpBarSprites_[i]->SetPosition(iconPositions_[i]+kHpBarOffset);
+		hpBarSprites_[i]->SetScale(kHpBarMaxSize);
+		hpBarSprites_[i]->Update();
+		
+		hpBarBackgroundSprites_[i] = std::make_unique<Sprite>();
+		hpBarBackgroundSprites_[i]->Initialize(hpBarBackgroundTextureHandle);
+		hpBarBackgroundSprites_[i]->SetAnchorPoint({1.0f,0.5f});
+		hpBarBackgroundSprites_[i]->SetPosition(iconPositions_[i]+kHpBarOffset);
+		hpBarBackgroundSprites_[i]->SetScale(kHpBarMaxSize);
+		hpBarBackgroundSprites_[i]->Update();
+
 	}
 }
 
@@ -70,6 +92,16 @@ void TeamUI::Draw() {
 	for (auto& iconSprite : iconSprites_) {
 		if (iconSprite) {
 			iconSprite->Draw();
+		}
+	}
+	for (auto& hpBarBackgroundSprite : hpBarBackgroundSprites_) {
+		if (hpBarBackgroundSprite) {
+			hpBarBackgroundSprite->Draw();
+		}
+	}
+	for (auto& hpBarSprite : hpBarSprites_) {
+		if (hpBarSprite) {
+			hpBarSprite->Draw();
 		}
 	}
 }
