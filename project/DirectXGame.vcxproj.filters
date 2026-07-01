@@ -529,6 +529,7 @@
       <Filter>Application\UI</Filter>
     </ClCompile>
     <ClCompile Include="application\UI\Team\TeamUI.cpp" />
+    <ClCompile Include="application\UI\DashGauge\DashGauge.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Engine\Camera\Camera.h">
@@ -1045,6 +1046,7 @@
       <Filter>Application\UI</Filter>
     </ClInclude>
     <ClInclude Include="application\UI\Team\TeamUI.h" />
+    <ClInclude Include="application\UI\DashGauge\DashGauge.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include=".editorconfig" />
