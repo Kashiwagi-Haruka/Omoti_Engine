@@ -255,12 +255,14 @@ void Adhesion::Update() {
 }
 
 void Adhesion::Draw() {
-	Object3dCommon::GetInstance()->DrawCommonNoCull();
+	Object3dCommon::GetInstance()->DrawCommonNoCullDepth();
 	if (isComparisonDisplayActive_) {
 		AttributeReactionPlane_->Draw();
+		Object3dCommon::GetInstance()->DrawCommon();
 		return;
 	}
 	if (attributeBitMask_ == 0) {
+		Object3dCommon::GetInstance()->DrawCommon();
 		return;
 	}
 
