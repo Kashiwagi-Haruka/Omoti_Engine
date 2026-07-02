@@ -87,7 +87,7 @@ void Sizuku::Draw(){
 #ifdef _DEBUG
 	if (sizukuSkeleton_) {
 		sizukuSkeleton_->SetObjectMatrix(playerWorld);
-		Object3dCommon::GetInstance()->DrawCommonWireframeNoDepth();
+		Object3dCommon::GetInstance()->DrawCommon(Object3dCommon::DrawCommonType::WireframeNoDepth);
 		/*sizukuSkeleton_->DrawBones(camera_, {0.2f, 0.9f, 1.0f, 1.0f}, {0.1f, 0.5f, 0.9f, 1.0f});*/
 	}
 #endif

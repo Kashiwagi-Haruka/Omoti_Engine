@@ -72,7 +72,7 @@ void Yuzuki::Draw() {
 #ifdef _DEBUG
 	if (yuzukiSkeleton_) {
 		yuzukiSkeleton_->SetObjectMatrix(worldMatrix_);
-		Object3dCommon::GetInstance()->DrawCommonWireframeNoDepth();
+		Object3dCommon::GetInstance()->DrawCommon(Object3dCommon::DrawCommonType::WireframeNoDepth);
 	}
 #endif
 }

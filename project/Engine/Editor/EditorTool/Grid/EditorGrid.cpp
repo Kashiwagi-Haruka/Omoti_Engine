@@ -106,7 +106,7 @@ void EditorGrid::DrawEditorGridLines(Settings& settings, std::unique_ptr<Primiti
 	}
 
 	gridPlane->SetCamera(Object3dCommon::GetInstance()->GetDefaultCamera());
-	Object3dCommon::GetInstance()->DrawCommonEditorGrid();
+	Object3dCommon::GetInstance()->DrawCommon(Object3dCommon::DrawCommonType::EditorGrid);
 	gridPlane->Update();
 	gridPlane->Draw();
 }

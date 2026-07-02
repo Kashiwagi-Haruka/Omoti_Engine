@@ -134,22 +134,23 @@ void SampleScene::DebugImgui() {
 #endif // USE_IMGUI
 }
 
+
 void SampleScene::Draw() {
 
 	Object3dCommon::GetInstance()->SetDefaultCamera(camera_.get());
 
-	Object3dCommon::GetInstance()->DrawCommonSkybox();
+	Object3dCommon::GetInstance()->DrawCommon(Object3dCommon::DrawCommonType::Skybox);
 	skyBox_->Draw();
 	Object3dCommon::GetInstance()->DrawCommon();
 	fieldObj_->Draw();
 
-	/*Object3dCommon::GetInstance()->DrawCommonSkinningToon();*/
-	Object3dCommon::GetInstance()->DrawCommonMaterialColorOnlySkinning();
+	/*Object3dCommon::GetInstance()->DrawCommon(Object3dCommon::DrawCommonType::SkinningToon);*/
+	Object3dCommon::GetInstance()->DrawCommon(Object3dCommon::DrawCommonType::MaterialColorOnlySkinning);
 	sizukuObj_->Draw();
 
-	//Object3dCommon::GetInstance()->DrawCommonSkinningToonOutline();
-	//sizukuObj_->Draw();
-	//Object3dCommon::GetInstance()->EndOutlineDraw();
+	// Object3dCommon::GetInstance()->DrawCommon(Object3dCommon::DrawCommonType::SkinningToonOutline);
+	// sizukuObj_->Draw();
+	// Object3dCommon::GetInstance()->EndOutlineDraw();
 
 	SpriteCommon::GetInstance()->DrawCommon();
 	sampleText_.Draw();

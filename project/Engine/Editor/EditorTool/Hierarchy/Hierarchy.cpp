@@ -1007,7 +1007,7 @@ void Hierarchy::DrawEditorGridLines() {
 		return;
 	}
 	selectionBoxPrimitive_->SetCamera(Object3dCommon::GetInstance()->GetDefaultCamera());
-	Object3dCommon::GetInstance()->DrawCommonWireframeNoDepth();
+	Object3dCommon::GetInstance()->DrawCommon(Object3dCommon::DrawCommonType::WireframeNoDepth);
 	selectionBoxPrimitive_->Update();
 	selectionBoxPrimitive_->Draw();
 #endif

@@ -72,7 +72,7 @@ void Arte::Draw() {
 #ifdef _DEBUG
 	if (arteSkeleton_) {
 		arteSkeleton_->SetObjectMatrix(worldMatrix_);
-		Object3dCommon::GetInstance()->DrawCommonWireframeNoDepth();
+		Object3dCommon::GetInstance()->DrawCommon(Object3dCommon::DrawCommonType::WireframeNoDepth);
 	}
 #endif
 }

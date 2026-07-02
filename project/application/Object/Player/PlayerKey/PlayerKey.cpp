@@ -131,7 +131,7 @@ void PlayerKey::Draw() {
 	Object3dCommon::GetInstance()->SetBlendMode(BlendMode::kBlendModeAlpha);
 	Object3dCommon::GetInstance()->DrawCommon();
 	keyObj_->Draw();
-	Object3dCommon::GetInstance()->DrawCommonNoCull();
+	Object3dCommon::GetInstance()->DrawCommon(Object3dCommon::DrawCommonType::NoCull);
 	keyHoleObj_->Draw();
 	planeCircleObj_->Draw();
 }

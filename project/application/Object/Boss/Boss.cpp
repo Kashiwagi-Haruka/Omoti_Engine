@@ -282,12 +282,12 @@ void Boss::Draw() {
 	if (skinCluster_.mappedPalette.empty()) {
 		Object3dCommon::GetInstance()->DrawCommon();
 	} else {
-		Object3dCommon::GetInstance()->DrawCommonSkinning();
+		Object3dCommon::GetInstance()->DrawCommon(Object3dCommon::DrawCommonType::Skinning);
 	}
 	object_->Draw();
 #ifdef _DEBUG
 	if (debugBox_) {
-		Object3dCommon::GetInstance()->DrawCommonNoCullDepth();
+		Object3dCommon::GetInstance()->DrawCommon(Object3dCommon::DrawCommonType::NoCullDepth);
 		debugBox_->Draw();
 	}
 #endif // _DEBUG

@@ -168,7 +168,7 @@ void EditorCamera::DrawCameraBillboards(bool isPlaying) {
 	billboardMatrix.m[3][1] = 0.0f;
 	billboardMatrix.m[3][2] = 0.0f;
 
-	object3dCommon->DrawCommonNoCull();
+	object3dCommon->DrawCommon(Object3dCommon::DrawCommonType::NoCull);
 	for (Camera* camera : cameras_) {
 		if (!camera || camera == previewCamera) {
 			continue;

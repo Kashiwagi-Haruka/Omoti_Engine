@@ -74,7 +74,7 @@ void Mei::Draw() {
 #ifdef _DEBUG
 	if (meiSkeleton_) {
 		meiSkeleton_->SetObjectMatrix(worldMatrix_);
-		Object3dCommon::GetInstance()->DrawCommonWireframeNoDepth();
+		Object3dCommon::GetInstance()->DrawCommon(Object3dCommon::DrawCommonType::WireframeNoDepth);
 	}
 #endif
 }
