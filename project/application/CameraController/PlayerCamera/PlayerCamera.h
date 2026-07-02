@@ -7,6 +7,7 @@ class PlayerCamera {
 	Transform transform_{};
 	std::unique_ptr<Camera> camera_;
 	float mouseSensitivity_ = 0.002f;
+	float stickSensitivity_ = 0.04f;
 	Vector3 playerPos = {0.0f, 0.0f, 0.0f};
 	float orbitYaw_ = 0.0f;
 	float orbitPitch_ = 0.15f;

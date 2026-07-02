@@ -177,8 +177,8 @@ copy "$(WindowsSdkDir)\bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)\
     <ClCompile Include="application\Object\Characters\Enemy\EnemyHitEffect.cpp" />
     <ClCompile Include="application\Object\Characters\Enemy\EnemyManager.cpp" />
     <ClCompile Include="application\Object\Characters\Enemy\EnemyStun.cpp" />
-    <ClCompile Include="application\Object\ExpCube\ExpCube.cpp" />
-    <ClCompile Include="application\Object\ExpCube\ExpCubeManager.cpp" />
+    <ClCompile Include="application\Object\SpecialGaugeBall\SpecialGaugeBall.cpp" />
+    <ClCompile Include="application\Object\SpecialGaugeBall\SpecialGaugeBallManager.cpp" />
     <ClCompile Include="application\Object\House\House.cpp" />
     <ClCompile Include="application\Object\House\HouseHP.cpp" />
     <ClCompile Include="application\Object\Field\Field.cpp" />
@@ -204,6 +204,7 @@ copy "$(WindowsSdkDir)\bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)\
     <ClCompile Include="application\Object\Characters\Playable\Weapon\BigSword\BigSword.cpp" />
     <ClCompile Include="application\AudioManager\BGMManager\BGMManager.cpp" />
     <ClCompile Include="application\Object\Characters\Enemy\Individual\brain\brain.cpp" />
+    <ClCompile Include="application\UI\DashGauge\DashGauge.cpp" />
     <ClCompile Include="Engine\Editor\EditorTool\Command\EditorCommand.cpp" />
     <ClCompile Include="Engine\Audio\AudioMixer.cpp" />
     <ClCompile Include="Engine\Editor\EditorData\Audio\EditorAudio.cpp" />
@@ -321,6 +322,7 @@ copy "$(WindowsSdkDir)\bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)\
     <ClCompile Include="application\UI\Menu\Menu.cpp" />
     <ClCompile Include="application\UI\Tower\TowerUI.cpp" />
     <ClCompile Include="application\Menu\TeamDisplay\TeamDisplay.cpp" />
+    <ClCompile Include="application\UI\Team\TeamUI.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include=".editorconfig" />
@@ -363,8 +365,8 @@ copy "$(WindowsSdkDir)\bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)\
     <ClInclude Include="application\Object\Characters\Enemy\EnemyManager.h" />
     <ClInclude Include="application\Object\Characters\Enemy\EnemyStun.h" />
     <ClInclude Include="application\Object\Characters\Playable\Weapon\BaseWeapon.h" />
-    <ClInclude Include="application\Object\ExpCube\ExpCube.h" />
-    <ClInclude Include="application\Object\ExpCube\ExpCubeManager.h" />
+    <ClInclude Include="application\Object\SpecialGaugeBall\SpecialGaugeBall.h" />
+    <ClInclude Include="application\Object\SpecialGaugeBall\SpecialGaugeBallManager.h" />
     <ClInclude Include="application\Object\House\House.h" />
     <ClInclude Include="application\Object\House\HouseHP.h" />
     <ClInclude Include="application\Object\Field\Field.h" />
@@ -391,6 +393,7 @@ copy "$(WindowsSdkDir)\bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)\
     <ClInclude Include="application\Object\Characters\Playable\Weapon\BigSword\BigSword.h" />
     <ClInclude Include="application\AudioManager\BGMManager\BGMManager.h" />
     <ClInclude Include="application\Object\Characters\Enemy\Individual\brain\brain.h" />
+    <ClInclude Include="application\UI\DashGauge\DashGauge.h" />
     <ClInclude Include="Engine\Editor\EditorTool\Command\EditorCommand.h" />
     <ClInclude Include="Engine\Audio\AudioMixer.h" />
     <ClInclude Include="Engine\base\ScreenSize.h" />
@@ -512,6 +515,7 @@ copy "$(WindowsSdkDir)\bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)\
     <ClInclude Include="application\UI\Menu\Menu.h" />
     <ClInclude Include="application\UI\Tower\TowerUI.h" />
     <ClInclude Include="application\Menu\TeamDisplay\TeamDisplay.h" />
+    <ClInclude Include="application\UI\Team\TeamUI.h" />
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="Resources\shader\FullScreenCopy\CopyImage.PS.hlsl">

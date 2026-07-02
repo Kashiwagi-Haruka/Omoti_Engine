@@ -60,7 +60,7 @@ class Player {
 
 	bool usedAirAttack = false;
 
-
+	float dashDistance_ = 5.0f;
 
 	Vector3 movementLimitCenter_{0.0f,2.5f,0.0f};
 	float movementLimitRadius_ = 50.0f;
@@ -81,6 +81,7 @@ public:
 	Vector3 GetPosition() { return transform_.translate; }
 	Vector3 GetVelocity() { return velocity_; }
 	bool GetIsAlive() { return isAlive; }
+	bool IsDashing() const { return isDash; }
 	bool GetIsSkillAttack() { return attack_->isSkillAttacking(); }
 	Vector3 GetSkillPosition() { return attack_->GetSkillDamagePosition(); }
 	Parameters GetParameters() { return parameters_; }

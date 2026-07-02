@@ -6,6 +6,7 @@
 #include "Object3d/Object3d.h"
 #include "Vector4.h"
 #include <algorithm>
+#include <cmath>
 
 namespace {
 const Vector4 kDamageInvincibleColor = {1.0f, 0.0f, 0.0f, 1.0f};
@@ -22,19 +23,23 @@ Enemy::Enemy() {
 void Enemy::Initialize(Camera* camera, Vector3 translates) {
 	isAlive = true;
 	isStun_ = false;
-	HP = 40;
+	HP = 100;
 	stunTime = 0;
 	attackTimer_ = 0.0f;
 	damageInvincibleTimer_ = 0.0f;
 	lastSkillDamageId_ = -1;
 	isDying_ = false;
 	deathTimer_ = 0.0f;
+	finalComboBackStepTimer_ = 0.0f;
+	isFinalComboBackStepping_ = false;
+	finalComboBackStepStart_ = translates;
+	finalComboBackStepTarget_ = translates;
 
 	object_->Initialize();
 	object_->SetModel("Enemy");
 	camera_ = camera;
 	transform_ = {
-	    .scale{1.0f, 1.0f, 1.0f},
+	    .scale{3.0f, 3.0f, 3.0f},
         .rotate{0.0f, 0.0f, 0.0f},
         .translate = translates
     };
@@ -79,11 +84,36 @@ void Enemy::Update(const Vector3& housePos, const Vector3& houseScale, const Vec
 		}
 	}
 	object_->SetColor(damageInvincibleTimer_ > 0.0f ? kDamageInvincibleColor : kDefaultColor);
+	if (isFinalComboBackStepping_) {
+		finalComboBackStepTimer_ += deltaTime;
+		float backStepProgress = std::clamp(finalComboBackStepTimer_ / finalComboBackStepDuration_, 0.0f, 1.0f);
+		transform_.translate = Function::Lerp(finalComboBackStepStart_, finalComboBackStepTarget_, backStepProgress);
+		velocity_ = {0.0f, 0.0f, 0.0f};
+		if (enemyAttack_) {
+			enemyAttack_->Cancel();
+			enemyAttack_->Update();
+		}
+		if (backStepProgress >= 1.0f) {
+			isFinalComboBackStepping_ = false;
+			finalComboBackStepTimer_ = 0.0f;
+		}
+		object_->SetCamera(camera_);
+		object_->SetTransform(transform_);
+		object_->Update();
+		if (adhesion_) {
+			adhesion_->SetCamera(camera_);
+			adhesion_->SetTransform(transform_);
+			adhesion_->Update();
+		}
+		return;
+	}
 	Vector3 targetPosition = housePos;
+	bool isTargetingPlayer = false;
 	if (isPlayerAlive) {
 		Vector3 toPlayer = playerPos - transform_.translate;
 		if (Function::LengthSquared(toPlayer) <= playerChaseRange_ * playerChaseRange_) {
 			targetPosition = playerPos;
+			isTargetingPlayer = true;
 		}
 	}
 
@@ -93,6 +123,8 @@ void Enemy::Update(const Vector3& housePos, const Vector3& houseScale, const Vec
 		toTarget.y = 0.0f;
 		if (Function::LengthSquared(toTarget) > 0.0001f) {
 			Vector3 direction = Function::Normalize(toTarget);
+			direction_ = direction;
+			transform_.rotate.y = std::atan2(direction.x, direction.z);
 			velocity_ = direction * maxSpeed_;
 		} else {
 			velocity_ = {0.0f, 0.0f, 0.0f};
@@ -132,7 +164,9 @@ void Enemy::Update(const Vector3& housePos, const Vector3& houseScale, const Vec
 		float houseRadius = std::max({houseScale.x, houseScale.y, houseScale.z});
 		float enemyRadius = std::max({transform_.scale.x, transform_.scale.y, transform_.scale.z});
 		float houseAttackRange = attackRange_ + houseRadius + enemyRadius;
-		inAttackRange = Function::LengthSquared(toTarget) <= attackRange_ * attackRange_ || Function::LengthSquared(toHouse) <= houseAttackRange * houseAttackRange;
+		float playerAttackStartRange = attackRange_ + enemyRadius;
+		float targetAttackRange = isTargetingPlayer ? playerAttackStartRange : attackRange_;
+		inAttackRange = Function::LengthSquared(toTarget) <= targetAttackRange * targetAttackRange || Function::LengthSquared(toHouse) <= houseAttackRange * houseAttackRange;
 	}
 	if (!isStun_ && !IsAttacking() && inAttackRange && IsAttackReady()) {
 		enemyAttack_->Start(transform_);
@@ -180,6 +214,8 @@ void Enemy::StartDeathAnimation() {
 	isDying_ = true;
 	deathTimer_ = 0.0f;
 	isStun_ = false;
+	isFinalComboBackStepping_ = false;
+	finalComboBackStepTimer_ = 0.0f;
 	velocity_ = {0.0f, 0.0f, 0.0f};
 	if (enemyAttack_) {
 		enemyAttack_->Cancel();
@@ -187,7 +223,15 @@ void Enemy::StartDeathAnimation() {
 	object_->SetColor(kDeathColor);
 }
 void Enemy::BulletCollision() {}
-
+void Enemy::SetPosition(const Vector3& position) {
+	transform_.translate = position;
+	if (object_) {
+		object_->SetTransform(transform_);
+	}
+	if (adhesion_) {
+		adhesion_->SetTransform(transform_);
+	}
+}
 void Enemy::SetIsStun(bool IsStun) { isStun_ = IsStun; }
 
 float Enemy::GetAttackHitSize() const {
@@ -196,7 +240,23 @@ float Enemy::GetAttackHitSize() const {
 	}
 	return attackHitSize_;
 }
-
+void Enemy::ApplyFinalComboBackStep() {
+	if (isDying_ || !isAlive) {
+		return;
+	}
+	Vector3 forward = {std::sin(transform_.rotate.y), 0.0f, std::cos(transform_.rotate.y)};
+	if (Function::LengthSquared(forward) < 0.0001f) {
+		forward = {0.0f, 0.0f, 1.0f};
+	}
+	finalComboBackStepStart_ = transform_.translate;
+	finalComboBackStepTarget_ = transform_.translate - Function::Normalize(forward) * finalComboBackStepDistance_;
+	finalComboBackStepTimer_ = 0.0f;
+	isFinalComboBackStepping_ = true;
+	velocity_ = {0.0f, 0.0f, 0.0f};
+	if (enemyAttack_) {
+		enemyAttack_->Cancel();
+	}
+}
 Vector3 Enemy::GetAttackPosition() const {
 	if (enemyAttack_) {
 		return enemyAttack_->GetPosition();

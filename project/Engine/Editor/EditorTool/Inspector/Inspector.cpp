@@ -2,10 +2,16 @@
 
 #ifdef USE_IMGUI
 #include "externals/imgui/imgui.h"
+#ifdef _WIN32
+#define NOMINMAX
+#include <Windows.h>
+#include <commdlg.h>
+#endif
 #endif
 
 #include <algorithm>
 #include <array>
+#include <filesystem>
 #ifdef USE_IMGUI
 namespace {
 bool DrawAxisValue(const char* axisLabel, const ImVec4& axisColor, const std::string& id, float& value) {
@@ -19,6 +25,19 @@ bool DrawAxisValue(const char* axisLabel, const ImVec4& axisColor, const std::st
 	return changed;
 }
 
+std::string ToProjectRelativePath(const char* fileName) {
+	if (!fileName || fileName[0] == '\0') {
+		return {};
+	}
+	std::filesystem::path selected = std::filesystem::absolute(fileName).lexically_normal();
+	std::filesystem::path current = std::filesystem::current_path().lexically_normal();
+	std::error_code errorCode;
+	std::filesystem::path relative = std::filesystem::relative(selected, current, errorCode);
+	if (!errorCode && !relative.empty() && relative.generic_string().find("..") != 0) {
+		return relative.generic_string();
+	}
+	return selected.generic_string();
+}
 bool DrawTransformAxisRow(const char* label, const std::string& idSuffix, Vector3& value) {
 	constexpr float kAxisStartX = 100.0f;
 	bool changed = false;
@@ -133,6 +152,35 @@ bool Inspector::DrawMaterialEditor(const std::string& idSuffix, InspectorMateria
 	changed |= ImGui::Checkbox(("Sepia##" + idSuffix).c_str(), &material.sepiaEnabled);
 	changed |= ImGui::DragFloat(("Distortion Strength##" + idSuffix).c_str(), &material.distortionStrength, 0.01f, -10.0f, 10.0f);
 	changed |= ImGui::DragFloat(("Distortion Falloff##" + idSuffix).c_str(), &material.distortionFalloff, 0.01f, 0.0f, 10.0f);
+	std::array<char, 260> textureBuffer{};
+	const size_t textureCopyLength = std::min(textureBuffer.size() - 1, material.texturePath.size());
+	std::copy_n(material.texturePath.begin(), textureCopyLength, textureBuffer.begin());
+	if (ImGui::InputText(("Texture##" + idSuffix).c_str(), textureBuffer.data(), textureBuffer.size())) {
+		material.texturePath = textureBuffer.data();
+		changed = true;
+	}
+#ifdef _WIN32
+	ImGui::SameLine();
+	if (ImGui::Button(("Open##texture_" + idSuffix).c_str())) {
+		char fileName[MAX_PATH] = {};
+		OPENFILENAMEA openFileName = {};
+		openFileName.lStructSize = sizeof(openFileName);
+		openFileName.hwndOwner = nullptr;
+		openFileName.lpstrFilter = "Texture Files (*.png;*.jpg;*.jpeg;*.dds)\0*.png;*.jpg;*.jpeg;*.dds\0All Files (*.*)\0*.*\0";
+		openFileName.lpstrFile = fileName;
+		openFileName.nMaxFile = MAX_PATH;
+		const std::filesystem::path initialDir = std::filesystem::absolute("Resources");
+		const std::string initialDirString = initialDir.string();
+		openFileName.lpstrInitialDir = initialDirString.c_str();
+		openFileName.Flags = OFN_FILEMUSTEXIST | OFN_PATHMUSTEXIST | OFN_NOCHANGEDIR;
+		if (GetOpenFileNameA(&openFileName)) {
+			material.texturePath = ToProjectRelativePath(fileName);
+			changed = true;
+		}
+	}
+#else
+	ImGui::TextDisabled("Texture file dialog is only available on Windows builds.");
+#endif
 	ImGui::SeparatorText("UV Distortion");
 	changed |= ImGui::DragFloat3(("UV Scale##" + idSuffix).c_str(), &material.uvScale.x, 0.01f);
 	changed |= ImGui::DragFloat3(("UV Rotate##" + idSuffix).c_str(), &material.uvRotate.x, 0.01f);

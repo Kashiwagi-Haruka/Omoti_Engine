@@ -429,10 +429,10 @@
     <ClCompile Include="application\Object\Characters\Playable\Base\Equipment.h">
       <Filter>Application\Character\Playable</Filter>
     </ClCompile>
-    <ClCompile Include="application\Object\ExpCube\ExpCube.cpp">
+    <ClCompile Include="application\Object\SpecialGaugeBall\SpecialGaugeBall.cpp">
       <Filter>Application\ExpCube</Filter>
     </ClCompile>
-    <ClCompile Include="application\Object\ExpCube\ExpCubeManager.cpp">
+    <ClCompile Include="application\Object\SpecialGaugeBall\SpecialGaugeBallManager.cpp">
       <Filter>Application\ExpCube</Filter>
     </ClCompile>
     <ClCompile Include="application\Object\House\House.cpp">
@@ -528,6 +528,8 @@
     <ClCompile Include="application\TutorialUI\TutorialUI.cpp">
       <Filter>Application\UI</Filter>
     </ClCompile>
+    <ClCompile Include="application\UI\Team\TeamUI.cpp" />
+    <ClCompile Include="application\UI\DashGauge\DashGauge.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Engine\Camera\Camera.h">
@@ -935,10 +937,10 @@
     <ClInclude Include="application\Object\Damage\DamageMath.h">
       <Filter>Application\Character</Filter>
     </ClInclude>
-    <ClInclude Include="application\Object\ExpCube\ExpCube.h">
+    <ClInclude Include="application\Object\SpecialGaugeBall\SpecialGaugeBall.h">
       <Filter>Application\ExpCube</Filter>
     </ClInclude>
-    <ClInclude Include="application\Object\ExpCube\ExpCubeManager.h">
+    <ClInclude Include="application\Object\SpecialGaugeBall\SpecialGaugeBallManager.h">
       <Filter>Application\ExpCube</Filter>
     </ClInclude>
     <ClInclude Include="application\Object\House\House.h">
@@ -1043,6 +1045,8 @@
     <ClInclude Include="application\TutorialUI\TutorialUI.h">
       <Filter>Application\UI</Filter>
     </ClInclude>
+    <ClInclude Include="application\UI\Team\TeamUI.h" />
+    <ClInclude Include="application\UI\DashGauge\DashGauge.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include=".editorconfig" />

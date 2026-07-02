@@ -36,7 +36,7 @@ private:
 
 	float timer_ = 0.0f;
 	float swingTime_ = 0.3f; // 振り下ろし時間
-	float hitSize_ = 1.2f;
+	float hitSize_ = 3.6f;
 	bool hitActive_ = false;
 	bool hasDealtDamage_ = false;
 };

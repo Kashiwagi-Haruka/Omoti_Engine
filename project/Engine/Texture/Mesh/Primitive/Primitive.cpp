@@ -551,9 +551,9 @@ void Primitive::Initialize(PrimitiveName name, uint32_t slices) {
 	materialData_->distortionFalloff = 1.0f;
 	materialResource_->Unmap(0, nullptr);
 
-	const std::string texturePath = "Resources/3d/uvChecker.png";
-	TextureManager::GetInstance()->LoadTextureName(texturePath);
-	textureIndex_ = TextureManager::GetInstance()->GetTextureIndexByfilePath(texturePath);
+	texturePath_ = "Resources/3d/uvChecker.png";
+	TextureManager::GetInstance()->LoadTextureName(texturePath_);
+	textureIndex_ = TextureManager::GetInstance()->GetTextureIndexByfilePath(texturePath_);
 
 	isUseSetWorld = false;
 }
@@ -606,8 +606,9 @@ void Primitive::Initialize(PrimitiveName name, const std::string& texturePath, u
 	materialData_->distortionFalloff = 1.0f;
 	materialResource_->Unmap(0, nullptr);
 
-	TextureManager::GetInstance()->LoadTextureName(texturePath);
-	textureIndex_ = TextureManager::GetInstance()->GetTextureIndexByfilePath(texturePath);
+	texturePath_ = texturePath;
+	TextureManager::GetInstance()->LoadTextureName(texturePath_);
+	textureIndex_ = TextureManager::GetInstance()->GetTextureIndexByfilePath(texturePath_);
 
 	isUseSetWorld = false;
 }
@@ -836,6 +837,14 @@ void Primitive::SetDistortionFalloff(float falloff) {
 	materialResource_->Unmap(0, nullptr);
 }
 void Primitive::SetTextureIndex(uint32_t textureIndex) { textureIndex_ = textureIndex; }
+void Primitive::SetTexturePath(const std::string& texturePath) {
+	if (texturePath.empty()) {
+		return;
+	}
+	texturePath_ = texturePath;
+	TextureManager::GetInstance()->LoadTextureName(texturePath_);
+	textureIndex_ = TextureManager::GetInstance()->GetTextureIndexByfilePath(texturePath_);
+}
 void Primitive::SetSecondaryTextureIndex(uint32_t textureIndex) { secondaryTextureIndex_ = textureIndex; }
 
 void Primitive::ClearSecondaryTextureIndex() { secondaryTextureIndex_ = UINT32_MAX; }

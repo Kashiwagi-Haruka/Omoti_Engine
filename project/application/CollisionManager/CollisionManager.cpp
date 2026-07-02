@@ -5,7 +5,7 @@
 #include "Object/Characters/Base/Attribute.h"
 #include "Object/Characters/Enemy/EnemyManager.h"
 #include "Object/Damage/DamageMath.h"
-#include "Object/ExpCube/ExpCubeManager.h"
+#include "Object/SpecialGaugeBall/SpecialGaugeBallManager.h"
 #include "Object/House/House.h"
 #include "Object/Player/Player.h"
 #include "RigidBody.h"
@@ -48,6 +48,25 @@ bool CollisionManager::HandleGameSceneCollisions(
 
 		Vector3 enemyPos = enemy->GetPosition();
 		AABB enemyAabb = MakeAabb(enemyPos, enemy->GetScale());
+		bool hitPlayerBody = player.GetIsAlive() && RigidBody::isCollision(enemyAabb, playerAabb);
+		if (hitPlayerBody) {
+			Vector3 toEnemy = enemyPos - player.GetPosition();
+			toEnemy.y = 0.0f;
+			if (Function::LengthSquared(toEnemy) < 0.0001f) {
+				toEnemy = {1.0f, 0.0f, 0.0f};
+			}
+			Vector3 pushDir = Function::Normalize(toEnemy);
+			Vector3 playerScale = player.GetScale();
+			Vector3 enemyScale = enemy->GetScale();
+			float playerRadius = std::max(playerScale.x, playerScale.z);
+			float enemyRadius = std::max(enemyScale.x, enemyScale.z);
+			float minDistance = playerRadius + enemyRadius;
+			Vector3 correctedPos = player.GetPosition() + pushDir * minDistance;
+			correctedPos.y = enemyPos.y;
+			enemy->SetPosition(correctedPos);
+			enemyPos = correctedPos;
+			enemyAabb = MakeAabb(enemyPos, enemy->GetScale());
+		}
 		bool hitHouseBody = RigidBody::isCollision(enemyAabb, houseAabb);
 		if (hitHouseBody) {
 			Vector3 toEnemy = enemyPos - house.GetPosition();
@@ -75,7 +94,8 @@ bool CollisionManager::HandleGameSceneCollisions(
 			bool hitSword = RigidBody::isCollision(swordAabb, enemyAabb);
 			if (hitSword && enemy->CanTakeDamage()) {
 				didPlayerAttackHitEnemy = true;
-				if (IsNormalAttackComboStep(player.GetSword()->GetComboStep())) {
+				const int swordComboStep = player.GetSword()->GetComboStep();
+				if (IsNormalAttackComboStep(swordComboStep)) {
 					didNormalAttackHitEnemy = true;
 					if (outHitEnemyPos) {
 						*outHitEnemyPos = enemy->GetPosition();
@@ -86,6 +106,9 @@ bool CollisionManager::HandleGameSceneCollisions(
 				enemy->SetHPSubtract(damage);
 				enemyManager.OnEnemyDamaged(enemy.get(), damage, playerAttackAttribute);
 				ApplyAttributeDamage(*enemy, enemyManager, playerAttackAttribute);
+				if (swordComboStep == 4) {
+					enemy->ApplyFinalComboBackStep();
+				}
 				enemy->TriggerDamageInvincibility();
 				tryEnemyFlinch(enemy.get());
 			}

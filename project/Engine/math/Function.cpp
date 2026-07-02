@@ -450,3 +450,20 @@ Vector3& operator/=(Vector3& v, float scalar) {
 	v = v / scalar;
 	return v;
 }
+Vector2 operator+(const Vector2& v1, const Vector2& v2) { return {v1.x + v2.x, v1.y + v2.y}; }
+Vector2 operator-(const Vector2& v1, const Vector2& v2) { return {v1.x - v2.x, v1.y - v2.y}; }
+Vector2 operator*(const Vector2& v, float scalar) { return {v.x * scalar, v.y * scalar}; }
+Vector2 operator*(float scalar, const Vector2& v) { return v * scalar; }
+Vector2 operator/(const Vector2& v, float scalar) {
+	assert(std::fabs(scalar) > 1e-6f);
+	float inv = 1.0f / scalar;
+	return {v.x * inv, v.y * inv};
+}
+Vector2& operator+=(Vector2& v1, const Vector2& v2) {
+	v1 = v1 + v2;
+	return v1;
+}
+Vector2& operator-=(Vector2& v1, const Vector2& v2) {
+	v1 = v1 - v2;
+	return v1;
+}

@@ -9,6 +9,8 @@ InspectorMaterial EditorPrimitive::CaptureMaterial(const Primitive* primitive) {
 	return {
 	    primitive->GetColor(),           primitive->IsLightingEnabled(), primitive->GetShininess(),          primitive->GetEnvironmentCoefficient(),
 	    primitive->IsGrayscaleEnabled(), primitive->IsSepiaEnabled(),    primitive->GetDistortionStrength(), primitive->GetDistortionFalloff(),
+	    primitive->GetUvScale(),         primitive->GetUvRotate(),       primitive->GetUvTranslate(),        primitive->GetUvAnchor(),
+	    primitive->GetTexturePath(),
 	};
 }
 
@@ -26,4 +28,5 @@ void EditorPrimitive::ApplyEditorValues(Primitive* primitive, const Transform& t
 	primitive->SetDistortionStrength(material.distortionStrength);
 	primitive->SetDistortionFalloff(material.distortionFalloff);
 	primitive->SetUvTransform(material.uvScale, material.uvRotate, material.uvTranslate, material.uvAnchor);
+	primitive->SetTexturePath(material.texturePath);
 }

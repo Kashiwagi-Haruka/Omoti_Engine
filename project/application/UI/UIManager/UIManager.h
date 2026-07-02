@@ -1,10 +1,11 @@
 #pragma once
 #include "Object/Player/PlayerParameters.h"
-#include "UI/HPBar/HPBarUI.h"
-#include "UI/AttackOperation/AttackOperation.h"
-#include "UI/Tower/TowerUI.h"
-#include "UI/Menu/Menu.h"
 #include "Sprite.h"
+#include "UI/AttackOperation/AttackOperation.h"
+#include "UI/HPBar/HPBarUI.h"
+#include "UI/Menu/Menu.h"
+#include "UI/Team/TeamUI.h"
+#include "UI/Tower/TowerUI.h"
 
 class GameBase;
 class UIManager {
@@ -18,6 +19,8 @@ class UIManager {
 	std::unique_ptr<AttackOperation> attackOperationUI_;
 	std::unique_ptr<TowerUI> towerUI_;
 	std::unique_ptr<Menu> menuUI_;
+	std::unique_ptr<TeamUI> teamUI_;
+	Team* team_ = nullptr;
 
 public:
 	// 生成時にUIリソースを読み込む。
@@ -30,6 +33,7 @@ public:
 	void Update();
 	// UIを描画する。
 	void Draw();
+	void SetTeam(Team* team);
 
 	// 現在のプレイヤーHPを設定する。
 	void SetPlayerHP(int HP);

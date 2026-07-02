@@ -1,12 +1,45 @@
 #include "EnemyManager.h"
 #include "Function.h"
-#include <algorithm>
-#include <cstdlib>
 #include "Object3d/Object3dCommon.h"
+#include <algorithm>
+#include <cmath>
+#include <cstdlib>
 
 namespace {
 constexpr int kFinalWave = 5;
+constexpr float kEnemySeparationRadius = 1.0f;
+constexpr float kPlayerSeparationRadius = 1.0f;
+constexpr float kSeparationEpsilon = 0.0001f;
+constexpr int kSeparationIterations = 4;
+
+float LengthSquaredXZ(const Vector3& vector) { return vector.x * vector.x + vector.z * vector.z; }
+
+void PushAwayXZ(Vector3& position, const Vector3& otherPosition, float minDistance, const Vector3& fallbackDirection) {
+	Vector3 delta = position - otherPosition;
+	delta.y = 0.0f;
+	float distanceSq = LengthSquaredXZ(delta);
+
+	if (distanceSq >= minDistance * minDistance) {
+		return;
+	}
+
+	if (distanceSq <= kSeparationEpsilon) {
+		delta = fallbackDirection;
+		delta.y = 0.0f;
+		distanceSq = LengthSquaredXZ(delta);
+	}
+
+	if (distanceSq <= kSeparationEpsilon) {
+		delta = {1.0f, 0.0f, 0.0f};
+		distanceSq = 1.0f;
+	}
+
+	const float distance = std::sqrt(distanceSq);
+	const float pushDistance = minDistance - distance;
+	position.x += (delta.x / distance) * pushDistance;
+	position.z += (delta.z / distance) * pushDistance;
 }
+} // namespace
 void EnemyManager::Clear() {
 	enemies.clear(); // unique_ptr が自動削除
 	hitEffects.clear();
@@ -196,13 +229,15 @@ void EnemyManager::Update(Camera* camera, const Vector3& housePos, const Vector3
 		break;
 	}
 
-	// 敵の更新
+		// 敵の更新
 	for (auto& e : enemies) {
 		if (e->GetIsAlive() || e->IsDying()) {
 			e->SetCamera(camera);
 			e->Update(housePos, houseScale, playerPos, isPlayerAlive);
 		}
 	}
+	ResolveOverlaps(playerPos, isPlayerAlive);
+
 	for (auto& entry : hitEffects) {
 		if (entry.enemy && entry.enemy->GetIsAlive()) {
 			entry.effect->SetPosition(entry.enemy->GetPosition());
@@ -217,6 +252,65 @@ void EnemyManager::Update(Camera* camera, const Vector3& housePos, const Vector3
 			entry.damageText->SetPosition(damagePos);
 		}
 		entry.damageText->Update();
+	}
+}
+
+void EnemyManager::ResolveOverlaps(const Vector3& playerPos, bool isPlayerAlive) {
+	const float enemyMinDistance = kEnemySeparationRadius * 2.0f;
+	const float playerMinDistance = kEnemySeparationRadius + kPlayerSeparationRadius;
+
+	for (int iteration = 0; iteration < kSeparationIterations; ++iteration) {
+		for (size_t i = 0; i < enemies.size(); ++i) {
+			Enemy* enemyA = enemies[i].get();
+			if (!enemyA || !enemyA->GetIsAlive() || enemyA->IsDying()) {
+				continue;
+			}
+
+			Vector3 enemyAPosition = enemyA->GetPosition();
+
+			if (isPlayerAlive) {
+				PushAwayXZ(enemyAPosition, playerPos, playerMinDistance, enemyAPosition - playerPos);
+			}
+
+			for (size_t j = i + 1; j < enemies.size(); ++j) {
+				Enemy* enemyB = enemies[j].get();
+				if (!enemyB || !enemyB->GetIsAlive() || enemyB->IsDying()) {
+					continue;
+				}
+
+				Vector3 enemyBPosition = enemyB->GetPosition();
+				Vector3 delta = enemyAPosition - enemyBPosition;
+				delta.y = 0.0f;
+				float distanceSq = LengthSquaredXZ(delta);
+
+				if (distanceSq >= enemyMinDistance * enemyMinDistance) {
+					continue;
+				}
+
+				if (distanceSq <= kSeparationEpsilon) {
+					float angle = static_cast<float>(i + j + 1) * 2.399963f;
+					delta = {std::cos(angle), 0.0f, std::sin(angle)};
+					distanceSq = 1.0f;
+				}
+
+				const float distance = std::sqrt(distanceSq);
+				const float pushDistance = (enemyMinDistance - distance) * 0.5f;
+				const Vector3 push = {delta.x / distance * pushDistance, 0.0f, delta.z / distance * pushDistance};
+				enemyAPosition += push;
+				enemyBPosition -= push;
+
+				if (isPlayerAlive) {
+					PushAwayXZ(enemyBPosition, playerPos, playerMinDistance, enemyBPosition - playerPos);
+				}
+
+				enemyB->SetPosition(enemyBPosition);
+			}
+
+			if (isPlayerAlive) {
+				PushAwayXZ(enemyAPosition, playerPos, playerMinDistance, enemyAPosition - playerPos);
+			}
+			enemyA->SetPosition(enemyAPosition);
+		}
 	}
 }
 

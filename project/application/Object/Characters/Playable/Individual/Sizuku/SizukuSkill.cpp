@@ -63,7 +63,7 @@ void SizukuSkill::Initialize() {
 	skillEmitter_->SetAcceleration(Vector3{0, 0.01f, 0});
 	skillEmitter_->SetAreaMin(Vector3{-transform_.scale.x, 0, -transform_.scale.z});
 	skillEmitter_->SetAreaMax(Vector3{transform_.scale.x, 1.0f, transform_.scale.z});
-	skillEmitter_->SetLife(20.0f);
+	skillEmitter_->SetLife(1.0f);
 	iceFlowers_ = std::make_unique<std::vector<Object3d>>();
 	iceFlowers_->clear();
 	iceFlowerTransforms_.clear();
@@ -110,6 +110,9 @@ void SizukuSkill::Update() {
 				endTime++;
 			} else {
 				isSkillEnd = true;
+				if (skillEmitter_) {
+					skillEmitter_->ResetTimer();
+				}
 			}
 		}
 		break;
@@ -136,7 +139,10 @@ void SizukuSkill::Update() {
 	skillUnderObject_->SetTransform(damageTransform2_);
 	skillUnderObject_->Update();
 	skillUnderObject_->SetTransform(damageTransform2_);
-	skillEmitter_->Update(particle_);
+
+	if (state == State::damage && !isSkillEnd) {
+		skillEmitter_->Update(particle_);
+	}
 }
 void SizukuSkill::EnsureIceFlowerCount(int count) {
 	if (count < 0) {
@@ -213,6 +219,9 @@ void SizukuSkill::StartAttack(const Transform& playerTransform) {
 	downTime = 0;
 	damageTime = 0;
 	endTime = 0;
+	if (skillEmitter_) {
+		skillEmitter_->ResetTimer();
+	}
 	skillDamageId_++;
 }
 

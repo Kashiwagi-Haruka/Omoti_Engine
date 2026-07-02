@@ -210,6 +210,14 @@ void TeamDisplay::UpdatePartyUI(Team& team) {
 	const Vector2 memberSelectionMarkerPos = memberSelectionMarker_->GetPosition();
 	const Vector2 memberSelectionMarkerSize = memberSelectionMarker_->GetScale();
 	const bool isHoveringMemberSelectionMarker = IsInsideRect(mousePos, memberSelectionMarkerPos, memberSelectionMarkerSize);
+	
+	if (Input::GetInstance()->TriggerKey(DIK_ESCAPE)) {
+		if (isMemberSelectionActive_) {
+			isMemberSelectionActive_ = false;
+		}
+	}
+	
+	
 	if (isHoveringMemberSelectionMarker && Input::GetInstance()->TriggerMouseButton(Input::MouseButton::kLeft)) {
 		isMemberSelectionActive_ = true;
 	}
@@ -263,6 +271,7 @@ void TeamDisplay::UpdatePartyUI(Team& team) {
 	if (isConfirmTriggered) {
 		team.AssignCharacterToSlot(team.GetActiveSlot(), selectedInventoryIndex_);
 		teamMemberIcons_[team.GetActiveSlot()]->Initialize(ownedCharacterIconHandles_[selectedInventoryIndex_]);
+		isMemberSelectionActive_ = false;
 	}
 
 	confirmButton_->SetColor(isHoveringConfirm ? Vector4{0.95f, 0.8f, 0.3f, 1.0f} : Vector4{0.2f, 0.55f, 0.9f, 0.95f});

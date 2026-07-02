@@ -13,7 +13,7 @@ constexpr float kPressedScaleRate = 1.15f;
 constexpr float kScaleReturnRate = 0.25f;
 constexpr Vector2 kKeyboardDisplaySize{100.0f, 100.0f};
 constexpr float kKeyboardDisplayBottomMargin = 5.0f;
-constexpr float kKeyboardDisplayIconOffsetY = 15.0f;
+constexpr float kKeyboardDisplayIconOffsetY = 50.0f;
 } // namespace
 AttackOperation::AttackOperation() {
 	// スキルアイコンのテクスチャハンドルを取得
@@ -146,11 +146,10 @@ void AttackOperation::UpdateOperationSprite(SpriteData& spriteData, bool isPress
 }
 
 void AttackOperation::UpdateKeyboardSprite(SpriteData& keyboardSpriteData, const SpriteData& iconSpriteData) {
-	const float screenBottom = static_cast<float>(WinApp::kClientHeight) - kKeyboardDisplayBottomMargin;
 	keyboardSpriteData.size = kKeyboardDisplaySize;
 	keyboardSpriteData.translate = {
 	    iconSpriteData.translate.x,
-	    std::min(iconSpriteData.translate.y + kKeyboardDisplayIconOffsetY, screenBottom),
+	    iconSpriteData.translate.y + kKeyboardDisplayIconOffsetY,
 	};
 	keyboardSpriteData.sprite->SetPosition(keyboardSpriteData.translate);
 	keyboardSpriteData.sprite->SetScale(keyboardSpriteData.size);

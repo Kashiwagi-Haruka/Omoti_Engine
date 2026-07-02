@@ -2,6 +2,7 @@
 #include "Player.h"
 #include "Camera.h"
 #include "Function.h"
+#include "Input.h"
 #include "Model/ModelManager.h"
 #include <algorithm>
 #include <numbers>
@@ -113,6 +114,16 @@ void Player::Move() {
 		}
 	}
 
+	const Vector2 leftStick = Input::GetInstance()->GetJoyStickLXY();
+	if (leftStick.x != 0.0f) {
+		inputAxis.x = leftStick.x;
+		hasInput = true;
+	}
+	if (leftStick.y != 0.0f) {
+		inputAxis.z = leftStick.y;
+		hasInput = true;
+	}
+
 	// 入力がある場合、その方向に向きを回転
 	if (hasInput) {
 		const float inputLength = std::sqrt(inputAxis.x * inputAxis.x + inputAxis.z * inputAxis.z);
@@ -152,7 +163,7 @@ void Player::Move() {
 		transform_.rotate.y = Function::Lerp(transform_.rotate.y, transform_.rotate.y + angleDiff, rotateTimer);
 	}
 
-	if (!PlayCommand::GetMOVE_LEFT() && !PlayCommand::GetMOVE_RIGHT() && !PlayCommand::GetMOVE_FRONT() && !PlayCommand::GetMOVE_BACK()) {
+	if (!hasInput) {
 		isDash = false;
 	} else {
 		isDash = PlayCommand::GetDASH();
@@ -166,13 +177,13 @@ void Player::Move() {
 		}
 	}
 
-	if (!PlayCommand::GetMOVE_LEFT() && !PlayCommand::GetMOVE_RIGHT()) {
+	if (inputAxis.x == 0.0f) {
 		velocity_.x *= (1.0f - parameters_.decelerationRate);
 		if (velocity_.x > -0.01f && velocity_.x < 0.01f) {
 			velocity_.x = 0.0f;
 		}
 	}
-	if (!PlayCommand::GetMOVE_FRONT() && !PlayCommand::GetMOVE_BACK()) {
+	if (inputAxis.z == 0.0f) {
 		velocity_.z *= (1.0f - parameters_.decelerationRate);
 		if (velocity_.z > -0.01f && velocity_.z < 0.01f) {
 			velocity_.z = 0.0f;
@@ -186,10 +197,10 @@ void Player::Move() {
 		velocity_.z *= parameters_.dashMagnification;
 	}
 
-	if (PlayCommand::GetMOVE_LEFT()) {
+	if (inputAxis.x < 0.0f) {
 		bulletVelocity_.x = -1;
 	}
-	if (PlayCommand::GetMOVE_RIGHT()) {
+	if (inputAxis.x > 0.0f) {
 		bulletVelocity_.x = 1;
 	}
 }

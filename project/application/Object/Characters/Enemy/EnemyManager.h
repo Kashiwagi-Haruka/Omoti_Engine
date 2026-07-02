@@ -52,6 +52,7 @@ public:
 	void StartNextWave();     // 次のウェーブを開始
 	void SpawnWaveEnemies();  // ウェーブに応じた敵を生成
 	void CheckWaveComplete(); // ウェーブクリア判定
+	void ResolveOverlaps(const Vector3& playerPos, bool isPlayerAlive);
 
 	// ゲッター
 	int GetCurrentWave() const { return currentWave_; }

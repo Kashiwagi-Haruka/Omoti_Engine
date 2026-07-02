@@ -417,7 +417,7 @@ float Input::GetJoyStickRY() const {
 	float norm = (padState_.lRy - 32767.0f) / 32767.0f; // 右スティックY
 	if (fabs(norm) < deadZone_)
 		norm = 0.0f;
-	return -norm; // 上をプラスにしたいなら符号を反転
+	return norm; // 上をプラスにしたいなら符号を反転
 }
 
 Vector2 Input::GetJoyStickRXY() const { return Vector2(GetJoyStickRX(), GetJoyStickRY()); }

@@ -4,7 +4,7 @@ class HouseHP {
 
 	static std::unique_ptr<HouseHP> instance;
 
-	static constexpr int kMaxHP = 40;
+	static constexpr int kMaxHP = 100;
 	int HP_;
 
 public:

@@ -16,6 +16,7 @@ public:
 	// 発生
 	void Emit();
 	void EmitVisible(bool v);
+	void ResetTimer();
 
 	void SetFrequency(float frequency);
 	void SetCount(uint32_t count);
