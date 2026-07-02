@@ -95,6 +95,10 @@ void TeamUI::Update(const Team& team) {
 		const int characterIndex = team.GetMemberCharacterIndex(i);
 		if (!team.GetHasMember(i) || characterIndex < 0) {
 			iconSprites_[i].reset();
+			hpBarSprites_[i].reset();
+			hpBarBackgroundSprites_[i].reset();
+			specialGaugeFlameSprites_[i].reset();
+			specialGaugeSprites_[i].reset();
 			displayedCharacterIndices_[i] = -1;
 			continue;
 		}
@@ -108,11 +112,53 @@ void TeamUI::Update(const Team& team) {
 			iconSprites_[i]->SetAnchorPoint(kRightTopAnchor);
 		}
 
+		if (!hpBarSprites_[i]) {
+			const uint32_t hpBarTextureHandle = TextureManager::GetInstance()->GetTextureIndexByfilePath("Resources/2d/Team/UI/HPBar.png");
+			hpBarSprites_[i] = std::make_unique<Sprite>();
+			hpBarSprites_[i]->Initialize(hpBarTextureHandle);
+			hpBarSprites_[i]->SetAnchorPoint({1.0f, 0.5f});
+		}
+		if (!hpBarBackgroundSprites_[i]) {
+			const uint32_t hpBarBackgroundTextureHandle = TextureManager::GetInstance()->GetTextureIndexByfilePath("Resources/2d/Team/UI/HPBarBackground.png");
+			hpBarBackgroundSprites_[i] = std::make_unique<Sprite>();
+			hpBarBackgroundSprites_[i]->Initialize(hpBarBackgroundTextureHandle);
+			hpBarBackgroundSprites_[i]->SetAnchorPoint({1.0f, 0.5f});
+		}
+		if (!specialGaugeFlameSprites_[i]) {
+			const uint32_t specialGaugeFlameTextureHandle = TextureManager::GetInstance()->GetTextureIndexByfilePath("Resources/2d/AttackOperation/special.png");
+			specialGaugeFlameSprites_[i] = std::make_unique<Sprite>();
+			specialGaugeFlameSprites_[i]->Initialize(specialGaugeFlameTextureHandle);
+			specialGaugeFlameSprites_[i]->SetAnchorPoint({1.0f, 0.5f});
+		}
+		if (!specialGaugeSprites_[i]) {
+			const uint32_t specialGaugeTextureHandle = TextureManager::GetInstance()->GetTextureIndexByfilePath("Resources/2d/AttackOperation/specialGauge.png");
+			specialGaugeSprites_[i] = std::make_unique<Sprite>();
+			specialGaugeSprites_[i]->Initialize(specialGaugeTextureHandle);
+			specialGaugeSprites_[i]->SetAnchorPoint({1.0f, 0.5f});
+		}
+
 		displayedCharacterIndices_[i] = characterIndex;
 		iconSprites_[i]->SetPosition(iconPositions_[i]);
 		iconSprites_[i]->SetScale(i == team.GetActiveSlot() ? kActiveIconSize : kIconSize);
 		iconSprites_[i]->SetColor(i == team.GetActiveSlot() ? kActiveColor : kInactiveColor);
 		iconSprites_[i]->Update();
+
+		hpBarSprites_[i]->SetPosition(iconPositions_[i] + kHpBarOffset);
+		hpBarSprites_[i]->SetScale(kHpBarMaxSize);
+		hpBarSprites_[i]->Update();
+
+		hpBarBackgroundSprites_[i]->SetPosition(iconPositions_[i] + kHpBarOffset);
+		hpBarBackgroundSprites_[i]->SetScale(kHpBarMaxSize);
+		hpBarBackgroundSprites_[i]->Update();
+
+		const Vector2 specialGaugePosition = iconPositions_[i] + kHpBarOffset + Vector2{-kHpBarMaxSize.x * 1.2f, -kHpBarOffset.y * 0.4f};
+		specialGaugeFlameSprites_[i]->SetPosition(specialGaugePosition);
+		specialGaugeFlameSprites_[i]->SetScale(kIconSize);
+		specialGaugeFlameSprites_[i]->Update();
+
+		specialGaugeSprites_[i]->SetPosition(specialGaugePosition);
+		specialGaugeSprites_[i]->SetScale(kIconSize);
+		specialGaugeSprites_[i]->Update();
 	}
 	selectedBackgroundSprite_->SetPosition(iconPositions_[team.GetActiveSlot()]);
 	selectedBackgroundSprite_->Update();
