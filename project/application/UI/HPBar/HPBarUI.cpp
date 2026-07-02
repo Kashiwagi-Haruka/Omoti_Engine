@@ -4,18 +4,17 @@
 #include "Sprite/SpriteCommon.h"
 #include <string>
 HPBarUI::HPBarUI() {
-	playerHpSPData.handle = TextureManager::GetInstance()->GetTextureIndexByfilePath("Resources/2d/playerHP.png");
-
-	playerHPFlameSPData.handle = TextureManager::GetInstance()->GetTextureIndexByfilePath("Resources/2d/playerHPFlame.png");
-
 
 	playerHpSPData.sprite = std::make_unique<Sprite>();
 	playerHPFlameSPData.sprite = std::make_unique<Sprite>();
+	playerHpBarBackgroundSprite.sprite = std::make_unique<Sprite>();
 }
 void HPBarUI::Initialize() {
-
+	uint32_t playerHpBarHandle = TextureManager::GetInstance()->GetTextureIndexByfilePath("Resources/2d/HPBar/playerHP.png");
+	uint32_t playerHpBarBackgroundHandle = TextureManager::GetInstance()->GetTextureIndexByfilePath("Resources/2d/HPBar/playerHPBackground.png");
+	uint32_t playerHPFlameHandle = TextureManager::GetInstance()->GetTextureIndexByfilePath("Resources/2d/HPBar/playerHPFlame.png");
 	// ------------------ HP Bar ------------------
-	playerHpSPData.sprite->Initialize(playerHpSPData.handle);
+	playerHpSPData.sprite->Initialize(playerHpBarHandle);
 	playerHpSPData.size = playerHPMaxSize;
 	// アンカーポイントを左端に設定（左端固定）
 	playerHpSPData.sprite->SetAnchorPoint({0.0f, 0.0f});
@@ -25,12 +24,20 @@ void HPBarUI::Initialize() {
 	playerHpSPData.sprite->SetPosition(playerHpSPData.translate);
 
 	// ------------------ HP Flame ------------------
-	playerHPFlameSPData.sprite->Initialize(playerHPFlameSPData.handle);
+	playerHPFlameSPData.sprite->Initialize(playerHPFlameHandle);
 	playerHPFlameSPData.size = playerHPMaxSize;
 	playerHPFlameSPData.translate = {640, 500};
 	playerHPFlameSPData.sprite->SetAnchorPoint({0.5f, 0.0f});
 	playerHPFlameSPData.sprite->SetPosition(playerHPFlameSPData.translate);
 	playerHPFlameSPData.sprite->SetScale(playerHPFlameSPData.size);
+
+	// ------------------ HP Background ------------------
+	playerHpBarBackgroundSprite.sprite->Initialize(playerHpBarBackgroundHandle);
+	playerHpBarBackgroundSprite.size = playerHPMaxSize;
+	playerHpBarBackgroundSprite.translate = {640 - playerHPMaxSize.x / 2, 500};
+	playerHpBarBackgroundSprite.sprite->SetAnchorPoint({0.0f, 0.0f});
+	playerHpBarBackgroundSprite.sprite->SetPosition(playerHpBarBackgroundSprite.translate);
+	playerHpBarBackgroundSprite.sprite->SetScale(playerHpBarBackgroundSprite.size);
 
 	// ------------------ HP Label ------------------
 
@@ -75,6 +82,7 @@ void HPBarUI::Update() {
 	playerHpText.UpdateLayout(false);
 }
 void HPBarUI::Draw() {
+	playerHpBarBackgroundSprite.sprite->Draw();
 	playerHpSPData.sprite->Draw();
 	playerHPFlameSPData.sprite->Draw();
 	playerHpText.Draw();

@@ -31,6 +31,6 @@ void Field::Update() {
 }
 
 void Field::Draw() { 	
-		Object3dCommon::GetInstance()->DrawCommon(Object3dCommon::DrawCommonType::NoCull);
+		Object3dCommon::GetInstance()->DrawCommon(Object3dCommon::DrawCommonType::Default);
 	field_->Draw();
 }
