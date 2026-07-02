@@ -4,6 +4,7 @@
 #include "Vector2.h"
 #include <array>
 #include <memory>
+#include "Text/Text.h"
 
 class TeamUI {
 public:
@@ -23,4 +24,5 @@ private:
 	std::array<std::unique_ptr<Sprite>, kMaxMembersCount> hpBarBackgroundSprites_;
 	std::array<std::unique_ptr<Sprite>, kMaxMembersCount> specialGaugeSprites_;
 	std::array<std::unique_ptr<Sprite>, kMaxMembersCount> specialGaugeFlameSprites_;
+	std::array<Text, kMaxMembersCount> CharacterNameTexts_;
 };

@@ -12,6 +12,7 @@ class PlayableBase {
 
 protected:
 	Transform transform_;
+	std::string name_;
 	Attribute attribute_ = Attribute::None;
 	WeaponTypes weaponTypes_ = WeaponTypes::NONE;
 	BaseParameter baseParameter_;
