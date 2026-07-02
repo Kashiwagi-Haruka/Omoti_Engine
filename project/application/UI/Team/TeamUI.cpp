@@ -84,7 +84,7 @@ void TeamUI::Initialize(const Team& team) {
 	selectedBackgroundSprite_ = std::make_unique<Sprite>();
 	selectedBackgroundSprite_->Initialize(selectedBackgroundTextureHandle);
 	selectedBackgroundSprite_->SetAnchorPoint({1.0f, 0.0f});
-	selectedBackgroundSprite_->SetScale({kIconSize.x + kHpBarMaxSize.x + (- kHpBarOffset.x), kIconSize.y});
+	selectedBackgroundSprite_->SetScale({kActiveIconSize.x + kHpBarMaxSize.x + (- kHpBarOffset.x), kActiveIconSize.y});
 	selectedBackgroundSprite_->SetPosition(iconPositions_[team.GetActiveSlot()]);
 	selectedBackgroundSprite_->Update();
 

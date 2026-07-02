@@ -8,11 +8,12 @@
 #include <numbers>
 
 namespace {
-constexpr float kStartAngle = 205.0f * std::numbers::pi_v<float> / 180.0f;
-constexpr float kEndAngle = 335.0f * std::numbers::pi_v<float> / 180.0f;
+constexpr float kStartAngle = 220.0f * std::numbers::pi_v<float> / 180.0f;
+constexpr float kEndAngle = 320.0f * std::numbers::pi_v<float> / 180.0f;
 constexpr float kGaugeRotationAngle = 90.0f * std::numbers::pi_v<float> / 180.0f;
-constexpr float kArcRadius = 190.0f;
-constexpr Vector2 kSegmentSize{18.0f, 34.0f};
+constexpr float kArcRadius = 165.0f;
+constexpr Vector2 kSegmentSize{12.0f, 24.0f};
+constexpr float kFramePadding = 2.0f;
 constexpr Vector4 kFrameColor{0.08f, 0.12f, 0.18f, 0.75f};
 constexpr Vector4 kFillColor{0.15f, 0.72f, 1.0f, 0.95f};
 } // namespace
@@ -53,7 +54,7 @@ void DashGauge::Update() {
 		if (frameSprites_[i]) {
 			frameSprites_[i]->SetPosition(segmentPosition);
 			frameSprites_[i]->SetRotation(tangentRotation);
-			frameSprites_[i]->SetScale({segmentSize_.x + 6.0f, segmentSize_.y + 6.0f});
+			frameSprites_[i]->SetScale({segmentSize_.x + kFramePadding, segmentSize_.y + kFramePadding});
 			frameSprites_[i]->Update();
 		}
 
