@@ -1,8 +1,10 @@
 #pragma once
 #include "Sprite/Sprite.h"
 #include "Team/Team.h"
+#include "Text/Text.h"
 #include "Vector2.h"
 #include <array>
+#include <cstdint>
 #include <memory>
 
 class TeamUI {
@@ -16,6 +18,7 @@ public:
 private:
 	static constexpr int kMaxMembersCount = Team::kMaxMembersCount;
 
+	std::unique_ptr<Sprite> selectedBackgroundSprite_;
 	std::array<std::unique_ptr<Sprite>, kMaxMembersCount> iconSprites_;
 	std::array<Vector2, kMaxMembersCount> iconPositions_{};
 	std::array<int, kMaxMembersCount> displayedCharacterIndices_{};
@@ -23,4 +26,6 @@ private:
 	std::array<std::unique_ptr<Sprite>, kMaxMembersCount> hpBarBackgroundSprites_;
 	std::array<std::unique_ptr<Sprite>, kMaxMembersCount> specialGaugeSprites_;
 	std::array<std::unique_ptr<Sprite>, kMaxMembersCount> specialGaugeFlameSprites_;
+	uint32_t characterNameFontHandle_ = 0;
+	std::array<Text, kMaxMembersCount> characterNameTexts_;
 };

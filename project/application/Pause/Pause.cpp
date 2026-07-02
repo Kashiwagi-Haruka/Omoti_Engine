@@ -205,7 +205,7 @@ void Pause::Draw() {
 	object3dCommon->DrawCommon();
 	BG_->Draw();
 	if (currentCharacterObj_) {
-		object3dCommon->DrawCommonMaterialColorOnlySkinning();
+		object3dCommon->DrawCommon(Object3dCommon::DrawCommonType::MaterialColorOnlySkinning);
 		currentCharacterObj_->Draw();
 	}
 

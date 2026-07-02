@@ -26,7 +26,7 @@ void SpecialGaugeBallManager::Update(Camera* camera, const Vector3& movementLimi
 }
 
 void SpecialGaugeBallManager::Draw() {
-	Object3dCommon::GetInstance()->DrawCommonNoCull();
+	Object3dCommon::GetInstance()->DrawCommon(Object3dCommon::DrawCommonType::NoCull);
 	for (auto& cube : SpecialGaugeBalls_) {
 		cube->Draw();
 	}

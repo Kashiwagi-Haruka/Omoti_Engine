@@ -68,6 +68,6 @@ void CharacterDisplay::Draw() {
 	}
 	Object3dCommon::GetInstance()->DrawCommon();
 	skyDome_->Draw();
-	Object3dCommon::GetInstance()->DrawCommonSkinningToon();
+	Object3dCommon::GetInstance()->DrawCommon(Object3dCommon::DrawCommonType::SkinningToon);
 	sizukuObject_->Draw();
 }

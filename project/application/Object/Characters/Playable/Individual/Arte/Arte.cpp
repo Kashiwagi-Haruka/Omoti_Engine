@@ -8,6 +8,8 @@
 void Arte::Initialize() {
 	SetAttribute(Attribute::Wind);
 	SetWeaponTypes(WeaponTypes::BOW);
+	SetName("アルテ");
+	SetRomanizationName("Arte");
 	arte_ = std::make_unique<Object3d>();
 	arte_->SetModel("sizuku");
 	arte_->Initialize();
@@ -72,7 +74,7 @@ void Arte::Draw() {
 #ifdef _DEBUG
 	if (arteSkeleton_) {
 		arteSkeleton_->SetObjectMatrix(worldMatrix_);
-		Object3dCommon::GetInstance()->DrawCommonWireframeNoDepth();
+		Object3dCommon::GetInstance()->DrawCommon(Object3dCommon::DrawCommonType::WireframeNoDepth);
 	}
 #endif
 }

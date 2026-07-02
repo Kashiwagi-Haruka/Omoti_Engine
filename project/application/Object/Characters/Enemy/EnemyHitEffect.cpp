@@ -223,7 +223,7 @@ void EnemyHitEffect::Draw() {
 		}
 	}
 	Object3dCommon::GetInstance()->SetBlendMode(BlendMode::kBlendModeAlpha);
-	Object3dCommon::GetInstance()->DrawCommonNoCullDepth();
+	Object3dCommon::GetInstance()->DrawCommon(Object3dCommon::DrawCommonType::NoCullDepth);
 	for (auto& shard : iceShards_) {
 		if (shard.object) {
 			shard.object->Draw();
@@ -232,5 +232,5 @@ void EnemyHitEffect::Draw() {
 	if (hitParticleEmitter_) {
 		hitParticleEmitter_->Draw();
 	}
-	Object3dCommon::GetInstance()->DrawCommonNoCullDepth();
+	Object3dCommon::GetInstance()->DrawCommon(Object3dCommon::DrawCommonType::NoCullDepth);
 }

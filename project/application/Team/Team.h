@@ -34,12 +34,16 @@ public:
 	std::string GetActiveCharacterName() const;
 	/// 所持キャラクターのインデックスから表示名を取得する。
 	const std::u32string& GetCharacterNameByIndex(int characterIndex) const;
+	/// 所持キャラクターのインデックスからプレイアブル識別名を取得する。
+	std::string GetPlayableNameByIndex(int characterIndex) const;
 
 private:
 	/// 所持しているプレイアブルキャラクター実体の一覧。
 	std::vector<std::unique_ptr<PlayableBase>> ownedCharacters_{};
 	/// 所持キャラクターのアイコンテクスチャハンドル一覧。
 	std::vector<uint32_t> ownedCharacterIconHandles_{};
+	/// 所持キャラクターから取得した表示名一覧。
+	std::vector<std::u32string> ownedCharacterDisplayNames_{};
 	/// 各チームスロットに割り当てられている所持キャラクターのインデックス。
 	std::array<int, kMaxMembersCount> teamMemberCharacterIndices_{};
 	/// 各チームスロットが使用中かどうかを示すフラグ。

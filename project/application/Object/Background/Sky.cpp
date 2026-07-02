@@ -27,7 +27,8 @@ void Sky::Update() {
 	skyBox_->Update();
 }
 void Sky::Draw() { 
-	Object3dCommon::GetInstance()->DrawCommonSkybox();
+		Object3dCommon::GetInstance()->DrawCommon(Object3dCommon::DrawCommonType::Skybox);
+	
 	
 	skyBox_->Draw(); 
 }

@@ -8,6 +8,8 @@
 void Yuzuki::Initialize() {
 	SetAttribute(Attribute::Thunder);
 	SetWeaponTypes(WeaponTypes::GUN);
+	SetName("柚希");
+	SetRomanizationName("Yuzuki");
 	yuzuki_ = std::make_unique<Object3d>();
 	yuzuki_->SetModel("sizuku");
 	yuzuki_->Initialize();
@@ -72,7 +74,7 @@ void Yuzuki::Draw() {
 #ifdef _DEBUG
 	if (yuzukiSkeleton_) {
 		yuzukiSkeleton_->SetObjectMatrix(worldMatrix_);
-		Object3dCommon::GetInstance()->DrawCommonWireframeNoDepth();
+		Object3dCommon::GetInstance()->DrawCommon(Object3dCommon::DrawCommonType::WireframeNoDepth);
 	}
 #endif
 }

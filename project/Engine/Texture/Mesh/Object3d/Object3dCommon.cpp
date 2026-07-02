@@ -296,147 +296,109 @@ void Object3dCommon::DrawSet(){
 
 	}
 }
-void Object3dCommon::DrawCommon() {
+void Object3dCommon::DrawCommon(DrawCommonType type) {
+	ID3D12RootSignature* rootSignature = nullptr;
+	Microsoft::WRL::ComPtr<ID3D12PipelineState> pipelineState;
+	D3D12_PRIMITIVE_TOPOLOGY primitiveTopology = D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST;
 
-	dxCommon_->GetCommandList()->SetGraphicsRootSignature(pso_->GetRootSignature().Get());
-	dxCommon_->GetCommandList()->SetPipelineState(pso_->GetGraphicsPipelineState(blendMode_).Get());
+	switch (type) {
+	case DrawCommonType::Default:
+		rootSignature = pso_->GetRootSignature().Get();
+		pipelineState = pso_->GetGraphicsPipelineState(blendMode_);
+		break;
+	case DrawCommonType::Toon:
+		rootSignature = psoToon_->GetRootSignature().Get();
+		pipelineState = psoToon_->GetGraphicsPipelineState(blendMode_);
+		break;
+	case DrawCommonType::Emissive:
+		rootSignature = psoEmissive_->GetRootSignature().Get();
+		pipelineState = psoEmissive_->GetGraphicsPipelineState(blendMode_);
+		break;
+	case DrawCommonType::NoCull:
+		rootSignature = psoNoCull_->GetRootSignature().Get();
+		pipelineState = psoNoCull_->GetGraphicsPipelineState(blendMode_);
+		break;
+	case DrawCommonType::NoDepth:
+		rootSignature = psoNoDepth_->GetRootSignature().Get();
+		pipelineState = psoNoDepth_->GetGraphicsPipelineState(blendMode_);
+		break;
+	case DrawCommonType::NoCullDepth:
+		rootSignature = psoNoCullDepth_->GetRootSignature().Get();
+		pipelineState = psoNoCullDepth_->GetGraphicsPipelineState(blendMode_);
+		break;
+	case DrawCommonType::WireframeNoDepth:
+		rootSignature = psoWireframeNoDepth_->GetRootSignature().Get();
+		pipelineState = psoWireframeNoDepth_->GetGraphicsPipelineState(blendMode_);
+		break;
+	case DrawCommonType::LineNoDepth:
+		rootSignature = psoLineNoDepth_->GetRootSignature().Get();
+		pipelineState = psoLineNoDepth_->GetGraphicsPipelineState(blendMode_);
+		primitiveTopology = D3D_PRIMITIVE_TOPOLOGY_LINELIST;
+		break;
+	case DrawCommonType::EditorGrid:
+		rootSignature = psoEditorGrid_->GetRootSignature().Get();
+		pipelineState = psoEditorGrid_->GetGraphicsPipelineState(blendMode_);
+		break;
+	case DrawCommonType::Skinning:
+		rootSignature = psoSkinning_->GetRootSignature().Get();
+		pipelineState = psoSkinning_->GetGraphicsPipelineState(blendMode_);
+		break;
+	case DrawCommonType::SkinningToon:
+		rootSignature = psoSkinningToon_->GetRootSignature().Get();
+		pipelineState = psoSkinningToon_->GetGraphicsPipelineState(blendMode_);
+		break;
+	case DrawCommonType::SkinningOutline:
+		dxCommon_->BeginOutlineRenderTarget();
+		rootSignature = psoSkinningOutline_->GetRootSignature().Get();
+		pipelineState = psoSkinningOutline_->GetGraphicsPipelineState(blendMode_);
+		break;
+	case DrawCommonType::SkinningToonOutline:
+		dxCommon_->BeginOutlineRenderTarget();
+		rootSignature = psoSkinningToonOutline_->GetRootSignature().Get();
+		pipelineState = psoSkinningToonOutline_->GetGraphicsPipelineState(blendMode_);
+		break;
+	case DrawCommonType::Mirror:
+		rootSignature = psoMirror_->GetRootSignature().Get();
+		pipelineState = psoMirror_->GetGraphicsPipelineState(blendMode_);
+		break;
+	case DrawCommonType::Outline:
+		dxCommon_->BeginOutlineRenderTarget();
+		rootSignature = psoOutline_->GetRootSignature().Get();
+		pipelineState = psoOutline_->GetGraphicsPipelineState(blendMode_);
+		break;
+	case DrawCommonType::Portal:
+		rootSignature = psoPortal_->GetRootSignature().Get();
+		pipelineState = psoPortal_->GetGraphicsPipelineState(blendMode_);
+		break;
+	case DrawCommonType::Shadow:
+		rootSignature = psoShadow_->GetRootSignature().Get();
+		pipelineState = psoShadow_->GetGraphicsPipelineState(blendMode_);
+		break;
+	case DrawCommonType::MaterialColorOnlySkinning:
+		rootSignature = psoMaterialColorSkinning_->GetRootSignature().Get();
+		pipelineState = psoMaterialColorSkinning_->GetGraphicsPipelineState(blendMode_);
+		break;
+	case DrawCommonType::Skybox:
+		rootSignature = psoSkybox_->GetRootSignature().Get();
+		pipelineState = psoSkybox_->GetGraphicsPipelineState(blendMode_);
+		break;
+	}
+
+	dxCommon_->GetCommandList()->SetGraphicsRootSignature(rootSignature);
+	dxCommon_->GetCommandList()->SetPipelineState(pipelineState.Get());
 	DrawSet();
-	dxCommon_->GetCommandList()->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+	dxCommon_->GetCommandList()->IASetPrimitiveTopology(primitiveTopology);
 }
-void Object3dCommon::DrawCommon(Camera* camera) {
+
+void Object3dCommon::DrawCommon(DrawCommonType type, Camera* camera) {
 	Camera* previousCamera = defaultCamera;
 	if (camera) {
 		defaultCamera = camera;
 	}
-	DrawCommon();
+	DrawCommon(type);
 	defaultCamera = previousCamera;
-}
-void Object3dCommon::DrawCommonEmissive() {
-	dxCommon_->GetCommandList()->SetGraphicsRootSignature(psoEmissive_->GetRootSignature().Get());
-	dxCommon_->GetCommandList()->SetPipelineState(psoEmissive_->GetGraphicsPipelineState(blendMode_).Get());
-	DrawSet();
-	dxCommon_->GetCommandList()->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
-}
-void Object3dCommon::DrawCommonNoCull() {
-
-	dxCommon_->GetCommandList()->SetGraphicsRootSignature(psoNoCull_->GetRootSignature().Get());
-	dxCommon_->GetCommandList()->SetPipelineState(psoNoCull_->GetGraphicsPipelineState(blendMode_).Get());
-	DrawSet();
-	dxCommon_->GetCommandList()->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
-}
-void Object3dCommon::DrawCommonNoDepth() {
-	dxCommon_->GetCommandList()->SetGraphicsRootSignature(psoNoDepth_->GetRootSignature().Get());
-	dxCommon_->GetCommandList()->SetPipelineState(psoNoDepth_->GetGraphicsPipelineState(blendMode_).Get());
-	DrawSet();
-	dxCommon_->GetCommandList()->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
-}
-void Object3dCommon::DrawCommonToon() {
-
-	dxCommon_->GetCommandList()->SetGraphicsRootSignature(psoToon_->GetRootSignature().Get());
-	dxCommon_->GetCommandList()->SetPipelineState(psoToon_->GetGraphicsPipelineState(blendMode_).Get());
-	DrawSet();
-	dxCommon_->GetCommandList()->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
-}
-void Object3dCommon::DrawCommonNoCullDepth() {
-	dxCommon_->GetCommandList()->SetGraphicsRootSignature(psoNoCullDepth_->GetRootSignature().Get());
-	dxCommon_->GetCommandList()->SetPipelineState(psoNoCullDepth_->GetGraphicsPipelineState(blendMode_).Get());
-	DrawSet();
-	dxCommon_->GetCommandList()->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
-}
-void Object3dCommon::DrawCommonWireframeNoDepth() {
-	dxCommon_->GetCommandList()->SetGraphicsRootSignature(psoWireframeNoDepth_->GetRootSignature().Get());
-	dxCommon_->GetCommandList()->SetPipelineState(psoWireframeNoDepth_->GetGraphicsPipelineState(blendMode_).Get());
-	DrawSet();
-	dxCommon_->GetCommandList()->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
-}
-void Object3dCommon::DrawCommonLineNoDepth() {
-	dxCommon_->GetCommandList()->SetGraphicsRootSignature(psoLineNoDepth_->GetRootSignature().Get());
-	dxCommon_->GetCommandList()->SetPipelineState(psoLineNoDepth_->GetGraphicsPipelineState(blendMode_).Get());
-	DrawSet();
-	dxCommon_->GetCommandList()->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_LINELIST);
-}
-void Object3dCommon::DrawCommonEditorGrid() {
-	dxCommon_->GetCommandList()->SetGraphicsRootSignature(psoEditorGrid_->GetRootSignature().Get());
-	dxCommon_->GetCommandList()->SetPipelineState(psoEditorGrid_->GetGraphicsPipelineState(blendMode_).Get());
-	DrawSet();
-	dxCommon_->GetCommandList()->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
-}
-void Object3dCommon::DrawCommonSkinning() {
-
-	dxCommon_->GetCommandList()->SetGraphicsRootSignature(psoSkinning_->GetRootSignature().Get());
-	dxCommon_->GetCommandList()->SetPipelineState(psoSkinning_->GetGraphicsPipelineState(blendMode_).Get());
-	DrawSet();
-	dxCommon_->GetCommandList()->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
-}
-void Object3dCommon::DrawCommonSkinningToon() {
-
-	dxCommon_->GetCommandList()->SetGraphicsRootSignature(psoSkinningToon_->GetRootSignature().Get());
-	dxCommon_->GetCommandList()->SetPipelineState(psoSkinningToon_->GetGraphicsPipelineState(blendMode_).Get());
-	DrawSet();
-	dxCommon_->GetCommandList()->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
-}
-void Object3dCommon::DrawCommonSkinningOutline() {
-	dxCommon_->BeginOutlineRenderTarget();
-	dxCommon_->GetCommandList()->SetGraphicsRootSignature(psoSkinningOutline_->GetRootSignature().Get());
-	dxCommon_->GetCommandList()->SetPipelineState(psoSkinningOutline_->GetGraphicsPipelineState(blendMode_).Get());
-	DrawSet();
-	dxCommon_->GetCommandList()->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
-}
-void Object3dCommon::DrawCommonSkinningToonOutline() {
-	dxCommon_->BeginOutlineRenderTarget();
-	dxCommon_->GetCommandList()->SetGraphicsRootSignature(psoSkinningToonOutline_->GetRootSignature().Get());
-	dxCommon_->GetCommandList()->SetPipelineState(psoSkinningToonOutline_->GetGraphicsPipelineState(blendMode_).Get());
-	DrawSet();
-	dxCommon_->GetCommandList()->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
-}
-void Object3dCommon::DrawCommonMirror() {
-
-	dxCommon_->GetCommandList()->SetGraphicsRootSignature(psoMirror_->GetRootSignature().Get());
-	dxCommon_->GetCommandList()->SetPipelineState(psoMirror_->GetGraphicsPipelineState(blendMode_).Get());
-	DrawSet();
-	dxCommon_->GetCommandList()->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
-}
-void Object3dCommon::DrawCommonOutline() {
-	dxCommon_->BeginOutlineRenderTarget();
-	dxCommon_->GetCommandList()->SetGraphicsRootSignature(psoOutline_->GetRootSignature().Get());
-	dxCommon_->GetCommandList()->SetPipelineState(psoOutline_->GetGraphicsPipelineState(blendMode_).Get());
-	DrawSet();
-	dxCommon_->GetCommandList()->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 }
 void Object3dCommon::EndOutlineDraw() { dxCommon_->EndOutlineRenderTarget(); }
-void Object3dCommon::DrawCommonPortal() {
-
-	dxCommon_->GetCommandList()->SetGraphicsRootSignature(psoPortal_->GetRootSignature().Get());
-	dxCommon_->GetCommandList()->SetPipelineState(psoPortal_->GetGraphicsPipelineState(blendMode_).Get());
-	DrawSet();
-	dxCommon_->GetCommandList()->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
-}
-void Object3dCommon::DrawCommonPortal(Camera* camera) {
-	Camera* previousCamera = defaultCamera;
-	if (camera) {
-		defaultCamera = camera;
-	}
-	DrawCommonPortal();
-	defaultCamera = previousCamera;
-}
-void Object3dCommon::DrawCommonShadow() {
-	dxCommon_->GetCommandList()->SetGraphicsRootSignature(psoShadow_->GetRootSignature().Get());
-	dxCommon_->GetCommandList()->SetPipelineState(psoShadow_->GetGraphicsPipelineState(blendMode_).Get());
-	DrawSet();
-	dxCommon_->GetCommandList()->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
-}
-void Object3dCommon::DrawCommonMaterialColorOnlySkinning() { 
-	dxCommon_->GetCommandList()->SetGraphicsRootSignature(psoMaterialColorSkinning_->GetRootSignature().Get()); 
-	dxCommon_->GetCommandList()->SetPipelineState(psoMaterialColorSkinning_->GetGraphicsPipelineState(blendMode_).Get()); 
-	DrawSet(); 
-	dxCommon_->GetCommandList()->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST); 
-}
-void Object3dCommon::DrawCommonSkybox() {
-	dxCommon_->GetCommandList()->SetGraphicsRootSignature(psoSkybox_->GetRootSignature().Get());
-	dxCommon_->GetCommandList()->SetPipelineState(psoSkybox_->GetGraphicsPipelineState(blendMode_).Get());
-	DrawSet();
-	dxCommon_->GetCommandList()->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
-}
 
 void Object3dCommon::BeginShadowMapPass() {
 	ID3D12Resource* resource = directionalShadowEnabled_ ? directionalShadowMapResource_.Get()

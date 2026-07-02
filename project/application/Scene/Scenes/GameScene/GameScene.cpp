@@ -127,6 +127,7 @@ void GameScene::Initialize() {
 	team_->Initialize();
 	uimanager->SetTeam(team_.get());
 	uimanager->Initialize();
+	uimanager->SetPlayerDashGauge(player->GetDashGauge(), player->GetDashGaugeMax());
 	rasen_->Initialize(cameraController->GetCamera());
 	openWorld_->Initialize(cameraController->GetCamera());
 	playAreaMode_ = PlayAreaMode::kSpiral;
@@ -421,7 +422,8 @@ void GameScene::Update() {
 	skyDome->Update();
 	field->Update();
 	player->Update();
-	fullscreenFilterType_ = player->IsDashing() ? kRadialBlurFullscreenFilterType : kDefaultFullscreenFilterType;
+	const bool isDashing = player->IsDashing();
+	fullscreenFilterType_ = isDashing ? kRadialBlurFullscreenFilterType : kDefaultFullscreenFilterType;
 	Object3dCommon::GetInstance()->SetFullscreenFilterType(fullscreenFilterType_);
 	if (playAreaMode_ == PlayAreaMode::kSpiral) {
 		rasen_->Update(cameraController->GetCamera(), player.get(), boss_.get());
@@ -494,6 +496,7 @@ void GameScene::Update() {
 	Object3dCommon::GetInstance()->SetFullScreenGrayscaleEnabled(damageGrayscaleTimer_ > 0.0f);
 	uimanager->SetPlayerParameters(player->GetParameters());
 	uimanager->SetPlayerHP(player->GetHP());
+	uimanager->SetPlayerDashGauge(player->GetDashGauge(), player->GetDashGaugeMax());
 	uimanager->Update();
 
 	cameraController->SetPlayerPos(player->GetPosition());

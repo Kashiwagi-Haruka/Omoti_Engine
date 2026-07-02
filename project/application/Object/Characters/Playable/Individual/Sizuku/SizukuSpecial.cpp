@@ -47,7 +47,7 @@ void SizukuSpecial::Draw() {
 	if (!isStarted_) {
 		return;
 	}
-	Object3dCommon::GetInstance()->DrawCommonNoCullDepth();
+	Object3dCommon::GetInstance()->DrawCommon(Object3dCommon::DrawCommonType::NoCullDepth);
 	Object3dCommon::GetInstance()->SetBlendMode(BlendMode::kBlendModeAdd);
 	if (fieldPlane_) {
 		fieldPlane_->Draw();

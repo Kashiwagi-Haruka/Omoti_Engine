@@ -54,7 +54,8 @@ void Player::Initialize(Camera* camera) {
 	attack_->SetTransform(transform_);
 	attack_->SetModels(models_.get());
 	attack_->Initialize();
-
+	dashGauge_ = dashGaugeMax_;
+	isDashGaugeRecovery_ = false;
 }
 void Player::SetCharacterType(const std::string& characterName) {
 	if (models_) {
@@ -68,6 +69,7 @@ void Player::Move() {
 
 	// ★ 落下攻撃中は移動できない
 	if (!attack_->IsCanMove()) {
+		isDash = false;
 		return;
 	}
 
@@ -192,10 +194,27 @@ void Player::Move() {
 
 	velocity_.x = std::clamp(velocity_.x, -parameters_.accelationMax, parameters_.accelationMax);
 	velocity_.z = std::clamp(velocity_.z, -parameters_.accelationMax, parameters_.accelationMax);
+	if (dashGauge_ <= 0.0f) {
+		dashGauge_ = 0.0f;
+		isDash = false;
+		isDashGaugeRecovery_ = true;
+	}
 	if (isDash) {
+		if (!isDashGaugeRecovery_) {
+		dashGauge_ -= dashGaugeDecrease_;
 		velocity_.x *= parameters_.dashMagnification;
 		velocity_.z *= parameters_.dashMagnification;
+		}
+	} else {
+		if (isDashGaugeRecovery_) {
+		dashGauge_ += dashGaugeRecovery_;
+			if (dashGauge_ >= dashGaugeMax_) {
+				dashGauge_ = dashGaugeMax_;
+				isDashGaugeRecovery_ = false;
+			}
+		}
 	}
+	
 
 	if (inputAxis.x < 0.0f) {
 		bulletVelocity_.x = -1;
@@ -301,28 +320,6 @@ void Player::Update() {
 	models_->SetCamera(camera_);
 	models_->SetPlayerTransform(transform_);
 	models_->Update();
-
-#ifdef USE_IMGUI
-
-	//if (ImGui::Begin("Player")) {
-
-	//	ImGui::DragInt("HP", &hp_);
-	//	ImGui::DragFloat3("plPos", &transform_.translate.x);
-	//	ImGui::DragFloat3("plRot", &transform_.rotate.x);
-	//	ImGui::DragFloat("rotateSpeed", &rotateTimer, 0.01f, 0.0f, 1.0f);
-	//	ImGui::DragFloat("comboWindow", &comboWindow_, 0.01f, 0.1f, 2.0f);
-	//	ImGui::DragFloat("heavyAttackThreshold", &heavyAttackThreshold_, 0.01f, 0.1f, 2.0f);
-	//	ImGui::Text("LMB = FIRE , WASD = MOVE , SPACE = JUMP");
-	//	ImGui::Text("isDash: %d", isDash);
-	//	ImGui::Text("Combo Step: %d / 4", comboStep_);
-	//	ImGui::Text("Combo Timer: %.2f", comboTimer_);
-	//	ImGui::Text("Can Combo: %s", canCombo_ ? "YES" : "NO");
-	//	ImGui::Text("Hold Timer: %.2f", attackHoldTimer_);
-	//	ImGui::Text("Falling Attack: %s", isFallingAttack_ ? "YES" : "NO");
-	//}
-	//ImGui::End();
-
-#endif //
 
 	parameters_.hpMax_ = parameters_.hpMax_ * (1 + parameters_.HPUp);
 

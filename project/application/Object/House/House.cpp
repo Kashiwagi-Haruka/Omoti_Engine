@@ -84,7 +84,7 @@ void House::Update(Camera* camera) {
 void House::Draw() {
 
 	object_->Draw();
-	Object3dCommon::GetInstance()->DrawCommonNoCullDepth();
+	Object3dCommon::GetInstance()->DrawCommon(Object3dCommon::DrawCommonType::NoCullDepth);
 	hpflame_->Draw();
 	hpbar_->Draw();
 }

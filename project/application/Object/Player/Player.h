@@ -60,7 +60,23 @@ class Player {
 
 	bool usedAirAttack = false;
 
+	// ダッシュ押したとき前に進む距離
 	float dashDistance_ = 5.0f;
+
+	// 最大ダッシュゲージ
+	float dashGaugeMax_ = 240.0f;
+
+	// 現在のダッシュゲージ
+	float dashGauge_ = dashGaugeMax_;
+
+	// ダッシュゲージの減少速度
+	float dashGaugeDecrease_ = 1.0f;
+
+	// ダッシュゲージの回復速度
+	float dashGaugeRecovery_ = 0.5f;
+
+	// ダッシュゲージが0になったか
+	bool isDashGaugeRecovery_ = false;
 
 	Vector3 movementLimitCenter_{0.0f,2.5f,0.0f};
 	float movementLimitRadius_ = 50.0f;
@@ -104,6 +120,8 @@ public:
 	bool GetSelect() { return isSelect_; };
 	int GetHP() const { return hp_; }
 	int GetHPMax() const { return parameters_.hpMax_; }
+	float GetDashGauge() const { return dashGauge_; }
+	float GetDashGaugeMax() const { return dashGaugeMax_; }
 	Vector3 GetMovementLimitCenter() const { return movementLimitCenter_; }
 	float GetMovementLimitRadius() const { return movementLimitRadius_; }
 	void IsLevelUp(bool lv) { isLevelUP = lv; }

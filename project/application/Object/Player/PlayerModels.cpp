@@ -83,9 +83,9 @@ void PlayerModels::Update() {
 
 void PlayerModels::Draw() {
 
-	Object3dCommon::GetInstance()->DrawCommonSkinningToon();
+	Object3dCommon::GetInstance()->DrawCommon(Object3dCommon::DrawCommonType::SkinningToon);
 	currentCharacter_->Draw();
-	Object3dCommon::GetInstance()->DrawCommonSkinningToonOutline();
+	Object3dCommon::GetInstance()->DrawCommon(Object3dCommon::DrawCommonType::SkinningToonOutline);
 	currentCharacter_->Draw();
 	Object3dCommon::GetInstance()->EndOutlineDraw();
 }

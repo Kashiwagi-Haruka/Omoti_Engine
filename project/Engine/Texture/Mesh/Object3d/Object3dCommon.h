@@ -193,12 +193,27 @@ private:
 	// ルートシグネチャ・DescriptorHeap共通設定
 	void DrawSet();
 
-	enum DrawCommons {
-		DEFAULT,
-		TOON,
-		EMMISIVE,
-		NOCULL,
-
+public:
+	enum class DrawCommonType {
+		Default,
+		Toon,
+		Emissive,
+		NoCull,
+		NoDepth,
+		NoCullDepth,
+		WireframeNoDepth,
+		LineNoDepth,
+		EditorGrid,
+		Skinning,
+		SkinningToon,
+		SkinningOutline,
+		SkinningToonOutline,
+		Mirror,
+		Outline,
+		Portal,
+		Shadow,
+		MaterialColorOnlySkinning,
+		Skybox,
 	};
 
 public:
@@ -217,50 +232,12 @@ public:
 	// 既定カメラ取得
 	Camera* GetDefaultCamera() const { return defaultCamera; };
 #pragma region DrawCommon
-	// 標準描画設定
-	void DrawCommon();
-	// 指定カメラで標準描画設定
-	void DrawCommon(Camera* camera);
-	// トゥーン描画設定
-	void DrawCommonToon();
-	// エミッシブ描画設定
-	void DrawCommonEmissive();
-	// カリングなし描画設定
-	void DrawCommonNoCull();
-	// 深度なし描画設定
-	void DrawCommonNoDepth();
-	// カリングなし＋深度なし描画設定
-	void DrawCommonNoCullDepth();
-	// ワイヤーフレーム＋深度なし描画設定
-	void DrawCommonWireframeNoDepth();
-	// ライン＋深度なし描画設定
-	void DrawCommonLineNoDepth();
-	// エディタグリッド描画設定
-	void DrawCommonEditorGrid();
-	// スキニング描画設定
-	void DrawCommonSkinning();
-	// スキニング＋トゥーン描画設定
-	void DrawCommonSkinningToon();
-	// スキニングアウトライン描画設定
-	void DrawCommonSkinningOutline();
-	// スキニング＋トゥーンアウトライン描画設定
-	void DrawCommonSkinningToonOutline();
+	// 描画設定
+	void DrawCommon(DrawCommonType type = DrawCommonType::Default);
+	// 指定カメラで描画設定
+	void DrawCommon(DrawCommonType type, Camera* camera);
 	// アウトライン描画ターゲットを通常シーンへ戻す
 	void EndOutlineDraw();
-	// ミラー描画設定
-	void DrawCommonMirror();
-	// アウトライン描画設定
-	void DrawCommonOutline();
-	// ポータル描画設定
-	void DrawCommonPortal();
-	// 指定カメラでポータル描画設定
-	void DrawCommonPortal(Camera* camera);
-	// シャドウマップ描画設定
-	void DrawCommonShadow();
-	// マテリアルカラーのみ描画設定
-	void DrawCommonMaterialColorOnlySkinning();
-	// スカイボックス描画設定
-	void DrawCommonSkybox();
 #pragma endregion
 
 

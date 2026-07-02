@@ -121,24 +121,24 @@ void Skeleton::DrawBones(Camera* camera, const Vector4& jointColor, const Vector
         }
     }
 
-    Object3dCommon::GetInstance()->DrawCommonWireframeNoDepth();
-    for (size_t i = 0; i < jointCount; ++i) {
-        const Joint& joint = joints_[i];
-        Vector3 jointPosition = GetJointWorldPosition(joint);
-        Primitive* jointPrimitive = debugJointPrimitives_[i].get();
-        jointPrimitive->SetCamera(camera);
-        jointPrimitive->SetColor(jointColor);
-        jointPrimitive->SetEnableLighting(false);
-        jointPrimitive->SetTransform({
-            .scale{kJointRadius,    kJointRadius,    kJointRadius   },
-            .rotate{0.0f,            0.0f,            0.0f           },
-            .translate{jointPosition.x, jointPosition.y, jointPosition.z},
-            });
-        jointPrimitive->Update();
-        jointPrimitive->Draw();
-    }
+    Object3dCommon::GetInstance()->DrawCommon(Object3dCommon::DrawCommonType::WireframeNoDepth);
+	for (size_t i = 0; i < jointCount; ++i) {
+		const Joint& joint = joints_[i];
+		Vector3 jointPosition = GetJointWorldPosition(joint);
+		Primitive* jointPrimitive = debugJointPrimitives_[i].get();
+		jointPrimitive->SetCamera(camera);
+		jointPrimitive->SetColor(jointColor);
+		jointPrimitive->SetEnableLighting(false);
+		jointPrimitive->SetTransform({
+		    .scale{kJointRadius,    kJointRadius,    kJointRadius   },
+		    .rotate{0.0f,            0.0f,            0.0f           },
+		    .translate{jointPosition.x, jointPosition.y, jointPosition.z},
+		});
+		jointPrimitive->Update();
+		jointPrimitive->Draw();
+	}
 
-    Object3dCommon::GetInstance()->DrawCommonLineNoDepth();
+	Object3dCommon::GetInstance()->DrawCommon(Object3dCommon::DrawCommonType::LineNoDepth);
     for (size_t i = 0; i < jointCount; ++i) {
         const Joint& joint = joints_[i];
         if (!joint.parent.has_value()) {

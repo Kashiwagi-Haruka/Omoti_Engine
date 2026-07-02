@@ -255,7 +255,7 @@ void Adhesion::Update() {
 }
 
 void Adhesion::Draw() {
-	Object3dCommon::GetInstance()->DrawCommonNoCullDepth();
+	Object3dCommon::GetInstance()->DrawCommon(Object3dCommon::DrawCommonType::NoCullDepth);
 	if (isComparisonDisplayActive_) {
 		AttributeReactionPlane_->Draw();
 		Object3dCommon::GetInstance()->DrawCommon();

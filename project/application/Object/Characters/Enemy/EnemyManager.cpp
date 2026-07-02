@@ -342,7 +342,7 @@ void EnemyManager::Draw() {
 			e->Draw();
 		}
 	}
-	Object3dCommon::GetInstance()->DrawCommonNoCullDepth();
+	Object3dCommon::GetInstance()->DrawCommon(Object3dCommon::DrawCommonType::NoCullDepth);
 	for (auto& entry : hitEffects) {
 		entry.effect->Draw();
 	}

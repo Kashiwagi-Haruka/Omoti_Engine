@@ -9,8 +9,7 @@ class HPBarUI {
 	struct SpriteData {
 		// 描画用スプライト本体。
 		std::unique_ptr<Sprite> sprite;
-		// 使用するテクスチャハンドル。
-		uint32_t handle = 0;
+
 		// スプライトサイズ（スケール）。
 		Vector2 size = {100, 100};
 		// 回転量（未使用の場合は0）。
@@ -22,17 +21,21 @@ class HPBarUI {
 	// プレイヤーHPの数値テキスト
 	Text playerHpText;
 
+	// プレイヤーHPバー背景用スプライト
+	SpriteData playerHpBarBackgroundSprite;
 	// プレイヤーHPバー用スプライト。
 	SpriteData playerHpSPData;
 	// プレイヤーHPフレーム用スプライト。
 	SpriteData playerHPFlameSPData;
+
+
 
 		// 現在のプレイヤーHP。
 	int playerHP=1;
 	// プレイヤーHP最大値。
 	int playerHPMax=1;
 	// HPバー最大サイズ。
-	Vector2 playerHPMaxSize = {400, 100};
+	Vector2 playerHPMaxSize = {400, 40};
 	// HPバーの現在表示幅。
 	float playerHPWidth = 1200.0f;
 	// HPバーの最大表示幅。
