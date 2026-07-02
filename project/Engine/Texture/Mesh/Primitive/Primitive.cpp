@@ -315,14 +315,14 @@ MeshData BuildCylinder(uint32_t slices) {
 		uint32_t bottom0 = baseIndex + 2 + i * 2;
 		uint32_t bottom1 = bottom0 + 2;
 		mesh.indices.push_back(baseIndex);
-		mesh.indices.push_back(bottom1);
 		mesh.indices.push_back(bottom0);
+		mesh.indices.push_back(bottom1);
 
 		uint32_t top0 = baseIndex + 3 + i * 2;
 		uint32_t top1 = top0 + 2;
 		mesh.indices.push_back(baseIndex + 1);
-		mesh.indices.push_back(top0);
 		mesh.indices.push_back(top1);
+		mesh.indices.push_back(top0);
 	}
 
 	return mesh;
