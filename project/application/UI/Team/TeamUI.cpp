@@ -24,6 +24,8 @@ void TeamUI::Initialize(const Team& team) {
 	uint32_t hpBarBackgroundTextureHandle = TextureManager::GetInstance()->GetTextureIndexByfilePath("Resources/2d/Team/UI/HPBarBackground.png");
 	uint32_t specialGaugeTextureHandle = TextureManager::GetInstance()->GetTextureIndexByfilePath("Resources/2d/AttackOperation/specialGauge.png");
 	uint32_t specialGaugeFlameTextureHandle = TextureManager::GetInstance()->GetTextureIndexByfilePath("Resources/2d/AttackOperation/special.png");
+	uint32_t selectedBackgroundTextureHandle = TextureManager::GetInstance()->GetTextureIndexByfilePath("Resources/2d/Team/UI/SelectedBackground.png");
+
 	for (int i = 0; i < kMaxMembersCount; ++i) {
 		iconPositions_[i] = {
 		    static_cast<float>(WinApp::kClientWidth) - kRightMargin,
@@ -77,8 +79,15 @@ void TeamUI::Initialize(const Team& team) {
 		specialGaugeSprites_[i]->SetScale(kIconSize);
 		specialGaugeSprites_[i]->Update();
 
-
 	}
+
+	selectedBackgroundSprite_ = std::make_unique<Sprite>();
+	selectedBackgroundSprite_->Initialize(selectedBackgroundTextureHandle);
+	selectedBackgroundSprite_->SetAnchorPoint({1.0f, 0.0f});
+	selectedBackgroundSprite_->SetScale({kIconSize.x + kHpBarMaxSize.x + (- kHpBarOffset.x), kIconSize.y});
+	selectedBackgroundSprite_->SetPosition(iconPositions_[team.GetActiveSlot()]);
+	selectedBackgroundSprite_->Update();
+
 }
 
 void TeamUI::Update(const Team& team) {
@@ -105,9 +114,12 @@ void TeamUI::Update(const Team& team) {
 		iconSprites_[i]->SetColor(i == team.GetActiveSlot() ? kActiveColor : kInactiveColor);
 		iconSprites_[i]->Update();
 	}
+	selectedBackgroundSprite_->SetPosition(iconPositions_[team.GetActiveSlot()]);
+	selectedBackgroundSprite_->Update();
 }
 
 void TeamUI::Draw() {
+	selectedBackgroundSprite_->Draw();
 	for (auto& iconSprite : iconSprites_) {
 		if (iconSprite) {
 			iconSprite->Draw();
