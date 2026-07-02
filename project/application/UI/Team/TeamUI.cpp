@@ -9,7 +9,7 @@ constexpr Vector2 kIconSize{35.0f, 35.0f};
 constexpr Vector2 kActiveIconSize{40.0f, 40.0f};
 constexpr Vector2 kHpBarMaxSize{30.0f, 4.0f};
 constexpr Vector2 kHpBarOffset{-kIconSize.x * 1.3f, kIconSize.y * 0.9f};
-constexpr Vector2 kCharacterNameOffset{-kIconSize.x * 1.3f, -2.0f};
+constexpr Vector2 kCharacterNameOffset{-kIconSize.x * 1.3f, 16.0f};
 constexpr Vector2 kCharacterNameTextSize{120.0f, 24.0f};
 constexpr float kRightMargin = 20.0f;
 constexpr float kTopMargin = 160.0f;
@@ -33,7 +33,7 @@ void TeamUI::Initialize(const Team& team) {
 	uint32_t selectedBackgroundTextureHandle = TextureManager::GetInstance()->GetTextureIndexByfilePath("Resources/2d/Team/UI/SelectedBackground.png");
 
 	characterNameFontHandle_ = FreeTypeManager::CreateFace("Resources/Font/irohakakuC-Medium.ttf", 0);
-	FreeTypeManager::SetPixelSizes(characterNameFontHandle_, 18, 18);
+	FreeTypeManager::SetPixelSizes(characterNameFontHandle_, 14, 14);
 
 	for (int i = 0; i < kMaxMembersCount; ++i) {
 		iconPositions_[i] = {
@@ -179,6 +179,7 @@ void TeamUI::Update(const Team& team) {
 		specialGaugeSprites_[i]->SetPosition(specialGaugePosition);
 		specialGaugeSprites_[i]->SetScale(kIconSize);
 		specialGaugeSprites_[i]->Update();
+
 		characterNameTexts_[i].SetString(team.GetCharacterNameByIndex(characterIndex));
 		characterNameTexts_[i].SetPosition(iconPositions_[i] + kCharacterNameOffset);
 		characterNameTexts_[i].SetColor(i == team.GetActiveSlot() ? kCharacterNameColor : kInactiveCharacterNameColor);

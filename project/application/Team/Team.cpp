@@ -5,6 +5,14 @@
 #include "Object/Characters/Playable/Individual/Sizuku/Sizuku.h"
 #include "Object/Characters/Playable/Individual/Yuzuki/Yuzuki.h"
 #include "TextureManager.h"
+#include "StringUtility.h"
+
+namespace {
+std::u32string ToU32String(const std::string& utf8String) {
+	const std::wstring wideString = StringUtility::ConvertString_(utf8String);
+	return std::u32string(wideString.begin(), wideString.end());
+}
+} // namespace
 
 void Team::Initialize() {
 	const uint32_t sizukuIconHandle = TextureManager::GetInstance()->GetTextureIndexByfilePath("Resources/2d/Character/Icon/Sizuku.png");
@@ -14,6 +22,7 @@ void Team::Initialize() {
 
 	ownedCharacters_.clear();
 	ownedCharacterIconHandles_.clear();
+	ownedCharacterDisplayNames_.clear();
 	ownedCharacters_.push_back(std::make_unique<Sizuku>());
 	ownedCharacterIconHandles_.push_back(sizukuIconHandle);
 	ownedCharacters_.push_back(std::make_unique<Mei>());
@@ -22,6 +31,12 @@ void Team::Initialize() {
 	ownedCharacterIconHandles_.push_back(arteIconHandle);
 	ownedCharacters_.push_back(std::make_unique<Yuzuki>());
 	ownedCharacterIconHandles_.push_back(yuzukiIconHandle);
+
+	ownedCharacterDisplayNames_.reserve(ownedCharacters_.size());
+	for (auto& character : ownedCharacters_) {
+		character->Initialize();
+		ownedCharacterDisplayNames_.push_back(ToU32String(character->GetName()));
+	}
 
 	teamMemberCharacterIndices_.fill(-1);
 	occupiedSlots_.fill(false);
@@ -100,21 +115,23 @@ bool Team::ConsumeCharacterSwitchTriggered() {
 
 const std::u32string& Team::GetCharacterNameByIndex(int characterIndex) const {
 	static const std::u32string kEmptyName = U"";
-	static const std::array<std::u32string, 4> kCharacterNames = {U"Sizuku", U"Mei", U"Arte", U"Yuzuki"};
-	if (characterIndex < 0 || characterIndex >= static_cast<int>(kCharacterNames.size())) {
+	if (characterIndex < 0 || characterIndex >= static_cast<int>(ownedCharacterDisplayNames_.size())) {
 		return kEmptyName;
 	}
-	return kCharacterNames[characterIndex];
+	return ownedCharacterDisplayNames_[characterIndex];
+}
+
+std::string Team::GetPlayableNameByIndex(int characterIndex) const {
+	if (characterIndex < 0 || characterIndex >= static_cast<int>(ownedCharacters_.size())) {
+		return "Sizuku";
+	}
+	const std::string& playableName = ownedCharacters_[characterIndex]->GetRomanizationName();
+	return playableName.empty() ? "Sizuku" : playableName;
 }
 
 std::string Team::GetActiveCharacterName() const {
 	if (activeSlotIndex_ < 0 || activeSlotIndex_ >= kMaxMembersCount) {
 		return "Sizuku";
 	}
-	const int characterIndex = teamMemberCharacterIndices_[activeSlotIndex_];
-	static const std::array<std::string, 4> kCharacterNames = {"Sizuku", "Mei", "Arte", "Yuzuki"};
-	if (characterIndex < 0 || characterIndex >= static_cast<int>(kCharacterNames.size())) {
-		return "Sizuku";
-	}
-	return kCharacterNames[characterIndex];
+	return GetPlayableNameByIndex(teamMemberCharacterIndices_[activeSlotIndex_]);
 }
