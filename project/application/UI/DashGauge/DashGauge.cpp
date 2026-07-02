@@ -11,15 +11,15 @@ namespace {
 constexpr float kStartAngle = 220.0f * std::numbers::pi_v<float> / 180.0f;
 constexpr float kEndAngle = 320.0f * std::numbers::pi_v<float> / 180.0f;
 constexpr float kGaugeRotationAngle = 90.0f * std::numbers::pi_v<float> / 180.0f;
-constexpr float kArcRadius = 165.0f;
-constexpr Vector2 kSegmentSize{12.0f, 24.0f};
+constexpr float kArcRadius = 82.5f;
+constexpr Vector2 kSegmentSize{5.0f, 10.0f};
 constexpr float kFramePadding = 2.0f;
 constexpr Vector4 kFrameColor{0.08f, 0.12f, 0.18f, 0.75f};
 constexpr Vector4 kFillColor{0.15f, 0.72f, 1.0f, 0.95f};
 } // namespace
 
 void DashGauge::Initialize() {
-	position_ = {static_cast<float>(WinApp::kClientWidth) * 0.5f, static_cast<float>(WinApp::kClientHeight) * 0.5f};
+	position_ = {static_cast<float>(WinApp::kClientWidth) * 0.55f, static_cast<float>(WinApp::kClientHeight) * 0.5f};
 	segmentSize_ = kSegmentSize;
 	const uint32_t whiteTextureHandle = TextureManager::GetInstance()->GetTextureIndexByfilePath("Resources/2d/white2x2.png");
 

@@ -13,6 +13,7 @@ class PlayableBase {
 protected:
 	Transform transform_;
 	std::string name_;
+	std::string romanizationName_;
 	Attribute attribute_ = Attribute::None;
 	WeaponTypes weaponTypes_ = WeaponTypes::NONE;
 	BaseParameter baseParameter_;
@@ -42,4 +43,6 @@ public:
 	const Parameter& GetParameter() const { return parameter_; }
 	void SetName(const std::string& name) { name_ = name; }
 	const std::string& GetName() const { return name_; }
+	void SetRomanizationName(const std::string& romanizationName) { romanizationName_ = romanizationName; }
+	const std::string& GetRomanizationName() const { return romanizationName_; }
 };

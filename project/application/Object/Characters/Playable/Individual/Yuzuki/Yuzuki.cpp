@@ -9,6 +9,7 @@ void Yuzuki::Initialize() {
 	SetAttribute(Attribute::Thunder);
 	SetWeaponTypes(WeaponTypes::GUN);
 	SetName("柚希");
+	SetRomanizationName("Yuzuki");
 	yuzuki_ = std::make_unique<Object3d>();
 	yuzuki_->SetModel("sizuku");
 	yuzuki_->Initialize();

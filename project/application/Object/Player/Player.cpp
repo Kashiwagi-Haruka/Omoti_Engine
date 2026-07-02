@@ -69,6 +69,7 @@ void Player::Move() {
 
 	// ★ 落下攻撃中は移動できない
 	if (!attack_->IsCanMove()) {
+		isDash = false;
 		return;
 	}
 

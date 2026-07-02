@@ -422,7 +422,8 @@ void GameScene::Update() {
 	skyDome->Update();
 	field->Update();
 	player->Update();
-	fullscreenFilterType_ = player->IsDashing() ? kRadialBlurFullscreenFilterType : kDefaultFullscreenFilterType;
+	const bool isDashing = player->IsDashing();
+	fullscreenFilterType_ = isDashing ? kRadialBlurFullscreenFilterType : kDefaultFullscreenFilterType;
 	Object3dCommon::GetInstance()->SetFullscreenFilterType(fullscreenFilterType_);
 	if (playAreaMode_ == PlayAreaMode::kSpiral) {
 		rasen_->Update(cameraController->GetCamera(), player.get(), boss_.get());
