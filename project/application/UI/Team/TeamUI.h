@@ -1,10 +1,11 @@
 #pragma once
 #include "Sprite/Sprite.h"
 #include "Team/Team.h"
+#include "Text/Text.h"
 #include "Vector2.h"
 #include <array>
+#include <cstdint>
 #include <memory>
-#include "Text/Text.h"
 
 class TeamUI {
 public:
@@ -25,5 +26,6 @@ private:
 	std::array<std::unique_ptr<Sprite>, kMaxMembersCount> hpBarBackgroundSprites_;
 	std::array<std::unique_ptr<Sprite>, kMaxMembersCount> specialGaugeSprites_;
 	std::array<std::unique_ptr<Sprite>, kMaxMembersCount> specialGaugeFlameSprites_;
-	std::array<Text, kMaxMembersCount> CharacterNameTexts_;
+	uint32_t characterNameFontHandle_ = 0;
+	std::array<Text, kMaxMembersCount> characterNameTexts_;
 };
