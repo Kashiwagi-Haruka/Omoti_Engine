@@ -8,7 +8,7 @@
 #include <algorithm>
 
 namespace {
-constexpr Vector2 kOperationIconBaseSize{90.0f, 90.0f};
+constexpr Vector2 kOperationIconBaseSize{60.0f, 60.0f};
 constexpr float kPressedScaleRate = 1.15f;
 constexpr float kScaleReturnRate = 0.25f;
 constexpr Vector2 kKeyboardDisplaySize{100.0f, 100.0f};

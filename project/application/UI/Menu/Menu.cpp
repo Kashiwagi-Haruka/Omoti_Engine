@@ -5,8 +5,8 @@
 #include "PlayCommand/PlayCommand.h"
 namespace{
 constexpr Vector2 kIconMargin = { 20.0f, 20.0f };
-constexpr Vector2 kIconSize = {60.0f, 60.0f};
-constexpr Vector2 kSelectIconSize = {80.0f, 80.0f};
+constexpr Vector2 kIconSize = {40.0f, 40.0f};
+constexpr Vector2 kSelectIconSize = {45.0f, 45.0f};
 
 constexpr Vector2 kKeyIconSize = {60.0f, 32.0f};
 constexpr float kKeyMarginY = 20.0f;

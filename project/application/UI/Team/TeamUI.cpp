@@ -3,9 +3,9 @@
 #include "TextureManager.h"
 #include "Function.h"
 namespace {
-constexpr Vector2 kIconSize{40.0f, 40.0f};
-constexpr Vector2 kActiveIconSize{58.0f, 58.0f};
-constexpr Vector2 kHpBarMaxSize{64.0f, 8.0f};
+constexpr Vector2 kIconSize{35.0f, 35.0f};
+constexpr Vector2 kActiveIconSize{40.0f, 40.0f};
+constexpr Vector2 kHpBarMaxSize{30.0f, 4.0f};
 constexpr Vector2 kHpBarOffset{-kIconSize.x*1.3f, kIconSize.y * 0.5f};
 constexpr float kRightMargin = 20.0f;
 constexpr float kTopMargin = 160.0f;
