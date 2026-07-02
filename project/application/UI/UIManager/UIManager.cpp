@@ -79,3 +79,7 @@ void UIManager::SetPlayerHP(int HP) { hpBarUI_->SetPlayerHP(HP); }
 void UIManager::SetPlayerHPMax(int HPMax) { hpBarUI_->SetPlayerHPMax(HPMax); }
 void UIManager::SetPlayerParameters(Parameters parameters) { parameters_ = parameters; }
 void UIManager::SetTeam(Team* team) { team_ = team; }
+void UIManager::SetPlayerDashGauge(float dashGauge, float dashGaugeMax) {
+	const float gaugeRate = dashGaugeMax > 0.0f ? dashGauge / dashGaugeMax : 0.0f;
+	dashGaugeUI_->SetGaugeRate(gaugeRate);
+}

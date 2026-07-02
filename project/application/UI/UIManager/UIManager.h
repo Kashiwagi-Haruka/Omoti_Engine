@@ -43,4 +43,6 @@ public:
 	void SetPlayerHPMax(int HPMax);
 	// プレイヤーパラメータを設定する。
 	void SetPlayerParameters(Parameters parameters);
+	// 現在のダッシュゲージを設定する。
+	void SetPlayerDashGauge(float dashGauge, float dashGaugeMax);
 };
