@@ -17,6 +17,7 @@ public:
 private:
 	static constexpr int kMaxMembersCount = Team::kMaxMembersCount;
 
+	std::array<std::unique_ptr<Sprite>, kMaxMembersCount> selectedBackgroundSprites_;
 	std::array<std::unique_ptr<Sprite>, kMaxMembersCount> iconSprites_;
 	std::array<Vector2, kMaxMembersCount> iconPositions_{};
 	std::array<int, kMaxMembersCount> displayedCharacterIndices_{};

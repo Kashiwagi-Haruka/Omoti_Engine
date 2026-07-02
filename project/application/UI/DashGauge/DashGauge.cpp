@@ -10,6 +10,7 @@
 namespace {
 constexpr float kStartAngle = 205.0f * std::numbers::pi_v<float> / 180.0f;
 constexpr float kEndAngle = 335.0f * std::numbers::pi_v<float> / 180.0f;
+constexpr float kGaugeRotationAngle = 90.0f * std::numbers::pi_v<float> / 180.0f;
 constexpr float kArcRadius = 190.0f;
 constexpr Vector2 kSegmentSize{18.0f, 34.0f};
 constexpr Vector4 kFrameColor{0.08f, 0.12f, 0.18f, 0.75f};
@@ -42,7 +43,7 @@ void DashGauge::Update() {
 
 	for (int i = 0; i < kSegmentCount; ++i) {
 		const float t = kSegmentCount <= 1 ? 0.0f : static_cast<float>(i) / static_cast<float>(kSegmentCount - 1);
-		const float angle = kStartAngle + (kEndAngle - kStartAngle) * t;
+		const float angle = kStartAngle + (kEndAngle - kStartAngle) * t + kGaugeRotationAngle;
 		const Vector2 segmentPosition = {
 		    position_.x + std::cos(angle) * kArcRadius,
 		    position_.y + std::sin(angle) * kArcRadius,
