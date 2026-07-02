@@ -40,4 +40,6 @@ public:
 	const BaseParameter& GetBaseParameter() const { return baseParameter_; }
 	void SetParameter(const Parameter& parameter) { parameter_ = parameter; }
 	const Parameter& GetParameter() const { return parameter_; }
+	void SetName(const std::string& name) { name_ = name; }
+	const std::string& GetName() const { return name_; }
 };

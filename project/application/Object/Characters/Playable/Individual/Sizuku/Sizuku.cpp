@@ -5,6 +5,7 @@
 void Sizuku::Initialize(){
 	SetAttribute(Attribute::Ice);
 	SetWeaponTypes(WeaponTypes::SWORD);
+	SetName("シズク");
 	Sizuku_ = std::make_unique<Object3d>();
 
 	Sizuku_->SetModel("sizuku");

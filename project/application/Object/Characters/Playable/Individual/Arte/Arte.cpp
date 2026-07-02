@@ -8,6 +8,7 @@
 void Arte::Initialize() {
 	SetAttribute(Attribute::Wind);
 	SetWeaponTypes(WeaponTypes::BOW);
+	SetName("アルテ");
 	arte_ = std::make_unique<Object3d>();
 	arte_->SetModel("sizuku");
 	arte_->Initialize();
