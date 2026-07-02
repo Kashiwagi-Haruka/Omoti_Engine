@@ -6,7 +6,7 @@ namespace {
 constexpr Vector2 kIconSize{35.0f, 35.0f};
 constexpr Vector2 kActiveIconSize{40.0f, 40.0f};
 constexpr Vector2 kHpBarMaxSize{30.0f, 4.0f};
-constexpr Vector2 kHpBarOffset{-kIconSize.x*1.3f, kIconSize.y * 0.5f};
+constexpr Vector2 kHpBarOffset{-kIconSize.x*1.3f, kIconSize.y * 0.9f};
 constexpr float kRightMargin = 20.0f;
 constexpr float kTopMargin = 160.0f;
 constexpr float kIconSpacing = 14.0f;
@@ -36,6 +36,8 @@ void TeamUI::Initialize(const Team& team) {
 			iconSprites_[i].reset();
 			hpBarSprites_[i].reset();
 			hpBarBackgroundSprites_[i].reset();
+			specialGaugeFlameSprites_[i].reset();
+			specialGaugeSprites_[i].reset();
 			continue;
 		}
 
@@ -64,14 +66,14 @@ void TeamUI::Initialize(const Team& team) {
 		specialGaugeFlameSprites_[i] = std::make_unique<Sprite>();
 		specialGaugeFlameSprites_[i]->Initialize(specialGaugeFlameTextureHandle);
 		specialGaugeFlameSprites_[i]->SetAnchorPoint({1.0f, 0.5f});
-		specialGaugeFlameSprites_[i]->SetPosition(iconPositions_[i] + kHpBarOffset + Vector2{0.0f, 12.0f});
+		specialGaugeFlameSprites_[i]->SetPosition(iconPositions_[i] + kHpBarOffset + Vector2{-kHpBarMaxSize.x*1.2f,-kHpBarOffset.y*0.4f});
 		specialGaugeFlameSprites_[i]->SetScale(kIconSize);
 		specialGaugeFlameSprites_[i]->Update();
 
 		specialGaugeSprites_[i] = std::make_unique<Sprite>();
 		specialGaugeSprites_[i]->Initialize(specialGaugeTextureHandle);
 		specialGaugeSprites_[i]->SetAnchorPoint({1.0f, 0.5f});
-		specialGaugeSprites_[i]->SetPosition(iconPositions_[i] + kHpBarOffset + Vector2{0.0f, 12.0f});
+		specialGaugeSprites_[i]->SetPosition(iconPositions_[i] + kHpBarOffset + Vector2{-kHpBarMaxSize.x * 1.2f, -kHpBarOffset.y*0.4f});
 		specialGaugeSprites_[i]->SetScale(kIconSize);
 		specialGaugeSprites_[i]->Update();
 
