@@ -2,6 +2,7 @@
 #include "Object/Player/PlayerParameters.h"
 #include "Sprite.h"
 #include "UI/AttackOperation/AttackOperation.h"
+#include "UI/DashGauge/DashGauge.h"
 #include "UI/HPBar/HPBarUI.h"
 #include "UI/Menu/Menu.h"
 #include "UI/Team/TeamUI.h"
@@ -17,6 +18,7 @@ class UIManager {
 
 	std::unique_ptr<HPBarUI> hpBarUI_;
 	std::unique_ptr<AttackOperation> attackOperationUI_;
+	std::unique_ptr<DashGauge> dashGaugeUI_;
 	std::unique_ptr<TowerUI> towerUI_;
 	std::unique_ptr<Menu> menuUI_;
 	std::unique_ptr<TeamUI> teamUI_;

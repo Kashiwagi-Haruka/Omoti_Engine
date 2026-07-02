@@ -9,6 +9,7 @@ UIManager::UIManager() {
 	cursolSprite_ = std::make_unique<Sprite>();
 	hpBarUI_ = std::make_unique<HPBarUI>();
 	attackOperationUI_ = std::make_unique<AttackOperation>();
+	dashGaugeUI_ = std::make_unique<DashGauge>();
 	towerUI_ = std::make_unique<TowerUI>();
 	menuUI_ = std::make_unique<Menu>();
 	teamUI_ = std::make_unique<TeamUI>();
@@ -24,6 +25,8 @@ void UIManager::Initialize() {
 	hpBarUI_->Initialize();
 
 	attackOperationUI_->Initialize();
+
+	dashGaugeUI_->Initialize();
 
 	towerUI_->Initialize();
 
@@ -42,6 +45,8 @@ void UIManager::Update() {
 
 	attackOperationUI_->Update();
 
+	dashGaugeUI_->Update();
+
 	towerUI_->Update();
 
 	menuUI_->Update();
@@ -56,6 +61,7 @@ void UIManager::Draw() {
 	hpBarUI_->Draw();
 	SpriteCommon::GetInstance()->DrawCommon();
 	attackOperationUI_->Draw();
+	dashGaugeUI_->Draw();
 	towerUI_->Draw();
 	SpriteCommon::GetInstance()->DrawCommon();
 	menuUI_->Draw();
