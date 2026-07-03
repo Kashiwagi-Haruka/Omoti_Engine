@@ -530,6 +530,7 @@
     </ClCompile>
     <ClCompile Include="application\UI\Team\TeamUI.cpp" />
     <ClCompile Include="application\UI\DashGauge\DashGauge.cpp" />
+    <ClCompile Include="application\Object\Characters\Enemy\HPBar\EnemyHPBar.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Engine\Camera\Camera.h">
@@ -1047,6 +1048,7 @@
     </ClInclude>
     <ClInclude Include="application\UI\Team\TeamUI.h" />
     <ClInclude Include="application\UI\DashGauge\DashGauge.h" />
+    <ClInclude Include="application\Object\Characters\Enemy\HPBar\EnemyHPBar.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include=".editorconfig" />

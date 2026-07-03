@@ -122,6 +122,9 @@ public:
 	// UV 変換行列を設定
 	void SetUvTransform(const Matrix4x4& uvTransform);
 	void SetUvTransform(Vector3 scale, Vector3 rotate, Vector3 translate, Vector2 anchor = {0.0f, 0.0f});
+	void SetUvScale(Vector3 scale);
+	void SetUvRotate(Vector3 rotate);
+	void SetUvTranslate(Vector3 translate);
 	void SetUvAnchor(Vector2 anchor);
 	// スペキュラの鋭さを設定
 	void SetShininess(float shininess);
