@@ -972,6 +972,7 @@ void Hierarchy::SetPlayMode(bool isPlaying) {
 void Hierarchy::DrawEditorGridLines() {
 #ifdef USE_IMGUI
 	DrawCameraBillboards();
+#endif
 	Object3dCommon* object3dCommon = Object3dCommon::GetInstance();
 	if (object3dCommon) {
 		const bool hasEditorOwnedObject = std::any_of(editorOwnedObjects_.begin(), editorOwnedObjects_.end(), [](const auto& object) { return object != nullptr; });
@@ -995,6 +996,7 @@ void Hierarchy::DrawEditorGridLines() {
 			primitive->Draw();
 		}
 	}
+#ifdef USE_IMGUI
 	EditorGrid::DrawEditorGridLines(gridSettings_, editorGridPlane_);
 	if (!showSelectionBox_ || !IsObjectSelected()) {
 		return;

@@ -17,25 +17,25 @@ void HPBarUI::Initialize() {
 	playerHpSPData.sprite->Initialize(playerHpBarHandle);
 	playerHpSPData.size = playerHPMaxSize;
 	// アンカーポイントを左端に設定（左端固定）
-	playerHpSPData.sprite->SetAnchorPoint({0.0f, 0.0f});
+	playerHpSPData.sprite->SetAnchorPoint({0.0f, 0.5f});
 	playerHpSPData.sprite->SetScale(playerHpSPData.size);
 	// 左端の位置を固定
-	playerHpSPData.translate = {640 - playerHPMaxSize.x / 2, 500};
+	playerHpSPData.translate = {640 - playerHPMaxSize.x / 2, 600};
 	playerHpSPData.sprite->SetPosition(playerHpSPData.translate);
 
 	// ------------------ HP Flame ------------------
 	playerHPFlameSPData.sprite->Initialize(playerHPFlameHandle);
-	playerHPFlameSPData.size = playerHPMaxSize;
-	playerHPFlameSPData.translate = {640, 500};
-	playerHPFlameSPData.sprite->SetAnchorPoint({0.5f, 0.0f});
+	playerHPFlameSPData.size = {playerHPMaxSize.x*13.0f/12.0f,playerHPMaxSize.y*11.0f/6.0f};
+	playerHPFlameSPData.translate = {640, 600};
+	playerHPFlameSPData.sprite->SetAnchorPoint({0.5f, 0.5f});
 	playerHPFlameSPData.sprite->SetPosition(playerHPFlameSPData.translate);
 	playerHPFlameSPData.sprite->SetScale(playerHPFlameSPData.size);
 
 	// ------------------ HP Background ------------------
 	playerHpBarBackgroundSprite.sprite->Initialize(playerHpBarBackgroundHandle);
 	playerHpBarBackgroundSprite.size = playerHPMaxSize;
-	playerHpBarBackgroundSprite.translate = {640 - playerHPMaxSize.x / 2, 500};
-	playerHpBarBackgroundSprite.sprite->SetAnchorPoint({0.0f, 0.0f});
+	playerHpBarBackgroundSprite.translate = {640 - playerHPMaxSize.x / 2, 600};
+	playerHpBarBackgroundSprite.sprite->SetAnchorPoint({0.0f, 0.5f});
 	playerHpBarBackgroundSprite.sprite->SetPosition(playerHpBarBackgroundSprite.translate);
 	playerHpBarBackgroundSprite.sprite->SetScale(playerHpBarBackgroundSprite.size);
 
@@ -45,7 +45,7 @@ void HPBarUI::Initialize() {
 	FreeTypeManager::SetPixelSizes(fontHandle_, 32, 32);
 	playerHpText.Initialize(fontHandle_);
 	playerHpText.SetString(U"HP");
-	playerHpText.SetPosition({playerHPFlameSPData.translate.x,playerHPFlameSPData.translate.y+playerHPFlameSPData.size.y * 0.5f});
+	playerHpText.SetPosition({playerHPFlameSPData.translate.x,playerHPFlameSPData.translate.y+10.0f});
 	playerHpText.SetColor({0.0f, 0.0f, 0.2f, 1.0f});
 	playerHpText.SetAlign(TextAlign::Center);
 	playerHpText.UpdateLayout(false);
@@ -65,13 +65,14 @@ void HPBarUI::Update() {
 		playerHpSPData.sprite->SetTextureRange({0, 0}, {playerHPWidth, 300});
 
 		// ★ 左端の位置は常に固定（ずれない）
-		playerHpSPData.translate = {640 - playerHPMaxSize.x / 2, 500};
+		playerHpSPData.translate.x = 640 - playerHPMaxSize.x / 2;
 		playerHpSPData.sprite->SetPosition(playerHpSPData.translate);
 	}
 
 	// 各スプライト Update
 	playerHpSPData.sprite->Update();
 	playerHPFlameSPData.sprite->Update();
+	playerHpBarBackgroundSprite.sprite->Update();
 	std::u32string hpText = U"HP:";
 	const std::string currentHPText = std::to_string(playerHP);
 	hpText.append(currentHPText.begin(), currentHPText.end());
