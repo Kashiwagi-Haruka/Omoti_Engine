@@ -4,9 +4,9 @@
 class Option {
 
 	enum class Menu {
-		kCamera,
-		kSound,
-		kBack,
+		kCAMERA,
+		kSOUND,
+		kBACK,
 	};
 
 	std::vector<Text> menuTexts_;	

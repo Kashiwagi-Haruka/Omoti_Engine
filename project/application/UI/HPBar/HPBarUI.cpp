@@ -10,9 +10,9 @@ HPBarUI::HPBarUI() {
 	playerHpBarBackgroundSprite.sprite = std::make_unique<Sprite>();
 }
 void HPBarUI::Initialize() {
-	uint32_t playerHpBarHandle = TextureManager::GetInstance()->GetTextureIndexByfilePath("Resources/2d/HPBar/playerHP.png");
-	uint32_t playerHpBarBackgroundHandle = TextureManager::GetInstance()->GetTextureIndexByfilePath("Resources/2d/HPBar/playerHPBackground.png");
-	uint32_t playerHPFlameHandle = TextureManager::GetInstance()->GetTextureIndexByfilePath("Resources/2d/HPBar/playerHPFlame.png");
+	uint32_t playerHpBarHandle = TextureManager::GetInstance()->GetTextureIndexByfilePath("Resources/2d/HPBar/HP.png");
+	uint32_t playerHpBarBackgroundHandle = TextureManager::GetInstance()->GetTextureIndexByfilePath("Resources/2d/HPBar/HPBackground.png");
+	uint32_t playerHPFlameHandle = TextureManager::GetInstance()->GetTextureIndexByfilePath("Resources/2d/HPBar/HPFlame.png");
 	// ------------------ HP Bar ------------------
 	playerHpSPData.sprite->Initialize(playerHpBarHandle);
 	playerHpSPData.size = playerHPMaxSize;
