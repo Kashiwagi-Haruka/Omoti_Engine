@@ -82,32 +82,25 @@ void Damage::Update() {
 		}
 		switch (attribute_) {
 		case Attribute::None:
-			primitive->SetColor(Color::RGBAToVector4(255, 255, 255, static_cast<int>(alpha_ * 255)));
-			primitive->SetTexturePath("Resources/2d/No.png");
+			primitive->SetTexturePath("Resources/2d/Attribute/Numbers/No.png");
 			break;
 		case Attribute::Fire:
-			primitive->SetColor(Color::RGBAToVector4(240, 40, 40, static_cast<int>(alpha_ * 255)));
-			primitive->SetTexturePath("Resources/2d/NoFire.png");
+			primitive->SetTexturePath("Resources/2d/Attribute/Numbers/NoFire.png");
 			break;
 		case Attribute::Ice:
-			primitive->SetColor(Color::RGBAToVector4(130, 210, 240, static_cast<int>(alpha_ * 255)));
-			primitive->SetTexturePath("Resources/2d/NoIce.png");
+			primitive->SetTexturePath("Resources/2d/Attribute/Numbers/NoIce.png");
 			break;
 		case Attribute::Wind:
-			primitive->SetColor(Color::RGBAToVector4(100, 210, 100, static_cast<int>(alpha_ * 255)));
-			primitive->SetTexturePath("Resources/2d/NoWind.png");
+			primitive->SetTexturePath("Resources/2d/Attribute/Numbers/NoWind.png");
 			break;
 		case Attribute::Thunder:
-			primitive->SetColor(Color::RGBAToVector4(200, 110, 210, static_cast<int>(alpha_ * 255)));
-			primitive->SetTexturePath("Resources/2d/NoThunder.png");
+			primitive->SetTexturePath("Resources/2d/Attribute/Numbers/NoThunder.png");
 			break;
 		case Attribute::Imaginary:
-			primitive->SetColor(Color::RGBAToVector4(240, 225, 70, static_cast<int>(alpha_ * 255)));
-			primitive->SetTexturePath("Resources/2d/NoImaginary.png");
+			primitive->SetTexturePath("Resources/2d/Attribute/Numbers/NoImaginary.png");
 			break;
 		case Attribute::Quantum:
-			primitive->SetColor(Color::RGBAToVector4(85, 85, 220, static_cast<int>(alpha_ * 255)));
-			primitive->SetTexturePath("Resources/2d/NoQuantum.png");
+			primitive->SetTexturePath("Resources/2d/Attribute/Numbers/NoQuantum.png");
 			break;
 		default:
 			break;

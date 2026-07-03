@@ -101,8 +101,9 @@ bool CollisionManager::HandleGameSceneCollisions(
 						*outHitEnemyPos = enemy->GetPosition();
 					}
 				}
+				bool isCritical = false;
 				const int damage = DamageMath::CalculatePlayerToEnemyDamage(
-				    player.GetCurrentBaseParameter(), player.GetCurrentCombatParameter(), enemy->GetBaseParameter(), enemy->GetParameter(), playerAttackAttribute);
+				    player.GetCurrentBaseParameter(), player.GetCurrentCombatParameter(), enemy->GetBaseParameter(), enemy->GetParameter(), playerAttackAttribute, &isCritical);
 				enemy->SetHPSubtract(damage);
 				enemyManager.OnEnemyDamaged(enemy.get(), damage, playerAttackAttribute, isCritical);
 				ApplyAttributeDamage(*enemy, enemyManager, playerAttackAttribute);
@@ -120,8 +121,9 @@ bool CollisionManager::HandleGameSceneCollisions(
 			int skillDamageId = player.GetSkill()->GetSkillDamageId();
 			if (hitSkill && enemy->GetLastSkillDamageId() != skillDamageId) {
 				didPlayerAttackHitEnemy = true;
+				bool isCritical = false;
 				const int damage = DamageMath::CalculatePlayerToEnemyDamage(
-				    player.GetCurrentBaseParameter(), player.GetCurrentCombatParameter(), enemy->GetBaseParameter(), enemy->GetParameter(), playerAttackAttribute);
+				    player.GetCurrentBaseParameter(), player.GetCurrentCombatParameter(), enemy->GetBaseParameter(), enemy->GetParameter(), playerAttackAttribute, &isCritical);
 				enemy->SetHPSubtract(damage);
 				enemyManager.OnEnemyDamaged(enemy.get(), damage, playerAttackAttribute, isCritical);
 				ApplyAttributeDamage(*enemy, enemyManager, playerAttackAttribute);
@@ -143,8 +145,9 @@ bool CollisionManager::HandleGameSceneCollisions(
 			if (hitSpecial) {
 				if (enemy->CanTakeDamage()) {
 					didPlayerAttackHitEnemy = true;
+					bool isCritical = false;
 					const int damage = DamageMath::CalculatePlayerToEnemyDamage(
-					    player.GetCurrentBaseParameter(), player.GetCurrentCombatParameter(), enemy->GetBaseParameter(), enemy->GetParameter(), playerAttackAttribute);
+					    player.GetCurrentBaseParameter(), player.GetCurrentCombatParameter(), enemy->GetBaseParameter(), enemy->GetParameter(), playerAttackAttribute, &isCritical);
 					enemy->SetHPSubtract(damage);
 					enemyManager.OnEnemyDamaged(enemy.get(), damage, playerAttackAttribute, isCritical);
 					ApplyAttributeDamage(*enemy, enemyManager, playerAttackAttribute);

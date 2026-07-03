@@ -363,7 +363,7 @@ void EnemyManager::OnEnemyDamaged(Enemy* enemy, int damage, Attribute attribute,
 	for (auto& entry : damageTexts) {
 		if (entry.enemy == enemy) {
 			entry.damageText->SetAttribute(attribute);
-			entry.damageText->SetCritical(isCritical);
+			entry.damageText->SetIsCritical(isCritical);
 			entry.damageText->SetDamageValue(damage);
 			break;
 		}
