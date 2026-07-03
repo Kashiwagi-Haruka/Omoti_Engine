@@ -25,7 +25,7 @@ void ApplyAttributeDamage(Enemy& enemy, EnemyManager& enemyManager, Attribute at
 		return;
 	}
 	enemy.SetHPSubtract(kAttributeReactionDamage);
-	enemyManager.OnEnemyDamaged(&enemy, kAttributeReactionDamage, attribute);
+	enemyManager.OnEnemyDamaged(&enemy, kAttributeReactionDamage, attribute, false);
 }
 } // namespace
 
@@ -104,7 +104,7 @@ bool CollisionManager::HandleGameSceneCollisions(
 				const int damage = DamageMath::CalculatePlayerToEnemyDamage(
 				    player.GetCurrentBaseParameter(), player.GetCurrentCombatParameter(), enemy->GetBaseParameter(), enemy->GetParameter(), playerAttackAttribute);
 				enemy->SetHPSubtract(damage);
-				enemyManager.OnEnemyDamaged(enemy.get(), damage, playerAttackAttribute);
+				enemyManager.OnEnemyDamaged(enemy.get(), damage, playerAttackAttribute, isCritical);
 				ApplyAttributeDamage(*enemy, enemyManager, playerAttackAttribute);
 				if (swordComboStep == 4) {
 					enemy->ApplyFinalComboBackStep();
@@ -123,7 +123,7 @@ bool CollisionManager::HandleGameSceneCollisions(
 				const int damage = DamageMath::CalculatePlayerToEnemyDamage(
 				    player.GetCurrentBaseParameter(), player.GetCurrentCombatParameter(), enemy->GetBaseParameter(), enemy->GetParameter(), playerAttackAttribute);
 				enemy->SetHPSubtract(damage);
-				enemyManager.OnEnemyDamaged(enemy.get(), damage, playerAttackAttribute);
+				enemyManager.OnEnemyDamaged(enemy.get(), damage, playerAttackAttribute, isCritical);
 				ApplyAttributeDamage(*enemy, enemyManager, playerAttackAttribute);
 				enemy->SetLastSkillDamageId(skillDamageId);
 				tryEnemyFlinch(enemy.get());
@@ -146,7 +146,7 @@ bool CollisionManager::HandleGameSceneCollisions(
 					const int damage = DamageMath::CalculatePlayerToEnemyDamage(
 					    player.GetCurrentBaseParameter(), player.GetCurrentCombatParameter(), enemy->GetBaseParameter(), enemy->GetParameter(), playerAttackAttribute);
 					enemy->SetHPSubtract(damage);
-					enemyManager.OnEnemyDamaged(enemy.get(), damage, playerAttackAttribute);
+					enemyManager.OnEnemyDamaged(enemy.get(), damage, playerAttackAttribute, isCritical);
 					ApplyAttributeDamage(*enemy, enemyManager, playerAttackAttribute);
 					enemy->TriggerDamageInvincibility();
 					tryEnemyFlinch(enemy.get());

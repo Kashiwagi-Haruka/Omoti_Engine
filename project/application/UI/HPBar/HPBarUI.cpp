@@ -49,6 +49,11 @@ void HPBarUI::Initialize() {
 	playerHpText.SetColor({0.0f, 0.0f, 0.2f, 1.0f});
 	playerHpText.SetAlign(TextAlign::Center);
 	playerHpText.UpdateLayout(false);
+
+	//------------------ Current Character Name Label ------------------
+
+
+
 }
 void HPBarUI::Update() {
 	// ---- HP (左端固定、右端から減る) ----

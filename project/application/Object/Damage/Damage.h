@@ -18,6 +18,7 @@ public:
 	void SetDamageValue(int damage);
 	void SetPosition(const Vector3& position);
 	void SetAttribute(Attribute attribute);
+	void SetIsCritical(bool isCritical) { isCritical_ = isCritical; }
 
 private:
 	static constexpr float kShowDuration_ = 1.0f;
@@ -34,6 +35,7 @@ private:
 	Attribute attribute_;
 	bool isVisible_ = false;
 	bool isFading_ = false;
+	bool isCritical_ = false;
 	float timer_ = 0.0f;
 	float alpha_ = 1.0f;
 	float digitSpacing_ = 0.55f;

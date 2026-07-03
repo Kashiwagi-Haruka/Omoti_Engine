@@ -6,6 +6,12 @@
 #include <string>
 #include "Data/Color.h"
 
+namespace{
+constexpr int kNormalColor = 180;
+constexpr int kCriticalColor = 255;
+}
+
+
 void Damage::Initialize(Camera* camera) {
 	camera_ = camera;
 	for (int i = 0; i < kDigitCount; ++i) {
@@ -69,27 +75,39 @@ void Damage::Update() {
 	for (int i = 0; i < digitCount; ++i) {
 		Primitive* primitive = digitPrimitives_[i].get();
 		primitive->SetCamera(camera_);
+		if (isCritical_) {
+			primitive->SetColor(Color::RGBAToVector4(kCriticalColor, kCriticalColor, kCriticalColor, static_cast<int>(alpha_ * 255)));
+		} else {
+			primitive->SetColor(Color::RGBAToVector4(kNormalColor, kNormalColor, kNormalColor, static_cast<int>(alpha_ * 255)));
+		}
 		switch (attribute_) {
 		case Attribute::None:
 			primitive->SetColor(Color::RGBAToVector4(255, 255, 255, static_cast<int>(alpha_ * 255)));
+			primitive->SetTexturePath("Resources/2d/No.png");
 			break;
 		case Attribute::Fire:
 			primitive->SetColor(Color::RGBAToVector4(240, 40, 40, static_cast<int>(alpha_ * 255)));
+			primitive->SetTexturePath("Resources/2d/NoFire.png");
 			break;
 		case Attribute::Ice:
 			primitive->SetColor(Color::RGBAToVector4(130, 210, 240, static_cast<int>(alpha_ * 255)));
+			primitive->SetTexturePath("Resources/2d/NoIce.png");
 			break;
 		case Attribute::Wind:
 			primitive->SetColor(Color::RGBAToVector4(100, 210, 100, static_cast<int>(alpha_ * 255)));
+			primitive->SetTexturePath("Resources/2d/NoWind.png");
 			break;
 		case Attribute::Thunder:
 			primitive->SetColor(Color::RGBAToVector4(200, 110, 210, static_cast<int>(alpha_ * 255)));
+			primitive->SetTexturePath("Resources/2d/NoThunder.png");
 			break;
 		case Attribute::Imaginary:
 			primitive->SetColor(Color::RGBAToVector4(240, 225, 70, static_cast<int>(alpha_ * 255)));
+			primitive->SetTexturePath("Resources/2d/NoImaginary.png");
 			break;
 		case Attribute::Quantum:
 			primitive->SetColor(Color::RGBAToVector4(85, 85, 220, static_cast<int>(alpha_ * 255)));
+			primitive->SetTexturePath("Resources/2d/NoQuantum.png");
 			break;
 		default:
 			break;
