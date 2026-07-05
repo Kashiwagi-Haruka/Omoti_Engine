@@ -6,7 +6,7 @@
 #include "Light/CommonLight/DirectionalCommonLight.h"
 #include "Light/CommonLight/PointCommonLight.h"
 #include "Light/CommonLight/SpotCommonLight.h"
-#include "Object/Characters/CharacterDisplay/CharacterDisplay.h"
+#include "Menu/CharacterDisplay/CharacterDisplay.h"
 #include "Object/Characters/Model/CharacterModel.h"
 #include "Object/Field/Field.h"
 #include "Object3d/Object3d.h"

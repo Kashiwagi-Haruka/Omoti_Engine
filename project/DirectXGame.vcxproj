@@ -168,8 +168,8 @@ copy "$(WindowsSdkDir)\bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)\
     <ClCompile Include="application\Object\Background\Sky.cpp" />
     <ClCompile Include="application\Object\Boss\Boss.cpp" />
     <ClCompile Include="application\Object\Characters\Playable\Base\Equipment.h" />
-    <ClCompile Include="application\Object\Characters\CharacterDisplay\CharacterDisplay.cpp" />
-    <ClCompile Include="application\Object\Characters\CharacterDisplay\CharacterDisplaySkyDome.cpp" />
+    <ClCompile Include="application\Menu\CharacterDisplay\CharacterDisplay.cpp" />
+    <ClCompile Include="application\Menu\CharacterDisplay\Background\CharacterDisplaySkyDome.cpp" />
     <ClCompile Include="application\Object\Characters\Model\CharacterModel.cpp" />
     <ClCompile Include="application\Object\Characters\Playable\Individual\Sizuku\Sizuku.cpp" />
     <ClCompile Include="application\Object\Characters\Enemy\Enemy.cpp" />
@@ -195,10 +195,10 @@ copy "$(WindowsSdkDir)\bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)\
     <ClCompile Include="application\Team\Team.cpp" />
     <ClCompile Include="application\TutorialUI\TutorialUI.cpp" />
     <ClCompile Include="application\UI\UIManager\UIManager.cpp" />
-    <ClCompile Include="application\Object\Characters\CharacterDisplay\Text\CharacterDisplayText.cpp" />
+    <ClCompile Include="application\Menu\CharacterDisplay\Text\CharacterDisplayText.cpp" />
     <ClCompile Include="application\Object\Damage\Damage.cpp" />
     <ClCompile Include="application\Object\Characters\Playable\Individual\Arte\Arte.cpp" />
-    <ClCompile Include="application\Object\Characters\CharacterDisplay\Text\CharacterDisplayMenuText.cpp" />
+    <ClCompile Include="application\Menu\CharacterDisplay\Text\CharacterDisplayMenuText.cpp" />
     <ClCompile Include="application\Object\Damage\DamageMath.cpp" />
     <ClCompile Include="application\UI\AttackOperation\AttackOperation.cpp" />
     <ClCompile Include="application\Object\Characters\Playable\Weapon\BigSword\BigSword.cpp" />
@@ -355,8 +355,8 @@ copy "$(WindowsSdkDir)\bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)\
     <ClInclude Include="application\Object\Characters\Base\Attribute.h" />
     <ClInclude Include="application\Object\Characters\Playable\Base\PlayableBase.h" />
     <ClInclude Include="application\Object\Characters\Base\CharacterParameters.h" />
-    <ClInclude Include="application\Object\Characters\CharacterDisplay\CharacterDisplay.h" />
-    <ClInclude Include="application\Object\Characters\CharacterDisplay\CharacterDisplaySkyDome.h" />
+    <ClInclude Include="application\Menu\CharacterDisplay\CharacterDisplay.h" />
+    <ClInclude Include="application\Menu\CharacterDisplay\Background\CharacterDisplaySkyDome.h" />
     <ClInclude Include="application\Object\Characters\Model\CharacterModel.h" />
     <ClInclude Include="application\Object\Characters\Playable\Individual\Sizuku\Sizuku.h" />
     <ClInclude Include="application\Object\Characters\Enemy\Base\BaseEnemy.h" />
@@ -385,10 +385,10 @@ copy "$(WindowsSdkDir)\bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)\
     <ClInclude Include="application\Team\Team.h" />
     <ClInclude Include="application\TutorialUI\TutorialUI.h" />
     <ClInclude Include="application\UI\UIManager\UIManager.h" />
-    <ClInclude Include="application\Object\Characters\CharacterDisplay\Text\CharacterDisplayText.h" />
+    <ClInclude Include="application\Menu\CharacterDisplay\Text\CharacterDisplayText.h" />
     <ClInclude Include="application\Object\Damage\Damage.h" />
     <ClInclude Include="application\Object\Characters\Playable\Individual\Arte\Arte.h" />
-    <ClInclude Include="application\Object\Characters\CharacterDisplay\Text\CharacterDisplayMenuText.h" />
+    <ClInclude Include="application\Menu\CharacterDisplay\Text\CharacterDisplayMenuText.h" />
     <ClInclude Include="application\Object\Damage\DamageMath.h" />
     <ClInclude Include="application\UI\AttackOperation\AttackOperation.h" />
     <ClInclude Include="application\Object\Characters\Playable\Weapon\BigSword\BigSword.h" />

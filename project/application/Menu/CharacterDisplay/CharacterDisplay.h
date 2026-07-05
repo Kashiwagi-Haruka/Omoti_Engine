@@ -2,12 +2,21 @@
 #include "Camera.h"
 #include "Object3d/Object3d.h"
 #include "Transform.h"
-#include "CharacterDisplaySkyDome.h"
+#include "Background/CharacterDisplaySkyDome.h"
 #include <memory>
 #include "Object/Characters/Playable/Individual/Sizuku/Sizuku.h"
 #include <numbers>
 #include "Light/CommonLight/DirectionalCommonLight.h"
 class CharacterDisplay {
+
+	enum class Menu { 
+		WEAPON,
+		EQUIP, 
+		SKILLTREE,
+		REINFORCEMENT,
+		PROFILE,
+	};
+
 	std::unique_ptr<Sizuku> sizukuObject_ = nullptr;
 	std::unique_ptr<CharacterDisplaySkyDome> skyDome_ = nullptr;
 	std::unique_ptr<Camera> camera_ = nullptr;

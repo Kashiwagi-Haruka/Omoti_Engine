@@ -366,16 +366,16 @@
     <ClCompile Include="application\CameraController\CameraController.cpp">
       <Filter>Application\Camera</Filter>
     </ClCompile>
-    <ClCompile Include="application\Object\Characters\CharacterDisplay\CharacterDisplay.cpp">
+    <ClCompile Include="application\Menu\CharacterDisplay\CharacterDisplay.cpp">
       <Filter>Application\CharacterDisplay</Filter>
     </ClCompile>
-    <ClCompile Include="application\Object\Characters\CharacterDisplay\Text\CharacterDisplayMenuText.cpp">
+    <ClCompile Include="application\Menu\CharacterDisplay\Text\CharacterDisplayMenuText.cpp">
       <Filter>Application\CharacterDisplay</Filter>
     </ClCompile>
-    <ClCompile Include="application\Object\Characters\CharacterDisplay\CharacterDisplaySkyDome.cpp">
+    <ClCompile Include="application\Menu\CharacterDisplay\Background\CharacterDisplaySkyDome.cpp">
       <Filter>Application\CharacterDisplay</Filter>
     </ClCompile>
-    <ClCompile Include="application\Object\Characters\CharacterDisplay\Text\CharacterDisplayText.cpp">
+    <ClCompile Include="application\Menu\CharacterDisplay\Text\CharacterDisplayText.cpp">
       <Filter>Application\CharacterDisplay</Filter>
     </ClCompile>
     <ClCompile Include="application\Object\Boss\Boss.cpp">
@@ -878,16 +878,16 @@
     <ClInclude Include="application\CameraController\CameraController.h">
       <Filter>Application\Camera</Filter>
     </ClInclude>
-    <ClInclude Include="application\Object\Characters\CharacterDisplay\CharacterDisplay.h">
+    <ClInclude Include="application\Menu\CharacterDisplay\CharacterDisplay.h">
       <Filter>Application\CharacterDisplay</Filter>
     </ClInclude>
-    <ClInclude Include="application\Object\Characters\CharacterDisplay\Text\CharacterDisplayMenuText.h">
+    <ClInclude Include="application\Menu\CharacterDisplay\Text\CharacterDisplayMenuText.h">
       <Filter>Application\CharacterDisplay</Filter>
     </ClInclude>
-    <ClInclude Include="application\Object\Characters\CharacterDisplay\CharacterDisplaySkyDome.h">
+    <ClInclude Include="application\Menu\CharacterDisplay\Background\CharacterDisplaySkyDome.h">
       <Filter>Application\CharacterDisplay</Filter>
     </ClInclude>
-    <ClInclude Include="application\Object\Characters\CharacterDisplay\Text\CharacterDisplayText.h">
+    <ClInclude Include="application\Menu\CharacterDisplay\Text\CharacterDisplayText.h">
       <Filter>Application\CharacterDisplay</Filter>
     </ClInclude>
     <ClInclude Include="application\Object\Boss\Boss.h">
