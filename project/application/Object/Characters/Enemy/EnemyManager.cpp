@@ -352,7 +352,7 @@ void EnemyManager::Draw() {
 	Object3dCommon::GetInstance()->DrawCommon();
 }
 
-void EnemyManager::OnEnemyDamaged(Enemy* enemy, int damage, Attribute attribute,bool isCritical) {
+void EnemyManager::OnEnemyDamaged(Enemy* enemy, int damage, Attribute attribute, bool isCritical, Attribute reactionPreviousAttribute) {
 	for (auto& entry : hitEffects) {
 		if (entry.enemy == enemy) {
 			entry.effect->Activate(enemy->GetPosition());
@@ -362,7 +362,11 @@ void EnemyManager::OnEnemyDamaged(Enemy* enemy, int damage, Attribute attribute,
 
 	for (auto& entry : damageTexts) {
 		if (entry.enemy == enemy) {
-			entry.damageText->SetAttribute(attribute);
+			if (reactionPreviousAttribute != Attribute::None && reactionPreviousAttribute != attribute) {
+				entry.damageText->SetReactionAttribute(reactionPreviousAttribute, attribute);
+			} else {
+				entry.damageText->SetAttribute(attribute);
+			}
 			entry.damageText->SetIsCritical(isCritical);
 			entry.damageText->SetDamageValue(damage);
 			break;

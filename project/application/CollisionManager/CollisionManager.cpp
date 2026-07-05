@@ -25,7 +25,7 @@ void ApplyAttributeDamage(Enemy& enemy, EnemyManager& enemyManager, Attribute at
 		return;
 	}
 	enemy.SetHPSubtract(kAttributeReactionDamage);
-	enemyManager.OnEnemyDamaged(&enemy, kAttributeReactionDamage, attribute, false);
+	enemyManager.OnEnemyDamaged(&enemy, kAttributeReactionDamage, attribute, false, enemy.GetLastReactionPreviousAttribute());
 }
 } // namespace
 

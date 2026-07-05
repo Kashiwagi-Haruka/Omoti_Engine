@@ -47,7 +47,7 @@ public:
 	void Update(Camera* camera, const Vector3& housePos, const Vector3& houseScale, const Vector3& playerPos, bool isPlayerAlive);
 	void Draw();
 	void Clear();
-	void OnEnemyDamaged(Enemy* enemy, int damage = 1, Attribute attribute = Attribute::None, bool isCritical = false);
+	void OnEnemyDamaged(Enemy* enemy, int damage = 1, Attribute attribute = Attribute::None, bool isCritical = false, Attribute reactionPreviousAttribute = Attribute::None);
 	// ウェーブシステム関連
 	void StartNextWave();     // 次のウェーブを開始
 	void SpawnWaveEnemies();  // ウェーブに応じた敵を生成

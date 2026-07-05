@@ -279,3 +279,6 @@ bool Enemy::AddAdhesionAttribute(Attribute attribute) {
 	}
 	return false;
 }
+Attribute Enemy::GetLastReactionPreviousAttribute() const { return adhesion_ ? adhesion_->GetLastReactionPreviousAttribute() : Attribute::None; }
+
+Attribute Enemy::GetLastReactionAppliedAttribute() const { return adhesion_ ? adhesion_->GetLastReactionAppliedAttribute() : Attribute::None; }

@@ -12,6 +12,8 @@ class Adhesion {
 	std::unique_ptr<Primitive> AttributeReactionPlane_;
 	uint32_t attributeBitMask_ = 0;
 	Attribute currentAttribute_ = Attribute::None;
+	Attribute lastReactionPreviousAttribute_ = Attribute::None;
+	Attribute lastReactionAppliedAttribute_ = Attribute::None;
 	bool isComparisonDisplayActive_ = false;
 	float comparisonDisplayTimer_ = 0.0f;
 	Transform baseTransform_{};
@@ -33,5 +35,7 @@ public:
 	void SetTransform(const Transform& transform);
 	void SetCamera(Camera* camera);
 	bool AddAttribute(Attribute attribute);
+	Attribute GetLastReactionPreviousAttribute() const { return lastReactionPreviousAttribute_; }
+	Attribute GetLastReactionAppliedAttribute() const { return lastReactionAppliedAttribute_; }
 	void Draw();
 };

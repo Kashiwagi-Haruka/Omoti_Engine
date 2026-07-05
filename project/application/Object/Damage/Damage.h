@@ -1,11 +1,10 @@
 #pragma once
-#include "Primitive/Primitive.h"
 #include "Object/Characters/Base/Attribute.h"
+#include "Primitive/Primitive.h"
 #include "Transform.h"
 #include <array>
 #include <memory>
 #include <vector>
-
 
 class Camera;
 class Damage {
@@ -18,6 +17,7 @@ public:
 	void SetDamageValue(int damage);
 	void SetPosition(const Vector3& position);
 	void SetAttribute(Attribute attribute);
+	void SetReactionAttribute(Attribute previousAttribute, Attribute appliedAttribute);
 	void SetIsCritical(bool isCritical) { isCritical_ = isCritical; }
 
 private:
@@ -32,7 +32,8 @@ private:
 	    {0.0f, 2.0f, 0.0f},
 	};
 	Camera* camera_ = nullptr;
-	Attribute attribute_;
+	Attribute attribute_ = Attribute::None;
+	Attribute reactionPreviousAttribute_ = Attribute::None;
 	bool isVisible_ = false;
 	bool isFading_ = false;
 	bool isCritical_ = false;

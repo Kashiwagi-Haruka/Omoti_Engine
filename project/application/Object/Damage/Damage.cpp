@@ -1,14 +1,49 @@
 #define NOMINMAX
 #include "Damage.h"
 #include "Camera.h"
+#include "Data/Color.h"
 #include "Function.h"
 #include <algorithm>
 #include <string>
-#include "Data/Color.h"
 
-namespace{
+namespace {
 constexpr int kNormalColor = 180;
 constexpr int kCriticalColor = 255;
+
+const char* GetAttributeName(Attribute attribute) {
+	switch (attribute) {
+	case Attribute::Fire:
+		return "Fire";
+	case Attribute::Ice:
+		return "Ice";
+	case Attribute::Wind:
+		return "Wind";
+	case Attribute::Thunder:
+		return "Thunder";
+	case Attribute::Imaginary:
+		return "Imaginary";
+	case Attribute::Quantum:
+		return "Quantum";
+	case Attribute::None:
+	case Attribute::MAXATTRIBUTE:
+	default:
+		return nullptr;
+	}
+}
+
+std::string GetDamageNumberTexturePath(Attribute attribute, Attribute reactionPreviousAttribute) {
+	const char* attributeName = GetAttributeName(attribute);
+	if (!attributeName) {
+		return "Resources/2d/Attribute/Numbers/No.png";
+	}
+
+	const char* previousAttributeName = GetAttributeName(reactionPreviousAttribute);
+	if (previousAttributeName && reactionPreviousAttribute != attribute) {
+		return std::string("Resources/2d/Attribute/Numbers/") + previousAttributeName + "Reaction/No" + attributeName + ".png";
+	}
+
+	return std::string("Resources/2d/Attribute/Numbers/No") + attributeName + ".png";
+}
 }
 
 
@@ -80,31 +115,7 @@ void Damage::Update() {
 		} else {
 			primitive->SetColor(Color::RGBAToVector4(kNormalColor, kNormalColor, kNormalColor, static_cast<int>(alpha_ * 255)));
 		}
-		switch (attribute_) {
-		case Attribute::None:
-			primitive->SetTexturePath("Resources/2d/Attribute/Numbers/No.png");
-			break;
-		case Attribute::Fire:
-			primitive->SetTexturePath("Resources/2d/Attribute/Numbers/NoFire.png");
-			break;
-		case Attribute::Ice:
-			primitive->SetTexturePath("Resources/2d/Attribute/Numbers/NoIce.png");
-			break;
-		case Attribute::Wind:
-			primitive->SetTexturePath("Resources/2d/Attribute/Numbers/NoWind.png");
-			break;
-		case Attribute::Thunder:
-			primitive->SetTexturePath("Resources/2d/Attribute/Numbers/NoThunder.png");
-			break;
-		case Attribute::Imaginary:
-			primitive->SetTexturePath("Resources/2d/Attribute/Numbers/NoImaginary.png");
-			break;
-		case Attribute::Quantum:
-			primitive->SetTexturePath("Resources/2d/Attribute/Numbers/NoQuantum.png");
-			break;
-		default:
-			break;
-		}
+		primitive->SetTexturePath(GetDamageNumberTexturePath(attribute_, reactionPreviousAttribute_));
 		primitive->SetUvTransform({0.1f, 1.0f, 1.0f}, {0.0f, 0.0f, 0.0f}, {0.1f * static_cast<float>(digits_[i]), 0.0f, 0.0f});
 
 		const float localXOffset = (static_cast<float>(i) * digitSpacing_) - (totalWidth * 0.5f);
@@ -128,4 +139,12 @@ void Damage::Draw() {
 	}
 }
 
-void Damage::SetAttribute(Attribute attribute) { attribute_ = attribute; }
+void Damage::SetAttribute(Attribute attribute) {
+	attribute_ = attribute;
+	reactionPreviousAttribute_ = Attribute::None;
+}
+
+void Damage::SetReactionAttribute(Attribute previousAttribute, Attribute appliedAttribute) {
+	attribute_ = appliedAttribute;
+	reactionPreviousAttribute_ = previousAttribute;
+}

@@ -103,6 +103,8 @@ public:
 	bool IsAttacking() const { return enemyAttack_ && enemyAttack_->IsAttacking(); }
 	bool IsStunned() const { return isStun_; }
 	bool AddAdhesionAttribute(Attribute attribute);
+	Attribute GetLastReactionPreviousAttribute() const;
+	Attribute GetLastReactionAppliedAttribute() const;
 	const BaseParameter& GetBaseParameter() const { return baseParameter_; }
 	const Parameter& GetParameter() const { return parameter_; }
 };
