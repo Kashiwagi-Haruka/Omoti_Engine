@@ -1,5 +1,5 @@
 #include "Team.h"
-#include "Input.h"
+#include "PlayCommand/PlayCommand.h"
 #include "Object/Characters/Playable/Individual/Arte/Arte.h"
 #include "Object/Characters/Playable/Individual/Mei/Mei.h"
 #include "Object/Characters/Playable/Individual/Sizuku/Sizuku.h"
@@ -53,8 +53,15 @@ void Team::Initialize() {
 }
 
 void Team::Update() {
+	const bool characterChangeCommands[kMaxMembersCount] = {
+	    PlayCommand::GetCharacterChange1(),
+	    PlayCommand::GetCharacterChange2(),
+	    PlayCommand::GetCharacterChange3(),
+	    PlayCommand::GetCharacterChange4(),
+	};
+
 	for (int i = 0; i < kMaxMembersCount; ++i) {
-		if (Input::GetInstance()->TriggerKey(static_cast<BYTE>(DIK_1 + i)) && occupiedSlots_[i]) {
+		if (characterChangeCommands[i] && occupiedSlots_[i]) {
 			SetActiveSlot(i);
 		}
 	}
