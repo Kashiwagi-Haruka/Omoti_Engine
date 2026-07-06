@@ -32,7 +32,7 @@ bool PlayCommand::GetJUMP() {
 	return false;
 }
 bool PlayCommand::GetDASH() {
-	if (Input::GetInstance()->PushMouseButton(Input::MouseButton::kRight) || Input::GetInstance()->PushButton(Input::PadButton::kButtonRightThumb)) {
+	if (Input::GetInstance()->PushMouseButton(Input::MouseButton::kRight) || Input::GetInstance()->PushRightTrigger()) {
 		return true;
 	}
 	return false;
