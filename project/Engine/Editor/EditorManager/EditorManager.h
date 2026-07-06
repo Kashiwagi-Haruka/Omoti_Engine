@@ -17,6 +17,8 @@ public:
 	void DrawObjectEditors();
 	void DrawAssetWindow();
 	void DrawEditorGridLines();
+	void ResetEditorWorldDrawState();
+	bool WasEditorWorldDrawnThisFrame() const { return wasEditorWorldDrawnThisFrame_; }
 	bool HasRegisteredObjects() const;
 	ToolBar::Result DrawToolBar(bool isPlaying, bool isPaused, bool hasUnsavedChanges, bool canUndo, bool canRedo, bool& showGridMenu, EditorGrid::Settings& gridSettings) const;
 	std::vector<EditorGridLine> CreateGridLines(int halfLineCount = 50, float spacing = 1.0f, float lineWidth = 1.0f) const;
@@ -31,4 +33,5 @@ private:
 
 	Hierarchy* hierarchy_ = nullptr;
 	EditorAsset editorAsset_{};
+	bool wasEditorWorldDrawnThisFrame_ = false;
 };

@@ -98,7 +98,7 @@ void SpriteCreatePSO::CreateGraphicsPipeline() {
 	// --- DepthStencil ---
 	D3D12_DEPTH_STENCIL_DESC depthStencilDesc{};
 	depthStencilDesc.DepthEnable = false;
-	depthStencilDesc.DepthWriteMask = D3D12_DEPTH_WRITE_MASK_ALL;  // 深度書き込みを有効
+	depthStencilDesc.DepthWriteMask = D3D12_DEPTH_WRITE_MASK_ZERO;  // 深度書き込みを有効
 	depthStencilDesc.DepthFunc = D3D12_COMPARISON_FUNC_LESS_EQUAL; // 手前なら描画
 	depthStencilDesc.StencilEnable = false;                        // ステンシル不要なら false
 

@@ -2,6 +2,7 @@
 #include "GameScene.h"
 #include "AudioManager/BGMManager/BGMManager.h"
 #include "CameraController/CameraController.h"
+#include "Engine/Editor/EditorManager/EditorManager.h"
 #include "GameTimer/GameTimer.h"
 #include "Object/Background/Sky.h"
 #include "Object/Boss/Boss.h"
@@ -550,7 +551,7 @@ void GameScene::Draw() {
 	} else {
 		openWorld_->Draw();
 	}
-
+	EditorManager::GetInstance()->DrawEditorGridLines();
 	SpriteCommon::GetInstance()->DrawCommon();
 	if (hitVinettTimer_ > 0.0f && hitVinettSprite_) {
 		hitVinettSprite_->Draw();

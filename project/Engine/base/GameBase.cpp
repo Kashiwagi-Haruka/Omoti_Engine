@@ -115,6 +115,7 @@ LONG WINAPI GameBase::ExportDump(EXCEPTION_POINTERS* exception) {
 
 void GameBase::BeginFlame() {
 
+	EditorManager::GetInstance()->ResetEditorWorldDrawState();
 	dxCommon_->PreDraw();
 	imguiM_->Begin();
 	Input::GetInstance()->Update();
@@ -123,7 +124,6 @@ void GameBase::BeginFlame() {
 
 // --- フレーム終了: ImGui 描画 → Present → フェンス同期まで ---
 void GameBase::EndFlame() {
-	EditorManager::GetInstance()->DrawEditorGridLines();
 	imguiM_->End();
 	dxCommon_->DrawSceneTextureToBackBuffer();
 	imguiM_->Draw(dxCommon_.get());
