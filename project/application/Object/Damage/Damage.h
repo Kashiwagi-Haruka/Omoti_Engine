@@ -36,6 +36,9 @@ private:
 	    {0.0f, 0.0f, 0.0f},
 	    {0.0f, 2.0f, 0.0f},
 	};
+	Vector3 basePosition_ = {0.0f, 2.0f, 0.0f};
+	Vector3 damagePositionOffset_ = {0.0f, 0.0f, 0.0f};
+	int damagePositionOffsetIndex_ = 0;
 	Camera* camera_ = nullptr;
 	Attribute attribute_ = Attribute::None;
 	Attribute reactionPreviousAttribute_ = Attribute::None;

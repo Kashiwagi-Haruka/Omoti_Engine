@@ -9,6 +9,15 @@
 namespace {
 constexpr int kNormalColor = 180;
 constexpr int kCriticalColor = 255;
+constexpr int kDamagePositionOffsetCount = 6;
+constexpr std::array<Vector3, kDamagePositionOffsetCount> kDamagePositionOffsets = {
+    Vector3{0.0f,   0.0f, 0.0f  },
+    Vector3{0.25f,  0.2f, 0.0f  },
+    Vector3{-0.25f, 0.4f, 0.0f  },
+    Vector3{0.0f,   0.6f, 0.25f },
+    Vector3{0.25f,  0.8f, -0.25f},
+    Vector3{-0.25f, 1.0f, 0.25f },
+};
 
 float SmoothStep(float t) {
 	t = std::clamp(t, 0.0f, 1.0f);
@@ -65,6 +74,7 @@ void Damage::Initialize(Camera* camera) {
 }
 
 void Damage::SetDamageValue(int damage) {
+	const bool wasVisible = isVisible_;
 	damage = std::clamp(damage, 0, MaxDamage_);
 	const std::string damageString = std::to_string(damage);
 	digits_.clear();
@@ -74,6 +84,13 @@ void Damage::SetDamageValue(int damage) {
 	}
 	isVisible_ = !digits_.empty();
 	if (isVisible_) {
+		if (wasVisible) {
+			damagePositionOffsetIndex_ = (damagePositionOffsetIndex_ + 1) % static_cast<int>(kDamagePositionOffsets.size());
+		} else {
+			damagePositionOffsetIndex_ = 0;
+		}
+		damagePositionOffset_ = kDamagePositionOffsets[damagePositionOffsetIndex_];
+		transform_.translate = basePosition_ + damagePositionOffset_;
 		alpha_ = kAppearStartAlpha_;
 		appearTimer_ = 0.0f;
 		isFading_ = false;
@@ -81,8 +98,10 @@ void Damage::SetDamageValue(int damage) {
 	}
 }
 
-void Damage::SetPosition(const Vector3& position) { transform_.translate = position; }
-
+void Damage::SetPosition(const Vector3& position) {
+	basePosition_ = position;
+	transform_.translate = basePosition_ + damagePositionOffset_;
+}
 void Damage::Update() {
 	if (!isVisible_ || !camera_) {
 		return;
