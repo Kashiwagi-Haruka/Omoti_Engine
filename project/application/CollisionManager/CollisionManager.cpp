@@ -10,6 +10,7 @@
 #include "Object/Player/Player.h"
 #include "RigidBody.h"
 #include <algorithm>
+#include <cmath>
 namespace {
 AABB MakeAabb(const Vector3& center, const Vector3& halfSize) {
 	AABB aabb;
@@ -18,16 +19,21 @@ AABB MakeAabb(const Vector3& center, const Vector3& halfSize) {
 	return aabb;
 }
 bool IsNormalAttackComboStep(int comboStep) { return comboStep >= 1 && comboStep <= 4; }
-constexpr int kAttributeReactionDamage = 1;
+int CalculateAttributeReactionDamage(const Parameter& playerParameter) {
+	const float reactionDamage = (playerParameter.AttributeAffinity * 0.1f) * playerParameter.Attack;
+	return std::max(0, static_cast<int>(std::round(reactionDamage)));
+}
 
-void ApplyAttributeDamage(Enemy& enemy, EnemyManager& enemyManager, Attribute attribute) {
+void ApplyAttributeDamage(Enemy& enemy, EnemyManager& enemyManager, Attribute attribute, const Parameter& playerParameter) {
 	if (!enemy.AddAdhesionAttribute(attribute)) {
 		return;
 	}
-	enemy.SetHPSubtract(kAttributeReactionDamage);
-	enemyManager.OnEnemyDamaged(&enemy, kAttributeReactionDamage, attribute, false, enemy.GetLastReactionPreviousAttribute());
+	const int attributeReactionDamage = CalculateAttributeReactionDamage(playerParameter);
+	enemy.SetHPSubtract(attributeReactionDamage);
+	enemyManager.OnEnemyDamaged(&enemy, attributeReactionDamage, attribute, false, enemy.GetLastReactionPreviousAttribute());
 }
 } // namespace
+
 
 bool CollisionManager::HandleGameSceneCollisions(
     Player& player, EnemyManager& enemyManager, House& house, Boss* boss, Vector3* outHitEnemyPos, bool* outDidPlayerAttackHitEnemy) {
@@ -106,7 +112,7 @@ bool CollisionManager::HandleGameSceneCollisions(
 				    player.GetCurrentBaseParameter(), player.GetCurrentCombatParameter(), enemy->GetBaseParameter(), enemy->GetParameter(), playerAttackAttribute, &isCritical);
 				enemy->SetHPSubtract(damage);
 				enemyManager.OnEnemyDamaged(enemy.get(), damage, playerAttackAttribute, isCritical);
-				ApplyAttributeDamage(*enemy, enemyManager, playerAttackAttribute);
+				ApplyAttributeDamage(*enemy, enemyManager, playerAttackAttribute, player.GetCurrentCombatParameter());
 				if (swordComboStep == 4) {
 					enemy->ApplyFinalComboBackStep();
 				}
@@ -126,7 +132,7 @@ bool CollisionManager::HandleGameSceneCollisions(
 				    player.GetCurrentBaseParameter(), player.GetCurrentCombatParameter(), enemy->GetBaseParameter(), enemy->GetParameter(), playerAttackAttribute, &isCritical);
 				enemy->SetHPSubtract(damage);
 				enemyManager.OnEnemyDamaged(enemy.get(), damage, playerAttackAttribute, isCritical);
-				ApplyAttributeDamage(*enemy, enemyManager, playerAttackAttribute);
+				ApplyAttributeDamage(*enemy, enemyManager, playerAttackAttribute, player.GetCurrentCombatParameter());
 				enemy->SetLastSkillDamageId(skillDamageId);
 				tryEnemyFlinch(enemy.get());
 			}
@@ -150,7 +156,7 @@ bool CollisionManager::HandleGameSceneCollisions(
 					    player.GetCurrentBaseParameter(), player.GetCurrentCombatParameter(), enemy->GetBaseParameter(), enemy->GetParameter(), playerAttackAttribute, &isCritical);
 					enemy->SetHPSubtract(damage);
 					enemyManager.OnEnemyDamaged(enemy.get(), damage, playerAttackAttribute, isCritical);
-					ApplyAttributeDamage(*enemy, enemyManager, playerAttackAttribute);
+					ApplyAttributeDamage(*enemy, enemyManager, playerAttackAttribute, player.GetCurrentCombatParameter());
 					enemy->TriggerDamageInvincibility();
 					tryEnemyFlinch(enemy.get());
 				}

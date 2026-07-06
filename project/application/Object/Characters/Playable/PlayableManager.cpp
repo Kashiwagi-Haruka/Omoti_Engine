@@ -37,6 +37,7 @@ Parameter LoadParameter(const nlohmann::json& parameterJson) {
 	parameter.Speed = parameterJson.value("Speed", parameter.Speed);
 	parameter.CriticalRate = parameterJson.value("CriticalRate", parameter.CriticalRate);
 	parameter.CriticalDamage = parameterJson.value("CriticalDamage", parameter.CriticalDamage);
+	parameter.AttributeAffinity = parameterJson.value("AttributeAffinity", parameter.AttributeAffinity);
 	LoadParameterRates(parameterJson.value("AttributeDamageRate", nlohmann::json::array()), parameter.AttributeDamageRate);
 	LoadParameterRates(parameterJson.value("AttributeResistanceRate", nlohmann::json::array()), parameter.AttributeResistanceRate);
 	return parameter;

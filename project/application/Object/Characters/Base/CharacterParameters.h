@@ -24,6 +24,8 @@ struct Parameter {
 	float CriticalRate;
 	// キャラクターのクリティカルダメージ
 	float CriticalDamage;
+	// キャラクターの属性親和度
+	float AttributeAffinity = 1.0f;
 	// キャラクターの属性ダメージ率
 	std::array<float, static_cast<std::size_t>(Attribute::MAXATTRIBUTE)> AttributeDamageRate{};
 	// キャラクターの属性耐性率

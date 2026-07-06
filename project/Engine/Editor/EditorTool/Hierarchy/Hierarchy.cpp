@@ -45,6 +45,7 @@ Parameter CreateDefaultCharacterParameter() {
 	parameter.Speed = 1.0f;
 	parameter.CriticalRate = 0.05f;
 	parameter.CriticalDamage = 1.5f;
+	parameter.AttributeAffinity = 1.0f;
 	return parameter;
 }
 
@@ -57,6 +58,7 @@ json ToJson(const Parameter& p) {
 	param["Speed"] = p.Speed;
 	param["CriticalRate"] = p.CriticalRate;
 	param["CriticalDamage"] = p.CriticalDamage;
+	param["AttributeAffinity"] = p.AttributeAffinity;
 	for (size_t i = 0; i < p.AttributeDamageRate.size(); ++i) {
 		param["AttributeDamageRate"].push_back(p.AttributeDamageRate[i]);
 		param["AttributeResistanceRate"].push_back(p.AttributeResistanceRate[i]);
@@ -105,6 +107,7 @@ void DrawParameterEditor(const char* label, Parameter& parameter) {
 	ImGui::DragFloat("Speed", &parameter.Speed, 0.01f, 0.0f, 100.0f);
 	ImGui::DragFloat("CriticalRate", &parameter.CriticalRate, 0.001f, 0.0f, 1.0f);
 	ImGui::DragFloat("CriticalDamage", &parameter.CriticalDamage, 0.01f, 1.0f, 10.0f);
+	ImGui::DragFloat("AttributeAffinity", &parameter.AttributeAffinity, 0.1f, 0.0f, 999.0f);
 	ImGui::PopID();
 }
 #endif
