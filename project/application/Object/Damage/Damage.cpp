@@ -10,6 +10,10 @@ namespace {
 constexpr int kNormalColor = 180;
 constexpr int kCriticalColor = 255;
 
+float SmoothStep(float t) {
+	t = std::clamp(t, 0.0f, 1.0f);
+	return t * t * (3.0f - 2.0f * t);
+}
 const char* GetAttributeName(Attribute attribute) {
 	switch (attribute) {
 	case Attribute::Fire:
@@ -70,7 +74,8 @@ void Damage::SetDamageValue(int damage) {
 	}
 	isVisible_ = !digits_.empty();
 	if (isVisible_) {
-		alpha_ = 1.0f;
+		alpha_ = kAppearStartAlpha_;
+		appearTimer_ = 0.0f;
 		isFading_ = false;
 		timer_ = kShowDuration_;
 	}
@@ -81,6 +86,12 @@ void Damage::SetPosition(const Vector3& position) { transform_.translate = posit
 void Damage::Update() {
 	if (!isVisible_ || !camera_) {
 		return;
+	}
+
+	if (!isFading_ && appearTimer_ < kAppearDuration_) {
+		appearTimer_ = std::min(appearTimer_ + 1.0f / 60.0f, kAppearDuration_);
+		const float appearEase = SmoothStep(appearTimer_ / kAppearDuration_);
+		alpha_ = std::clamp(kAppearStartAlpha_ + (1.0f - kAppearStartAlpha_) * appearEase, 0.0f, 1.0f);
 	}
 
 	if (timer_ > 0.0f) {
@@ -105,6 +116,9 @@ void Damage::Update() {
 	billboardMatrix.m[3][2] = 0.0f;
 
 	const int digitCount = static_cast<int>(std::min(digits_.size(), digitPrimitives_.size()));
+	const float appearEase = SmoothStep(appearTimer_ / kAppearDuration_);
+	const float scaleMultiplier = !isFading_ ? kAppearStartScale_ + (1.0f - kAppearStartScale_) * appearEase : 1.0f;
+	const Vector3 drawScale = {transform_.scale.x * scaleMultiplier, transform_.scale.y * scaleMultiplier, transform_.scale.z * scaleMultiplier};
 	const float totalWidth = (digitCount - 1) * digitSpacing_;
 	const Matrix4x4 baseTranslateMatrix = Function::MakeTranslateMatrix(transform_.translate);
 	for (int i = 0; i < digitCount; ++i) {
@@ -119,7 +133,7 @@ void Damage::Update() {
 		primitive->SetUvTransform({0.1f, 1.0f, 1.0f}, {0.0f, 0.0f, 0.0f}, {0.1f * static_cast<float>(digits_[i]), 0.0f, 0.0f});
 
 		const float localXOffset = (static_cast<float>(i) * digitSpacing_) - (totalWidth * 0.5f);
-		const Matrix4x4 scaleMatrix = Function::MakeScaleMatrix(transform_.scale);
+		const Matrix4x4 scaleMatrix = Function::MakeScaleMatrix(drawScale);
 		const Matrix4x4 localOffsetMatrix = Function::MakeTranslateMatrix(localXOffset, 0.0f, 0.0f);
 		const Matrix4x4 localBillboardMatrix = Function::Multiply(scaleMatrix, Function::Multiply(localOffsetMatrix, billboardMatrix));
 		const Matrix4x4 worldMatrix = Function::Multiply(localBillboardMatrix, baseTranslateMatrix);

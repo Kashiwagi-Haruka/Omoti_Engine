@@ -53,6 +53,7 @@ public:
 	void SpawnWaveEnemies();  // ウェーブに応じた敵を生成
 	void CheckWaveComplete(); // ウェーブクリア判定
 	void ResolveOverlaps(const Vector3& playerPos, bool isPlayerAlive);
+	void ResolveDamageTextOverlaps();
 
 	// ゲッター
 	int GetCurrentWave() const { return currentWave_; }

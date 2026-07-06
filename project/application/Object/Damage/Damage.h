@@ -16,6 +16,8 @@ public:
 	void Draw();
 	void SetDamageValue(int damage);
 	void SetPosition(const Vector3& position);
+	const Vector3& GetPosition() const { return transform_.translate; }
+	bool IsVisible() const { return isVisible_; }
 	void SetAttribute(Attribute attribute);
 	void SetReactionAttribute(Attribute previousAttribute, Attribute appliedAttribute);
 	void SetIsCritical(bool isCritical) { isCritical_ = isCritical; }
@@ -23,6 +25,9 @@ public:
 private:
 	static constexpr float kShowDuration_ = 1.0f;
 	static constexpr float kFadeDuration_ = 0.5f;
+	static constexpr float kAppearDuration_ = 0.2f;
+	static constexpr float kAppearStartAlpha_ = 0.5f;
+	static constexpr float kAppearStartScale_ = 1.4f;
 	static constexpr int kDigitCount = 8;
 	std::array<std::unique_ptr<Primitive>, kDigitCount> digitPrimitives_{};
 	std::vector<int> digits_{};
@@ -38,6 +43,7 @@ private:
 	bool isFading_ = false;
 	bool isCritical_ = false;
 	float timer_ = 0.0f;
+	float appearTimer_ = 0.0f;
 	float alpha_ = 1.0f;
 	float digitSpacing_ = 0.55f;
 };

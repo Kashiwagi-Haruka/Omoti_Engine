@@ -9,6 +9,7 @@ namespace {
 constexpr int kFinalWave = 5;
 constexpr float kEnemySeparationRadius = 1.0f;
 constexpr float kPlayerSeparationRadius = 1.0f;
+constexpr float kDamageTextSeparationRadius = 0.3f;
 constexpr float kSeparationEpsilon = 0.0001f;
 constexpr int kSeparationIterations = 4;
 
@@ -251,7 +252,49 @@ void EnemyManager::Update(Camera* camera, const Vector3& housePos, const Vector3
 			damagePos.y += 2.0f;
 			entry.damageText->SetPosition(damagePos);
 		}
+	}
+	ResolveDamageTextOverlaps();
+	for (auto& entry : damageTexts) {
 		entry.damageText->Update();
+	}
+}
+
+void EnemyManager::ResolveDamageTextOverlaps() {
+	for (size_t i = 0; i < damageTexts.size(); ++i) {
+		Damage* damageA = damageTexts[i].damageText.get();
+		if (!damageA || !damageA->IsVisible()) {
+			continue;
+		}
+
+		Vector3 positionA = damageA->GetPosition();
+		for (size_t j = i + 1; j < damageTexts.size(); ++j) {
+			Damage* damageB = damageTexts[j].damageText.get();
+			if (!damageB || !damageB->IsVisible()) {
+				continue;
+			}
+
+			Vector3 positionB = damageB->GetPosition();
+			Vector3 delta = positionB - positionA;
+			const float distanceSq = delta.x * delta.x + delta.y * delta.y + delta.z * delta.z;
+			if (distanceSq >= kDamageTextSeparationRadius * kDamageTextSeparationRadius) {
+				continue;
+			}
+
+			float distance = std::sqrt(distanceSq);
+			if (distanceSq <= kSeparationEpsilon) {
+				const float angle = static_cast<float>(i + j + 1) * 2.399963f;
+				delta = {std::cos(angle), 0.0f, std::sin(angle)};
+				distance = 0.0f;
+			}
+
+			const float pushDistance = (kDamageTextSeparationRadius - distance) * 0.5f;
+			const float invDistance = distance > kSeparationEpsilon ? 1.0f / distance : 1.0f;
+			const Vector3 push = {delta.x * invDistance * pushDistance, delta.y * invDistance * pushDistance, delta.z * invDistance * pushDistance};
+			positionA -= push;
+			positionB += push;
+			damageB->SetPosition(positionB);
+		}
+		damageA->SetPosition(positionA);
 	}
 }
 
