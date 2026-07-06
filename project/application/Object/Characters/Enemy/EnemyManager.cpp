@@ -196,10 +196,6 @@ void EnemyManager::AddEnemy(Camera* camera, const Vector3& pos) {
 	hitEffect->SetCamera(camera);
 	hitEffect->Initialize();
 	hitEffects.push_back({enemyPtr, std::move(hitEffect)});
-
-	auto damageText = std::make_unique<Damage>();
-	damageText->Initialize(camera);
-	damageTexts.push_back({enemyPtr, std::move(damageText)});
 }
 void EnemyManager::Update(Camera* camera, const Vector3& housePos, const Vector3& houseScale, const Vector3& playerPos, bool isPlayerAlive) {
 
@@ -257,6 +253,7 @@ void EnemyManager::Update(Camera* camera, const Vector3& housePos, const Vector3
 	for (auto& entry : damageTexts) {
 		entry.damageText->Update();
 	}
+	damageTexts.erase(std::remove_if(damageTexts.begin(), damageTexts.end(), [](const DamageTextEntry& entry) { return !entry.damageText || !entry.damageText->IsVisible(); }), damageTexts.end());
 }
 
 void EnemyManager::ResolveDamageTextOverlaps() {
@@ -375,6 +372,10 @@ void EnemyManager::CheckWaveComplete() {
 		}
 
 		// 倒した敵をクリア
+		hitEffects.clear();
+		for (auto& entry : damageTexts) {
+			entry.enemy = nullptr;
+		}
 		enemies.clear();
 	}
 }
@@ -403,18 +404,19 @@ void EnemyManager::OnEnemyDamaged(Enemy* enemy, int damage, Attribute attribute,
 		}
 	}
 
-	for (auto& entry : damageTexts) {
-		if (entry.enemy == enemy) {
-			if (reactionPreviousAttribute != Attribute::None && reactionPreviousAttribute != attribute) {
-				entry.damageText->SetReactionAttribute(reactionPreviousAttribute, attribute);
-			} else {
-				entry.damageText->SetAttribute(attribute);
-			}
-			entry.damageText->SetIsCritical(isCritical);
-			entry.damageText->SetDamageValue(damage);
-			break;
-		}
+	auto damageText = std::make_unique<Damage>();
+	damageText->Initialize(camera_);
+	Vector3 damagePos = enemy->GetPosition();
+	damagePos.y += 2.0f;
+	damageText->SetPosition(damagePos);
+	if (reactionPreviousAttribute != Attribute::None && reactionPreviousAttribute != attribute) {
+		damageText->SetReactionAttribute(reactionPreviousAttribute, attribute);
+	} else {
+		damageText->SetAttribute(attribute);
 	}
+	damageText->SetIsCritical(isCritical);
+	damageText->SetDamageValue(damage);
+	damageTexts.push_back({enemy, std::move(damageText)});
 }
 void EnemyManager::ForceStartWave(int waveNumber) {
 	Clear();
