@@ -125,12 +125,18 @@ std::string Team::GetPlayableNameByIndex(int characterIndex) const {
 	if (characterIndex < 0 || characterIndex >= static_cast<int>(ownedCharacters_.size())) {
 		return "Sizuku";
 	}
+	if (!ownedCharacters_[characterIndex]) {
+		return "Sizuku";
+	}
 	const std::string& playableName = ownedCharacters_[characterIndex]->GetRomanizationName();
 	return playableName.empty() ? "Sizuku" : playableName;
 }
 
 std::string Team::GetActiveCharacterName() const {
 	if (activeSlotIndex_ < 0 || activeSlotIndex_ >= kMaxMembersCount) {
+		return "Sizuku";
+	}
+	if (!occupiedSlots_[activeSlotIndex_]) {
 		return "Sizuku";
 	}
 	return GetPlayableNameByIndex(teamMemberCharacterIndices_[activeSlotIndex_]);

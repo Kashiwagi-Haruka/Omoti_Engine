@@ -103,6 +103,7 @@ void GameScene::Finalize() {
 	UnloadTeamDisplay();
 	rasen_->Finalize();
 	openWorld_->Finalize();
+	ParticleManager::GetInstance()->Clear();
 }
 
 void GameScene::Initialize() {

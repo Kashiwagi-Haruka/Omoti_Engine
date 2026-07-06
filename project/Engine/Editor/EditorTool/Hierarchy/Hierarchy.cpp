@@ -179,7 +179,23 @@ bool IsTransformNearlyEqual(const Transform& lhs, const Transform& rhs) {
 	       IsNearlyEqual(lhs.rotate.y, rhs.rotate.y) && IsNearlyEqual(lhs.rotate.z, rhs.rotate.z) && IsNearlyEqual(lhs.translate.x, rhs.translate.x) &&
 	       IsNearlyEqual(lhs.translate.y, rhs.translate.y) && IsNearlyEqual(lhs.translate.z, rhs.translate.z);
 }
+void EnsureObjectEditorDataSize(
+    size_t size, std::vector<std::string>& objectNames, std::vector<std::string>& objectModelNames, std::vector<Transform>& editorTransforms, std::vector<InspectorMaterial>& editorMaterials) {
+	while (objectNames.size() < size) {
+		objectNames.push_back("Object " + std::to_string(objectNames.size()));
+	}
+	objectModelNames.resize(size);
+	editorTransforms.resize(size);
+	editorMaterials.resize(size);
+}
 
+void EnsurePrimitiveEditorDataSize(size_t size, std::vector<std::string>& primitiveNames, std::vector<Transform>& primitiveEditorTransforms, std::vector<InspectorMaterial>& primitiveEditorMaterials) {
+	while (primitiveNames.size() < size) {
+		primitiveNames.push_back("Primitive " + std::to_string(primitiveNames.size()));
+	}
+	primitiveEditorTransforms.resize(size);
+	primitiveEditorMaterials.resize(size);
+}
 } // namespace
 
 Hierarchy* Hierarchy::GetInstance() {
@@ -467,6 +483,7 @@ void Hierarchy::RegisterObject3d(Object3d* object) {
 	auto emptyIt = std::find(objects_.begin(), objects_.end(), nullptr);
 	if (emptyIt != objects_.end()) {
 		const size_t index = static_cast<size_t>(std::distance(objects_.begin(), emptyIt));
+		EnsureObjectEditorDataSize(index + 1, objectNames_, objectModelNames_, editorTransforms_, editorMaterials_);
 		objects_[index] = object;
 		objectModelNames_[index] = object->GetModelFilePath();
 		EditorObject3d::ApplyEditorValues(object, editorTransforms_[index], editorMaterials_[index]);
@@ -505,10 +522,12 @@ void Hierarchy::RegisterPrimitive(Primitive* primitive) {
 	auto emptyIt = std::find(primitives_.begin(), primitives_.end(), nullptr);
 	if (emptyIt != primitives_.end()) {
 		const size_t index = static_cast<size_t>(std::distance(primitives_.begin(), emptyIt));
+		EnsurePrimitiveEditorDataSize(index + 1, primitiveNames_, primitiveEditorTransforms_, primitiveEditorMaterials_);
 		primitives_[index] = primitive;
 		EditorPrimitive::ApplyEditorValues(primitive, primitiveEditorTransforms_[index], primitiveEditorMaterials_[index]);
 		return;
 	}
+	
 	const size_t index = primitives_.size();
 	primitives_.push_back(primitive);
 	primitiveNames_.push_back("Primitive " + std::to_string(index));
@@ -649,12 +668,18 @@ bool Hierarchy::SaveObjectEditorsToJson(const std::string& filePath) const {
 }
 
 bool Hierarchy::LoadObjectEditorsFromJson(const std::string& filePath) {
-	JsonManager* jsonManager = JsonManager::GetInstance();
-	if (!jsonManager->LoadJson(filePath)) {
+	const std::filesystem::path jsonPath = ResolveObjectEditorJsonPath(filePath);
+	std::ifstream file(jsonPath);
+	if (!file.is_open()) {
 		return false;
 	}
 
-	const nlohmann::json& root = jsonManager->GetData();
+	nlohmann::json root;
+	try {
+		file >> root;
+	} catch (const nlohmann::json::parse_error&) {
+		return false;
+	}
 	if (!root.is_object()) {
 		return false;
 	}
@@ -704,6 +729,7 @@ bool Hierarchy::LoadObjectEditorsFromJson(const std::string& filePath) {
 					continue;
 				}
 			}
+			EnsureObjectEditorDataSize(index + 1, objectNames_, objectModelNames_, editorTransforms_, editorMaterials_);
 			if (objectJson.contains("name") && objectJson["name"].is_string()) {
 				objectNames_[index] = objectJson["name"].get<std::string>();
 			}
@@ -821,6 +847,7 @@ bool Hierarchy::LoadObjectEditorsFromJson(const std::string& filePath) {
 			if (index == std::numeric_limits<size_t>::max() || index >= primitives_.size() || !primitives_[index] || primitives_[index] == selectionBoxPrimitive_.get()) {
 				continue;
 			}
+			EnsurePrimitiveEditorDataSize(index + 1, primitiveNames_, primitiveEditorTransforms_, primitiveEditorMaterials_);
 			if (primitiveJson.contains("name") && primitiveJson["name"].is_string()) {
 				primitiveNames_[index] = primitiveJson["name"].get<std::string>();
 			}
@@ -888,7 +915,9 @@ bool Hierarchy::LoadObjectEditorsFromJson(const std::string& filePath) {
 	if (root.contains("lights") && root["lights"].is_object()) {
 		editorLight_.LoadFromJson(root["lights"]);
 	}
+#ifdef USE_IMGUI
 	editorAudio_.LoadFromJson(root.value("audio", nlohmann::json::object()));
+#endif
 	loadedSnapshot_ = CreateCurrentSnapshot();
 	hasLoadedSnapshot_ = true;
 	loadedSnapshotFilePath_ = filePath;
