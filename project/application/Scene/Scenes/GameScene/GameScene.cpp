@@ -542,7 +542,7 @@ void GameScene::Draw() {
 	field->Draw();
 
 	player->Draw();
-
+	EditorManager::GetInstance()->DrawEditorGridLines();
 	if (playAreaMode_ == PlayAreaMode::kSpiral) {
 		rasen_->Draw(boss_.get());
 		if (rasen_->IsBossActive()) {
@@ -551,7 +551,7 @@ void GameScene::Draw() {
 	} else {
 		openWorld_->Draw();
 	}
-	EditorManager::GetInstance()->DrawEditorGridLines();
+
 	SpriteCommon::GetInstance()->DrawCommon();
 	if (hitVinettTimer_ > 0.0f && hitVinettSprite_) {
 		hitVinettSprite_->Draw();

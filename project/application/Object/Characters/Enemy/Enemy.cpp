@@ -19,11 +19,13 @@ Enemy::Enemy() {
 	object_ = std::make_unique<Object3d>();
 	enemyStun = std::make_unique<EnemyStun>();
 	adhesion_ = std::make_unique<Adhesion>();
+	hpBar_ = std::make_unique<EnemyHPBar>();
 }
 void Enemy::Initialize(Camera* camera, Vector3 translates) {
 	isAlive = true;
 	isStun_ = false;
-	HP = 100;
+	maxHP_ = 100;
+	HP = maxHP_;
 	stunTime = 0;
 	attackTimer_ = 0.0f;
 	damageInvincibleTimer_ = 0.0f;
@@ -52,6 +54,11 @@ void Enemy::Initialize(Camera* camera, Vector3 translates) {
 	enemyAttack_->Initialize(camera_);
 	adhesion_->Initialize();
 	adhesion_->SetCamera(camera_);
+	hpBar_->SetCamera(camera_);
+	hpBar_->SetMaxHP(maxHP_);
+	hpBar_->SetHP(HP);
+	hpBar_->SetPosition(transform_.translate);
+	hpBar_->Initialize();
 	object_->SetColor(kDefaultColor);
 }
 void Enemy::Update(const Vector3& housePos, const Vector3& houseScale, const Vector3& playerPos, bool isPlayerAlive) {
@@ -68,6 +75,12 @@ void Enemy::Update(const Vector3& housePos, const Vector3& houseScale, const Vec
 		object_->SetCamera(camera_);
 		object_->SetTransform(transform_);
 		object_->Update();
+		if (hpBar_) {
+			hpBar_->SetCamera(camera_);
+			hpBar_->SetHP(HP);
+			hpBar_->SetPosition(transform_.translate);
+			hpBar_->Update();
+		}
 		if (progress >= 1.0f) {
 			isAlive = false;
 			isDying_ = false;
@@ -104,6 +117,12 @@ void Enemy::Update(const Vector3& housePos, const Vector3& houseScale, const Vec
 			adhesion_->SetCamera(camera_);
 			adhesion_->SetTransform(transform_);
 			adhesion_->Update();
+		}
+		if (hpBar_) {
+			hpBar_->SetCamera(camera_);
+			hpBar_->SetHP(HP);
+			hpBar_->SetPosition(transform_.translate);
+			hpBar_->Update();
 		}
 		return;
 	}
@@ -153,7 +172,12 @@ void Enemy::Update(const Vector3& housePos, const Vector3& houseScale, const Vec
 		adhesion_->SetTransform(transform_);
 		adhesion_->Update();
 	}
-
+	if (hpBar_) {
+		hpBar_->SetCamera(camera_);
+		hpBar_->SetHP(HP);
+		hpBar_->SetPosition(transform_.translate);
+		hpBar_->Update();
+	}
 	// 攻撃開始条件
 	bool inAttackRange = false;
 	if (!isStun_) {
@@ -195,7 +219,9 @@ void Enemy::Stun() {
 void Enemy::Draw() {
 	// 敵の描画処理
 	object_->Draw();
-
+	if (hpBar_) {
+		hpBar_->Draw();
+	}
 	if (!isDying_ && enemyAttack_) {
 		enemyAttack_->Draw();
 	}
