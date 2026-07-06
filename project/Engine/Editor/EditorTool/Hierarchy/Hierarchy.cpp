@@ -196,6 +196,10 @@ void EnsurePrimitiveEditorDataSize(size_t size, std::vector<std::string>& primit
 	primitiveEditorTransforms.resize(size);
 	primitiveEditorMaterials.resize(size);
 }
+std::string GetCurrentSceneName() {
+	const SceneManager* sceneManager = SceneManager::GetInstance();
+	return sceneManager ? sceneManager->GetCurrentSceneName() : std::string();
+}
 } // namespace
 
 Hierarchy* Hierarchy::GetInstance() {
@@ -209,9 +213,11 @@ void Hierarchy::Finalize() {
 	editorTransforms_.clear();
 	editorMaterials_.clear();
 	objectModelNames_.clear();
+	objectSceneNames_.clear();
 
 	primitives_.clear();
 	primitiveNames_.clear();
+	primitiveSceneNames_.clear();
 	primitiveEditorTransforms_.clear();
 	primitiveEditorMaterials_.clear();
 
@@ -236,9 +242,11 @@ void Hierarchy::OnSceneChangeRequested(const std::string& nextSceneName) {
 	editorTransforms_.clear();
 	editorMaterials_.clear();
 	objectModelNames_.clear();
+	objectSceneNames_.clear();
 
 	primitives_.clear();
 	primitiveNames_.clear();
+	primitiveSceneNames_.clear();
 	primitiveEditorTransforms_.clear();
 	primitiveEditorMaterials_.clear();
 
@@ -280,6 +288,7 @@ std::string Hierarchy::GetSceneScopedEditorFilePath(const std::string& defaultFi
 }
 
 void Hierarchy::ResetForSceneChange() {
+	const std::string currentSceneName = GetCurrentSceneName();
 	editorAudio_.ResetForSceneChange();
 	hasUnsavedChanges_ = false;
 	saveStatusMessage_.clear();
@@ -299,7 +308,18 @@ void Hierarchy::ResetForSceneChange() {
 	}
 	editorOwnedObjects_.clear();
 	editorOwnedPrimitives_.clear();
+	for (size_t i = 0; i < objects_.size(); ++i) {
+		if (i >= objectSceneNames_.size() || objectSceneNames_[i] != currentSceneName) {
+			objects_[i] = nullptr;
+		}
+	}
+	for (size_t i = 0; i < primitives_.size(); ++i) {
+		if (i >= primitiveSceneNames_.size() || primitiveSceneNames_[i] != currentSceneName) {
+			primitives_[i] = nullptr;
+		}
+	}
 }
+
 
 Hierarchy::EditorSnapshot Hierarchy::CreateCurrentSnapshot() const {
 	EditorSnapshot snapshot{};
@@ -484,8 +504,10 @@ void Hierarchy::RegisterObject3d(Object3d* object) {
 	if (emptyIt != objects_.end()) {
 		const size_t index = static_cast<size_t>(std::distance(objects_.begin(), emptyIt));
 		EnsureObjectEditorDataSize(index + 1, objectNames_, objectModelNames_, editorTransforms_, editorMaterials_);
+		objectSceneNames_.resize(index + 1);
 		objects_[index] = object;
 		objectModelNames_[index] = object->GetModelFilePath();
+		objectSceneNames_[index] = GetCurrentSceneName();
 		EditorObject3d::ApplyEditorValues(object, editorTransforms_[index], editorMaterials_[index]);
 		return;
 	}
@@ -493,6 +515,7 @@ void Hierarchy::RegisterObject3d(Object3d* object) {
 	objects_.push_back(object);
 	objectNames_.push_back("Object " + std::to_string(index));
 	objectModelNames_.push_back(object->GetModelFilePath());
+	objectSceneNames_.push_back(GetCurrentSceneName());
 	editorTransforms_.push_back(object->GetTransform());
 	editorMaterials_.push_back(EditorObject3d::CaptureMaterial(object));
 }
@@ -504,6 +527,9 @@ void Hierarchy::UnregisterObject3d(Object3d* object) {
 	for (size_t i = 0; i < objects_.size(); ++i) {
 		if (objects_[i] == object) {
 			objects_[i] = nullptr;
+			if (i < objectSceneNames_.size()) {
+				objectSceneNames_[i].clear();
+			}
 			if (!selectedIsPrimitive_ && selectedObjectIndex_ == i) {
 				selectedObjectIndex_ = 0;
 			}
@@ -523,14 +549,17 @@ void Hierarchy::RegisterPrimitive(Primitive* primitive) {
 	if (emptyIt != primitives_.end()) {
 		const size_t index = static_cast<size_t>(std::distance(primitives_.begin(), emptyIt));
 		EnsurePrimitiveEditorDataSize(index + 1, primitiveNames_, primitiveEditorTransforms_, primitiveEditorMaterials_);
+		primitiveSceneNames_.resize(index + 1);
 		primitives_[index] = primitive;
+		primitiveSceneNames_[index] = GetCurrentSceneName();
 		EditorPrimitive::ApplyEditorValues(primitive, primitiveEditorTransforms_[index], primitiveEditorMaterials_[index]);
 		return;
 	}
-	
+
 	const size_t index = primitives_.size();
 	primitives_.push_back(primitive);
 	primitiveNames_.push_back("Primitive " + std::to_string(index));
+	primitiveSceneNames_.push_back(GetCurrentSceneName());
 	primitiveEditorTransforms_.push_back(primitive->GetTransform());
 	primitiveEditorMaterials_.push_back(EditorPrimitive::CaptureMaterial(primitive));
 }
@@ -542,6 +571,9 @@ void Hierarchy::UnregisterPrimitive(Primitive* primitive) {
 	for (size_t i = 0; i < primitives_.size(); ++i) {
 		if (primitives_[i] == primitive) {
 			primitives_[i] = nullptr;
+			if (i < primitiveSceneNames_.size()) {
+				primitiveSceneNames_[i].clear();
+			}
 			if (selectedIsPrimitive_ && selectedObjectIndex_ == i) {
 				selectedObjectIndex_ = 0;
 			}
@@ -564,7 +596,6 @@ void Hierarchy::UnregisterCamera(Camera* camera) {
 	(void)camera;
 #endif
 }
-
 bool Hierarchy::HasRegisteredObjects() const { return !objects_.empty() || !primitives_.empty(); }
 
 bool Hierarchy::LoadObjectEditorsFromJsonIfExists(const std::string& filePath) {
@@ -724,7 +755,8 @@ bool Hierarchy::LoadObjectEditorsFromJson(const std::string& filePath) {
 				const std::string editorId = objectJson.value("editorId", std::string());
 				Object3d* rawObject = CreateEditorOwnedObject(editorOwnedObjects_, modelName, editorId);
 				RegisterObject3d(rawObject);
-				index = objects_.empty() ? std::numeric_limits<size_t>::max() : objects_.size() - 1;
+				const auto objectIt = std::find(objects_.begin(), objects_.end(), rawObject);
+				index = objectIt == objects_.end() ? std::numeric_limits<size_t>::max() : static_cast<size_t>(std::distance(objects_.begin(), objectIt));
 				if (index == std::numeric_limits<size_t>::max()) {
 					continue;
 				}
@@ -842,7 +874,8 @@ bool Hierarchy::LoadObjectEditorsFromJson(const std::string& filePath) {
 				const std::string editorId = primitiveJson.value("editorId", std::string());
 				Primitive* rawPrimitive = CreateEditorOwnedPrimitive(editorOwnedPrimitives_, PrimitiveTypeFromName(primitiveTypeName), editorId);
 				RegisterPrimitive(rawPrimitive);
-				index = primitives_.empty() ? std::numeric_limits<size_t>::max() : primitives_.size() - 1;
+				const auto primitiveIt = std::find(primitives_.begin(), primitives_.end(), rawPrimitive);
+				index = primitiveIt == primitives_.end() ? std::numeric_limits<size_t>::max() : static_cast<size_t>(std::distance(primitives_.begin(), primitiveIt));
 			}
 			if (index == std::numeric_limits<size_t>::max() || index >= primitives_.size() || !primitives_[index] || primitives_[index] == selectionBoxPrimitive_.get()) {
 				continue;
