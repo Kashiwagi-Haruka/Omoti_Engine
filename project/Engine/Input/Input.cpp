@@ -70,6 +70,48 @@ void GetCombinedTriggerValues(const DIJOYSTATE& state, int leftButtonIndex, int 
 	}
 }
 float NormalizeXInputTrigger(BYTE triggerValue) { return Clamp01(static_cast<float>(triggerValue) / 255.0f); }
+
+
+WORD GetXInputButtonMask(Input::PadButton button) {
+	switch (button) {
+	case Input::PadButton::kButtonA:
+		return XINPUT_GAMEPAD_A;
+	case Input::PadButton::kButtonB:
+		return XINPUT_GAMEPAD_B;
+	case Input::PadButton::kButtonX:
+		return XINPUT_GAMEPAD_X;
+	case Input::PadButton::kButtonY:
+		return XINPUT_GAMEPAD_Y;
+	case Input::PadButton::kButtonLeftShoulder:
+		return XINPUT_GAMEPAD_LEFT_SHOULDER;
+	case Input::PadButton::kButtonRightShoulder:
+		return XINPUT_GAMEPAD_RIGHT_SHOULDER;
+	case Input::PadButton::kButtonBack:
+		return XINPUT_GAMEPAD_BACK;
+	case Input::PadButton::kButtonStart:
+		return XINPUT_GAMEPAD_START;
+	case Input::PadButton::kButtonLeftThumb:
+		return XINPUT_GAMEPAD_LEFT_THUMB;
+	case Input::PadButton::kButtonRightThumb:
+		return XINPUT_GAMEPAD_RIGHT_THUMB;
+	case Input::PadButton::kButtonUp:
+		return XINPUT_GAMEPAD_DPAD_UP;
+	case Input::PadButton::kButtonDown:
+		return XINPUT_GAMEPAD_DPAD_DOWN;
+	case Input::PadButton::kButtonLeft:
+		return XINPUT_GAMEPAD_DPAD_LEFT;
+	case Input::PadButton::kButtonRight:
+		return XINPUT_GAMEPAD_DPAD_RIGHT;
+	default:
+		return 0;
+	}
+}
+
+bool GetXInputButtonState(const XINPUT_STATE& state, Input::PadButton button) {
+	const WORD mask = GetXInputButtonMask(button);
+	return mask != 0 && (state.Gamepad.wButtons & mask) != 0;
+}
+
 bool IsForegroundWindow(const WinApp* winApp) {
 	if (!winApp) {
 		return false;
@@ -309,6 +351,9 @@ bool Input::ReleaseKey(BYTE keyNumber) {
 }
 
 bool Input::PushButton(PadButton button) {
+	if (isXInputConnected_) {
+		return GetXInputButtonState(xInputState_, button);
+	}
 	if (!gamePadDevice_)
 		return false;
 	int index = static_cast<int>(button);
@@ -332,6 +377,11 @@ bool Input::PushButton(PadButton button) {
 }
 
 bool Input::TriggerButton(PadButton button) {
+	if (isXInputConnected_) {
+		const bool now = GetXInputButtonState(xInputState_, button);
+		const bool prev = GetXInputButtonState(preXInputState_, button);
+		return now && !prev;
+	}
 	if (!gamePadDevice_)
 		return false;
 	int index = static_cast<int>(button);
@@ -358,6 +408,11 @@ bool Input::TriggerButton(PadButton button) {
 	return false;
 }
 bool Input::ReleaseButton(PadButton button) {
+	if (isXInputConnected_) {
+		const bool now = GetXInputButtonState(xInputState_, button);
+		const bool prev = GetXInputButtonState(preXInputState_, button);
+		return !now && prev;
+	}
 	if (!gamePadDevice_)
 		return false;
 	int index = static_cast<int>(button);
