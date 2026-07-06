@@ -12,6 +12,9 @@
 
 class Team;
 
+/// <summary>
+/// チーム編成画面
+/// </summary>
 class TeamDisplay {
 public:
 	/// チーム編成画面とメンバー情報に必要なリソースを初期化する。
