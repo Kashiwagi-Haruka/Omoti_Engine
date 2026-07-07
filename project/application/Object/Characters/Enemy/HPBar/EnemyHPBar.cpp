@@ -41,7 +41,7 @@ void EnemyHPBar::ApplyBillboardTransform() {
 	}
 
 	const float hpRatio = std::clamp(static_cast<float>(HP_) / static_cast<float>(maxHP_), kMinHpRatio, kMaxHpRatio);
-	const float damageRatio = 1.0f - hpRatio;
+	const float damageRatio = 1.0f -(hpRatio/2.0f)+0.5f;
 	const Vector3 scale = {width_, height_, 1.0f};
 	Vector3 translate = position_;
 	translate.y += verticalOffset_;
