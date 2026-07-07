@@ -33,6 +33,11 @@ class AttackOperation {
 	SpriteData keyboardSkillIconSPData_;
 	SpriteData keyboardSpecialAttackSPData_;
 
+	SpriteData padDashSPData_;
+	SpriteData padJumpSPData_;
+	SpriteData padNormalAttackSPData_;
+	SpriteData padSkillIconSPData_;
+	SpriteData padSpecialAttackSPData_;
 
 	public:
 	AttackOperation();
