@@ -124,11 +124,11 @@ void GameScene::Initialize() {
 	isTransitionIn = true;
 	isTransitionOut = false;
 	nextSceneName.clear();
-	uimanager->SetPlayerHPMax(player->GetHPMax());
-	uimanager->SetPlayerHP(player->GetHP());
 	team_->Initialize();
 	uimanager->SetTeam(team_.get());
 	uimanager->Initialize();
+	uimanager->SetPlayerHPMax(team_->GetActiveCharacterHPMax());
+	uimanager->SetPlayerHP(team_->GetActiveCharacterHP());
 	uimanager->SetPlayerDashGauge(player->GetDashGauge(), player->GetDashGaugeMax());
 	rasen_->Initialize(cameraController->GetCamera());
 	openWorld_->Initialize(cameraController->GetCamera());
@@ -451,7 +451,7 @@ void GameScene::Update() {
 #endif // _DEBUG
 
 	if (playAreaMode_ == PlayAreaMode::kSpiral) {
-		if (!player->GetIsAlive() || rasen_->GetHouse()->GetHP() == 0) {
+		if (!team_->GetIsActiveCharacterAlive() || rasen_->GetHouse()->GetHP() == 0) {
 			if (!isTransitionOut) {
 				nextSceneName = "GameOver";
 				sceneTransition->Initialize(true);
@@ -463,8 +463,7 @@ void GameScene::Update() {
 		Boss* activeBoss = (rasen_->IsBossActive() && boss_->GetIsAlive()) ? boss_.get() : nullptr;
 		Vector3 hitEnemyPos{};
 		bool didPlayerAttackHitEnemy = false;
-		const bool didNormalAttackHitEnemy =
-		    collisionManager_.HandleGameSceneCollisions(*player, *rasen_->GetEnemyManager(), *rasen_->GetHouse(), activeBoss, &hitEnemyPos, &didPlayerAttackHitEnemy);
+		const bool didNormalAttackHitEnemy = collisionManager_.HandleGameSceneCollisions(*player, *rasen_->GetEnemyManager(), *rasen_->GetHouse(), activeBoss, &hitEnemyPos, &didPlayerAttackHitEnemy);
 		if (didPlayerAttackHitEnemy) {
 			hitVinettTimer_ = kHitVinettDuration_;
 		}
@@ -477,6 +476,7 @@ void GameScene::Update() {
 			}
 		}
 		if (player->ConsumeDamageTrigger()) {
+			team_->DamageActiveCharacter(player->ConsumePendingDamage());
 			cameraController->StartShake(0.75f);
 			damageGrayscaleTimer_ = kDamageGrayscaleDuration_;
 		}
@@ -497,7 +497,8 @@ void GameScene::Update() {
 	}
 	Object3dCommon::GetInstance()->SetFullScreenGrayscaleEnabled(damageGrayscaleTimer_ > 0.0f);
 	uimanager->SetPlayerParameters(player->GetParameters());
-	uimanager->SetPlayerHP(player->GetHP());
+	uimanager->SetPlayerHPMax(team_->GetActiveCharacterHPMax());
+	uimanager->SetPlayerHP(team_->GetActiveCharacterHP());
 	uimanager->SetPlayerDashGauge(player->GetDashGauge(), player->GetDashGaugeMax());
 	uimanager->Update();
 
@@ -514,7 +515,6 @@ void GameScene::Update() {
 		}
 	}
 }
-
 void GameScene::Draw() {
 	if (isCharacterDisplayMode_) {
 		characterDisplay_->Draw();

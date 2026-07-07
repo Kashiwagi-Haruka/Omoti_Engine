@@ -40,6 +40,7 @@ class Player {
 	bool isInvincible_ = false;
 	float invincibleTimer_ = 0.0f;
 	bool damageTrigger_ = false;
+	int pendingDamage_ = 0;
 
 	bool isDash = false;
 	bool isJump = false;
@@ -106,7 +107,7 @@ public:
 	Vector3 GetScale() { return transform_.scale; }
 	void Damage(int amount) {
 		if (!isInvincible_) {
-			hp_ -= amount;
+			pendingDamage_ = amount;
 			isInvincible_ = true;
 			invincibleTimer_ = 1.0f; // 1秒無敵
 			damageTrigger_ = true;
@@ -116,6 +117,11 @@ public:
 		const bool triggered = damageTrigger_;
 		damageTrigger_ = false;
 		return triggered;
+	}
+	int ConsumePendingDamage() {
+		const int damage = pendingDamage_;
+		pendingDamage_ = 0;
+		return damage;
 	}
 	bool GetSelect() { return isSelect_; };
 	int GetHP() const { return hp_; }

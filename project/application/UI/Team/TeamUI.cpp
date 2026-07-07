@@ -4,6 +4,7 @@
 #include "Text/FreeTypeManager/FreeTypeManager.h"
 #include "TextureManager.h"
 #include "WinApp.h"
+#include <algorithm>
 namespace {
 constexpr Vector2 kIconSize{35.0f, 35.0f};
 constexpr Vector2 kActiveIconSize{40.0f, 40.0f};
@@ -92,7 +93,11 @@ void TeamUI::Initialize(const Team& team) {
 		hpBarSprites_[i]->Initialize(hpBarTextureHandle);
 		hpBarSprites_[i]->SetAnchorPoint({1.0f, 0.5f});
 		hpBarSprites_[i]->SetPosition(iconPositions_[i] + kHpBarOffset);
-		hpBarSprites_[i]->SetScale(kHpBarMaxSize);
+		{
+			const int hpMax = team.GetMemberHPMax(i);
+			const float hpRate = hpMax > 0 ? std::clamp(static_cast<float>(team.GetMemberHP(i)) / static_cast<float>(hpMax), 0.0f, 1.0f) : 0.0f;
+			hpBarSprites_[i]->SetScale({kHpBarMaxSize.x * hpRate, kHpBarMaxSize.y});
+		}
 		hpBarSprites_[i]->Update();
 
 		hpBarBackgroundSprites_[i] = std::make_unique<Sprite>();
@@ -200,7 +205,11 @@ void TeamUI::Update(const Team& team) {
 		padSprites_[i]->Update();
 
 		hpBarSprites_[i]->SetPosition(iconPositions_[i] + kHpBarOffset);
-		hpBarSprites_[i]->SetScale(kHpBarMaxSize);
+		{
+			const int hpMax = team.GetMemberHPMax(i);
+			const float hpRate = hpMax > 0 ? std::clamp(static_cast<float>(team.GetMemberHP(i)) / static_cast<float>(hpMax), 0.0f, 1.0f) : 0.0f;
+			hpBarSprites_[i]->SetScale({kHpBarMaxSize.x * hpRate, kHpBarMaxSize.y});
+		}
 		hpBarSprites_[i]->Update();
 
 		hpBarBackgroundSprites_[i]->SetPosition(iconPositions_[i] + kHpBarOffset);
