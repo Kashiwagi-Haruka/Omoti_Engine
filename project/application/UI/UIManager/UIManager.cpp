@@ -13,6 +13,7 @@ UIManager::UIManager() {
 	towerUI_ = std::make_unique<TowerUI>();
 	menuUI_ = std::make_unique<Menu>();
 	teamUI_ = std::make_unique<TeamUI>();
+	padMenuUI_ = std::make_unique<PadMenu>();
 }
 
 UIManager::~UIManager() {}
@@ -31,6 +32,8 @@ void UIManager::Initialize() {
 	towerUI_->Initialize();
 
 	menuUI_->Initialize();
+
+	padMenuUI_->Initialize();
 	if (team_) {
 		teamUI_->Initialize(*team_);
 	}
@@ -50,6 +53,8 @@ void UIManager::Update() {
 	towerUI_->Update();
 
 	menuUI_->Update();
+
+	padMenuUI_->Update();
 	if (team_) {
 		teamUI_->Update(*team_);
 	}
@@ -68,6 +73,7 @@ void UIManager::Draw() {
 	if (team_) {
 		teamUI_->Draw();
 	}
+	padMenuUI_->Draw();
 	if (PlayCommand::GetCURSOR_DISPLAY()) {
 		if (cursolSprite_) {
 			cursolSprite_->Draw();

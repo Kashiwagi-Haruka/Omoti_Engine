@@ -468,29 +468,47 @@ float Input::GetJoyStickRX() const {
 
 bool Input::IsJoyStickSelectDirectionL(JoyconStickDirection direction) const {
 
-	if (direction == JoyconStickDirection::LEFT || direction == JoyconStickDirection::DOWNLEFT || direction == JoyconStickDirection::UPLEFT) {
-		if (GetJoyStickLX() > 0.0f) {
-			return false;
+	//if (direction == JoyconStickDirection::LEFT){
+	//	if (GetJoyStickLX() < 0.0f && GetJoyStickLY() <= 0.34f && GetJoyStickLY() >= -0.34f) {
+	//		return true;
+	//	}
+	//}
+	//if (direction == JoyconStickDirection::RIGHT) {
+	//	if (GetJoyStickLX() > 0.0f && GetJoyStickLY() <= 0.34f && GetJoyStickLY() >= -0.34f) {
+	//		return true;
+	//	}
+	//}
+	//if (direction == JoyconStickDirection::UP) {
+	//	if (GetJoyStickLX() <= 0.34f && GetJoyStickLX() >= -0.34f && GetJoyStickLY() > 0.0f) {
+	//		return true;
+	//	}
+	//}
+	//if (direction == JoyconStickDirection::DOWN) {
+	//	if (GetJoyStickLX() <= 0.34f && GetJoyStickLX() >= -0.34f && GetJoyStickLY() < 0.0f) {
+	//		return true;
+	//	}
+	//}
+	if (direction == JoyconStickDirection::UPLEFT) {
+		if (GetJoyStickLX() > -0.66f && GetJoyStickLX() < -0.34f && GetJoyStickLY() > 0.34f && GetJoyStickLY() < 0.66f) {
+			return true;
 		}
 	}
-	if (direction == JoyconStickDirection::RIGHT || direction == JoyconStickDirection::DOWNRIGHT || direction == JoyconStickDirection::UPRIGHT) {
-		if (GetJoyStickLX() < 0.0f) {
-			return false;
+	if (direction == JoyconStickDirection::UPRIGHT) {
+		if (GetJoyStickLX() <= 0.34f && GetJoyStickLX() >= -0.34f && GetJoyStickLY() <= 0.34f && GetJoyStickLY() >= -0.34f) {
+			return true;
 		}
 	}
-	if (direction == JoyconStickDirection::UP || direction == JoyconStickDirection::UPRIGHT || direction == JoyconStickDirection::UPLEFT) {
-		if (GetJoyStickLY() > 0.0f) {
-			return false;
+	if (direction == JoyconStickDirection::DOWNLEFT) {
+		if (GetJoyStickLX() <= 0.34f && GetJoyStickLX() >= -0.34f && GetJoyStickLY() <= 0.34f && GetJoyStickLY() >= -0.34f) {
+			return true;
 		}
 	}
-	if (direction == JoyconStickDirection::DOWN || direction == JoyconStickDirection::DOWNRIGHT || direction == JoyconStickDirection::DOWNLEFT) {
-		if (GetJoyStickLY() < 0.0f) {
-			return false;
+	if (direction == JoyconStickDirection::DOWNRIGHT) {
+		if (GetJoyStickLX() <= 0.34f && GetJoyStickLX() >= -0.34f && GetJoyStickLY() <= 0.34f && GetJoyStickLY() >= -0.34f) {
+			return true;
 		}
 	}
-	
-
-	return true; 
+	return false; 
 }
 
 float Input::GetJoyStickRY() const {
@@ -535,12 +553,12 @@ bool Input::IsJoyStickSelectDirectionR(JoyconStickDirection direction) const {
 		}
 	}
 	if (direction == JoyconStickDirection::UP || direction == JoyconStickDirection::UPRIGHT || direction == JoyconStickDirection::UPLEFT) {
-		if (GetJoyStickRY() > 0.0f) {
+		if (GetJoyStickRY() < 0.0f) {
 			return false;
 		}
 	}
 	if (direction == JoyconStickDirection::DOWN || direction == JoyconStickDirection::DOWNRIGHT || direction == JoyconStickDirection::DOWNLEFT) {
-		if (GetJoyStickRY() < 0.0f) {
+		if (GetJoyStickRY() > 0.0f) {
 			return false;
 		}
 	}

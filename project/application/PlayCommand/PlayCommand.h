@@ -117,11 +117,23 @@ class PlayCommand {
 	/// <returns></returns>
 	static bool GetCharacterChange4();
 
+	/// <summary>
+	/// チーム画面切り替え
+	/// </summary>
+	/// <returns></returns>
 	static bool GetTeamSelectDisplay();
 
+	/// <summary>
+	/// キャラクター画面切り替え
+	/// </summary>
+	/// <returns></returns>
 	static bool GetCharacterDisplay();
 
-	private:
+	/// <summary>
+	/// パッドのメニュー開いているか
+	/// </summary>
+	/// <returns></returns>
+	static bool GetPadMenuOpen();
 
 
 	

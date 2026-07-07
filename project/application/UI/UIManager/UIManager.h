@@ -7,6 +7,7 @@
 #include "UI/Menu/Menu.h"
 #include "UI/Team/TeamUI.h"
 #include "UI/Tower/TowerUI.h"
+#include "UI/PadMenu/PadMenu.h"
 
 class GameBase;
 class UIManager {
@@ -22,6 +23,7 @@ class UIManager {
 	std::unique_ptr<TowerUI> towerUI_;
 	std::unique_ptr<Menu> menuUI_;
 	std::unique_ptr<TeamUI> teamUI_;
+	std::unique_ptr<PadMenu> padMenuUI_;
 	Team* team_ = nullptr;
 
 public:

@@ -129,3 +129,9 @@ bool PlayCommand::GetCharacterDisplay(){
 	}
 	return false;
 }
+bool PlayCommand::GetPadMenuOpen(){ 
+	if (Input::GetInstance()->PushButton(Input::PadButton::kButtonLeftShoulder)) {
+		return true;
+	}
+	return false;
+}
