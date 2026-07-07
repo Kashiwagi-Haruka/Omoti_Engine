@@ -64,7 +64,7 @@ void UIManager::Draw() {
 	dashGaugeUI_->Draw();
 	towerUI_->Draw();
 	SpriteCommon::GetInstance()->DrawCommon();
-	/*menuUI_->Draw();*/
+	menuUI_->Draw();
 	if (team_) {
 		teamUI_->Draw();
 	}

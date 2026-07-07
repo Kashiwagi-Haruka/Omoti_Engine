@@ -11,8 +11,9 @@ namespace {
 constexpr Vector2 kOperationIconBaseSize{60.0f, 60.0f};
 constexpr float kPressedScaleRate = 1.15f;
 constexpr float kScaleReturnRate = 0.25f;
-constexpr Vector2 kKeyboardDisplaySize{100.0f, 100.0f};
+constexpr Vector2 kKeyboardDisplaySize{80.0f, 80.0f};
 constexpr float kKeyboardDisplayIconOffsetY = 50.0f;
+constexpr Vector2 kPadScale = {5.0f, 5.0f};
 } // namespace
 AttackOperation::AttackOperation() {
 	// スキルアイコンのテクスチャハンドルを取得
@@ -90,6 +91,11 @@ void AttackOperation::Initialize() {
 	padJumpSPData_.sprite->SetAnchorPoint({1.0f, 1.0f});
 	padNormalAttackSPData_.sprite->SetAnchorPoint({1.0f, 1.0f});
 	padSpecialAttackSPData_.sprite->SetAnchorPoint({1.0f, 1.0f});
+	padDashSPData_.size = kPadScale;
+	padSkillIconSPData_.size = kPadScale;
+	padJumpSPData_.size = kPadScale;
+	padNormalAttackSPData_.size = kPadScale;
+	padSpecialAttackSPData_.size = kPadScale;
 }
 
 void AttackOperation::Update() {
