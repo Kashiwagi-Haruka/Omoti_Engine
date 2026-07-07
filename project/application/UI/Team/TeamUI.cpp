@@ -98,6 +98,8 @@ void TeamUI::Initialize(const Team& team) {
 		characterNameTexts_[i].SetPosition(iconPositions_[i] + kCharacterNameOffset);
 		characterNameTexts_[i].SetColor(i == team.GetActiveSlot() ? kCharacterNameColor : kInactiveCharacterNameColor);
 		characterNameTexts_[i].UpdateLayout(false);
+
+		
 	}
 
 	selectedBackgroundSprite_ = std::make_unique<Sprite>();
