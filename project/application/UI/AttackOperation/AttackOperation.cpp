@@ -1,10 +1,10 @@
 #define NOMINMAX
 #include "AttackOperation.h"
+#include "Input.h"
 #include "PlayCommand/PlayCommand.h"
 #include "Sprite/Sprite.h"
 #include "TextureManager.h"
 #include "WinApp.h"
-#include "Input.h"
 #include <algorithm>
 
 namespace {
@@ -12,7 +12,6 @@ constexpr Vector2 kOperationIconBaseSize{60.0f, 60.0f};
 constexpr float kPressedScaleRate = 1.15f;
 constexpr float kScaleReturnRate = 0.25f;
 constexpr Vector2 kKeyboardDisplaySize{100.0f, 100.0f};
-constexpr float kKeyboardDisplayBottomMargin = 5.0f;
 constexpr float kKeyboardDisplayIconOffsetY = 50.0f;
 } // namespace
 AttackOperation::AttackOperation() {
@@ -28,6 +27,12 @@ AttackOperation::AttackOperation() {
 	keyboardJumpSPData_.sprite = std::make_unique<Sprite>();
 	keyboardNormalAttackSPData_.sprite = std::make_unique<Sprite>();
 	keyboardSpecialAttackSPData_.sprite = std::make_unique<Sprite>();
+
+	padDashSPData_.sprite = std::make_unique<Sprite>();
+	padSkillIconSPData_.sprite = std::make_unique<Sprite>();
+	padJumpSPData_.sprite = std::make_unique<Sprite>();
+	padNormalAttackSPData_.sprite = std::make_unique<Sprite>();
+	padSpecialAttackSPData_.sprite = std::make_unique<Sprite>();
 }
 void AttackOperation::Initialize() {
 	uint32_t dashHandle = TextureManager::GetInstance()->GetTextureIndexByfilePath("Resources/2d/AttackOperation/dash.png");
@@ -68,9 +73,28 @@ void AttackOperation::Initialize() {
 	keyboardJumpSPData_.sprite->SetAnchorPoint({1.0f, 1.0f});
 	keyboardNormalAttackSPData_.sprite->SetAnchorPoint({1.0f, 1.0f});
 	keyboardSpecialAttackSPData_.sprite->SetAnchorPoint({1.0f, 1.0f});
+
+	uint32_t normalPadHandle = TextureManager::GetInstance()->GetTextureIndexByfilePath("Resources/2d/AttackOperation/Pad/X.png");
+	uint32_t dashPadHandle = TextureManager::GetInstance()->GetTextureIndexByfilePath("Resources/2d/AttackOperation/Pad/RT.png");
+	uint32_t jumpPadHandle = TextureManager::GetInstance()->GetTextureIndexByfilePath("Resources/2d/AttackOperation/Pad/A.png");
+	uint32_t skillPadHandle = TextureManager::GetInstance()->GetTextureIndexByfilePath("Resources/2d/AttackOperation/Pad/RB.png");
+	uint32_t specialPadHandle = TextureManager::GetInstance()->GetTextureIndexByfilePath("Resources/2d/AttackOperation/Pad/Y.png");
+
+	padDashSPData_.sprite->Initialize(dashPadHandle);
+	padSkillIconSPData_.sprite->Initialize(skillPadHandle);
+	padJumpSPData_.sprite->Initialize(jumpPadHandle);
+	padNormalAttackSPData_.sprite->Initialize(normalPadHandle);
+	padSpecialAttackSPData_.sprite->Initialize(specialPadHandle);
+	padDashSPData_.sprite->SetAnchorPoint({1.0f, 1.0f});
+	padSkillIconSPData_.sprite->SetAnchorPoint({1.0f, 1.0f});
+	padJumpSPData_.sprite->SetAnchorPoint({1.0f, 1.0f});
+	padNormalAttackSPData_.sprite->SetAnchorPoint({1.0f, 1.0f});
+	padSpecialAttackSPData_.sprite->SetAnchorPoint({1.0f, 1.0f});
 }
 
 void AttackOperation::Update() {
+	UpdateInputDisplayMode();
+
 	skillIconSPData_.translate = {1260.0f, 700.0f};
 	UpdateOperationSprite(skillIconSPData_, PlayCommand::GetSKILL_ATTACK());
 	normalAttackSPData_.translate = {skillIconSPData_.translate.x - skillIconSPData_.size.x - 20.0f, 700.0f};
@@ -82,11 +106,16 @@ void AttackOperation::Update() {
 	dashSPData_.translate = {specialAttackSPData_.translate.x - specialAttackSPData_.size.x - 20.0f, specialAttackSPData_.translate.y};
 	UpdateOperationSprite(dashSPData_, PlayCommand::GetDASH());
 
-	UpdateKeyboardSprite(keyboardSkillIconSPData_, skillIconSPData_);
-	UpdateKeyboardSprite(keyboardJumpSPData_, jumpSPData_);
-	UpdateKeyboardSprite(keyboardNormalAttackSPData_, normalAttackSPData_);
-	UpdateKeyboardSprite(keyboardSpecialAttackSPData_, specialAttackSPData_);
-	UpdateKeyboardSprite(keyboardDashSPData_, dashSPData_);
+	UpdateControlGuideSprite(keyboardSkillIconSPData_, skillIconSPData_);
+	UpdateControlGuideSprite(keyboardJumpSPData_, jumpSPData_);
+	UpdateControlGuideSprite(keyboardNormalAttackSPData_, normalAttackSPData_);
+	UpdateControlGuideSprite(keyboardSpecialAttackSPData_, specialAttackSPData_);
+	UpdateControlGuideSprite(keyboardDashSPData_, dashSPData_);
+	UpdateControlGuideSprite(padSkillIconSPData_, skillIconSPData_);
+	UpdateControlGuideSprite(padJumpSPData_, jumpSPData_);
+	UpdateControlGuideSprite(padNormalAttackSPData_, normalAttackSPData_);
+	UpdateControlGuideSprite(padSpecialAttackSPData_, specialAttackSPData_);
+	UpdateControlGuideSprite(padDashSPData_, dashSPData_);
 }
 void AttackOperation::Draw() {
 	// スキルアイコンを描画
@@ -105,20 +134,17 @@ void AttackOperation::Draw() {
 	if (specialAttackSPData_.sprite) {
 		specialAttackSPData_.sprite->Draw();
 	}
-	if (keyboardDashSPData_.sprite) {
-		keyboardDashSPData_.sprite->Draw();
-	}
-	if (keyboardSkillIconSPData_.sprite) {
-		keyboardSkillIconSPData_.sprite->Draw();
-	}
-	if (keyboardJumpSPData_.sprite) {
-		keyboardJumpSPData_.sprite->Draw();
-	}
-	if (keyboardNormalAttackSPData_.sprite) {
-		keyboardNormalAttackSPData_.sprite->Draw();
-	}
-	if (keyboardSpecialAttackSPData_.sprite) {
-		keyboardSpecialAttackSPData_.sprite->Draw();
+	SpriteData* controlGuideSprites[] = {
+	    inputDisplayMode_ == InputDisplayMode::Pad ? &padDashSPData_ : &keyboardDashSPData_,
+	    inputDisplayMode_ == InputDisplayMode::Pad ? &padSkillIconSPData_ : &keyboardSkillIconSPData_,
+	    inputDisplayMode_ == InputDisplayMode::Pad ? &padJumpSPData_ : &keyboardJumpSPData_,
+	    inputDisplayMode_ == InputDisplayMode::Pad ? &padNormalAttackSPData_ : &keyboardNormalAttackSPData_,
+	    inputDisplayMode_ == InputDisplayMode::Pad ? &padSpecialAttackSPData_ : &keyboardSpecialAttackSPData_,
+	};
+	for (SpriteData* spriteData : controlGuideSprites) {
+		if (spriteData->sprite) {
+			spriteData->sprite->Draw();
+		}
 	}
 }
 void AttackOperation::SetOperationSpriteBaseSize(SpriteData& spriteData, const Vector2& size) {
@@ -145,13 +171,38 @@ void AttackOperation::UpdateOperationSprite(SpriteData& spriteData, bool isPress
 	spriteData.sprite->Update();
 }
 
-void AttackOperation::UpdateKeyboardSprite(SpriteData& keyboardSpriteData, const SpriteData& iconSpriteData) {
-	keyboardSpriteData.size = kKeyboardDisplaySize;
-	keyboardSpriteData.translate = {
+void AttackOperation::UpdateInputDisplayMode() {
+	Input* input = Input::GetInstance();
+
+	const bool isPadInput = input->PushButton(Input::PadButton::kButtonA) || input->PushButton(Input::PadButton::kButtonB) || input->PushButton(Input::PadButton::kButtonX) ||
+	                        input->PushButton(Input::PadButton::kButtonY) || input->PushButton(Input::PadButton::kButtonLeftShoulder) || input->PushButton(Input::PadButton::kButtonRightShoulder) ||
+	                        input->PushButton(Input::PadButton::kButtonBack) || input->PushButton(Input::PadButton::kButtonStart) || input->PushButton(Input::PadButton::kButtonLeftThumb) ||
+	                        input->PushButton(Input::PadButton::kButtonRightThumb) || input->PushButton(Input::PadButton::kButtonUp) || input->PushButton(Input::PadButton::kButtonDown) ||
+	                        input->PushButton(Input::PadButton::kButtonLeft) || input->PushButton(Input::PadButton::kButtonRight) || input->PushLeftTrigger() || input->PushRightTrigger();
+	if (isPadInput) {
+		inputDisplayMode_ = InputDisplayMode::Pad;
+		return;
+	}
+
+	const bool isKeyboardInput = input->PushKey(DIK_W) || input->PushKey(DIK_A) || input->PushKey(DIK_S) || input->PushKey(DIK_D) || input->PushKey(DIK_SPACE) || input->PushKey(DIK_E) ||
+	                             input->PushKey(DIK_Q) || input->PushKey(DIK_ESCAPE) || input->PushKey(DIK_RETURN) || input->PushMouseButton(Input::MouseButton::kLeft) ||
+	                             input->PushMouseButton(Input::MouseButton::kRight);
+	if (isKeyboardInput) {
+		inputDisplayMode_ = InputDisplayMode::Keyboard;
+	}
+}
+
+void AttackOperation::UpdateControlGuideSprite(SpriteData& controlGuideSpriteData, const SpriteData& iconSpriteData) {
+	if (!controlGuideSpriteData.sprite) {
+		return;
+	}
+
+	controlGuideSpriteData.size = kKeyboardDisplaySize;
+	controlGuideSpriteData.translate = {
 	    iconSpriteData.translate.x,
 	    iconSpriteData.translate.y + kKeyboardDisplayIconOffsetY,
 	};
-	keyboardSpriteData.sprite->SetPosition(keyboardSpriteData.translate);
-	keyboardSpriteData.sprite->SetScale(keyboardSpriteData.size);
-	keyboardSpriteData.sprite->Update();
+	controlGuideSpriteData.sprite->SetPosition(controlGuideSpriteData.translate);
+	controlGuideSpriteData.sprite->SetScale(controlGuideSpriteData.size);
+	controlGuideSpriteData.sprite->Update();
 }

@@ -26,6 +26,7 @@ private:
 	std::array<std::unique_ptr<Sprite>, kMaxMembersCount> hpBarBackgroundSprites_;
 	std::array<std::unique_ptr<Sprite>, kMaxMembersCount> specialGaugeSprites_;
 	std::array<std::unique_ptr<Sprite>, kMaxMembersCount> specialGaugeFlameSprites_;
+	std::array<std::unique_ptr<Sprite>, kMaxMembersCount> padSprites_;
 	uint32_t characterNameFontHandle_ = 0;
 	std::array<Text, kMaxMembersCount> characterNameTexts_;
 };
