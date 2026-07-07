@@ -466,6 +466,33 @@ float Input::GetJoyStickRX() const {
 	return norm;
 }
 
+bool Input::IsJoyStickSelectDirectionL(JoyconStickDirection direction) const {
+
+	if (direction == JoyconStickDirection::LEFT || direction == JoyconStickDirection::DOWNLEFT || direction == JoyconStickDirection::UPLEFT) {
+		if (GetJoyStickLX() > 0.0f) {
+			return false;
+		}
+	}
+	if (direction == JoyconStickDirection::RIGHT || direction == JoyconStickDirection::DOWNRIGHT || direction == JoyconStickDirection::UPRIGHT) {
+		if (GetJoyStickLX() < 0.0f) {
+			return false;
+		}
+	}
+	if (direction == JoyconStickDirection::UP || direction == JoyconStickDirection::UPRIGHT || direction == JoyconStickDirection::UPLEFT) {
+		if (GetJoyStickLY() > 0.0f) {
+			return false;
+		}
+	}
+	if (direction == JoyconStickDirection::DOWN || direction == JoyconStickDirection::DOWNRIGHT || direction == JoyconStickDirection::DOWNLEFT) {
+		if (GetJoyStickLY() < 0.0f) {
+			return false;
+		}
+	}
+	
+
+	return true; 
+}
+
 float Input::GetJoyStickRY() const {
 	if (!gamePadDevice_)
 		return 0.0f;
@@ -493,6 +520,32 @@ float Input::GetLeftTrigger() const {
 
 	const float analog = Clamp01(static_cast<float>(padState_.lZ) / 65535.0f);
 	return std::max(analog, GetDigitalTrigger(padState_, leftTriggerButtonIndex_));
+}
+
+bool Input::IsJoyStickSelectDirectionR(JoyconStickDirection direction) const {
+
+	if (direction == JoyconStickDirection::LEFT || direction == JoyconStickDirection::DOWNLEFT || direction == JoyconStickDirection::UPLEFT) {
+		if (GetJoyStickRX() > 0.0f) {
+			return false;
+		}
+	}
+	if (direction == JoyconStickDirection::RIGHT || direction == JoyconStickDirection::DOWNRIGHT || direction == JoyconStickDirection::UPRIGHT) {
+		if (GetJoyStickRX() < 0.0f) {
+			return false;
+		}
+	}
+	if (direction == JoyconStickDirection::UP || direction == JoyconStickDirection::UPRIGHT || direction == JoyconStickDirection::UPLEFT) {
+		if (GetJoyStickRY() > 0.0f) {
+			return false;
+		}
+	}
+	if (direction == JoyconStickDirection::DOWN || direction == JoyconStickDirection::DOWNRIGHT || direction == JoyconStickDirection::DOWNLEFT) {
+		if (GetJoyStickRY() < 0.0f) {
+			return false;
+		}
+	}
+
+	return true;
 }
 
 float Input::GetRightTrigger() const {

@@ -2,6 +2,7 @@
 class PlayCommand {
 
 	public:
+
 	/// <summary>
 	/// 前移動
 	/// </summary>
@@ -120,5 +121,8 @@ class PlayCommand {
 
 	static bool GetCharacterDisplay();
 
+	private:
 
+
+	
 };
