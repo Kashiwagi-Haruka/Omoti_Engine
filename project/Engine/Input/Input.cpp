@@ -3,6 +3,7 @@
 #include <cassert>
 #include <algorithm>
 #include <cmath>
+#include <numbers>
 #ifdef USE_IMGUI
 #include "imgui.h"
 #endif
@@ -467,50 +468,37 @@ float Input::GetJoyStickRX() const {
 }
 
 bool Input::IsJoyStickSelectDirectionL(JoyconStickDirection direction) const {
+	const float x = GetJoyStickLX();
+	const float y = GetJoyStickLY();
 
-	if (direction == JoyconStickDirection::LEFT){
-		if (GetJoyStickLX() < 0.0f && GetJoyStickLY() <= 0.34f && GetJoyStickLY() >= -0.34f) {
-			return true;
-		}
+	if (x == 0.0f && y == 0.0f) {
+		return false;
 	}
-	if (direction == JoyconStickDirection::RIGHT) {
-		if (GetJoyStickLX() > 0.0f && GetJoyStickLY() <= 0.34f && GetJoyStickLY() >= -0.34f) {
-			return true;
-		}
+	constexpr float kDegreesPerRadian = 180.0f / std::numbers::pi_v<float>;
+	const float angle = std::atan2(y, x) * kDegreesPerRadian;
+	const float normalizedAngle = angle < 0.0f ? angle + 360.0f : angle;
+
+	JoyconStickDirection selectedDirection = JoyconStickDirection::RIGHT;
+	if (normalizedAngle < 22.5f || normalizedAngle >= 337.5f) {
+		selectedDirection = JoyconStickDirection::RIGHT;
+	} else if (normalizedAngle < 67.5f) {
+		selectedDirection = JoyconStickDirection::UPRIGHT;
+	} else if (normalizedAngle < 112.5f) {
+		selectedDirection = JoyconStickDirection::UP;
+	} else if (normalizedAngle < 157.5f) {
+		selectedDirection = JoyconStickDirection::UPLEFT;
+	} else if (normalizedAngle < 202.5f) {
+		selectedDirection = JoyconStickDirection::LEFT;
+	} else if (normalizedAngle < 247.5f) {
+		selectedDirection = JoyconStickDirection::DOWNLEFT;
+	} else if (normalizedAngle < 292.5f) {
+		selectedDirection = JoyconStickDirection::DOWN;
+	} else {
+		selectedDirection = JoyconStickDirection::DOWNRIGHT;
 	}
-	if (direction == JoyconStickDirection::UP) {
-		if (GetJoyStickLX() <= 0.34f && GetJoyStickLX() >= -0.34f && GetJoyStickLY() > 0.0f) {
-			return true;
-		}
-	}
-	if (direction == JoyconStickDirection::DOWN) {
-		if (GetJoyStickLX() <= 0.34f && GetJoyStickLX() >= -0.34f && GetJoyStickLY() < 0.0f) {
-			return true;
-		}
-	}
-	if (direction == JoyconStickDirection::UPLEFT) {
-		if (GetJoyStickLX() > -0.66f && GetJoyStickLX() < -0.34f && GetJoyStickLY() > 0.34f && GetJoyStickLY() < 0.66f) {
-			return true;
-		}
-	}
-	if (direction == JoyconStickDirection::UPRIGHT) {
-		if (GetJoyStickLX() <= 0.34f && GetJoyStickLX() >= -0.34f && GetJoyStickLY() <= 0.34f && GetJoyStickLY() >= -0.34f) {
-			return true;
-		}
-	}
-	if (direction == JoyconStickDirection::DOWNLEFT) {
-		if (GetJoyStickLX() <= 0.34f && GetJoyStickLX() >= -0.34f && GetJoyStickLY() <= 0.34f && GetJoyStickLY() >= -0.34f) {
-			return true;
-		}
-	}
-	if (direction == JoyconStickDirection::DOWNRIGHT) {
-		if (GetJoyStickLX() <= 0.34f && GetJoyStickLX() >= -0.34f && GetJoyStickLY() <= 0.34f && GetJoyStickLY() >= -0.34f) {
-			return true;
-		}
-	}
-	return false; 
+
+	return selectedDirection == direction;
 }
-
 float Input::GetJoyStickRY() const {
 	if (!gamePadDevice_)
 		return 0.0f;
@@ -542,28 +530,36 @@ float Input::GetLeftTrigger() const {
 
 bool Input::IsJoyStickSelectDirectionR(JoyconStickDirection direction) const {
 
-	if (direction == JoyconStickDirection::LEFT || direction == JoyconStickDirection::DOWNLEFT || direction == JoyconStickDirection::UPLEFT) {
-		if (GetJoyStickRX() > 0.0f) {
-			return false;
-		}
+	const float x = GetJoyStickRX();
+	const float y = GetJoyStickRY();
+
+	if (x == 0.0f && y == 0.0f) {
+		return false;
 	}
-	if (direction == JoyconStickDirection::RIGHT || direction == JoyconStickDirection::DOWNRIGHT || direction == JoyconStickDirection::UPRIGHT) {
-		if (GetJoyStickRX() < 0.0f) {
-			return false;
-		}
-	}
-	if (direction == JoyconStickDirection::UP || direction == JoyconStickDirection::UPRIGHT || direction == JoyconStickDirection::UPLEFT) {
-		if (GetJoyStickRY() < 0.0f) {
-			return false;
-		}
-	}
-	if (direction == JoyconStickDirection::DOWN || direction == JoyconStickDirection::DOWNRIGHT || direction == JoyconStickDirection::DOWNLEFT) {
-		if (GetJoyStickRY() > 0.0f) {
-			return false;
-		}
+	constexpr float kDegreesPerRadian = 180.0f / std::numbers::pi_v<float>;
+	const float angle = std::atan2(y, x) * kDegreesPerRadian;
+	const float normalizedAngle = angle < 0.0f ? angle + 360.0f : angle;
+
+	JoyconStickDirection selectedDirection = JoyconStickDirection::RIGHT;
+	if (normalizedAngle < 22.5f || normalizedAngle >= 337.5f) {
+		selectedDirection = JoyconStickDirection::RIGHT;
+	} else if (normalizedAngle < 67.5f) {
+		selectedDirection = JoyconStickDirection::UPRIGHT;
+	} else if (normalizedAngle < 112.5f) {
+		selectedDirection = JoyconStickDirection::UP;
+	} else if (normalizedAngle < 157.5f) {
+		selectedDirection = JoyconStickDirection::UPLEFT;
+	} else if (normalizedAngle < 202.5f) {
+		selectedDirection = JoyconStickDirection::LEFT;
+	} else if (normalizedAngle < 247.5f) {
+		selectedDirection = JoyconStickDirection::DOWNLEFT;
+	} else if (normalizedAngle < 292.5f) {
+		selectedDirection = JoyconStickDirection::DOWN;
+	} else {
+		selectedDirection = JoyconStickDirection::DOWNRIGHT;
 	}
 
-	return true;
+	return selectedDirection == direction;
 }
 
 float Input::GetRightTrigger() const {

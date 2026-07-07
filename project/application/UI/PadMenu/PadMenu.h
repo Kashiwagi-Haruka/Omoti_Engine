@@ -8,6 +8,7 @@ class PadMenu {
 	std::unique_ptr<Sprite> backgroundSprite_;
 
 	float selectRotation_ = 0.0f;
+	bool isMenuSelect = false;
 
 public:
 	PadMenu();

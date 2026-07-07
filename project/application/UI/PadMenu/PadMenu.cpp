@@ -41,7 +41,7 @@ void PadMenu::Update(){
 	if (!PlayCommand::GetPadMenuOpen()) {
 		return;
 	}
-
+	isMenuSelect = true;
 	if (Input::GetInstance()->IsJoyStickSelectDirectionL(Input::JoyconStickDirection::UPRIGHT)) {
 		selectRotation_ = std::numbers::pi_v<float> / 4.0f;
 	} else if (Input::GetInstance()->IsJoyStickSelectDirectionL(Input::JoyconStickDirection::RIGHT)) {
@@ -58,6 +58,8 @@ void PadMenu::Update(){
 		selectRotation_ = std::numbers::pi_v<float> / -4.0f;
 	} else if (Input::GetInstance()->IsJoyStickSelectDirectionL(Input::JoyconStickDirection::UP)) {
 		selectRotation_ = 0.0f;
+	} else {
+		isMenuSelect = false;
 	}
 
 	selectSprite_->SetRotation(selectRotation_);
@@ -68,6 +70,8 @@ void PadMenu::Draw(){
 		return;
 	}
 	backgroundSprite_->Draw();
+	if (isMenuSelect) {
 	selectSprite_->Draw();
+	}
 	flameSprite_->Draw();
 }
