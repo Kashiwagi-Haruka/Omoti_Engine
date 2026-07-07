@@ -12,8 +12,8 @@ constexpr Vector2 kOperationIconBaseSize{60.0f, 60.0f};
 constexpr float kPressedScaleRate = 1.15f;
 constexpr float kScaleReturnRate = 0.25f;
 constexpr Vector2 kKeyboardDisplaySize{80.0f, 80.0f};
+constexpr Vector2 kPadDisplaySize{60.0f, 60.0f};
 constexpr float kKeyboardDisplayIconOffsetY = 50.0f;
-constexpr Vector2 kPadScale = {5.0f, 5.0f};
 } // namespace
 AttackOperation::AttackOperation() {
 	// スキルアイコンのテクスチャハンドルを取得
@@ -80,7 +80,6 @@ void AttackOperation::Initialize() {
 	uint32_t jumpPadHandle = TextureManager::GetInstance()->GetTextureIndexByfilePath("Resources/2d/AttackOperation/Pad/A.png");
 	uint32_t skillPadHandle = TextureManager::GetInstance()->GetTextureIndexByfilePath("Resources/2d/AttackOperation/Pad/RB.png");
 	uint32_t specialPadHandle = TextureManager::GetInstance()->GetTextureIndexByfilePath("Resources/2d/AttackOperation/Pad/Y.png");
-
 	padDashSPData_.sprite->Initialize(dashPadHandle);
 	padSkillIconSPData_.sprite->Initialize(skillPadHandle);
 	padJumpSPData_.sprite->Initialize(jumpPadHandle);
@@ -91,11 +90,6 @@ void AttackOperation::Initialize() {
 	padJumpSPData_.sprite->SetAnchorPoint({1.0f, 1.0f});
 	padNormalAttackSPData_.sprite->SetAnchorPoint({1.0f, 1.0f});
 	padSpecialAttackSPData_.sprite->SetAnchorPoint({1.0f, 1.0f});
-	padDashSPData_.size = kPadScale;
-	padSkillIconSPData_.size = kPadScale;
-	padJumpSPData_.size = kPadScale;
-	padNormalAttackSPData_.size = kPadScale;
-	padSpecialAttackSPData_.size = kPadScale;
 }
 
 void AttackOperation::Update() {
@@ -112,16 +106,16 @@ void AttackOperation::Update() {
 	dashSPData_.translate = {specialAttackSPData_.translate.x - specialAttackSPData_.size.x - 20.0f, specialAttackSPData_.translate.y};
 	UpdateOperationSprite(dashSPData_, PlayCommand::GetDASH());
 
-	UpdateControlGuideSprite(keyboardSkillIconSPData_, skillIconSPData_);
-	UpdateControlGuideSprite(keyboardJumpSPData_, jumpSPData_);
-	UpdateControlGuideSprite(keyboardNormalAttackSPData_, normalAttackSPData_);
-	UpdateControlGuideSprite(keyboardSpecialAttackSPData_, specialAttackSPData_);
-	UpdateControlGuideSprite(keyboardDashSPData_, dashSPData_);
-	UpdateControlGuideSprite(padSkillIconSPData_, skillIconSPData_);
-	UpdateControlGuideSprite(padJumpSPData_, jumpSPData_);
-	UpdateControlGuideSprite(padNormalAttackSPData_, normalAttackSPData_);
-	UpdateControlGuideSprite(padSpecialAttackSPData_, specialAttackSPData_);
-	UpdateControlGuideSprite(padDashSPData_, dashSPData_);
+	UpdateControlGuideSprite(keyboardSkillIconSPData_, skillIconSPData_, kKeyboardDisplaySize);
+	UpdateControlGuideSprite(keyboardJumpSPData_, jumpSPData_, kKeyboardDisplaySize);
+	UpdateControlGuideSprite(keyboardNormalAttackSPData_, normalAttackSPData_, kKeyboardDisplaySize);
+	UpdateControlGuideSprite(keyboardSpecialAttackSPData_, specialAttackSPData_, kKeyboardDisplaySize);
+	UpdateControlGuideSprite(keyboardDashSPData_, dashSPData_, kKeyboardDisplaySize);
+	UpdateControlGuideSprite(padSkillIconSPData_, skillIconSPData_, kPadDisplaySize);
+	UpdateControlGuideSprite(padJumpSPData_, jumpSPData_, kPadDisplaySize);
+	UpdateControlGuideSprite(padNormalAttackSPData_, normalAttackSPData_, kPadDisplaySize);
+	UpdateControlGuideSprite(padSpecialAttackSPData_, specialAttackSPData_, kPadDisplaySize);
+	UpdateControlGuideSprite(padDashSPData_, dashSPData_, kPadDisplaySize);
 }
 void AttackOperation::Draw() {
 	// スキルアイコンを描画
@@ -198,12 +192,12 @@ void AttackOperation::UpdateInputDisplayMode() {
 	}
 }
 
-void AttackOperation::UpdateControlGuideSprite(SpriteData& controlGuideSpriteData, const SpriteData& iconSpriteData) {
+void AttackOperation::UpdateControlGuideSprite(SpriteData& controlGuideSpriteData, const SpriteData& iconSpriteData, const Vector2& displaySize) {
 	if (!controlGuideSpriteData.sprite) {
 		return;
 	}
 
-	controlGuideSpriteData.size = kKeyboardDisplaySize;
+	controlGuideSpriteData.size = displaySize;
 	controlGuideSpriteData.translate = {
 	    iconSpriteData.translate.x,
 	    iconSpriteData.translate.y + kKeyboardDisplayIconOffsetY,

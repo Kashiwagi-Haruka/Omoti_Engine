@@ -81,7 +81,7 @@ class PlayCommand {
 	static bool GetESCAPE();          
 
 	/// <summary>
-	/// キャンセル
+	/// ポーズ切り替え
 	/// </summary>
 	/// <returns></returns>
 	static bool GetPause();

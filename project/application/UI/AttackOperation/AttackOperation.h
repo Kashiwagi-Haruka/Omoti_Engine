@@ -55,6 +55,6 @@ public:
 private:
 	void UpdateInputDisplayMode();
 	void UpdateOperationSprite(SpriteData& spriteData, bool isPressed);
-	void UpdateControlGuideSprite(SpriteData& controlGuideSpriteData, const SpriteData& iconSpriteData);
+	void UpdateControlGuideSprite(SpriteData& controlGuideSpriteData, const SpriteData& iconSpriteData, const Vector2& displaySize);
 	void SetOperationSpriteBaseSize(SpriteData& spriteData, const Vector2& size);
 };

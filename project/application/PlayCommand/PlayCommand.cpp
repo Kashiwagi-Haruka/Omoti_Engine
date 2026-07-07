@@ -68,13 +68,13 @@ bool PlayCommand::GetSPECIAL_ATTACK() {
 	return false;
 }
 bool PlayCommand::GetDESIDE() {
-	if (Input::GetInstance()->TriggerKey(DIK_RETURN)) {
+	if (Input::GetInstance()->TriggerKey(DIK_SPACE)||Input::GetInstance()->TriggerButton(Input::PadButton::kButtonA)) {
 		return true;
 	}
 	return false;
 }
 bool PlayCommand::GetESCAPE() {
-	if (Input::GetInstance()->TriggerKey(DIK_ESCAPE)) {
+	if (Input::GetInstance()->TriggerKey(DIK_ESCAPE)||Input::GetInstance()->TriggerButton(Input::PadButton::kButtonB)) {
 		return true;
 	}
 	return false;
@@ -93,7 +93,7 @@ bool PlayCommand::GetPause(){
 	return false;
 }
 bool PlayCommand::GetCharacterChange1(){
-	if (Input::GetInstance()->TriggerKey(DIK_1) || Input::GetInstance()->TriggerButton(Input::PadButton::kButtonLeft)) {
+	if (Input::GetInstance()->TriggerKey(DIK_1) || Input::GetInstance()->TriggerButton(Input::PadButton::kButtonUp)) {
 		return true;
 	}
 	return false;
@@ -111,7 +111,7 @@ bool PlayCommand::GetCharacterChange3() {
 	return false;
 }
 bool PlayCommand::GetCharacterChange4() {
-	if (Input::GetInstance()->TriggerKey(DIK_4) || Input::GetInstance()->TriggerButton(Input::PadButton::kButtonUp)) {
+	if (Input::GetInstance()->TriggerKey(DIK_4) || Input::GetInstance()->TriggerButton(Input::PadButton::kButtonLeft)) {
 		return true;
 	}
 	return false;
