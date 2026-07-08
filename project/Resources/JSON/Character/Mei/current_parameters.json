@@ -5,13 +5,13 @@
     "HP": 100.0
   },
   "baseLevelUp": {
-    "Attack": 3.5,
-    "Deffence": 3.299999952316284,
-    "HP": 45.0
+    "Attack": 0.0,
+    "Deffence": 0.0,
+    "HP": 0.0
   },
   "parameter": {
     "Attack": 20.0,
-    "AttributeAffinity": 1.0,
+    "AttributeAffinity": 10.300000190734863,
     "AttributeDamageRate": [
       0.0,
       0.0,
