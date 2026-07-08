@@ -5,6 +5,7 @@
 #include "PlayCommand/PlayCommand.h"
 #include <algorithm>
 #include <numbers>
+#include "ImGui.h"
 
 namespace {
 
@@ -121,6 +122,43 @@ void CameraController::Update() {
 
 	blendCamera_->Update();
 	camera_ = blendCamera_.get();
+#ifdef USE_IMGUI
+	
+	if(ImGui::Begin("CameraMode")){
+		ImGui::Text("Now");
+		switch (cameraMode_) {
+		case CameraController::CameraMode::kPlayerCamera:
+			ImGui::Text("playerCamera");
+			break;
+		case CameraController::CameraMode::kLockOnCamera:
+			ImGui::Text("kLockCamera");
+			break;
+		case CameraController::CameraMode::kNormalAttackCamera:
+			ImGui::Text("AttackCamera");
+			break;
+		default:
+			break;
+		}
+		ImGui::Text("Pre");
+		switch (preCameraMode_) {
+		case CameraController::CameraMode::kPlayerCamera:
+			ImGui::Text("playerCamera");
+			break;
+		case CameraController::CameraMode::kLockOnCamera:
+			ImGui::Text("kLockCamera");
+			break;
+		case CameraController::CameraMode::kNormalAttackCamera:
+			ImGui::Text("AttackCamera");
+			break;
+		default:
+			break;
+		}
+		
+	}
+	ImGui::End();
+
+#endif // USE_IMGUI
+
 	preCameraMode_ = cameraMode_;
 }
 
