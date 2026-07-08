@@ -451,7 +451,7 @@ void GameScene::Update() {
 #endif // _DEBUG
 
 	if (playAreaMode_ == PlayAreaMode::kSpiral) {
-		if (!team_->GetIsActiveCharacterAlive() || rasen_->GetHouse()->GetHP() == 0) {
+		if (team_->GetAreAllMembersDead() || rasen_->GetHouse()->GetHP() == 0) {
 			if (!isTransitionOut) {
 				nextSceneName = "GameOver";
 				sceneTransition->Initialize(true);

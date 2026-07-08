@@ -168,7 +168,14 @@ void Team::DamageActiveCharacter(int amount) {
 }
 
 bool Team::GetIsActiveCharacterAlive() const { return GetActiveCharacterHP() > 0; }
-
+bool Team::GetAreAllMembersDead() const {
+	for (int i = 0; i < kMaxMembersCount; ++i) {
+		if (occupiedSlots_[i] && memberHP_[i] > 0) {
+			return false;
+		}
+	}
+	return true;
+}
 int Team::GetActiveCharacterHP() const { return GetMemberHP(activeSlotIndex_); }
 
 int Team::GetActiveCharacterHPMax() const { return GetMemberHPMax(activeSlotIndex_); }

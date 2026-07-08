@@ -51,6 +51,7 @@ private:
 		std::string name;
 		BaseParameter lv1Base{};
 		Parameter lv1Parameter{};
+		BaseParameter levelUpBase{};
 		BaseParameter currentBase{};
 		Parameter currentParameter{};
 	};

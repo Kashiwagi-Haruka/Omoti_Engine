@@ -73,19 +73,22 @@ void SaveJson(const std::string& path, const json& j) {
 	}
 }
 
-void SaveCharacterTuningJson(const std::string& name, const BaseParameter& lv1Base, const Parameter& lv1Parameter, const BaseParameter& currentBase, const Parameter& currentParameter) {
+void SaveCharacterTuningJson(
+    const std::string& name, const BaseParameter& lv1Base, const Parameter& lv1Parameter, const BaseParameter& levelUpBase, const BaseParameter& currentBase, const Parameter& currentParameter) {
 	const std::string directory = "Resources/JSON/Character/" + name;
 	std::filesystem::create_directories(directory);
 
 	SaveJson(
 	    directory + "/lv1_parameters.json", json{
-	                                            {"base",      {{"HP", lv1Base.HP}, {"Attack", lv1Base.Attack}, {"Deffence", lv1Base.Deffence}}},
-                                                {"parameter", ToJson(lv1Parameter)                                                            }
+	                                            {"base",        {{"HP", lv1Base.HP}, {"Attack", lv1Base.Attack}, {"Deffence", lv1Base.Deffence}}            },
+	                                            {"baseLevelUp", {{"HP", levelUpBase.HP}, {"Attack", levelUpBase.Attack}, {"Deffence", levelUpBase.Deffence}}},
+	                                            {"parameter",   ToJson(lv1Parameter)                                                                        }
     });
 	SaveJson(
 	    directory + "/current_parameters.json", json{
-	                                                {"base",      {{"HP", currentBase.HP}, {"Attack", currentBase.Attack}, {"Deffence", currentBase.Deffence}}},
-                                                    {"parameter", ToJson(currentParameter)                                                                    }
+	                                                {"base",        {{"HP", currentBase.HP}, {"Attack", currentBase.Attack}, {"Deffence", currentBase.Deffence}}},
+	                                                {"baseLevelUp", {{"HP", levelUpBase.HP}, {"Attack", levelUpBase.Attack}, {"Deffence", levelUpBase.Deffence}}},
+	                                                {"parameter",   ToJson(currentParameter)                                                                    }
     });
 }
 
@@ -97,10 +100,28 @@ void DrawBaseParameterEditor(const char* label, BaseParameter& parameter) {
 	ImGui::DragFloat("Deffence", &parameter.Deffence, 0.1f, 0.0f, 9999.0f);
 }
 
-void DrawParameterEditor(const char* label, Parameter& parameter) {
+void DrawBaseParameterViewer(const char* label, const BaseParameter& parameter) {
+	ImGui::SeparatorText(label);
+	ImGui::Text("HP: %.2f", parameter.HP);
+	ImGui::Text("Attack: %.2f", parameter.Attack);
+	ImGui::Text("Deffence: %.2f", parameter.Deffence);
+}
+
+void DrawParameterEditor(const char* label, Parameter& parameter, bool levelOnlyEditable = false) {
 	ImGui::PushID(label);
 	ImGui::SeparatorText(label);
 	ImGui::DragInt("Level", &parameter.level, 1.0f, 1, 100);
+	if (levelOnlyEditable) {
+		ImGui::Text("HP: %.2f", parameter.HP);
+		ImGui::Text("Attack: %.2f", parameter.Attack);
+		ImGui::Text("Deffence: %.2f", parameter.Deffence);
+		ImGui::Text("Speed: %.2f", parameter.Speed);
+		ImGui::Text("CriticalRate: %.3f", parameter.CriticalRate);
+		ImGui::Text("CriticalDamage: %.2f", parameter.CriticalDamage);
+		ImGui::Text("AttributeAffinity: %.2f", parameter.AttributeAffinity);
+		ImGui::PopID();
+		return;
+	}
 	ImGui::DragFloat("HP", &parameter.HP, 1.0f, 1.0f, 99999.0f);
 	ImGui::DragFloat("Attack", &parameter.Attack, 0.1f, 0.0f, 9999.0f);
 	ImGui::DragFloat("Deffence", &parameter.Deffence, 0.1f, 0.0f, 9999.0f);
@@ -111,6 +132,21 @@ void DrawParameterEditor(const char* label, Parameter& parameter) {
 	ImGui::PopID();
 }
 #endif
+
+BaseParameter CalculateCurrentBaseParameter(const BaseParameter& lv1Base, const BaseParameter& levelUpBase, int level) {
+	const float levelOffset = static_cast<float>(std::max(level, 1) - 1);
+	return BaseParameter{lv1Base.HP + levelUpBase.HP * levelOffset, lv1Base.Attack + levelUpBase.Attack * levelOffset, lv1Base.Deffence + levelUpBase.Deffence * levelOffset};
+}
+
+Parameter CalculateCurrentParameter(const Parameter& lv1Parameter, const BaseParameter& levelUpBase, int level) {
+	Parameter currentParameter = lv1Parameter;
+	currentParameter.level = std::max(level, 1);
+	const float levelOffset = static_cast<float>(currentParameter.level - 1);
+	currentParameter.HP = lv1Parameter.HP + levelUpBase.HP * levelOffset;
+	currentParameter.Attack = lv1Parameter.Attack + levelUpBase.Attack * levelOffset;
+	currentParameter.Deffence = lv1Parameter.Deffence + levelUpBase.Deffence * levelOffset;
+	return currentParameter;
+}
 constexpr const char* kDefaultObjectModelName = "debugBox";
 constexpr float kDegreesToRadians = 3.14159265358979323846f / 180.0f;
 std::filesystem::path ResolveObjectEditorJsonPath(const std::string& filePath) { return std::filesystem::path("Resources") / "JSON" / std::filesystem::path(filePath).filename(); }
@@ -1089,8 +1125,11 @@ void Hierarchy::DrawCharacterParameterHierarchy() {
 			characterParameterEditorDatas_[i].name = names[i];
 			characterParameterEditorDatas_[i].lv1Base = {100.0f, 20.0f, 10.0f};
 			characterParameterEditorDatas_[i].lv1Parameter = CreateDefaultCharacterParameter();
-			characterParameterEditorDatas_[i].currentBase = characterParameterEditorDatas_[i].lv1Base;
-			characterParameterEditorDatas_[i].currentParameter = characterParameterEditorDatas_[i].lv1Parameter;
+			characterParameterEditorDatas_[i].levelUpBase = {0.0f, 0.0f, 0.0f};
+			characterParameterEditorDatas_[i].currentBase =
+			    CalculateCurrentBaseParameter(characterParameterEditorDatas_[i].lv1Base, characterParameterEditorDatas_[i].levelUpBase, characterParameterEditorDatas_[i].currentParameter.level);
+			characterParameterEditorDatas_[i].currentParameter =
+			    CalculateCurrentParameter(characterParameterEditorDatas_[i].lv1Parameter, characterParameterEditorDatas_[i].levelUpBase, characterParameterEditorDatas_[i].currentParameter.level);
 		}
 	}
 
@@ -1120,14 +1159,22 @@ void Hierarchy::DrawCharacterParameterInspector() {
 	ImGui::PushID("lv1_base");
 	DrawBaseParameterEditor("LV1 Base Parameters", data.lv1Base);
 	ImGui::PopID();
+	ImGui::PushID("level_up_base");
+	DrawBaseParameterEditor("Base Parameter Increase Per Level", data.levelUpBase);
+	ImGui::PopID();
+	const int currentLevel = data.currentParameter.level;
+	data.currentBase = CalculateCurrentBaseParameter(data.lv1Base, data.levelUpBase, currentLevel);
+	data.currentParameter = CalculateCurrentParameter(data.lv1Parameter, data.levelUpBase, currentLevel);
 	ImGui::PushID("current_base");
-	DrawBaseParameterEditor("Current Base Parameters", data.currentBase);
+	DrawBaseParameterViewer("Current Base Parameters", data.currentBase);
 	ImGui::PopID();
 	DrawParameterEditor("LV1 Parameter", data.lv1Parameter);
-	DrawParameterEditor("Current Level Parameter", data.currentParameter);
+	DrawParameterEditor("Current Level Parameter", data.currentParameter, true);
+	data.currentBase = CalculateCurrentBaseParameter(data.lv1Base, data.levelUpBase, data.currentParameter.level);
+	data.currentParameter = CalculateCurrentParameter(data.lv1Parameter, data.levelUpBase, data.currentParameter.level);
 
 	if (ImGui::Button("Save Character Json")) {
-		SaveCharacterTuningJson(data.name, data.lv1Base, data.lv1Parameter, data.currentBase, data.currentParameter);
+		SaveCharacterTuningJson(data.name, data.lv1Base, data.lv1Parameter, data.levelUpBase, data.currentBase, data.currentParameter);
 		saveStatusMessage_ = "Saved character parameters: " + data.name;
 	}
 #endif
