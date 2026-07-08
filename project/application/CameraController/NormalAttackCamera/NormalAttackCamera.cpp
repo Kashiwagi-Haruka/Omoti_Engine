@@ -39,6 +39,13 @@ void NormalAttackCamera::Initialize() {
 }
 void NormalAttackCamera::Update() {
 
+	if (hasTarget_) {
+		Vector3 toTarget = targetPos_ - playerPos;
+		if (Function::LengthSquared(toTarget) > 0.0001f) {
+			orbitYaw_ = GetNearestAngle(orbitYaw_, std::atan2f(toTarget.x, toTarget.z));
+		}
+	}
+
 	const float maxPitch = 1.2f;
 	const float minPitch = -1.2f;
 	if (orbitPitch_ > maxPitch) {

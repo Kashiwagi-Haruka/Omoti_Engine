@@ -20,7 +20,9 @@ class NormalAttackCamera {
 	bool hasFollowPosition_ = false;              // プレイヤーの座標を追従するかどうかのフラグ
 	Vector3 followPosition_ = {0.0f, 0.0f, 0.0f}; // プレイヤーの座標
 	float distance_ = 5.0f;                       // カメラとプレイヤーの距離
-	                                              /// <summary>
+
+public:
+	/// <summary>
 	/// コンストラクタ
 	/// </summary>
 	NormalAttackCamera();

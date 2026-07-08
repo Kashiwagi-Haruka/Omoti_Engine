@@ -468,11 +468,16 @@ void GameScene::Update() {
 			hitVinettTimer_ = kHitVinettDuration_;
 		}
 		if (didNormalAttackHitEnemy) {
-			Vector3 lockOnTargetPos = hitEnemyPos;
-			if (TryFindNearestEnemyInPlayerFront(*player, *rasen_->GetEnemyManager(), &lockOnTargetPos)) {
-				cameraController->SetLockOnTarget(lockOnTargetPos, 0.8f);
+			Vector3 cameraTargetPos = hitEnemyPos;
+			if (!TryFindNearestEnemyInPlayerFront(*player, *rasen_->GetEnemyManager(), &cameraTargetPos)) {
+				cameraTargetPos = hitEnemyPos;
+			}
+
+			const int normalAttackComboStep = player->GetSword()->GetComboStep();
+			if (normalAttackComboStep <= 1) {
+				cameraController->SetLockOnTarget(cameraTargetPos, 0.8f);
 			} else {
-				cameraController->SetLockOnTarget(hitEnemyPos, 0.8f);
+				cameraController->SetNormalAttackTarget(cameraTargetPos);
 			}
 		}
 		if (player->ConsumeDamageTrigger()) {

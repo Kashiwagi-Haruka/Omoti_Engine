@@ -35,6 +35,7 @@ class CameraController {
 	float cameraSwitchTimer_ = 0.0f; // カメラ切り替えのタイマー
 	float cameraSwitchDuration_ = 0.2f; // カメラ切り替えの時間
 	float autoLockOnTimer_ = 0.0f;      // 自動ロックオンのタイマー
+	float normalAttackIdleTimer_ = 1.0f; // 通常攻撃ボタンが押されていない時間
 	Transform switchStartTransform_{};  // カメラ切り替え開始時の変換情報
 
 public:
@@ -91,4 +92,9 @@ public:
 	/// <param name="targetPos"> ターゲットの位置 </param>
 	/// <param name="durationSeconds"> 持続時間（秒） </param>
 	void SetLockOnTarget(const Vector3& targetPos, float durationSeconds = 1.0f);
+
+	/// <summary>
+	/// 通常攻撃カメラのターゲット設定
+	/// </summary>
+	void SetNormalAttackTarget(const Vector3& targetPos);
 };

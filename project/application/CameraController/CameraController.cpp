@@ -2,6 +2,7 @@
 #include "Camera.h"
 #include "Input.h"
 #include "Function.h"
+#include "PlayCommand/PlayCommand.h"
 #include <algorithm>
 #include <numbers>
 
@@ -34,6 +35,9 @@ void CameraController::Initialize() {
 	lockOnCamera_ = std::make_unique<LockOnCamera>();
 	lockOnCamera_->Initialize();
 
+	normalAttackCamera_ = std::make_unique<NormalAttackCamera>();
+	normalAttackCamera_->Initialize();
+
 	blendCamera_ = std::make_unique<Camera>();
 	switchStartTransform_ = playerCamera_->GetTransform();
 	blendCamera_->SetTransform(switchStartTransform_);
@@ -42,14 +46,29 @@ void CameraController::Initialize() {
 }
 
 void CameraController::Update() {
+	constexpr float kDeltaTime = 1.0f / 60.0f;
+	constexpr float kNormalAttackCameraReturnDelay = 1.0f;
+
+	if (PlayCommand::GetNORMAL_ATTACK_PUSH()) {
+		normalAttackIdleTimer_ = 0.0f;
+	} else {
+		normalAttackIdleTimer_ += kDeltaTime;
+	}
+
 	if (autoLockOnTimer_ > 0.0f) {
-		autoLockOnTimer_ -= 1.0f / 60.0f;
+		autoLockOnTimer_ -= kDeltaTime;
 		cameraMode_ = CameraMode::kLockOnCamera;
 		if (autoLockOnTimer_ <= 0.0f) {
 			autoLockOnTimer_ = 0.0f;
 			lockOnCamera_->ClearTarget();
-			cameraMode_ = CameraMode::kPlayerCamera;
 		}
+	}
+
+	if ((cameraMode_ == CameraMode::kLockOnCamera || cameraMode_ == CameraMode::kNormalAttackCamera) && normalAttackIdleTimer_ >= kNormalAttackCameraReturnDelay) {
+		cameraMode_ = CameraMode::kPlayerCamera;
+		autoLockOnTimer_ = 0.0f;
+		lockOnCamera_->ClearTarget();
+		normalAttackCamera_->ClearTarget();
 	}
 
 	playerCamera_->SetPlayerPos(playerPos);
@@ -68,7 +87,17 @@ void CameraController::Update() {
 	lockOnCamera_->SetOrbitPitch(playerCamera_->GetTransform().rotate.x);
 	lockOnCamera_->Update();
 
-	const Transform targetTransform = (cameraMode_ == CameraMode::kLockOnCamera) ? lockOnCamera_->GetTransform() : playerCamera_->GetTransform();
+	normalAttackCamera_->SetPlayerPos(playerPos);
+	normalAttackCamera_->SetFollowPosition(playerCamera_->GetTransform().translate);
+	normalAttackCamera_->SetOrbitPitch(playerCamera_->GetTransform().rotate.x);
+	normalAttackCamera_->Update();
+
+	Transform targetTransform = playerCamera_->GetTransform();
+	if (cameraMode_ == CameraMode::kLockOnCamera) {
+		targetTransform = lockOnCamera_->GetTransform();
+	} else if (cameraMode_ == CameraMode::kNormalAttackCamera) {
+		targetTransform = normalAttackCamera_->GetTransform();
+	}
 
 	if (preCameraMode_ != cameraMode_) {
 		isCameraSwitching_ = true;
@@ -99,6 +128,14 @@ Camera* CameraController::GetCamera() { return camera_; }
 void CameraController::StartShake(float durationSeconds) { playerCamera_->StartShake(durationSeconds); }
 void CameraController::SetLockOnTarget(const Vector3& targetPos, float durationSeconds) {
 	lockOnCamera_->SetTargetPos(targetPos);
+	normalAttackIdleTimer_ = 0.0f;
 	autoLockOnTimer_ = durationSeconds;
 	cameraMode_ = CameraMode::kLockOnCamera;
+}
+void CameraController::SetNormalAttackTarget(const Vector3& targetPos) {
+	normalAttackCamera_->SetTargetPos(targetPos);
+	normalAttackIdleTimer_ = 0.0f;
+	autoLockOnTimer_ = 0.0f;
+	lockOnCamera_->ClearTarget();
+	cameraMode_ = CameraMode::kNormalAttackCamera;
 }
