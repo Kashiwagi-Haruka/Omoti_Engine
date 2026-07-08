@@ -538,6 +538,7 @@
       <Filter>Engine\Editor\ToolBar</Filter>
     </ClCompile>
     <ClCompile Include="application\UI\PadMenu\PadMenu.cpp" />
+    <ClCompile Include="application\Object\Characters\Base\CharacterParameterLoader.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Engine\Camera\Camera.h">
@@ -1063,6 +1064,7 @@
       <Filter>Engine\Editor\ToolBar</Filter>
     </ClInclude>
     <ClInclude Include="application\UI\PadMenu\PadMenu.h" />
+    <ClInclude Include="application\Object\Characters\Base\CharacterParameterLoader.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include=".editorconfig" />

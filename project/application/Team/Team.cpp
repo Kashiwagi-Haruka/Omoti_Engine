@@ -1,5 +1,6 @@
 #define NOMINMAX
 #include "Team.h"
+#include "Object/Characters/Base/CharacterParameterLoader.h"
 #include "Object/Characters/Playable/Individual/Arte/Arte.h"
 #include "Object/Characters/Playable/Individual/Mei/Mei.h"
 #include "Object/Characters/Playable/Individual/Sizuku/Sizuku.h"
@@ -38,6 +39,12 @@ void Team::Initialize() {
 	ownedCharacterDisplayNames_.reserve(ownedCharacters_.size());
 	for (auto& character : ownedCharacters_) {
 		character->Initialize();
+		BaseParameter baseParameter{};
+		Parameter parameter{};
+		if (CharacterParameterLoader::LoadCurrentParameters(character->GetRomanizationName(), baseParameter, parameter)) {
+			character->SetBaseParameter(baseParameter);
+			character->SetParameter(parameter);
+		}
 		ownedCharacterDisplayNames_.push_back(ToU32String(character->GetName()));
 	}
 
