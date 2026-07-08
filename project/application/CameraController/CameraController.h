@@ -1,6 +1,7 @@
 #pragma once
 #include "LockOnCamera/LockOnCamera.h"
 #include "PlayerCamera/PlayerCamera.h"
+#include "NormalAttackCamera/NormalAttackCamera.h"
 #include "Transform.h"
 #include "Vector3.h"
 #include <memory>
@@ -23,6 +24,7 @@ class CameraController {
 	CameraMode preCameraMode_ = CameraMode::kPlayerCamera; // 前回のカメラモード
 	std::unique_ptr<PlayerCamera> playerCamera_;           // プレイヤーカメラのインスタンス
 	std::unique_ptr<LockOnCamera> lockOnCamera_;           // ロックオンカメラのインスタンス
+	std::unique_ptr<NormalAttackCamera> normalAttackCamera_;//通常攻撃カメラのインスタンス
 	std::unique_ptr<Camera> blendCamera_;                  // ブレンドカメラのインスタンス
 
 	Vector3 playerPos = {0.0f, 0.0f, 0.0f}; // プレイヤーの位置
