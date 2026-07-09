@@ -76,11 +76,15 @@ private:
 	std::unique_ptr<Sprite> inventorySelectionMarker_;
 	/// ゲーム中HUDで現在操作中のメンバーを示すマーカー。
 	std::unique_ptr<Sprite> memberSelectionMarker_;
+	/// カーソルスプライト
+	std::unique_ptr<Sprite> cursorSprite_;
 	/// チーム編成画面背景板ポリ
 	std::unique_ptr<Primitive> teamBackgroundPlane_;
 	/// チーム画面用のカメラ
 	std::unique_ptr<Camera> camera_;
 
+	/// カーソル位置
+	Vector2 cursorPos_{};
 	/// チームスロット背景の表示サイズ。
 	Vector2 slotSize_{80.0f, 80.0f};
 	/// 所持キャラクター一覧パネルの左上座標。

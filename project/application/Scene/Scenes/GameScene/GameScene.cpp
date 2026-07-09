@@ -355,7 +355,7 @@ void GameScene::Update() {
 				}
 			}
 			if (isPartyMode_ && !PlayCommand::GetTeamSelectDisplay()) {
-				if (Input::GetInstance()->TriggerKey(DIK_ESCAPE)) {
+				if (Input::GetInstance()->TriggerKey(DIK_ESCAPE)||Input::GetInstance()->TriggerButton(Input::PadButton::kButtonB)) {
 					isPartyMode_ = false;
 					UnloadTeamDisplay();
 				}

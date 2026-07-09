@@ -539,6 +539,7 @@
     </ClCompile>
     <ClCompile Include="application\UI\PadMenu\PadMenu.cpp" />
     <ClCompile Include="application\Object\Characters\Base\CharacterParameterLoader.cpp" />
+    <ClCompile Include="application\Menu\HelpDisplay\HelpDisplay.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Engine\Camera\Camera.h">
@@ -1065,6 +1066,7 @@
     </ClInclude>
     <ClInclude Include="application\UI\PadMenu\PadMenu.h" />
     <ClInclude Include="application\Object\Characters\Base\CharacterParameterLoader.h" />
+    <ClInclude Include="application\Menu\HelpDisplay\HelpDisplay.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include=".editorconfig" />
