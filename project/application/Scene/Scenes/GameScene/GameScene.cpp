@@ -2,6 +2,7 @@
 #include "GameScene.h"
 #include "AudioManager/BGMManager/BGMManager.h"
 #include "CameraController/CameraController.h"
+#include "Engine/Editor/EditorManager/EditorManager.h"
 #include "GameTimer/GameTimer.h"
 #include "Object/Background/Sky.h"
 #include "Object/Boss/Boss.h"
@@ -102,6 +103,7 @@ void GameScene::Finalize() {
 	UnloadTeamDisplay();
 	rasen_->Finalize();
 	openWorld_->Finalize();
+	ParticleManager::GetInstance()->Clear();
 }
 
 void GameScene::Initialize() {
@@ -122,11 +124,11 @@ void GameScene::Initialize() {
 	isTransitionIn = true;
 	isTransitionOut = false;
 	nextSceneName.clear();
-	uimanager->SetPlayerHPMax(player->GetHPMax());
-	uimanager->SetPlayerHP(player->GetHP());
 	team_->Initialize();
 	uimanager->SetTeam(team_.get());
 	uimanager->Initialize();
+	uimanager->SetPlayerHPMax(team_->GetActiveCharacterHPMax());
+	uimanager->SetPlayerHP(team_->GetActiveCharacterHP());
 	uimanager->SetPlayerDashGauge(player->GetDashGauge(), player->GetDashGaugeMax());
 	rasen_->Initialize(cameraController->GetCamera());
 	openWorld_->Initialize(cameraController->GetCamera());
@@ -353,7 +355,7 @@ void GameScene::Update() {
 				}
 			}
 			if (isPartyMode_ && !PlayCommand::GetTeamSelectDisplay()) {
-				if (Input::GetInstance()->TriggerKey(DIK_ESCAPE)) {
+				if (Input::GetInstance()->TriggerKey(DIK_ESCAPE)||Input::GetInstance()->TriggerButton(Input::PadButton::kButtonB)) {
 					isPartyMode_ = false;
 					UnloadTeamDisplay();
 				}
@@ -449,7 +451,7 @@ void GameScene::Update() {
 #endif // _DEBUG
 
 	if (playAreaMode_ == PlayAreaMode::kSpiral) {
-		if (!player->GetIsAlive() || rasen_->GetHouse()->GetHP() == 0) {
+		if (team_->GetAreAllMembersDead() || rasen_->GetHouse()->GetHP() == 0) {
 			if (!isTransitionOut) {
 				nextSceneName = "GameOver";
 				sceneTransition->Initialize(true);
@@ -461,20 +463,25 @@ void GameScene::Update() {
 		Boss* activeBoss = (rasen_->IsBossActive() && boss_->GetIsAlive()) ? boss_.get() : nullptr;
 		Vector3 hitEnemyPos{};
 		bool didPlayerAttackHitEnemy = false;
-		const bool didNormalAttackHitEnemy =
-		    collisionManager_.HandleGameSceneCollisions(*player, *rasen_->GetEnemyManager(), *rasen_->GetHouse(), activeBoss, &hitEnemyPos, &didPlayerAttackHitEnemy);
+		const bool didNormalAttackHitEnemy = collisionManager_.HandleGameSceneCollisions(*player, *rasen_->GetEnemyManager(), *rasen_->GetHouse(), activeBoss, &hitEnemyPos, &didPlayerAttackHitEnemy);
 		if (didPlayerAttackHitEnemy) {
 			hitVinettTimer_ = kHitVinettDuration_;
 		}
 		if (didNormalAttackHitEnemy) {
-			Vector3 lockOnTargetPos = hitEnemyPos;
-			if (TryFindNearestEnemyInPlayerFront(*player, *rasen_->GetEnemyManager(), &lockOnTargetPos)) {
-				cameraController->SetLockOnTarget(lockOnTargetPos, 0.8f);
+			Vector3 cameraTargetPos = hitEnemyPos;
+			if (!TryFindNearestEnemyInPlayerFront(*player, *rasen_->GetEnemyManager(), &cameraTargetPos)) {
+				cameraTargetPos = hitEnemyPos;
+			}
+
+			const int normalAttackComboStep = player->GetSword()->GetComboStep();
+			if (normalAttackComboStep <= 1) {
+				cameraController->SetLockOnTarget(cameraTargetPos, 0.8f);
 			} else {
-				cameraController->SetLockOnTarget(hitEnemyPos, 0.8f);
+				cameraController->SetNormalAttackTarget(cameraTargetPos);
 			}
 		}
 		if (player->ConsumeDamageTrigger()) {
+			team_->DamageActiveCharacter(player->ConsumePendingDamage());
 			cameraController->StartShake(0.75f);
 			damageGrayscaleTimer_ = kDamageGrayscaleDuration_;
 		}
@@ -495,7 +502,8 @@ void GameScene::Update() {
 	}
 	Object3dCommon::GetInstance()->SetFullScreenGrayscaleEnabled(damageGrayscaleTimer_ > 0.0f);
 	uimanager->SetPlayerParameters(player->GetParameters());
-	uimanager->SetPlayerHP(player->GetHP());
+	uimanager->SetPlayerHPMax(team_->GetActiveCharacterHPMax());
+	uimanager->SetPlayerHP(team_->GetActiveCharacterHP());
 	uimanager->SetPlayerDashGauge(player->GetDashGauge(), player->GetDashGaugeMax());
 	uimanager->Update();
 
@@ -512,7 +520,6 @@ void GameScene::Update() {
 		}
 	}
 }
-
 void GameScene::Draw() {
 	if (isCharacterDisplayMode_) {
 		characterDisplay_->Draw();
@@ -541,7 +548,7 @@ void GameScene::Draw() {
 	field->Draw();
 
 	player->Draw();
-
+	EditorManager::GetInstance()->DrawEditorGridLines();
 	if (playAreaMode_ == PlayAreaMode::kSpiral) {
 		rasen_->Draw(boss_.get());
 		if (rasen_->IsBossActive()) {

@@ -7,6 +7,7 @@
 #include "UI/Menu/Menu.h"
 #include "UI/Team/TeamUI.h"
 #include "UI/Tower/TowerUI.h"
+#include "UI/PadMenu/PadMenu.h"
 
 class GameBase;
 class UIManager {
@@ -15,6 +16,7 @@ class UIManager {
 	Parameters parameters_;
 
 	std::unique_ptr<Sprite> cursolSprite_;
+	std::unique_ptr<Sprite> controllerSprite_;
 
 	std::unique_ptr<HPBarUI> hpBarUI_;
 	std::unique_ptr<AttackOperation> attackOperationUI_;
@@ -22,6 +24,7 @@ class UIManager {
 	std::unique_ptr<TowerUI> towerUI_;
 	std::unique_ptr<Menu> menuUI_;
 	std::unique_ptr<TeamUI> teamUI_;
+	std::unique_ptr<PadMenu> padMenuUI_;
 	Team* team_ = nullptr;
 
 public:

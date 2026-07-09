@@ -16,7 +16,16 @@ public:
 	void Draw();
 
 private:
+
+	void UpdateInputDisplayMode();
+
+	enum class InputDisplayMode {
+		Keyboard,
+		Pad,
+	};
+
 	static constexpr int kMaxMembersCount = Team::kMaxMembersCount;
+	InputDisplayMode inputDisplayMode_ = InputDisplayMode::Keyboard;
 
 	std::unique_ptr<Sprite> selectedBackgroundSprite_;
 	std::array<std::unique_ptr<Sprite>, kMaxMembersCount> iconSprites_;
@@ -26,6 +35,8 @@ private:
 	std::array<std::unique_ptr<Sprite>, kMaxMembersCount> hpBarBackgroundSprites_;
 	std::array<std::unique_ptr<Sprite>, kMaxMembersCount> specialGaugeSprites_;
 	std::array<std::unique_ptr<Sprite>, kMaxMembersCount> specialGaugeFlameSprites_;
+	std::array<std::unique_ptr<Sprite>, kMaxMembersCount> padSprites_;
+	std::array<std::unique_ptr<Sprite>, kMaxMembersCount> keyboardSprites_;
 	uint32_t characterNameFontHandle_ = 0;
 	std::array<Text, kMaxMembersCount> characterNameTexts_;
 };

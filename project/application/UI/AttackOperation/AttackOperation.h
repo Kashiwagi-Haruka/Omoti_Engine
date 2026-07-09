@@ -4,6 +4,11 @@
 #include <memory>
 class Sprite;
 class AttackOperation {
+	enum class InputDisplayMode {
+		Keyboard,
+		Pad,
+	};
+
 	// スプライトに必要なリソースと変換情報。
 	struct SpriteData {
 		// 描画用スプライト本体。
@@ -33,15 +38,23 @@ class AttackOperation {
 	SpriteData keyboardSkillIconSPData_;
 	SpriteData keyboardSpecialAttackSPData_;
 
+	SpriteData padDashSPData_;
+	SpriteData padJumpSPData_;
+	SpriteData padNormalAttackSPData_;
+	SpriteData padSkillIconSPData_;
+	SpriteData padSpecialAttackSPData_;
 
-	public:
+	InputDisplayMode inputDisplayMode_ = InputDisplayMode::Keyboard;
+
+public:
 	AttackOperation();
 	void Initialize();
 	void Update();
 	void Draw();
 
 private:
+	void UpdateInputDisplayMode();
 	void UpdateOperationSprite(SpriteData& spriteData, bool isPressed);
-	void UpdateKeyboardSprite(SpriteData& keyboardSpriteData, const SpriteData& iconSpriteData);
+	void UpdateControlGuideSprite(SpriteData& controlGuideSpriteData, const SpriteData& iconSpriteData, const Vector2& displaySize);
 	void SetOperationSpriteBaseSize(SpriteData& spriteData, const Vector2& size);
 };

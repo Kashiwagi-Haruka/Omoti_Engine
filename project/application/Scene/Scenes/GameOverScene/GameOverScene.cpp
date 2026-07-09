@@ -1,5 +1,6 @@
 #include "GameOverScene.h"
 #include "Input.h"
+#include "PlayCommand/PlayCommand.h"
 #include "SceneManager.h"
 #include "Sprite/SpriteCommon.h"
 #include "TextureManager.h"
@@ -40,7 +41,7 @@ void GameOverScene::Initialize() {
 }
 void GameOverScene::Update() {
 	BGMManager::GetInstance()->Play(BGMManager::BGMType::GameOver);
-	if (Input::GetInstance()->TriggerKey(DIK_SPACE) && !isTransitionOut) {
+	if (PlayCommand::GetDESIDE() && !isTransitionOut) {
 		transition->Initialize(true);
 		isTransitionOut = true;
 	}

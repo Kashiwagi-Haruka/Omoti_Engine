@@ -197,10 +197,14 @@ void Adhesion::SetCamera(Camera* camera) {
 
 bool Adhesion::AddAttribute(Attribute attribute) {
 	if (attribute == Attribute::None || attribute == Attribute::MAXATTRIBUTE) {
+		lastReactionPreviousAttribute_ = Attribute::None;
+		lastReactionAppliedAttribute_ = Attribute::None;
 		return false;
 	}
 	const uint32_t bit = (1u << static_cast<uint32_t>(attribute));
 	if (currentAttribute_ == attribute && (attributeBitMask_ & bit) != 0) {
+		lastReactionPreviousAttribute_ = Attribute::None;
+		lastReactionAppliedAttribute_ = Attribute::None;
 		return false;
 	}
 	const Attribute previousAttribute = currentAttribute_;
@@ -209,6 +213,8 @@ bool Adhesion::AddAttribute(Attribute attribute) {
 	currentAttribute_ = attribute;
 
 	if (hadPreviousAttribute) {
+		lastReactionPreviousAttribute_ = previousAttribute;
+		lastReactionAppliedAttribute_ = currentAttribute_;
 		RefreshReactionTexture(currentAttribute_, previousAttribute);
 		attributeBitMask_ = 0;
 		currentAttribute_ = Attribute::None;
@@ -220,6 +226,8 @@ bool Adhesion::AddAttribute(Attribute attribute) {
 		return true;
 	}
 
+	lastReactionPreviousAttribute_ = Attribute::None;
+	lastReactionAppliedAttribute_ = Attribute::None;
 	isComparisonDisplayActive_ = false;
 	comparisonDisplayTimer_ = 0.0f;
 	RefreshAttributeTexture();

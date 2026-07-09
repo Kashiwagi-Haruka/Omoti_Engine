@@ -8,6 +8,7 @@
 #include <memory>
 #include "Camera.h"
 #include "Object/Characters/Base/Attribute.h"
+#include "Option/Option.h"
 
 class Pause {
 
@@ -41,7 +42,10 @@ private:
 	Text pauseText_;
 	std::vector<Text> menuTexts_;
 	uint32_t pauseFontHandle_ = 0;
+
+	std::unique_ptr<Option> option_;
 	Attribute currentAttribute = Attribute::None;
+
 
 	void CurrentCharacterUpdate();
 	void SelectSpriteUpdate();

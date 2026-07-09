@@ -45,6 +45,7 @@ Parameter CreateDefaultCharacterParameter() {
 	parameter.Speed = 1.0f;
 	parameter.CriticalRate = 0.05f;
 	parameter.CriticalDamage = 1.5f;
+	parameter.AttributeAffinity = 1.0f;
 	return parameter;
 }
 
@@ -57,6 +58,7 @@ json ToJson(const Parameter& p) {
 	param["Speed"] = p.Speed;
 	param["CriticalRate"] = p.CriticalRate;
 	param["CriticalDamage"] = p.CriticalDamage;
+	param["AttributeAffinity"] = p.AttributeAffinity;
 	for (size_t i = 0; i < p.AttributeDamageRate.size(); ++i) {
 		param["AttributeDamageRate"].push_back(p.AttributeDamageRate[i]);
 		param["AttributeResistanceRate"].push_back(p.AttributeResistanceRate[i]);
@@ -71,19 +73,22 @@ void SaveJson(const std::string& path, const json& j) {
 	}
 }
 
-void SaveCharacterTuningJson(const std::string& name, const BaseParameter& lv1Base, const Parameter& lv1Parameter, const BaseParameter& currentBase, const Parameter& currentParameter) {
+void SaveCharacterTuningJson(
+    const std::string& name, const BaseParameter& lv1Base, const Parameter& lv1Parameter, const BaseParameter& levelUpBase, const BaseParameter& currentBase, const Parameter& currentParameter) {
 	const std::string directory = "Resources/JSON/Character/" + name;
 	std::filesystem::create_directories(directory);
 
 	SaveJson(
 	    directory + "/lv1_parameters.json", json{
-	                                            {"base",      {{"HP", lv1Base.HP}, {"Attack", lv1Base.Attack}, {"Deffence", lv1Base.Deffence}}},
-                                                {"parameter", ToJson(lv1Parameter)                                                            }
+	                                            {"base",        {{"HP", lv1Base.HP}, {"Attack", lv1Base.Attack}, {"Deffence", lv1Base.Deffence}}            },
+	                                            {"baseLevelUp", {{"HP", levelUpBase.HP}, {"Attack", levelUpBase.Attack}, {"Deffence", levelUpBase.Deffence}}},
+	                                            {"parameter",   ToJson(lv1Parameter)                                                                        }
     });
 	SaveJson(
 	    directory + "/current_parameters.json", json{
-	                                                {"base",      {{"HP", currentBase.HP}, {"Attack", currentBase.Attack}, {"Deffence", currentBase.Deffence}}},
-                                                    {"parameter", ToJson(currentParameter)                                                                    }
+	                                                {"base",        {{"HP", currentBase.HP}, {"Attack", currentBase.Attack}, {"Deffence", currentBase.Deffence}}},
+	                                                {"baseLevelUp", {{"HP", levelUpBase.HP}, {"Attack", levelUpBase.Attack}, {"Deffence", levelUpBase.Deffence}}},
+	                                                {"parameter",   ToJson(currentParameter)                                                                    }
     });
 }
 
@@ -95,19 +100,53 @@ void DrawBaseParameterEditor(const char* label, BaseParameter& parameter) {
 	ImGui::DragFloat("Deffence", &parameter.Deffence, 0.1f, 0.0f, 9999.0f);
 }
 
-void DrawParameterEditor(const char* label, Parameter& parameter) {
+void DrawBaseParameterViewer(const char* label, const BaseParameter& parameter) {
+	ImGui::SeparatorText(label);
+	ImGui::Text("HP: %.2f", parameter.HP);
+	ImGui::Text("Attack: %.2f", parameter.Attack);
+	ImGui::Text("Deffence: %.2f", parameter.Deffence);
+}
+
+void DrawParameterEditor(const char* label, Parameter& parameter, bool levelOnlyEditable = false) {
 	ImGui::PushID(label);
 	ImGui::SeparatorText(label);
 	ImGui::DragInt("Level", &parameter.level, 1.0f, 1, 100);
+	if (levelOnlyEditable) {
+		ImGui::Text("HP: %.2f", parameter.HP);
+		ImGui::Text("Attack: %.2f", parameter.Attack);
+		ImGui::Text("Deffence: %.2f", parameter.Deffence);
+		ImGui::Text("Speed: %.2f", parameter.Speed);
+		ImGui::Text("CriticalRate: %.3f", parameter.CriticalRate);
+		ImGui::Text("CriticalDamage: %.2f", parameter.CriticalDamage);
+		ImGui::Text("AttributeAffinity: %.2f", parameter.AttributeAffinity);
+		ImGui::PopID();
+		return;
+	}
 	ImGui::DragFloat("HP", &parameter.HP, 1.0f, 1.0f, 99999.0f);
 	ImGui::DragFloat("Attack", &parameter.Attack, 0.1f, 0.0f, 9999.0f);
 	ImGui::DragFloat("Deffence", &parameter.Deffence, 0.1f, 0.0f, 9999.0f);
 	ImGui::DragFloat("Speed", &parameter.Speed, 0.01f, 0.0f, 100.0f);
 	ImGui::DragFloat("CriticalRate", &parameter.CriticalRate, 0.001f, 0.0f, 1.0f);
 	ImGui::DragFloat("CriticalDamage", &parameter.CriticalDamage, 0.01f, 1.0f, 10.0f);
+	ImGui::DragFloat("AttributeAffinity", &parameter.AttributeAffinity, 0.1f, 0.0f, 999.0f);
 	ImGui::PopID();
 }
 #endif
+
+BaseParameter CalculateCurrentBaseParameter(const BaseParameter& lv1Base, const BaseParameter& levelUpBase, int level) {
+	const float levelOffset = static_cast<float>(std::max(level, 1) - 1);
+	return BaseParameter{lv1Base.HP + levelUpBase.HP * levelOffset, lv1Base.Attack + levelUpBase.Attack * levelOffset, lv1Base.Deffence + levelUpBase.Deffence * levelOffset};
+}
+
+Parameter CalculateCurrentParameter(const Parameter& lv1Parameter, const BaseParameter& levelUpBase, int level) {
+	Parameter currentParameter = lv1Parameter;
+	currentParameter.level = std::max(level, 1);
+	const float levelOffset = static_cast<float>(currentParameter.level - 1);
+	currentParameter.HP = lv1Parameter.HP + levelUpBase.HP * levelOffset;
+	currentParameter.Attack = lv1Parameter.Attack + levelUpBase.Attack * levelOffset;
+	currentParameter.Deffence = lv1Parameter.Deffence + levelUpBase.Deffence * levelOffset;
+	return currentParameter;
+}
 constexpr const char* kDefaultObjectModelName = "debugBox";
 constexpr float kDegreesToRadians = 3.14159265358979323846f / 180.0f;
 std::filesystem::path ResolveObjectEditorJsonPath(const std::string& filePath) { return std::filesystem::path("Resources") / "JSON" / std::filesystem::path(filePath).filename(); }
@@ -179,7 +218,27 @@ bool IsTransformNearlyEqual(const Transform& lhs, const Transform& rhs) {
 	       IsNearlyEqual(lhs.rotate.y, rhs.rotate.y) && IsNearlyEqual(lhs.rotate.z, rhs.rotate.z) && IsNearlyEqual(lhs.translate.x, rhs.translate.x) &&
 	       IsNearlyEqual(lhs.translate.y, rhs.translate.y) && IsNearlyEqual(lhs.translate.z, rhs.translate.z);
 }
+void EnsureObjectEditorDataSize(
+    size_t size, std::vector<std::string>& objectNames, std::vector<std::string>& objectModelNames, std::vector<Transform>& editorTransforms, std::vector<InspectorMaterial>& editorMaterials) {
+	while (objectNames.size() < size) {
+		objectNames.push_back("Object " + std::to_string(objectNames.size()));
+	}
+	objectModelNames.resize(size);
+	editorTransforms.resize(size);
+	editorMaterials.resize(size);
+}
 
+void EnsurePrimitiveEditorDataSize(size_t size, std::vector<std::string>& primitiveNames, std::vector<Transform>& primitiveEditorTransforms, std::vector<InspectorMaterial>& primitiveEditorMaterials) {
+	while (primitiveNames.size() < size) {
+		primitiveNames.push_back("Primitive " + std::to_string(primitiveNames.size()));
+	}
+	primitiveEditorTransforms.resize(size);
+	primitiveEditorMaterials.resize(size);
+}
+std::string GetCurrentSceneName() {
+	const SceneManager* sceneManager = SceneManager::GetInstance();
+	return sceneManager ? sceneManager->GetCurrentSceneName() : std::string();
+}
 } // namespace
 
 Hierarchy* Hierarchy::GetInstance() {
@@ -193,9 +252,11 @@ void Hierarchy::Finalize() {
 	editorTransforms_.clear();
 	editorMaterials_.clear();
 	objectModelNames_.clear();
+	objectSceneNames_.clear();
 
 	primitives_.clear();
 	primitiveNames_.clear();
+	primitiveSceneNames_.clear();
 	primitiveEditorTransforms_.clear();
 	primitiveEditorMaterials_.clear();
 
@@ -220,9 +281,11 @@ void Hierarchy::OnSceneChangeRequested(const std::string& nextSceneName) {
 	editorTransforms_.clear();
 	editorMaterials_.clear();
 	objectModelNames_.clear();
+	objectSceneNames_.clear();
 
 	primitives_.clear();
 	primitiveNames_.clear();
+	primitiveSceneNames_.clear();
 	primitiveEditorTransforms_.clear();
 	primitiveEditorMaterials_.clear();
 
@@ -264,6 +327,7 @@ std::string Hierarchy::GetSceneScopedEditorFilePath(const std::string& defaultFi
 }
 
 void Hierarchy::ResetForSceneChange() {
+	const std::string currentSceneName = GetCurrentSceneName();
 	editorAudio_.ResetForSceneChange();
 	hasUnsavedChanges_ = false;
 	saveStatusMessage_.clear();
@@ -283,7 +347,18 @@ void Hierarchy::ResetForSceneChange() {
 	}
 	editorOwnedObjects_.clear();
 	editorOwnedPrimitives_.clear();
+	for (size_t i = 0; i < objects_.size(); ++i) {
+		if (i >= objectSceneNames_.size() || objectSceneNames_[i] != currentSceneName) {
+			objects_[i] = nullptr;
+		}
+	}
+	for (size_t i = 0; i < primitives_.size(); ++i) {
+		if (i >= primitiveSceneNames_.size() || primitiveSceneNames_[i] != currentSceneName) {
+			primitives_[i] = nullptr;
+		}
+	}
 }
+
 
 Hierarchy::EditorSnapshot Hierarchy::CreateCurrentSnapshot() const {
 	EditorSnapshot snapshot{};
@@ -467,8 +542,11 @@ void Hierarchy::RegisterObject3d(Object3d* object) {
 	auto emptyIt = std::find(objects_.begin(), objects_.end(), nullptr);
 	if (emptyIt != objects_.end()) {
 		const size_t index = static_cast<size_t>(std::distance(objects_.begin(), emptyIt));
+		EnsureObjectEditorDataSize(index + 1, objectNames_, objectModelNames_, editorTransforms_, editorMaterials_);
+		objectSceneNames_.resize(index + 1);
 		objects_[index] = object;
 		objectModelNames_[index] = object->GetModelFilePath();
+		objectSceneNames_[index] = GetCurrentSceneName();
 		EditorObject3d::ApplyEditorValues(object, editorTransforms_[index], editorMaterials_[index]);
 		return;
 	}
@@ -476,6 +554,7 @@ void Hierarchy::RegisterObject3d(Object3d* object) {
 	objects_.push_back(object);
 	objectNames_.push_back("Object " + std::to_string(index));
 	objectModelNames_.push_back(object->GetModelFilePath());
+	objectSceneNames_.push_back(GetCurrentSceneName());
 	editorTransforms_.push_back(object->GetTransform());
 	editorMaterials_.push_back(EditorObject3d::CaptureMaterial(object));
 }
@@ -487,6 +566,9 @@ void Hierarchy::UnregisterObject3d(Object3d* object) {
 	for (size_t i = 0; i < objects_.size(); ++i) {
 		if (objects_[i] == object) {
 			objects_[i] = nullptr;
+			if (i < objectSceneNames_.size()) {
+				objectSceneNames_[i].clear();
+			}
 			if (!selectedIsPrimitive_ && selectedObjectIndex_ == i) {
 				selectedObjectIndex_ = 0;
 			}
@@ -505,13 +587,18 @@ void Hierarchy::RegisterPrimitive(Primitive* primitive) {
 	auto emptyIt = std::find(primitives_.begin(), primitives_.end(), nullptr);
 	if (emptyIt != primitives_.end()) {
 		const size_t index = static_cast<size_t>(std::distance(primitives_.begin(), emptyIt));
+		EnsurePrimitiveEditorDataSize(index + 1, primitiveNames_, primitiveEditorTransforms_, primitiveEditorMaterials_);
+		primitiveSceneNames_.resize(index + 1);
 		primitives_[index] = primitive;
+		primitiveSceneNames_[index] = GetCurrentSceneName();
 		EditorPrimitive::ApplyEditorValues(primitive, primitiveEditorTransforms_[index], primitiveEditorMaterials_[index]);
 		return;
 	}
+
 	const size_t index = primitives_.size();
 	primitives_.push_back(primitive);
 	primitiveNames_.push_back("Primitive " + std::to_string(index));
+	primitiveSceneNames_.push_back(GetCurrentSceneName());
 	primitiveEditorTransforms_.push_back(primitive->GetTransform());
 	primitiveEditorMaterials_.push_back(EditorPrimitive::CaptureMaterial(primitive));
 }
@@ -523,6 +610,9 @@ void Hierarchy::UnregisterPrimitive(Primitive* primitive) {
 	for (size_t i = 0; i < primitives_.size(); ++i) {
 		if (primitives_[i] == primitive) {
 			primitives_[i] = nullptr;
+			if (i < primitiveSceneNames_.size()) {
+				primitiveSceneNames_[i].clear();
+			}
 			if (selectedIsPrimitive_ && selectedObjectIndex_ == i) {
 				selectedObjectIndex_ = 0;
 			}
@@ -545,7 +635,6 @@ void Hierarchy::UnregisterCamera(Camera* camera) {
 	(void)camera;
 #endif
 }
-
 bool Hierarchy::HasRegisteredObjects() const { return !objects_.empty() || !primitives_.empty(); }
 
 bool Hierarchy::LoadObjectEditorsFromJsonIfExists(const std::string& filePath) {
@@ -649,12 +738,18 @@ bool Hierarchy::SaveObjectEditorsToJson(const std::string& filePath) const {
 }
 
 bool Hierarchy::LoadObjectEditorsFromJson(const std::string& filePath) {
-	JsonManager* jsonManager = JsonManager::GetInstance();
-	if (!jsonManager->LoadJson(filePath)) {
+	const std::filesystem::path jsonPath = ResolveObjectEditorJsonPath(filePath);
+	std::ifstream file(jsonPath);
+	if (!file.is_open()) {
 		return false;
 	}
 
-	const nlohmann::json& root = jsonManager->GetData();
+	nlohmann::json root;
+	try {
+		file >> root;
+	} catch (const nlohmann::json::parse_error&) {
+		return false;
+	}
 	if (!root.is_object()) {
 		return false;
 	}
@@ -699,11 +794,13 @@ bool Hierarchy::LoadObjectEditorsFromJson(const std::string& filePath) {
 				const std::string editorId = objectJson.value("editorId", std::string());
 				Object3d* rawObject = CreateEditorOwnedObject(editorOwnedObjects_, modelName, editorId);
 				RegisterObject3d(rawObject);
-				index = objects_.empty() ? std::numeric_limits<size_t>::max() : objects_.size() - 1;
+				const auto objectIt = std::find(objects_.begin(), objects_.end(), rawObject);
+				index = objectIt == objects_.end() ? std::numeric_limits<size_t>::max() : static_cast<size_t>(std::distance(objects_.begin(), objectIt));
 				if (index == std::numeric_limits<size_t>::max()) {
 					continue;
 				}
 			}
+			EnsureObjectEditorDataSize(index + 1, objectNames_, objectModelNames_, editorTransforms_, editorMaterials_);
 			if (objectJson.contains("name") && objectJson["name"].is_string()) {
 				objectNames_[index] = objectJson["name"].get<std::string>();
 			}
@@ -816,11 +913,13 @@ bool Hierarchy::LoadObjectEditorsFromJson(const std::string& filePath) {
 				const std::string editorId = primitiveJson.value("editorId", std::string());
 				Primitive* rawPrimitive = CreateEditorOwnedPrimitive(editorOwnedPrimitives_, PrimitiveTypeFromName(primitiveTypeName), editorId);
 				RegisterPrimitive(rawPrimitive);
-				index = primitives_.empty() ? std::numeric_limits<size_t>::max() : primitives_.size() - 1;
+				const auto primitiveIt = std::find(primitives_.begin(), primitives_.end(), rawPrimitive);
+				index = primitiveIt == primitives_.end() ? std::numeric_limits<size_t>::max() : static_cast<size_t>(std::distance(primitives_.begin(), primitiveIt));
 			}
 			if (index == std::numeric_limits<size_t>::max() || index >= primitives_.size() || !primitives_[index] || primitives_[index] == selectionBoxPrimitive_.get()) {
 				continue;
 			}
+			EnsurePrimitiveEditorDataSize(index + 1, primitiveNames_, primitiveEditorTransforms_, primitiveEditorMaterials_);
 			if (primitiveJson.contains("name") && primitiveJson["name"].is_string()) {
 				primitiveNames_[index] = primitiveJson["name"].get<std::string>();
 			}
@@ -888,7 +987,9 @@ bool Hierarchy::LoadObjectEditorsFromJson(const std::string& filePath) {
 	if (root.contains("lights") && root["lights"].is_object()) {
 		editorLight_.LoadFromJson(root["lights"]);
 	}
+#ifdef USE_IMGUI
 	editorAudio_.LoadFromJson(root.value("audio", nlohmann::json::object()));
+#endif
 	loadedSnapshot_ = CreateCurrentSnapshot();
 	hasLoadedSnapshot_ = true;
 	loadedSnapshotFilePath_ = filePath;
@@ -972,6 +1073,7 @@ void Hierarchy::SetPlayMode(bool isPlaying) {
 void Hierarchy::DrawEditorGridLines() {
 #ifdef USE_IMGUI
 	DrawCameraBillboards();
+#endif
 	Object3dCommon* object3dCommon = Object3dCommon::GetInstance();
 	if (object3dCommon) {
 		const bool hasEditorOwnedObject = std::any_of(editorOwnedObjects_.begin(), editorOwnedObjects_.end(), [](const auto& object) { return object != nullptr; });
@@ -995,6 +1097,7 @@ void Hierarchy::DrawEditorGridLines() {
 			primitive->Draw();
 		}
 	}
+#ifdef USE_IMGUI
 	EditorGrid::DrawEditorGridLines(gridSettings_, editorGridPlane_);
 	if (!showSelectionBox_ || !IsObjectSelected()) {
 		return;
@@ -1022,8 +1125,11 @@ void Hierarchy::DrawCharacterParameterHierarchy() {
 			characterParameterEditorDatas_[i].name = names[i];
 			characterParameterEditorDatas_[i].lv1Base = {100.0f, 20.0f, 10.0f};
 			characterParameterEditorDatas_[i].lv1Parameter = CreateDefaultCharacterParameter();
-			characterParameterEditorDatas_[i].currentBase = characterParameterEditorDatas_[i].lv1Base;
-			characterParameterEditorDatas_[i].currentParameter = characterParameterEditorDatas_[i].lv1Parameter;
+			characterParameterEditorDatas_[i].levelUpBase = {0.0f, 0.0f, 0.0f};
+			characterParameterEditorDatas_[i].currentBase =
+			    CalculateCurrentBaseParameter(characterParameterEditorDatas_[i].lv1Base, characterParameterEditorDatas_[i].levelUpBase, characterParameterEditorDatas_[i].currentParameter.level);
+			characterParameterEditorDatas_[i].currentParameter =
+			    CalculateCurrentParameter(characterParameterEditorDatas_[i].lv1Parameter, characterParameterEditorDatas_[i].levelUpBase, characterParameterEditorDatas_[i].currentParameter.level);
 		}
 	}
 
@@ -1053,14 +1159,22 @@ void Hierarchy::DrawCharacterParameterInspector() {
 	ImGui::PushID("lv1_base");
 	DrawBaseParameterEditor("LV1 Base Parameters", data.lv1Base);
 	ImGui::PopID();
+	ImGui::PushID("level_up_base");
+	DrawBaseParameterEditor("Base Parameter Increase Per Level", data.levelUpBase);
+	ImGui::PopID();
+	const int currentLevel = data.currentParameter.level;
+	data.currentBase = CalculateCurrentBaseParameter(data.lv1Base, data.levelUpBase, currentLevel);
+	data.currentParameter = CalculateCurrentParameter(data.lv1Parameter, data.levelUpBase, currentLevel);
 	ImGui::PushID("current_base");
-	DrawBaseParameterEditor("Current Base Parameters", data.currentBase);
+	DrawBaseParameterViewer("Current Base Parameters", data.currentBase);
 	ImGui::PopID();
 	DrawParameterEditor("LV1 Parameter", data.lv1Parameter);
-	DrawParameterEditor("Current Level Parameter", data.currentParameter);
+	DrawParameterEditor("Current Level Parameter", data.currentParameter, true);
+	data.currentBase = CalculateCurrentBaseParameter(data.lv1Base, data.levelUpBase, data.currentParameter.level);
+	data.currentParameter = CalculateCurrentParameter(data.lv1Parameter, data.levelUpBase, data.currentParameter.level);
 
 	if (ImGui::Button("Save Character Json")) {
-		SaveCharacterTuningJson(data.name, data.lv1Base, data.lv1Parameter, data.currentBase, data.currentParameter);
+		SaveCharacterTuningJson(data.name, data.lv1Base, data.lv1Parameter, data.levelUpBase, data.currentBase, data.currentParameter);
 		saveStatusMessage_ = "Saved character parameters: " + data.name;
 	}
 #endif

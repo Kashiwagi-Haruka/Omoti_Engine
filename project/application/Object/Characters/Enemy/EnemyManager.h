@@ -47,12 +47,13 @@ public:
 	void Update(Camera* camera, const Vector3& housePos, const Vector3& houseScale, const Vector3& playerPos, bool isPlayerAlive);
 	void Draw();
 	void Clear();
-	void OnEnemyDamaged(Enemy* enemy, int damage = 1, Attribute attribute = Attribute::None);
+	void OnEnemyDamaged(Enemy* enemy, int damage = 1, Attribute attribute = Attribute::None, bool isCritical = false, Attribute reactionPreviousAttribute = Attribute::None);
 	// ウェーブシステム関連
 	void StartNextWave();     // 次のウェーブを開始
 	void SpawnWaveEnemies();  // ウェーブに応じた敵を生成
 	void CheckWaveComplete(); // ウェーブクリア判定
 	void ResolveOverlaps(const Vector3& playerPos, bool isPlayerAlive);
+	void ResolveDamageTextOverlaps();
 
 	// ゲッター
 	int GetCurrentWave() const { return currentWave_; }

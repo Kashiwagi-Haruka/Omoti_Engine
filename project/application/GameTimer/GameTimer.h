@@ -8,12 +8,25 @@ class GameTimer {
 	static std::unique_ptr<GameTimer> instance;
 
 public:
-	// シングルトンのインスタンス取得。
+	/// <summary>
+	/// インスタンス取得。
+	/// </summary>
+	/// <returns></returns>
 	static GameTimer* GetInstance();
-	// タイマーを0に戻す。
+
+	/// <summary>
+	/// タイマーリセット
+	/// </summary>
 	void Reset();
-	// 1フレーム分の時間を加算する。
+
+	/// <summary>
+	/// 1フレーム分の時間を加算する。
+	/// </summary>
 	void Update();
-	// 現在のタイマー値(秒)を取得する。
+
+	/// <summary>
+	/// 現在のタイマー値(秒)を取得する。
+	/// </summary>
+	/// <returns></returns>
 	float GetTimer() { return timer_; };
 };

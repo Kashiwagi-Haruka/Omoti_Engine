@@ -49,6 +49,7 @@ void Player::Initialize(Camera* camera) {
 	isLevelUP = false;
 	rotateTimer = 0.1f;
 	damageTrigger_ = false;
+	pendingDamage_ = 0;
 	attack_ = std::make_unique<PlayerAttack>();
 	attack_->SetCamera(camera_);
 	attack_->SetTransform(transform_);

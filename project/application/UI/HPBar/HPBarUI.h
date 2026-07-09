@@ -21,6 +21,9 @@ class HPBarUI {
 	// プレイヤーHPの数値テキスト
 	Text playerHpText;
 
+	//現在操作中のキャラの名前
+	Text currentCharacterNameText;
+
 	// プレイヤーHPバー背景用スプライト
 	SpriteData playerHpBarBackgroundSprite;
 	// プレイヤーHPバー用スプライト。

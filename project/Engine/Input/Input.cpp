@@ -3,6 +3,7 @@
 #include <cassert>
 #include <algorithm>
 #include <cmath>
+#include <numbers>
 #ifdef USE_IMGUI
 #include "imgui.h"
 #endif
@@ -70,6 +71,48 @@ void GetCombinedTriggerValues(const DIJOYSTATE& state, int leftButtonIndex, int 
 	}
 }
 float NormalizeXInputTrigger(BYTE triggerValue) { return Clamp01(static_cast<float>(triggerValue) / 255.0f); }
+
+
+WORD GetXInputButtonMask(Input::PadButton button) {
+	switch (button) {
+	case Input::PadButton::kButtonA:
+		return XINPUT_GAMEPAD_A;
+	case Input::PadButton::kButtonB:
+		return XINPUT_GAMEPAD_B;
+	case Input::PadButton::kButtonX:
+		return XINPUT_GAMEPAD_X;
+	case Input::PadButton::kButtonY:
+		return XINPUT_GAMEPAD_Y;
+	case Input::PadButton::kButtonLeftShoulder:
+		return XINPUT_GAMEPAD_LEFT_SHOULDER;
+	case Input::PadButton::kButtonRightShoulder:
+		return XINPUT_GAMEPAD_RIGHT_SHOULDER;
+	case Input::PadButton::kButtonBack:
+		return XINPUT_GAMEPAD_BACK;
+	case Input::PadButton::kButtonStart:
+		return XINPUT_GAMEPAD_START;
+	case Input::PadButton::kButtonLeftThumb:
+		return XINPUT_GAMEPAD_LEFT_THUMB;
+	case Input::PadButton::kButtonRightThumb:
+		return XINPUT_GAMEPAD_RIGHT_THUMB;
+	case Input::PadButton::kButtonUp:
+		return XINPUT_GAMEPAD_DPAD_UP;
+	case Input::PadButton::kButtonDown:
+		return XINPUT_GAMEPAD_DPAD_DOWN;
+	case Input::PadButton::kButtonLeft:
+		return XINPUT_GAMEPAD_DPAD_LEFT;
+	case Input::PadButton::kButtonRight:
+		return XINPUT_GAMEPAD_DPAD_RIGHT;
+	default:
+		return 0;
+	}
+}
+
+bool GetXInputButtonState(const XINPUT_STATE& state, Input::PadButton button) {
+	const WORD mask = GetXInputButtonMask(button);
+	return mask != 0 && (state.Gamepad.wButtons & mask) != 0;
+}
+
 bool IsForegroundWindow(const WinApp* winApp) {
 	if (!winApp) {
 		return false;
@@ -309,6 +352,9 @@ bool Input::ReleaseKey(BYTE keyNumber) {
 }
 
 bool Input::PushButton(PadButton button) {
+	if (isXInputConnected_) {
+		return GetXInputButtonState(xInputState_, button);
+	}
 	if (!gamePadDevice_)
 		return false;
 	int index = static_cast<int>(button);
@@ -332,6 +378,11 @@ bool Input::PushButton(PadButton button) {
 }
 
 bool Input::TriggerButton(PadButton button) {
+	if (isXInputConnected_) {
+		const bool now = GetXInputButtonState(xInputState_, button);
+		const bool prev = GetXInputButtonState(preXInputState_, button);
+		return now && !prev;
+	}
 	if (!gamePadDevice_)
 		return false;
 	int index = static_cast<int>(button);
@@ -358,6 +409,11 @@ bool Input::TriggerButton(PadButton button) {
 	return false;
 }
 bool Input::ReleaseButton(PadButton button) {
+	if (isXInputConnected_) {
+		const bool now = GetXInputButtonState(xInputState_, button);
+		const bool prev = GetXInputButtonState(preXInputState_, button);
+		return !now && prev;
+	}
 	if (!gamePadDevice_)
 		return false;
 	int index = static_cast<int>(button);
@@ -411,6 +467,38 @@ float Input::GetJoyStickRX() const {
 	return norm;
 }
 
+bool Input::IsJoyStickSelectDirectionL(JoyconStickDirection direction) const {
+	const float x = GetJoyStickLX();
+	const float y = GetJoyStickLY();
+
+	if (x == 0.0f && y == 0.0f) {
+		return false;
+	}
+	constexpr float kDegreesPerRadian = 180.0f / std::numbers::pi_v<float>;
+	const float angle = std::atan2(y, x) * kDegreesPerRadian;
+	const float normalizedAngle = angle < 0.0f ? angle + 360.0f : angle;
+
+	JoyconStickDirection selectedDirection = JoyconStickDirection::RIGHT;
+	if (normalizedAngle < 22.5f || normalizedAngle >= 337.5f) {
+		selectedDirection = JoyconStickDirection::RIGHT;
+	} else if (normalizedAngle < 67.5f) {
+		selectedDirection = JoyconStickDirection::UPRIGHT;
+	} else if (normalizedAngle < 112.5f) {
+		selectedDirection = JoyconStickDirection::UP;
+	} else if (normalizedAngle < 157.5f) {
+		selectedDirection = JoyconStickDirection::UPLEFT;
+	} else if (normalizedAngle < 202.5f) {
+		selectedDirection = JoyconStickDirection::LEFT;
+	} else if (normalizedAngle < 247.5f) {
+		selectedDirection = JoyconStickDirection::DOWNLEFT;
+	} else if (normalizedAngle < 292.5f) {
+		selectedDirection = JoyconStickDirection::DOWN;
+	} else {
+		selectedDirection = JoyconStickDirection::DOWNRIGHT;
+	}
+
+	return selectedDirection == direction;
+}
 float Input::GetJoyStickRY() const {
 	if (!gamePadDevice_)
 		return 0.0f;
@@ -438,6 +526,40 @@ float Input::GetLeftTrigger() const {
 
 	const float analog = Clamp01(static_cast<float>(padState_.lZ) / 65535.0f);
 	return std::max(analog, GetDigitalTrigger(padState_, leftTriggerButtonIndex_));
+}
+
+bool Input::IsJoyStickSelectDirectionR(JoyconStickDirection direction) const {
+
+	const float x = GetJoyStickRX();
+	const float y = GetJoyStickRY();
+
+	if (x == 0.0f && y == 0.0f) {
+		return false;
+	}
+	constexpr float kDegreesPerRadian = 180.0f / std::numbers::pi_v<float>;
+	const float angle = std::atan2(y, x) * kDegreesPerRadian;
+	const float normalizedAngle = angle < 0.0f ? angle + 360.0f : angle;
+
+	JoyconStickDirection selectedDirection = JoyconStickDirection::RIGHT;
+	if (normalizedAngle < 22.5f || normalizedAngle >= 337.5f) {
+		selectedDirection = JoyconStickDirection::RIGHT;
+	} else if (normalizedAngle < 67.5f) {
+		selectedDirection = JoyconStickDirection::UPRIGHT;
+	} else if (normalizedAngle < 112.5f) {
+		selectedDirection = JoyconStickDirection::UP;
+	} else if (normalizedAngle < 157.5f) {
+		selectedDirection = JoyconStickDirection::UPLEFT;
+	} else if (normalizedAngle < 202.5f) {
+		selectedDirection = JoyconStickDirection::LEFT;
+	} else if (normalizedAngle < 247.5f) {
+		selectedDirection = JoyconStickDirection::DOWNLEFT;
+	} else if (normalizedAngle < 292.5f) {
+		selectedDirection = JoyconStickDirection::DOWN;
+	} else {
+		selectedDirection = JoyconStickDirection::DOWNRIGHT;
+	}
+
+	return selectedDirection == direction;
 }
 
 float Input::GetRightTrigger() const {

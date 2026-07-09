@@ -5,6 +5,7 @@
 #include "Object/Characters/Enemy/EnemyManager.h"
 #include "Object/Player/Player.h"
 #include "TextureManager.h"
+#include "Sprite/SpriteCommon.h"
 #include <algorithm>
 #include <cmath>
 #include <imgui.h>
@@ -243,7 +244,7 @@ void Rasen::Draw(Boss* boss) {
 		boss->Draw();
 	}
 	house->Draw();
-
+	SpriteCommon::GetInstance()->DrawCommon();
 	if (isPhaseSpriteActive_ && !isBossActive_) {
 		phaseSprites_[currentPhaseSpriteIndex_]->Draw();
 	}

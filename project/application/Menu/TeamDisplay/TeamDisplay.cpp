@@ -1,4 +1,5 @@
 #include "TeamDisplay.h"
+#include "Function.h"
 #include "Input.h"
 #include "Object3d/Object3dCommon.h"
 #include "SpriteCommon.h"
@@ -162,6 +163,13 @@ void TeamDisplay::Initialize(const Team& team) {
 			teamMemberIcons_[i]->Initialize(ownedCharacterIconHandles_[characterIndex]);
 		}
 	}
+	cursorPos_ = {Input::GetInstance()->GetMouseX(), Input::GetInstance()->GetMouseY()};
+	cursorSprite_ = std::make_unique<Sprite>();
+	uint32_t cursorTextureHandle = TextureManager::GetInstance()->GetTextureIndexByfilePath("Resources/2d/Cursor.png");
+	cursorSprite_->Initialize(cursorTextureHandle);
+	cursorSprite_->SetPosition(cursorPos_);
+	cursorSprite_->SetScale({100.0f, 100.0f});
+	cursorSprite_->Update();
 }
 
 void TeamDisplay::Unload() {
@@ -186,6 +194,7 @@ void TeamDisplay::Unload() {
 	inventorySelectionMarker_.reset();
 	memberSelectionMarker_.reset();
 	teamBackgroundPlane_.reset();
+	cursorSprite_.reset();
 	camera_.reset();
 	isCandidateSelected_ = false;
 	isDraggingInventoryIcon_ = false;
@@ -200,47 +209,49 @@ void TeamDisplay::Update(Team& team) {
 		noMemberPlanes_[i]->SetCamera(camera_.get());
 		noMemberPlanes_[i]->Update();
 	}
-	Input::GetInstance()->SetIsCursorVisible(true);
+	Input::GetInstance()->SetIsCursorVisible(false);
 	Input::GetInstance()->SetIsCursorStability(false);
 	UpdatePartyUI(team);
+	cursorSprite_->SetPosition(cursorPos_);
+	cursorSprite_->Update();
 }
 
 void TeamDisplay::UpdatePartyUI(Team& team) {
-	Vector2 mousePos{Input::GetInstance()->GetMouseX(), Input::GetInstance()->GetMouseY()};
+	cursorPos_ += {Input::GetInstance()->GetMouseMove().x + Input::GetInstance()->GetJoyStickLX() * 10.0f, Input::GetInstance()->GetMouseMove().y + Input::GetInstance()->GetJoyStickLY() * -10.0f};
 	const Vector2 memberSelectionMarkerPos = memberSelectionMarker_->GetPosition();
 	const Vector2 memberSelectionMarkerSize = memberSelectionMarker_->GetScale();
-	const bool isHoveringMemberSelectionMarker = IsInsideRect(mousePos, memberSelectionMarkerPos, memberSelectionMarkerSize);
+	const bool isHoveringMemberSelectionMarker = IsInsideRect(cursorPos_, memberSelectionMarkerPos, memberSelectionMarkerSize);
 	
-	if (Input::GetInstance()->TriggerKey(DIK_ESCAPE)) {
+	if (Input::GetInstance()->TriggerKey(DIK_ESCAPE) || Input::GetInstance()->TriggerButton(Input::PadButton::kButtonB)) {
 		if (isMemberSelectionActive_) {
 			isMemberSelectionActive_ = false;
 		}
 	}
 	
 	
-	if (isHoveringMemberSelectionMarker && Input::GetInstance()->TriggerMouseButton(Input::MouseButton::kLeft)) {
+	if (isHoveringMemberSelectionMarker && (Input::GetInstance()->TriggerMouseButton(Input::MouseButton::kLeft) || Input::GetInstance()->TriggerButton(Input::PadButton::kButtonA))) {
 		isMemberSelectionActive_ = true;
 	}
 	memberSelectionMarker_->SetColor(isHoveringMemberSelectionMarker ? Vector4{0.95f, 0.8f, 0.3f, 1.0f} : Vector4{1.0f, 1.0f, 1.0f, 1.0f});
 	hoveredInventoryIndex_ = -1;
 	dropTargetSlotIndex_ = -1;
 	for (int i = 0; i < kMaxMembersCount; ++i) {
-		if (IsInsideRect(mousePos, slotPositions_[i], slotSize_)) {
+		if (IsInsideRect(cursorPos_, slotPositions_[i], slotSize_)) {
 			dropTargetSlotIndex_ = i;
-			if (Input::GetInstance()->TriggerMouseButton(Input::MouseButton::kLeft)) {
+			if ((Input::GetInstance()->TriggerMouseButton(Input::MouseButton::kLeft) || Input::GetInstance()->TriggerButton(Input::PadButton::kButtonA))) {
 				team.SetActiveSlot(i);
 			}
 		}
 	}
 
 	for (size_t i = 0; i < inventoryIcons_.size(); ++i) {
-		if (IsInsideRect(mousePos, inventoryIconPositions_[i], iconSize_)) {
+		if (IsInsideRect(cursorPos_, inventoryIconPositions_[i], iconSize_)) {
 			hoveredInventoryIndex_ = static_cast<int>(i);
 			break;
 		}
 	}
 
-	if (hoveredInventoryIndex_ >= 0 && Input::GetInstance()->TriggerMouseButton(Input::MouseButton::kLeft)) {
+	if (hoveredInventoryIndex_ >= 0 && (Input::GetInstance()->TriggerMouseButton(Input::MouseButton::kLeft) || Input::GetInstance()->TriggerButton(Input::PadButton::kButtonA))) {
 		selectedInventoryIndex_ = hoveredInventoryIndex_;
 		isCandidateSelected_ = true;
 		isDraggingInventoryIcon_ = true;
@@ -252,11 +263,11 @@ void TeamDisplay::UpdatePartyUI(Team& team) {
 
 	if (isDraggingInventoryIcon_) {
 		if (draggingInventoryIndex_ >= 0 && draggingInventoryIndex_ < static_cast<int>(ownedCharacterIconHandles_.size())) {
-			draggingIcon_->SetPosition({mousePos.x - iconSize_.x * 0.5f, mousePos.y - iconSize_.y * 0.5f});
+			draggingIcon_->SetPosition({cursorPos_.x - iconSize_.x * 0.5f, cursorPos_.y - iconSize_.y * 0.5f});
 			draggingIcon_->SetColor({1.0f, 1.0f, 1.0f, dropTargetSlotIndex_ >= 0 ? 0.95f : 0.78f});
 			draggingIcon_->Update();
 		}
-		if (Input::GetInstance()->ReleaseMouseButton(Input::MouseButton::kLeft)) {
+		if ((Input::GetInstance()->ReleaseMouseButton(Input::MouseButton::kLeft) || Input::GetInstance()->ReleaseButton(Input::PadButton::kButtonA))) {
 			if (dropTargetSlotIndex_ >= 0) {
 				team.AssignCharacterToSlot(dropTargetSlotIndex_, draggingInventoryIndex_);
 				teamMemberIcons_[dropTargetSlotIndex_]->Initialize(ownedCharacterIconHandles_[draggingInventoryIndex_]);
@@ -266,8 +277,9 @@ void TeamDisplay::UpdatePartyUI(Team& team) {
 		}
 	}
 
-	const bool isHoveringConfirm = IsInsideRect(mousePos, confirmPos_, confirmSize_);
-	const bool isConfirmTriggered = isHoveringConfirm && (Input::GetInstance()->TriggerMouseButton(Input::MouseButton::kLeft) || Input::GetInstance()->TriggerKey(DIK_SPACE));
+	const bool isHoveringConfirm = IsInsideRect(cursorPos_, confirmPos_, confirmSize_);
+	const bool isConfirmTriggered = isHoveringConfirm && ((Input::GetInstance()->TriggerMouseButton(Input::MouseButton::kLeft) || Input::GetInstance()->TriggerButton(Input::PadButton::kButtonA)) ||
+	                                                      Input::GetInstance()->TriggerKey(DIK_SPACE));
 	if (isConfirmTriggered) {
 		team.AssignCharacterToSlot(team.GetActiveSlot(), selectedInventoryIndex_);
 		teamMemberIcons_[team.GetActiveSlot()]->Initialize(ownedCharacterIconHandles_[selectedInventoryIndex_]);
@@ -335,27 +347,28 @@ void TeamDisplay::Draw(const Team& team) {
 	formationTransitionText_.Draw();
 	teamFormationText_.Draw();
 	confirmButtonText_.Draw();
-	if (!isMemberSelectionActive_) {
-		return;
-	}
 	SpriteCommon::GetInstance()->DrawCommon();
-	for (int i = 0; i < kMaxMembersCount; ++i) {
-		teamSlotSprites_[i]->Draw();
-		if (team.GetHasMember(i)) {
-			teamMemberIcons_[i]->Draw();
+	if (isMemberSelectionActive_) {
+		
+		for (int i = 0; i < kMaxMembersCount; ++i) {
+			teamSlotSprites_[i]->Draw();
+			if (team.GetHasMember(i)) {
+				teamMemberIcons_[i]->Draw();
+			}
+		}
+		inventoryBg_->Draw();
+		inventorySelectionMarker_->Draw();
+		for (auto& icon : inventoryIcons_) {
+			icon->Draw();
+		}
+		if (isCandidateSelected_) {
+			candidatePreview_->Draw();
+		}
+		if (isDraggingInventoryIcon_) {
+			draggingIcon_->Draw();
 		}
 	}
-	inventoryBg_->Draw();
-	inventorySelectionMarker_->Draw();
-	for (auto& icon : inventoryIcons_) {
-		icon->Draw();
-	}
-	if (isCandidateSelected_) {
-		candidatePreview_->Draw();
-	}
-	if (isDraggingInventoryIcon_) {
-		draggingIcon_->Draw();
-	}
+	cursorSprite_->Draw();
 }
 void TeamDisplay::DrawTeamDisplayMembers(const Team& team) {
 	for (int i = 0; i < kMaxMembersCount; ++i) {

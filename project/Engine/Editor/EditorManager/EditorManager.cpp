@@ -24,10 +24,16 @@ void EditorManager::DrawObjectEditors() {
 void EditorManager::DrawAssetWindow() { editorAsset_.EditorDraw(); }
 
 void EditorManager::DrawEditorGridLines() {
+	if (wasEditorWorldDrawnThisFrame_) {
+		return;
+	}
+	wasEditorWorldDrawnThisFrame_ = true;
 	if (hierarchy_) {
 		hierarchy_->DrawEditorGridLines();
 	}
 }
+
+void EditorManager::ResetEditorWorldDrawState() { wasEditorWorldDrawnThisFrame_ = false; }
 
 bool EditorManager::HasRegisteredObjects() const { return hierarchy_ && hierarchy_->HasRegisteredObjects(); }
 

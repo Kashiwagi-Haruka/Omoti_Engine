@@ -71,3 +71,8 @@ void PlayerCamera::StartShake(float durationSeconds) {
 	shakeDuration_ = durationSeconds;
 	shakeTimer_ = durationSeconds;
 }
+void PlayerCamera::SetOrbitRotation(const Vector3& rotate) {
+	orbitPitch_ = rotate.x;
+	orbitYaw_ = rotate.y;
+	transform_.rotate = {orbitPitch_, orbitYaw_, 0.0f};
+}

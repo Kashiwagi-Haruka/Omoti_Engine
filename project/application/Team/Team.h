@@ -32,6 +32,20 @@ public:
 	bool ConsumeCharacterSwitchTriggered();
 	/// 現在操作中のキャラクター名を文字列で返す。
 	std::string GetActiveCharacterName() const;
+	/// 現在操作中のキャラクターにダメージを与える。
+	void DamageActiveCharacter(int amount);
+	/// 現在操作中のキャラクターが生存しているかを返す。
+	bool GetIsActiveCharacterAlive() const;
+	/// チーム内の全メンバーが戦闘不能かを返す。
+	bool GetAreAllMembersDead() const;
+	/// 現在操作中キャラクターの現在HPを返す。
+	int GetActiveCharacterHP() const;
+	/// 現在操作中キャラクターの最大HPを返す。
+	int GetActiveCharacterHPMax() const;
+	/// 指定スロットの現在HPを返す。
+	int GetMemberHP(int slotIndex) const;
+	/// 指定スロットの最大HPを返す。
+	int GetMemberHPMax(int slotIndex) const;
 	/// 所持キャラクターのインデックスから表示名を取得する。
 	const std::u32string& GetCharacterNameByIndex(int characterIndex) const;
 	/// 所持キャラクターのインデックスからプレイアブル識別名を取得する。
@@ -48,6 +62,10 @@ private:
 	std::array<int, kMaxMembersCount> teamMemberCharacterIndices_{};
 	/// 各チームスロットが使用中かどうかを示すフラグ。
 	std::array<bool, kMaxMembersCount> occupiedSlots_{};
+	/// 各チームスロットに割り当てられているキャラクターの現在HP。
+	std::array<int, kMaxMembersCount> memberHP_{};
+	/// 各チームスロットに割り当てられているキャラクターの最大HP。
+	std::array<int, kMaxMembersCount> memberHPMax_{};
 	/// 現在操作対象になっているチームスロット番号。
 	int activeSlotIndex_ = 0;
 	/// 操作キャラクターの切り替えが発生したことを通知するフラグ。

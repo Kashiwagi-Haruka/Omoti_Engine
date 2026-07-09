@@ -3,6 +3,7 @@
 #include "EnemyAttack.h"
 #include "EnemyStun.h"
 #include "Object/Characters/Base/CharacterParameters.h"
+#include "Object/Characters/Enemy/HPBar/EnemyHPBar.h"
 #include "Primitive/Primitive.h"
 #include "Transform.h"
 #include "Vector3.h"
@@ -15,6 +16,7 @@ class Object3d;
 class Enemy {
 
 	int HP = 40;
+	int maxHP_ = 100;
 	BaseParameter baseParameter_{10.0f, 0.0f, 10.0f};
 	Parameter parameter_{};
 	bool isAlive = true;
@@ -47,6 +49,7 @@ class Enemy {
 	std::unique_ptr<EnemyStun> enemyStun;
 	std::unique_ptr<EnemyAttack> enemyAttack_;
 	std::unique_ptr<Adhesion> adhesion_;
+	std::unique_ptr<EnemyHPBar> hpBar_;
 
 	Camera* camera_ = nullptr;
 	float playerChaseRange_ = 8.0f;
@@ -82,6 +85,9 @@ public:
 		if (adhesion_) {
 			adhesion_->SetCamera(camera_);
 		}
+		if (hpBar_) {
+			hpBar_->SetCamera(camera_);
+		}
 	}
 	Vector3 GetPosition() { return transform_.translate; }
 	Vector3 GetScale() { return transform_.scale; }
@@ -103,6 +109,8 @@ public:
 	bool IsAttacking() const { return enemyAttack_ && enemyAttack_->IsAttacking(); }
 	bool IsStunned() const { return isStun_; }
 	bool AddAdhesionAttribute(Attribute attribute);
+	Attribute GetLastReactionPreviousAttribute() const;
+	Attribute GetLastReactionAppliedAttribute() const;
 	const BaseParameter& GetBaseParameter() const { return baseParameter_; }
 	const Parameter& GetParameter() const { return parameter_; }
 };

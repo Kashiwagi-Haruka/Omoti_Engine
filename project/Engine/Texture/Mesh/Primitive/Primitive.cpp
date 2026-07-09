@@ -800,6 +800,18 @@ void Primitive::SetUvTransform(Vector3 scale, Vector3 rotate, Vector3 translate,
 	uvAnchor_ = anchor;
 	SetUvTransform(Function::MakeAffineMatrix(uvScale_, uvRotate_, uvTranslate_, uvAnchor_));
 }
+void Primitive::SetUvScale(Vector3 scale) {
+	uvScale_ = scale;
+	SetUvTransform(Function::MakeAffineMatrix(uvScale_, uvRotate_, uvTranslate_, uvAnchor_));
+}
+void Primitive::SetUvRotate(Vector3 rotate) {
+	uvRotate_ = rotate;
+	SetUvTransform(Function::MakeAffineMatrix(uvScale_, uvRotate_, uvTranslate_, uvAnchor_));
+}
+void Primitive::SetUvTranslate(Vector3 translate) {
+	uvTranslate_ = translate;
+	SetUvTransform(Function::MakeAffineMatrix(uvScale_, uvRotate_, uvTranslate_, uvAnchor_));
+}
 void Primitive::SetUvAnchor(Vector2 anchor) {
 	uvAnchor_ = anchor;
 	SetUvTransform(Function::MakeAffineMatrix(uvScale_, uvRotate_, uvTranslate_, uvAnchor_));

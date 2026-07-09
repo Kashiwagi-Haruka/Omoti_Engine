@@ -1,4 +1,5 @@
 #include "TitleScene.h"
+#include "PlayCommand/PlayCommand.h"
 #include "Input.h"
 #include "SceneManager.h"
 #include "Sprite/SpriteCommon.h"
@@ -61,7 +62,7 @@ void TitleScene::Update() {
 	BGSP_.sprite->SetRotation(BGSP_.rotate);
 	BGSP_.sprite->Update();
 
-	if (Input::GetInstance()->TriggerKey(DIK_SPACE) && !isTransitionOut) {
+	if (PlayCommand::GetDESIDE() && !isTransitionOut) {
 		transition->Initialize(true);
 		isTransitionOut = true;
 

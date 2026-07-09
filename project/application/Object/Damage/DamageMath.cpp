@@ -35,12 +35,16 @@ void DamageMath::SubtractDamage(int amount) {
 }
 
 int DamageMath::CalculatePlayerToEnemyDamage(
-    const BaseParameter& playerBase, const Parameter& playerParameter, const BaseParameter& enemyBase, const Parameter& enemyParameter, Attribute attackAttribute) {
+    const BaseParameter& playerBase, const Parameter& playerParameter, const BaseParameter& enemyBase, const Parameter& enemyParameter, Attribute attackAttribute, bool* outIsCritical) {
 	const float attack = playerBase.Attack;
 	const float defence = enemyBase.Deffence;
 	const float attributeDamageRate = GetAttributeRate(playerParameter.AttributeDamageRate, attackAttribute);
 	const float attributeResistanceRate = GetAttributeRate(enemyParameter.AttributeResistanceRate, attackAttribute);
-	const float criticalDamage = RollCritical(playerParameter.CriticalRate) ? playerParameter.CriticalDamage : 0.0f;
+	const bool isCritical = RollCritical(playerParameter.CriticalRate);
+	if (outIsCritical) {
+		*outIsCritical = isCritical;
+	}
+	const float criticalDamage = isCritical ? playerParameter.CriticalDamage : 0.0f;
 
 	const float damage = (attack - defence) * (1.0f + (attributeDamageRate - attributeResistanceRate)) * (1.0f + criticalDamage);
 	return std::max(0, static_cast<int>(std::round(damage)));

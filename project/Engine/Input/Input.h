@@ -76,6 +76,19 @@ public:
 		kMaxButtons
 	};
 
+	enum class JoyconStickDirection {
+
+		UP,        // 上
+		UPRIGHT,   // 右上
+		RIGHT,     // 右
+		DOWNRIGHT, // 右下
+		DOWN,      // 下
+		DOWNLEFT,  // 左下
+		LEFT,      // 左
+		UPLEFT     // 左上
+
+	};
+
 	enum class MouseButton { kLeft = 0, kRight, kMiddle, kMaxButtons };
 
 	/// <summary>
@@ -137,10 +150,24 @@ public:
 	/// <returns></returns>
 	Vector2 GetJoyStickLXY() const;
 
+	/// <summary>
+	/// 選んだ向きに左スティックが傾けられているか
+	/// </summary>
+	/// <param name="direction"></param>
+	/// <returns></returns>
+	bool IsJoyStickSelectDirectionL(JoyconStickDirection direction) const;
+
 	// 右スティック
 	float GetJoyStickRX() const;
 	float GetJoyStickRY() const;
 	Vector2 GetJoyStickRXY() const;
+
+	/// <summary>
+	/// 選んだ向きに右スティックが傾けられているか
+	/// </summary>
+	/// <param name="direction"></param>
+	/// <returns></returns>
+	bool IsJoyStickSelectDirectionR(JoyconStickDirection direction) const;
 
 	// マウス
 	float GetMouseX() const;                           // マウスのX座標を取得

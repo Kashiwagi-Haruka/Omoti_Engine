@@ -1,11 +1,15 @@
+#define NOMINMAX
 #include "Team.h"
-#include "Input.h"
+#include "Object/Characters/Base/CharacterParameterLoader.h"
 #include "Object/Characters/Playable/Individual/Arte/Arte.h"
 #include "Object/Characters/Playable/Individual/Mei/Mei.h"
 #include "Object/Characters/Playable/Individual/Sizuku/Sizuku.h"
 #include "Object/Characters/Playable/Individual/Yuzuki/Yuzuki.h"
-#include "TextureManager.h"
+#include "PlayCommand/PlayCommand.h"
 #include "StringUtility.h"
+#include "TextureManager.h"
+#include <algorithm>
+#include <cmath>
 
 namespace {
 std::u32string ToU32String(const std::string& utf8String) {
@@ -35,26 +39,45 @@ void Team::Initialize() {
 	ownedCharacterDisplayNames_.reserve(ownedCharacters_.size());
 	for (auto& character : ownedCharacters_) {
 		character->Initialize();
+		BaseParameter baseParameter{};
+		Parameter parameter{};
+		if (CharacterParameterLoader::LoadCurrentParameters(character->GetRomanizationName(), baseParameter, parameter)) {
+			character->SetBaseParameter(baseParameter);
+			character->SetParameter(parameter);
+		}
 		ownedCharacterDisplayNames_.push_back(ToU32String(character->GetName()));
 	}
 
 	teamMemberCharacterIndices_.fill(-1);
 	occupiedSlots_.fill(false);
+	memberHP_.fill(0);
+	memberHPMax_.fill(0);
 	if (!ownedCharacterIconHandles_.empty()) {
 		occupiedSlots_[0] = true;
 		teamMemberCharacterIndices_[0] = 0;
+		memberHPMax_[0] = std::max(1, static_cast<int>(std::ceil(ownedCharacters_[0]->GetParameter().HP)));
+		memberHP_[0] = memberHPMax_[0];
 	}
 	if (ownedCharacterIconHandles_.size() >= 2) {
 		occupiedSlots_[1] = true;
 		teamMemberCharacterIndices_[1] = 1;
+		memberHPMax_[1] = std::max(1, static_cast<int>(std::ceil(ownedCharacters_[1]->GetParameter().HP)));
+		memberHP_[1] = memberHPMax_[1];
 	}
 	activeSlotIndex_ = 0;
 	characterSwitchTriggered_ = false;
 }
 
 void Team::Update() {
+	const bool characterChangeCommands[kMaxMembersCount] = {
+	    PlayCommand::GetCharacterChange1(),
+	    PlayCommand::GetCharacterChange2(),
+	    PlayCommand::GetCharacterChange3(),
+	    PlayCommand::GetCharacterChange4(),
+	};
+
 	for (int i = 0; i < kMaxMembersCount; ++i) {
-		if (Input::GetInstance()->TriggerKey(static_cast<BYTE>(DIK_1 + i)) && occupiedSlots_[i]) {
+		if (characterChangeCommands[i] && occupiedSlots_[i]) {
 			SetActiveSlot(i);
 		}
 	}
@@ -92,6 +115,8 @@ void Team::AssignCharacterToSlot(int slotIndex, int characterIndex) {
 	occupiedSlots_[slotIndex] = true;
 	activeSlotIndex_ = slotIndex;
 	teamMemberCharacterIndices_[slotIndex] = characterIndex;
+	memberHPMax_[slotIndex] = std::max(1, static_cast<int>(std::ceil(ownedCharacters_[characterIndex]->GetParameter().HP)));
+	memberHP_[slotIndex] = memberHPMax_[slotIndex];
 	if (previousActiveCharacterIndex != characterIndex) {
 		characterSwitchTriggered_ = true;
 	}
@@ -125,6 +150,9 @@ std::string Team::GetPlayableNameByIndex(int characterIndex) const {
 	if (characterIndex < 0 || characterIndex >= static_cast<int>(ownedCharacters_.size())) {
 		return "Sizuku";
 	}
+	if (!ownedCharacters_[characterIndex]) {
+		return "Sizuku";
+	}
 	const std::string& playableName = ownedCharacters_[characterIndex]->GetRomanizationName();
 	return playableName.empty() ? "Sizuku" : playableName;
 }
@@ -133,5 +161,42 @@ std::string Team::GetActiveCharacterName() const {
 	if (activeSlotIndex_ < 0 || activeSlotIndex_ >= kMaxMembersCount) {
 		return "Sizuku";
 	}
+	if (!occupiedSlots_[activeSlotIndex_]) {
+		return "Sizuku";
+	}
 	return GetPlayableNameByIndex(teamMemberCharacterIndices_[activeSlotIndex_]);
+}
+
+void Team::DamageActiveCharacter(int amount) {
+	if (activeSlotIndex_ < 0 || activeSlotIndex_ >= kMaxMembersCount || !occupiedSlots_[activeSlotIndex_]) {
+		return;
+	}
+	memberHP_[activeSlotIndex_] = std::max(0, memberHP_[activeSlotIndex_] - std::max(0, amount));
+}
+
+bool Team::GetIsActiveCharacterAlive() const { return GetActiveCharacterHP() > 0; }
+bool Team::GetAreAllMembersDead() const {
+	for (int i = 0; i < kMaxMembersCount; ++i) {
+		if (occupiedSlots_[i] && memberHP_[i] > 0) {
+			return false;
+		}
+	}
+	return true;
+}
+int Team::GetActiveCharacterHP() const { return GetMemberHP(activeSlotIndex_); }
+
+int Team::GetActiveCharacterHPMax() const { return GetMemberHPMax(activeSlotIndex_); }
+
+int Team::GetMemberHP(int slotIndex) const {
+	if (slotIndex < 0 || slotIndex >= kMaxMembersCount || !occupiedSlots_[slotIndex]) {
+		return 0;
+	}
+	return memberHP_[slotIndex];
+}
+
+int Team::GetMemberHPMax(int slotIndex) const {
+	if (slotIndex < 0 || slotIndex >= kMaxMembersCount || !occupiedSlots_[slotIndex]) {
+		return 0;
+	}
+	return memberHPMax_[slotIndex];
 }

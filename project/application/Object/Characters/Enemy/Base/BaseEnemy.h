@@ -8,6 +8,9 @@
 class Camera;
 class Object3d;
 
+/// <summary>
+/// 敵の基本クラス
+/// </summary>
 class BaseEnemy {
 protected:
 	BaseParameter baseParameter_{10.0f, 0.0f, 10.0f};

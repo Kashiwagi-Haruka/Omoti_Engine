@@ -58,7 +58,7 @@ void PlayerAttack::Update() {
 		models_->SetStateM(PlayerModels::StateM::idle);
 	}
 
-	if (!isSkillAttack && !isSpecialAttack) {
+	if (!isSkillAttack) {
 	// コンボタイマーの更新
 	if (comboTimer_ > 0.0f) {
 		comboTimer_ -= 1.0f / 60.0f;

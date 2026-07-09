@@ -2,6 +2,7 @@
 class PlayCommand {
 
 	public:
+
 	/// <summary>
 	/// 前移動
 	/// </summary>
@@ -81,7 +82,7 @@ class PlayCommand {
 	static bool GetESCAPE();          
 
 	/// <summary>
-	/// キャンセル
+	/// ポーズ切り替え
 	/// </summary>
 	/// <returns></returns>
 	static bool GetPause();
@@ -116,9 +117,24 @@ class PlayCommand {
 	/// <returns></returns>
 	static bool GetCharacterChange4();
 
+	/// <summary>
+	/// チーム画面切り替え
+	/// </summary>
+	/// <returns></returns>
 	static bool GetTeamSelectDisplay();
 
+	/// <summary>
+	/// キャラクター画面切り替え
+	/// </summary>
+	/// <returns></returns>
 	static bool GetCharacterDisplay();
 
+	/// <summary>
+	/// パッドのメニュー開いているか
+	/// </summary>
+	/// <returns></returns>
+	static bool GetPadMenuOpen();
 
+
+	
 };
