@@ -64,6 +64,12 @@ public:
 	void SetTransform(Transform transform) { transform_ = transform; }
 
 	/// <summary>
+	/// カメラの回転をプレイヤーカメラの操作角度に反映する
+	/// </summary>
+	/// <param name="rotate"> 引き継ぐ回転 </param>
+	void SetOrbitRotation(const Vector3& rotate);
+
+	/// <summary>
 	/// プレイヤーの位置を設定する
 	/// </summary>
 	/// <param name="pos"></param>

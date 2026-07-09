@@ -4,20 +4,28 @@
 #include "Input.h"
 #include <numbers>
 #include "WinApp.h"
+#include <cmath>
 namespace{
 float padMenuSize = 500.0f;
 Vector2 padMenuPos = {WinApp::kClientWidth/2.0f, WinApp::kClientHeight/2.0f};
+float iconSize = 60.0f;
 }
 PadMenu::PadMenu() { 
 	backgroundSprite_ = std::make_unique<Sprite>(); 
 	selectSprite_ = std::make_unique<Sprite>();
 	flameSprite_ = std::make_unique<Sprite>();
+
+	teamDisplayIcon_ = std::make_unique<Sprite>();
+	characterDisplayIcon_ = std::make_unique<Sprite>();
+	HintIcon_ = std::make_unique<Sprite>();
 }
 PadMenu::~PadMenu(){};
 void PadMenu::Initialize() {
 	uint32_t backgroundTextureHandle = TextureManager::GetInstance()->GetTextureIndexByfilePath("Resources/2d/Menu/PadMenu/Background.png");
 	uint32_t selectTextureHandle = TextureManager::GetInstance()->GetTextureIndexByfilePath("Resources/2d/Menu/PadMenu/Select.png");
 	uint32_t circleTextureHandle = TextureManager::GetInstance()->GetTextureIndexByfilePath("Resources/2d/Menu/PadMenu/CircleFlame.png");
+	uint32_t teamDisplayIconHandle = TextureManager::GetInstance()->GetTextureIndexByfilePath("Resources/2d/Menu/Team.png");
+
 	backgroundSprite_->Initialize(backgroundTextureHandle);
 	backgroundSprite_->SetScale({padMenuSize,padMenuSize});
 	backgroundSprite_->SetPosition(padMenuPos);
@@ -36,6 +44,8 @@ void PadMenu::Initialize() {
 	flameSprite_->SetAnchorPoint({0.5f, 0.5});
 	flameSprite_->Update();
 
+	teamDisplayIcon_->Initialize(teamDisplayIconHandle);
+	teamDisplayIcon_->SetScale({iconSize, iconSize});
 }
 void PadMenu::Update(){
 	if (!PlayCommand::GetPadMenuOpen()) {

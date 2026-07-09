@@ -38,6 +38,12 @@ class CameraController {
 	float normalAttackIdleTimer_ = 1.0f; // 通常攻撃ボタンが押されていない時間
 	Transform switchStartTransform_{};  // カメラ切り替え開始時の変換情報
 
+	/// <summary>
+	/// 指定されたカメラモードの回転をプレイヤーカメラへ引き継ぐ
+	/// </summary>
+	/// <param name="sourceMode"> 引き継ぎ元のカメラモード </param>
+	void InheritPlayerCameraRotation(CameraMode sourceMode);
+
 public:
 
 	/// <summary>
