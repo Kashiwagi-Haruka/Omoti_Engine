@@ -9,6 +9,7 @@ namespace{
 float padMenuSize = 500.0f;
 Vector2 padMenuPos = {WinApp::kClientWidth/2.0f, WinApp::kClientHeight/2.0f};
 float iconSize = 60.0f;
+float iconDistance = 150.0f;
 }
 PadMenu::PadMenu() { 
 	backgroundSprite_ = std::make_unique<Sprite>(); 
@@ -17,7 +18,7 @@ PadMenu::PadMenu() {
 
 	teamDisplayIcon_ = std::make_unique<Sprite>();
 	characterDisplayIcon_ = std::make_unique<Sprite>();
-	HintIcon_ = std::make_unique<Sprite>();
+	helpIcon_ = std::make_unique<Sprite>();
 }
 PadMenu::~PadMenu(){};
 void PadMenu::Initialize() {
@@ -25,6 +26,8 @@ void PadMenu::Initialize() {
 	uint32_t selectTextureHandle = TextureManager::GetInstance()->GetTextureIndexByfilePath("Resources/2d/Menu/PadMenu/Select.png");
 	uint32_t circleTextureHandle = TextureManager::GetInstance()->GetTextureIndexByfilePath("Resources/2d/Menu/PadMenu/CircleFlame.png");
 	uint32_t teamDisplayIconHandle = TextureManager::GetInstance()->GetTextureIndexByfilePath("Resources/2d/Menu/Team.png");
+	uint32_t characterDisplayIconHandle = TextureManager::GetInstance()->GetTextureIndexByfilePath("Resources/2d/Menu/CharacterDisplay.png");
+	uint32_t helpIconHandle = TextureManager::GetInstance()->GetTextureIndexByfilePath("Resources/2d/Menu/Help.png");
 
 	backgroundSprite_->Initialize(backgroundTextureHandle);
 	backgroundSprite_->SetScale({padMenuSize,padMenuSize});
@@ -46,6 +49,21 @@ void PadMenu::Initialize() {
 
 	teamDisplayIcon_->Initialize(teamDisplayIconHandle);
 	teamDisplayIcon_->SetScale({iconSize, iconSize});
+	teamDisplayIcon_->SetPosition({iconDistance * sinf(0)+padMenuPos.x, iconDistance * -cosf(0)+padMenuPos.y});
+	teamDisplayIcon_->SetAnchorPoint({0.5f, 0.5f});
+	teamDisplayIcon_->Update();
+
+	characterDisplayIcon_->Initialize(characterDisplayIconHandle);
+	characterDisplayIcon_->SetScale({iconSize, iconSize});
+	characterDisplayIcon_->SetPosition({iconDistance * sinf(std::numbers::pi_v<float> / 4.0f) + padMenuPos.x, iconDistance * -cosf(std::numbers::pi_v<float> / 4.0f) + padMenuPos.y});
+	characterDisplayIcon_->SetAnchorPoint({0.5f, 0.5f});
+	characterDisplayIcon_->Update();
+
+	helpIcon_->Initialize(helpIconHandle);
+	helpIcon_->SetScale({iconSize, iconSize});
+	helpIcon_->SetPosition({iconDistance * sinf(std::numbers::pi_v<float> / 2.0f) + padMenuPos.x, iconDistance * -cosf(std::numbers::pi_v<float> / 2.0f) + padMenuPos.y});
+	helpIcon_->SetAnchorPoint({0.5f, 0.5f});
+	helpIcon_->Update();
 }
 void PadMenu::Update(){
 	if (!PlayCommand::GetPadMenuOpen()) {
@@ -83,5 +101,8 @@ void PadMenu::Draw(){
 	if (isMenuSelect) {
 	selectSprite_->Draw();
 	}
+	teamDisplayIcon_->Draw();
+	characterDisplayIcon_->Draw();
+	helpIcon_->Draw();
 	flameSprite_->Draw();
 }

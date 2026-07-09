@@ -10,7 +10,7 @@ class PadMenu {
 	#pragma region ShortCutMenu
 	std::unique_ptr<Sprite> teamDisplayIcon_;
 	std::unique_ptr<Sprite> characterDisplayIcon_;
-	std::unique_ptr<Sprite> HintIcon_;
+	std::unique_ptr<Sprite> helpIcon_;
 	
 	#pragma endregion
 

@@ -120,11 +120,17 @@ bool PlayCommand::GetTeamSelectDisplay(){
 	if (Input::GetInstance()->TriggerKey(DIK_L)) {
 		return true;
 	}
+	if (Input::GetInstance()->ReleaseButton(Input::PadButton::kButtonLeftShoulder)&&Input::GetInstance()->IsJoyStickSelectDirectionL(Input::JoyconStickDirection::UP)) {
+		return true;
+	}
 	return false;
 }
 
 bool PlayCommand::GetCharacterDisplay(){
 	if (Input::GetInstance()->TriggerKey(DIK_C)) {
+		return true;
+	}
+	if (Input::GetInstance()->ReleaseButton(Input::PadButton::kButtonLeftShoulder) && Input::GetInstance()->IsJoyStickSelectDirectionL(Input::JoyconStickDirection::UPRIGHT)) {
 		return true;
 	}
 	return false;
