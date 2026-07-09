@@ -25,7 +25,8 @@ void CharacterDisplay::Initialize() {
 	skyDome_ = std::make_unique<CharacterDisplaySkyDome>();
 		skyDome_->Initialize(camera_.get());
 	}
-	
+	menuText_ = std::make_unique<CharacterDisplayMenuText>();
+	menuText_->Initialize();
 }
 
 void CharacterDisplay::Update() {
@@ -60,12 +61,14 @@ void CharacterDisplay::Update() {
 	sizukuObject_->SetCamera(camera_.get());
 	sizukuObject_->SetTransform(characterTransform_);
 	sizukuObject_->Update();
+	menuText_->Update();
 }
 
 void CharacterDisplay::Draw() {
 	if (!isActive_ || !sizukuObject_) {
 		return;
 	}
+	menuText_->Draw();
 	Object3dCommon::GetInstance()->DrawCommon();
 	skyDome_->Draw();
 	Object3dCommon::GetInstance()->DrawCommon(Object3dCommon::DrawCommonType::SkinningToon);

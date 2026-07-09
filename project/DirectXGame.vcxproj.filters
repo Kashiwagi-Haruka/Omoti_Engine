@@ -1067,6 +1067,7 @@
     <ClInclude Include="application\UI\PadMenu\PadMenu.h" />
     <ClInclude Include="application\Object\Characters\Base\CharacterParameterLoader.h" />
     <ClInclude Include="application\Menu\HelpDisplay\HelpDisplay.h" />
+    <ClInclude Include="application\Menu\CharacterDisplay\CharacterDisplayMenuType.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include=".editorconfig" />

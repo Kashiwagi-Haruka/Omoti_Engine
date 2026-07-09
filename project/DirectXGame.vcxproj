@@ -348,6 +348,7 @@ copy "$(WindowsSdkDir)\bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)\
     <None Include="Resources\shader\Sprite\Sprite.hlsli" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="application\Menu\CharacterDisplay\CharacterDisplayMenuType.h" />
     <ClInclude Include="application\Object\Characters\Playable\Weapon\Allow\Allow.h" />
     <ClInclude Include="application\CameraController\LockOnCamera\LockOnCamera.h" />
     <ClInclude Include="application\Object\Characters\Enemy\Adhesion\Adhesion.h" />

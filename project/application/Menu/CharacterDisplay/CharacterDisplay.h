@@ -1,8 +1,10 @@
 #pragma once
 #include "Camera.h"
+#include "CharacterDisplayMenuType.h"
 #include "Object3d/Object3d.h"
 #include "Transform.h"
 #include "Background/CharacterDisplaySkyDome.h"
+#include "Text/CharacterDisplayMenuText.h"
 #include <memory>
 #include "Object/Characters/Playable/Individual/Sizuku/Sizuku.h"
 #include <numbers>
@@ -12,20 +14,10 @@
 /// </summary>
 class CharacterDisplay {
 
-	/// <summary>
-	/// 項目
-	/// </summary>
-	enum class Menu { 
-		WEAPON, // 武器
-		EQUIP,  // 装備
-		SKILLTREE, // スキルツリー
-		REINFORCEMENT, // 強化
-		PROFILE,       // プロフィール
-	};
-
 	std::unique_ptr<Sizuku> sizukuObject_ = nullptr;
 	std::unique_ptr<CharacterDisplaySkyDome> skyDome_ = nullptr;
 	std::unique_ptr<Camera> camera_ = nullptr;
+	std::unique_ptr<CharacterDisplayMenuText> menuText_ = nullptr;
 	Transform characterTransform_ = {
 	    .scale{1.0f, 1.0f, 1.0f},
 	    .rotate{0.0f,  std::numbers::pi_v<float>,  0.0f },
@@ -33,12 +25,14 @@ class CharacterDisplay {
 	};
 	Transform cameraTransform_ = {
 	    .scale{1.0f, 1.0f, 1.0f  },
-	    .rotate{0.1f, 0.0f, 0.0f  },
+	    .rotate{-0.1f, 0.0f, 0.0f  },
 	    .translate{0.0f, 2.0f, -5.0f},
 	};
 	float rotateSpeed_ = 0.01f;
 	bool isActive_ = true;
 	DirectionalCommonLight directionalLight{.color{1,1,1,},.direction{0,-1,1.0f},.intensity{0.5f}};
+
+	CharacterDisplayMenuType selectMenuType_;
 
 public:
 
