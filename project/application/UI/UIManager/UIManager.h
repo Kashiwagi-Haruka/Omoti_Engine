@@ -16,6 +16,7 @@ class UIManager {
 	Parameters parameters_;
 
 	std::unique_ptr<Sprite> cursolSprite_;
+	std::unique_ptr<Sprite> controllerSprite_;
 
 	std::unique_ptr<HPBarUI> hpBarUI_;
 	std::unique_ptr<AttackOperation> attackOperationUI_;

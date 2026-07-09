@@ -95,16 +95,22 @@ void AttackOperation::Initialize() {
 void AttackOperation::Update() {
 	UpdateInputDisplayMode();
 
-	skillIconSPData_.translate = {1260.0f, 700.0f};
+	skillIconSPData_.translate = {1200.0f, 400.0f};
 	UpdateOperationSprite(skillIconSPData_, PlayCommand::GetSKILL_ATTACK());
-	normalAttackSPData_.translate = {skillIconSPData_.translate.x - skillIconSPData_.size.x - 20.0f, 700.0f};
-	UpdateOperationSprite(normalAttackSPData_, PlayCommand::GetNORMAL_ATTACK_PUSH());
-	jumpSPData_.translate = {normalAttackSPData_.translate.x - normalAttackSPData_.size.x - 20.0f, 700.0f};
-	UpdateOperationSprite(jumpSPData_, PlayCommand::GetJUMP());
-	specialAttackSPData_.translate = {skillIconSPData_.translate.x, skillIconSPData_.translate.y - skillIconSPData_.size.y - 20.0f};
-	UpdateOperationSprite(specialAttackSPData_, PlayCommand::GetSPECIAL_ATTACK());
-	dashSPData_.translate = {specialAttackSPData_.translate.x - specialAttackSPData_.size.x - 20.0f, specialAttackSPData_.translate.y};
+
+	dashSPData_.translate = {skillIconSPData_.translate.x, skillIconSPData_.translate.y+skillIconSPData_.size.y/2.0f+40.0f};
 	UpdateOperationSprite(dashSPData_, PlayCommand::GetDASH());
+
+
+	specialAttackSPData_.translate = {dashSPData_.translate.x-80.0f, dashSPData_.translate.y + dashSPData_.size.y + 20.0f};
+	UpdateOperationSprite(specialAttackSPData_, PlayCommand::GetSPECIAL_ATTACK());
+
+	normalAttackSPData_.translate = {specialAttackSPData_.translate.x - specialAttackSPData_.size.x - 20.0f, specialAttackSPData_.translate.y + specialAttackSPData_.size.y/2.0f+20.0f};
+	UpdateOperationSprite(normalAttackSPData_, PlayCommand::GetNORMAL_ATTACK_PUSH());
+	jumpSPData_.translate = {specialAttackSPData_.translate.x, normalAttackSPData_.translate.y + normalAttackSPData_.size.y/2.0f + 20.0f};
+	UpdateOperationSprite(jumpSPData_, PlayCommand::GetJUMP());
+
+
 
 	UpdateControlGuideSprite(keyboardSkillIconSPData_, skillIconSPData_, kKeyboardDisplaySize);
 	UpdateControlGuideSprite(keyboardJumpSPData_, jumpSPData_, kKeyboardDisplaySize);
