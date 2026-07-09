@@ -185,7 +185,9 @@ void AttackOperation::UpdateInputDisplayMode() {
 	}
 
 	const bool isKeyboardInput = input->PushKey(DIK_W) || input->PushKey(DIK_A) || input->PushKey(DIK_S) || input->PushKey(DIK_D) || input->PushKey(DIK_SPACE) || input->PushKey(DIK_E) ||
-	                             input->PushKey(DIK_Q) || input->PushKey(DIK_ESCAPE) || input->PushKey(DIK_RETURN) || input->PushMouseButton(Input::MouseButton::kLeft) ||
+	                             input->PushKey(DIK_Q) || input->PushKey(DIK_ESCAPE) || input->PushKey(DIK_RETURN) || input->PushKey(DIK_1) || input->PushKey(DIK_2) || input->PushKey(DIK_3) ||
+	                             input->PushKey(DIK_4) ||
+	                             input->PushMouseButton(Input::MouseButton::kLeft) ||
 	                             input->PushMouseButton(Input::MouseButton::kRight);
 	if (isKeyboardInput) {
 		inputDisplayMode_ = InputDisplayMode::Keyboard;

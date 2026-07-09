@@ -1,5 +1,6 @@
 #include "TeamUI.h"
 #include "Function.h"
+#include "Input.h"
 #include "SpriteCommon.h"
 #include "Text/FreeTypeManager/FreeTypeManager.h"
 #include "TextureManager.h"
@@ -29,6 +30,12 @@ constexpr std::array<const char*, Team::kMaxMembersCount> kPadTexturePaths{
     "Resources/2d/Team/UI/Pad/DOWN.png",
     "Resources/2d/Team/UI/Pad/LEFT.png",
 };
+constexpr std::array<const char*, Team::kMaxMembersCount> kKeyboardTexturePaths{
+    "Resources/2d/Team/UI/KeyBoard/1.png",
+    "Resources/2d/Team/UI/KeyBoard/2.png",
+    "Resources/2d/Team/UI/KeyBoard/3.png",
+    "Resources/2d/Team/UI/KeyBoard/4.png",
+};
 } // namespace
 
 TeamUI::TeamUI() { displayedCharacterIndices_.fill(-1); }
@@ -44,6 +51,10 @@ void TeamUI::Initialize(const Team& team) {
 	std::array<uint32_t, kMaxMembersCount> padTextureHandles{};
 	for (int i = 0; i < kMaxMembersCount; ++i) {
 		padTextureHandles[i] = TextureManager::GetInstance()->GetTextureIndexByfilePath(kPadTexturePaths[i]);
+	}
+	std::array<uint32_t, kMaxMembersCount> keyboardTextureHandles{};
+	for (int i = 0; i < kMaxMembersCount; ++i) {
+		keyboardTextureHandles[i] = TextureManager::GetInstance()->GetTextureIndexByfilePath(kKeyboardTexturePaths[i]);
 	}
 
 	characterNameFontHandle_ = FreeTypeManager::CreateFace("Resources/Font/irohakakuC-Medium.ttf", 0);
@@ -68,6 +79,7 @@ void TeamUI::Initialize(const Team& team) {
 			hpBarSprites_[i].reset();
 			hpBarBackgroundSprites_[i].reset();
 			padSprites_[i].reset();
+			keyboardSprites_[i].reset();
 			specialGaugeFlameSprites_[i].reset();
 			specialGaugeSprites_[i].reset();
 			continue;
@@ -88,6 +100,14 @@ void TeamUI::Initialize(const Team& team) {
 		padSprites_[i]->SetScale(kPadIconSize);
 		padSprites_[i]->SetColor(i == team.GetActiveSlot() ? kActiveColor : kInactiveColor);
 		padSprites_[i]->Update();
+
+		keyboardSprites_[i] = std::make_unique<Sprite>();
+		keyboardSprites_[i]->Initialize(keyboardTextureHandles[i]);
+		keyboardSprites_[i]->SetAnchorPoint(kLeftTopAnchor);
+		keyboardSprites_[i]->SetPosition(iconPositions_[i] + Vector2{kPadIconGap, 0.0f});
+		keyboardSprites_[i]->SetScale(kPadIconSize);
+		keyboardSprites_[i]->SetColor(i == team.GetActiveSlot() ? kActiveColor : kInactiveColor);
+		keyboardSprites_[i]->Update();
 
 		hpBarSprites_[i] = std::make_unique<Sprite>();
 		hpBarSprites_[i]->Initialize(hpBarTextureHandle);
@@ -137,6 +157,7 @@ void TeamUI::Initialize(const Team& team) {
 }
 
 void TeamUI::Update(const Team& team) {
+	UpdateInputDisplayMode();
 	for (int i = 0; i < kMaxMembersCount; ++i) {
 		const int characterIndex = team.GetMemberCharacterIndex(i);
 		if (!team.GetHasMember(i) || characterIndex < 0) {
@@ -146,6 +167,7 @@ void TeamUI::Update(const Team& team) {
 			hpBarSprites_[i].reset();
 			hpBarBackgroundSprites_[i].reset();
 			padSprites_[i].reset();
+			keyboardSprites_[i].reset();
 			specialGaugeFlameSprites_[i].reset();
 			specialGaugeSprites_[i].reset();
 			displayedCharacterIndices_[i] = -1;
@@ -166,6 +188,13 @@ void TeamUI::Update(const Team& team) {
 			padSprites_[i] = std::make_unique<Sprite>();
 			padSprites_[i]->Initialize(padTextureHandle);
 			padSprites_[i]->SetAnchorPoint(kLeftTopAnchor);
+		}
+
+		if (!keyboardSprites_[i]) {
+			const uint32_t keyboardTextureHandle = TextureManager::GetInstance()->GetTextureIndexByfilePath(kKeyboardTexturePaths[i]);
+			keyboardSprites_[i] = std::make_unique<Sprite>();
+			keyboardSprites_[i]->Initialize(keyboardTextureHandle);
+			keyboardSprites_[i]->SetAnchorPoint(kLeftTopAnchor);
 		}
 
 		if (!hpBarSprites_[i]) {
@@ -203,6 +232,11 @@ void TeamUI::Update(const Team& team) {
 		padSprites_[i]->SetScale(kPadIconSize);
 		padSprites_[i]->SetColor(i == team.GetActiveSlot() ? kInactiveColor : kActiveColor);
 		padSprites_[i]->Update();
+
+		keyboardSprites_[i]->SetPosition(iconPositions_[i] + Vector2{kPadIconGap, 0.0f});
+		keyboardSprites_[i]->SetScale(kPadIconSize);
+		keyboardSprites_[i]->SetColor(i == team.GetActiveSlot() ? kInactiveColor : kActiveColor);
+		keyboardSprites_[i]->Update();		
 
 		hpBarSprites_[i]->SetPosition(iconPositions_[i] + kHpBarOffset);
 		{
@@ -242,11 +276,21 @@ void TeamUI::Draw() {
 			iconSprite->Draw();
 		}
 	}
-	for (auto& padSprite : padSprites_) {
-		if (padSprite) {
-			padSprite->Draw();
+	if (inputDisplayMode_ == InputDisplayMode::Pad) {
+		for (auto& padSprite : padSprites_) {
+			if (padSprite) {
+				padSprite->Draw();
+			}
 		}
 	}
+	if (inputDisplayMode_ == InputDisplayMode::Keyboard) {
+		for (auto& keyboardSprite : keyboardSprites_) {
+			if (keyboardSprite) {
+				keyboardSprite->Draw();
+			}
+		}
+	}
+	
 	for (auto& characterNameText : characterNameTexts_) {
 		characterNameText.Draw();
 	}
@@ -270,5 +314,25 @@ void TeamUI::Draw() {
 		if (specialGaugeFlameSprite) {
 			specialGaugeFlameSprite->Draw();
 		}
+	}
+}
+void TeamUI::UpdateInputDisplayMode() {
+	Input* input = Input::GetInstance();
+
+	const bool isPadInput = input->PushButton(Input::PadButton::kButtonA) || input->PushButton(Input::PadButton::kButtonB) || input->PushButton(Input::PadButton::kButtonX) ||
+	                        input->PushButton(Input::PadButton::kButtonY) || input->PushButton(Input::PadButton::kButtonLeftShoulder) || input->PushButton(Input::PadButton::kButtonRightShoulder) ||
+	                        input->PushButton(Input::PadButton::kButtonBack) || input->PushButton(Input::PadButton::kButtonStart) || input->PushButton(Input::PadButton::kButtonLeftThumb) ||
+	                        input->PushButton(Input::PadButton::kButtonRightThumb) || input->PushButton(Input::PadButton::kButtonUp) || input->PushButton(Input::PadButton::kButtonDown) ||
+	                        input->PushButton(Input::PadButton::kButtonLeft) || input->PushButton(Input::PadButton::kButtonRight) || input->PushLeftTrigger() || input->PushRightTrigger();
+	if (isPadInput) {
+		inputDisplayMode_ = InputDisplayMode::Pad;
+		return;
+	}
+
+	const bool isKeyboardInput = input->PushKey(DIK_W) || input->PushKey(DIK_A) || input->PushKey(DIK_S) || input->PushKey(DIK_D) || input->PushKey(DIK_SPACE) || input->PushKey(DIK_E) ||
+	                             input->PushKey(DIK_Q) || input->PushKey(DIK_ESCAPE) || input->PushKey(DIK_RETURN) || input->PushKey(DIK_1) || input->PushKey(DIK_2) || input->PushKey(DIK_3) ||
+	                             input->PushKey(DIK_4) || input->PushMouseButton(Input::MouseButton::kLeft) || input->PushMouseButton(Input::MouseButton::kRight);
+	if (isKeyboardInput) {
+		inputDisplayMode_ = InputDisplayMode::Keyboard;
 	}
 }
