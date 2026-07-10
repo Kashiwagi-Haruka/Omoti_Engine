@@ -198,7 +198,7 @@ copy "$(WindowsSdkDir)\bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)\
     <ClCompile Include="application\Menu\CharacterDisplay\Text\CharacterDisplayText.cpp" />
     <ClCompile Include="application\Object\Damage\Damage.cpp" />
     <ClCompile Include="application\Object\Characters\Playable\Individual\Arte\Arte.cpp" />
-    <ClCompile Include="application\Menu\CharacterDisplay\Text\CharacterDisplayMenuText.cpp" />
+    <ClCompile Include="application\Menu\CharacterDisplay\Menu\CharacterDisplayMenuText.cpp" />
     <ClCompile Include="application\Object\Damage\DamageMath.cpp" />
     <ClCompile Include="application\UI\AttackOperation\AttackOperation.cpp" />
     <ClCompile Include="application\Object\Characters\Playable\Weapon\BigSword\BigSword.cpp" />
@@ -207,6 +207,12 @@ copy "$(WindowsSdkDir)\bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)\
     <ClCompile Include="application\UI\DashGauge\DashGauge.cpp" />
     <ClCompile Include="application\Object\Characters\Enemy\HPBar\EnemyHPBar.cpp" />
     <ClCompile Include="application\Object\Characters\Base\CharacterParameterLoader.cpp" />
+    <ClCompile Include="application\Menu\CharacterDisplay\Menu\Reinforcement\CharacterDisplayReinforcement.cpp" />
+    <ClCompile Include="application\Menu\CharacterDisplay\Menu\Equip\CharacterDisplayEquip.cpp" />
+    <ClCompile Include="application\Menu\CharacterDisplay\Menu\Profile\CharacterDisplayProfile.cpp" />
+    <ClCompile Include="application\Menu\CharacterDisplay\Menu\Skilltree\CharacterDisplaySkilltree.cpp" />
+    <ClCompile Include="application\Menu\CharacterDisplay\Menu\Status\CharacterDisplayStatus.cpp" />
+    <ClCompile Include="application\Menu\CharacterDisplay\Menu\Weapon\CharacterDisplayWeapon.cpp" />
     <ClCompile Include="Engine\Editor\EditorTool\Command\EditorCommand.cpp" />
     <ClCompile Include="Engine\Audio\AudioMixer.cpp" />
     <ClCompile Include="Engine\Editor\EditorData\Audio\EditorAudio.cpp" />
@@ -327,6 +333,7 @@ copy "$(WindowsSdkDir)\bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)\
     <ClCompile Include="application\UI\Team\TeamUI.cpp" />
     <ClCompile Include="application\UI\PadMenu\PadMenu.cpp" />
     <ClCompile Include="application\Menu\HelpDisplay\HelpDisplay.cpp" />
+    <ClCompile Include="application\CameraController\CharacterCamera\SizukuSpecialCamera.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include=".editorconfig" />
@@ -392,7 +399,7 @@ copy "$(WindowsSdkDir)\bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)\
     <ClInclude Include="application\Menu\CharacterDisplay\Text\CharacterDisplayText.h" />
     <ClInclude Include="application\Object\Damage\Damage.h" />
     <ClInclude Include="application\Object\Characters\Playable\Individual\Arte\Arte.h" />
-    <ClInclude Include="application\Menu\CharacterDisplay\Text\CharacterDisplayMenuText.h" />
+    <ClInclude Include="application\Menu\CharacterDisplay\Menu\CharacterDisplayMenuText.h" />
     <ClInclude Include="application\Object\Damage\DamageMath.h" />
     <ClInclude Include="application\UI\AttackOperation\AttackOperation.h" />
     <ClInclude Include="application\Object\Characters\Playable\Weapon\BigSword\BigSword.h" />
@@ -401,6 +408,12 @@ copy "$(WindowsSdkDir)\bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)\
     <ClInclude Include="application\UI\DashGauge\DashGauge.h" />
     <ClInclude Include="application\Object\Characters\Enemy\HPBar\EnemyHPBar.h" />
     <ClInclude Include="application\Object\Characters\Base\CharacterParameterLoader.h" />
+    <ClInclude Include="application\Menu\CharacterDisplay\Menu\Reinforcement\CharacterDisplayReinforcement.h" />
+    <ClInclude Include="application\Menu\CharacterDisplay\Menu\Equip\CharacterDisplayEquip.h" />
+    <ClInclude Include="application\Menu\CharacterDisplay\Menu\Profile\CharacterDisplayProfile.h" />
+    <ClInclude Include="application\Menu\CharacterDisplay\Menu\Skilltree\CharacterDisplaySkilltree.h" />
+    <ClInclude Include="application\Menu\CharacterDisplay\Menu\Status\CharacterDisplayStatus.h" />
+    <ClInclude Include="application\Menu\CharacterDisplay\Menu\Weapon\CharacterDisplayWeapon.h" />
     <ClInclude Include="Engine\Editor\EditorTool\Command\EditorCommand.h" />
     <ClInclude Include="Engine\Audio\AudioMixer.h" />
     <ClInclude Include="Engine\base\ScreenSize.h" />
@@ -525,6 +538,7 @@ copy "$(WindowsSdkDir)\bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)\
     <ClInclude Include="application\UI\Team\TeamUI.h" />
     <ClInclude Include="application\UI\PadMenu\PadMenu.h" />
     <ClInclude Include="application\Menu\HelpDisplay\HelpDisplay.h" />
+    <ClInclude Include="application\CameraController\CharacterCamera\SizukuSpecialCamera.h" />
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="Resources\shader\FullScreenCopy\CopyImage.PS.hlsl">

@@ -243,7 +243,7 @@
     <ClCompile Include="application\Menu\CharacterDisplay\CharacterDisplay.cpp">
       <Filter>Application\Menu\CharacterDisplay</Filter>
     </ClCompile>
-    <ClCompile Include="application\Menu\CharacterDisplay\Text\CharacterDisplayMenuText.cpp">
+    <ClCompile Include="application\Menu\CharacterDisplay\Menu\CharacterDisplayMenuText.cpp">
       <Filter>Application\Menu\CharacterDisplay</Filter>
     </ClCompile>
     <ClCompile Include="application\Menu\CharacterDisplay\Background\CharacterDisplaySkyDome.cpp">
@@ -540,6 +540,13 @@
     <ClCompile Include="application\UI\PadMenu\PadMenu.cpp" />
     <ClCompile Include="application\Object\Characters\Base\CharacterParameterLoader.cpp" />
     <ClCompile Include="application\Menu\HelpDisplay\HelpDisplay.cpp" />
+    <ClCompile Include="application\CameraController\CharacterCamera\SizukuSpecialCamera.cpp" />
+    <ClCompile Include="application\Menu\CharacterDisplay\Menu\Reinforcement\CharacterDisplayReinforcement.cpp" />
+    <ClCompile Include="application\Menu\CharacterDisplay\Menu\Equip\CharacterDisplayEquip.cpp" />
+    <ClCompile Include="application\Menu\CharacterDisplay\Menu\Profile\CharacterDisplayProfile.cpp" />
+    <ClCompile Include="application\Menu\CharacterDisplay\Menu\Skilltree\CharacterDisplaySkilltree.cpp" />
+    <ClCompile Include="application\Menu\CharacterDisplay\Menu\Status\CharacterDisplayStatus.cpp" />
+    <ClCompile Include="application\Menu\CharacterDisplay\Menu\Weapon\CharacterDisplayWeapon.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Engine\Camera\Camera.h">
@@ -728,7 +735,7 @@
     <ClInclude Include="application\Menu\CharacterDisplay\CharacterDisplay.h">
       <Filter>Application\Menu\CharacterDisplay</Filter>
     </ClInclude>
-    <ClInclude Include="application\Menu\CharacterDisplay\Text\CharacterDisplayMenuText.h">
+    <ClInclude Include="application\Menu\CharacterDisplay\Menu\CharacterDisplayMenuText.h">
       <Filter>Application\Menu\CharacterDisplay</Filter>
     </ClInclude>
     <ClInclude Include="application\Menu\CharacterDisplay\Background\CharacterDisplaySkyDome.h">
@@ -1068,6 +1075,13 @@
     <ClInclude Include="application\Object\Characters\Base\CharacterParameterLoader.h" />
     <ClInclude Include="application\Menu\HelpDisplay\HelpDisplay.h" />
     <ClInclude Include="application\Menu\CharacterDisplay\CharacterDisplayMenuType.h" />
+    <ClInclude Include="application\CameraController\CharacterCamera\SizukuSpecialCamera.h" />
+    <ClInclude Include="application\Menu\CharacterDisplay\Menu\Reinforcement\CharacterDisplayReinforcement.h" />
+    <ClInclude Include="application\Menu\CharacterDisplay\Menu\Equip\CharacterDisplayEquip.h" />
+    <ClInclude Include="application\Menu\CharacterDisplay\Menu\Profile\CharacterDisplayProfile.h" />
+    <ClInclude Include="application\Menu\CharacterDisplay\Menu\Skilltree\CharacterDisplaySkilltree.h" />
+    <ClInclude Include="application\Menu\CharacterDisplay\Menu\Status\CharacterDisplayStatus.h" />
+    <ClInclude Include="application\Menu\CharacterDisplay\Menu\Weapon\CharacterDisplayWeapon.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include=".editorconfig" />

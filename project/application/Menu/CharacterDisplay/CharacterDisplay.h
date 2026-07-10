@@ -4,7 +4,7 @@
 #include "Object3d/Object3d.h"
 #include "Transform.h"
 #include "Background/CharacterDisplaySkyDome.h"
-#include "Text/CharacterDisplayMenuText.h"
+#include "Menu/CharacterDisplayMenuText.h"
 #include <memory>
 #include "Object/Characters/Playable/Individual/Sizuku/Sizuku.h"
 #include <numbers>
@@ -25,7 +25,7 @@ class CharacterDisplay {
 	};
 	Transform cameraTransform_ = {
 	    .scale{1.0f, 1.0f, 1.0f  },
-	    .rotate{-0.1f, 0.0f, 0.0f  },
+	    .rotate{0.1f, 0.0f, 0.0f  },
 	    .translate{0.0f, 2.0f, -5.0f},
 	};
 	float rotateSpeed_ = 0.01f;
