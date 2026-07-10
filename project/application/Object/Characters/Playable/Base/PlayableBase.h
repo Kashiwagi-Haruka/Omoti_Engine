@@ -4,6 +4,7 @@
 #include "Object/Characters/Base/Attribute.h"
 #include "Object/Characters/Base/CharacterParameters.h"
 #include "Object/Characters/Playable/Base/WeaponTypes.h"
+#include "SkilltreeType.h"
 #include "Object3d/Object3d.h"
 #include <optional>
 #include <string>
@@ -18,6 +19,9 @@ protected:
 	WeaponTypes weaponTypes_ = WeaponTypes::NONE;
 	BaseParameter baseParameter_;
 	Parameter parameter_;
+	SkilltreeType skilltree_;
+	// 強化量
+	int reinforcementAmount_;
 	bool isHaveCharacter_;
 
 public:

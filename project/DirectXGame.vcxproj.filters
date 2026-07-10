@@ -1082,6 +1082,7 @@
     <ClInclude Include="application\Menu\CharacterDisplay\Menu\Skilltree\CharacterDisplaySkilltree.h" />
     <ClInclude Include="application\Menu\CharacterDisplay\Menu\Status\CharacterDisplayStatus.h" />
     <ClInclude Include="application\Menu\CharacterDisplay\Menu\Weapon\CharacterDisplayWeapon.h" />
+    <ClInclude Include="application\Object\Characters\Playable\Base\SkilltreeType.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include=".editorconfig" />
