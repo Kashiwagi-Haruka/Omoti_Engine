@@ -3,9 +3,16 @@
 /// 項目
 /// </summary>
 enum class CharacterDisplayMenuType {
-	WEAPON,        // 武器
-	EQUIP,         // 装備
-	SKILLTREE,     // スキルツリー
-	REINFORCEMENT, // 強化
-	PROFILE,       // プロフィール
+	// ステータス
+	STATUS,		   
+	// 武器
+	WEAPON,        
+	// 装備
+	EQUIP, 
+	// スキルツリー
+	SKILLTREE,     
+	// 強化
+	REINFORCEMENT, 
+	// プロフィール
+	PROFILE,       
 };
