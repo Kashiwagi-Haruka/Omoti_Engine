@@ -1,6 +1,7 @@
 #include "CharacterDisplay.h"
 #include "Model/ModelManager.h"
 #include "Object3d/Object3dCommon.h"
+#include "SpriteCommon.h"
 #include <numbers>
 #include <imgui.h>
 #include "Input.h"
@@ -68,9 +69,11 @@ void CharacterDisplay::Draw() {
 	if (!isActive_ || !sizukuObject_) {
 		return;
 	}
-	menuText_->Draw();
+
 	Object3dCommon::GetInstance()->DrawCommon();
 	skyDome_->Draw();
 	Object3dCommon::GetInstance()->DrawCommon(Object3dCommon::DrawCommonType::SkinningToon);
 	sizukuObject_->Draw();
+	SpriteCommon::GetInstance()->DrawCommon();
+	menuText_->Draw();
 }
