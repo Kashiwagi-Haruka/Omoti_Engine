@@ -71,7 +71,18 @@ void GetCombinedTriggerValues(const DIJOYSTATE& state, int leftButtonIndex, int 
 	}
 }
 float NormalizeXInputTrigger(BYTE triggerValue) { return Clamp01(static_cast<float>(triggerValue) / 255.0f); }
+float NormalizeXInputThumb(SHORT value, SHORT deadZone) {
+	const int rawValue = static_cast<int>(value);
+	const int deadZoneValue = static_cast<int>(deadZone);
+	const int absValue = std::abs(rawValue);
+	if (absValue <= deadZoneValue) {
+		return 0.0f;
+	}
 
+	const int maxValue = rawValue < 0 ? 32768 : 32767;
+	const float normalized = static_cast<float>(absValue - deadZoneValue) / static_cast<float>(maxValue - deadZoneValue);
+	return std::copysign(Clamp01(normalized), static_cast<float>(rawValue));
+}
 
 WORD GetXInputButtonMask(Input::PadButton button) {
 	switch (button) {
@@ -438,6 +449,9 @@ bool Input::ReleaseButton(PadButton button) {
 	return false;
 }
 float Input::GetJoyStickLX() const {
+	if (isXInputConnected_) {
+		return NormalizeXInputThumb(xInputState_.Gamepad.sThumbLX, XINPUT_GAMEPAD_LEFT_THUMB_DEADZONE);
+	}
 	if (!gamePadDevice_)
 		return 0.0f;
 	float norm = (padState_.lX - 32767.0f) / 32767.0f;
@@ -447,6 +461,9 @@ float Input::GetJoyStickLX() const {
 }
 
 float Input::GetJoyStickLY() const {
+	if (isXInputConnected_) {
+		return NormalizeXInputThumb(xInputState_.Gamepad.sThumbLY, XINPUT_GAMEPAD_LEFT_THUMB_DEADZONE);
+	}
 	if (!gamePadDevice_)
 		return 0.0f;
 	float norm = (padState_.lY - 32767.0f) / 32767.0f;
@@ -459,6 +476,9 @@ float Input::GetJoyStickLY() const {
 Vector2 Input::GetJoyStickLXY() const { return Vector2(GetJoyStickLX(), GetJoyStickLY()); }
 
 float Input::GetJoyStickRX() const {
+	if (isXInputConnected_) {
+		return NormalizeXInputThumb(xInputState_.Gamepad.sThumbRX, XINPUT_GAMEPAD_RIGHT_THUMB_DEADZONE);
+	}
 	if (!gamePadDevice_)
 		return 0.0f;
 	float norm = (padState_.lRx - 32767.0f) / 32767.0f; // 右スティックX
@@ -500,6 +520,9 @@ bool Input::IsJoyStickSelectDirectionL(JoyconStickDirection direction) const {
 	return selectedDirection == direction;
 }
 float Input::GetJoyStickRY() const {
+	if (isXInputConnected_) {
+		return NormalizeXInputThumb(xInputState_.Gamepad.sThumbRY, XINPUT_GAMEPAD_RIGHT_THUMB_DEADZONE);
+	}
 	if (!gamePadDevice_)
 		return 0.0f;
 	float norm = (padState_.lRy - 32767.0f) / 32767.0f; // 右スティックY
