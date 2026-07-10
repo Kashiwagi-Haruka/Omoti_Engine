@@ -1,6 +1,7 @@
 #pragma once
 #include "Sprite.h"
 #include <array>
+#include <memory>
 class CharacterDisplayReinforcement {
 
 	// 最大分割数
