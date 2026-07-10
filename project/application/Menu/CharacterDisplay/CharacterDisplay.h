@@ -7,6 +7,13 @@
 #include "Menu/CharacterDisplayMenuText.h"
 #include <memory>
 #include "Object/Characters/Playable/Individual/Sizuku/Sizuku.h"
+#include "Menu/Status/CharacterDisplayStatus.h"
+#include "Menu/Weapon/CharacterDisplayWeapon.h"
+#include "Menu/Equip/CharacterDisplayEquip.h"
+#include "Menu/Skilltree/CharacterDisplaySkilltree.h"
+#include "Menu/Reinforcement/CharacterDisplayReinforcement.h"
+#include "Menu/Profile/CharacterDisplayProfile.h"
+
 #include <numbers>
 #include "Light/CommonLight/DirectionalCommonLight.h"
 /// <summary>
@@ -33,6 +40,13 @@ class CharacterDisplay {
 	DirectionalCommonLight directionalLight{.color{1,1,1,},.direction{0,-1,1.0f},.intensity{0.5f}};
 
 	CharacterDisplayMenuType selectMenuType_;
+
+	std::unique_ptr<CharacterDisplayStatus> status_;
+	std::unique_ptr<CharacterDisplayWeapon> weapon_;
+	std::unique_ptr<CharacterDisplayEquip> equip_;
+	std::unique_ptr<CharacterDisplaySkilltree> skilltree_;
+	std::unique_ptr<CharacterDisplayReinforcement> reinforcement_;
+	std::unique_ptr<CharacterDisplayProfile> profile_;
 
 public:
 

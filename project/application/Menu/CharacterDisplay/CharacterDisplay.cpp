@@ -28,6 +28,19 @@ void CharacterDisplay::Initialize() {
 	}
 	menuText_ = std::make_unique<CharacterDisplayMenuText>();
 	menuText_->Initialize();
+
+	status_ = std::make_unique<CharacterDisplayStatus>();
+	status_->Initialize();
+	weapon_ = std::make_unique<CharacterDisplayWeapon>();
+	weapon_->Initialize();
+	equip_ = std::make_unique<CharacterDisplayEquip>();
+	equip_->Initialize();
+	skilltree_ = std::make_unique<CharacterDisplaySkilltree>();
+	skilltree_->Initialize();
+	reinforcement_ = std::make_unique<CharacterDisplayReinforcement>();
+	reinforcement_->Initialize();
+	profile_ = std::make_unique<CharacterDisplayProfile>();
+	profile_->Initialize();
 }
 
 void CharacterDisplay::Update() {
@@ -62,6 +75,32 @@ void CharacterDisplay::Update() {
 	sizukuObject_->SetCamera(camera_.get());
 	sizukuObject_->SetTransform(characterTransform_);
 	sizukuObject_->Update();
+
+	switch (selectMenuType_) {
+	case CharacterDisplayMenuType::STATUS:
+		status_->Update();
+		break;
+	case CharacterDisplayMenuType::WEAPON:
+		weapon_->Update();
+		break;
+	case CharacterDisplayMenuType::EQUIP:
+		equip_->Update();
+		break;
+	case CharacterDisplayMenuType::SKILLTREE:
+		skilltree_->Update();
+		break;
+	case CharacterDisplayMenuType::REINFORCEMENT:
+		reinforcement_->Update();
+		break;
+	case CharacterDisplayMenuType::PROFILE:
+		profile_->Update();
+		break;
+	default:
+		break;
+	}
+
+
+
 	menuText_->Update();
 }
 
@@ -72,6 +111,30 @@ void CharacterDisplay::Draw() {
 
 	Object3dCommon::GetInstance()->DrawCommon();
 	skyDome_->Draw();
+
+	switch (selectMenuType_) {
+	case CharacterDisplayMenuType::STATUS:
+		status_->Draw();
+		break;
+	case CharacterDisplayMenuType::WEAPON:
+		weapon_->Draw();
+		break;
+	case CharacterDisplayMenuType::EQUIP:
+		equip_->Draw();
+		break;
+	case CharacterDisplayMenuType::SKILLTREE:
+		skilltree_->Draw();
+		break;
+	case CharacterDisplayMenuType::REINFORCEMENT:
+		reinforcement_->Draw();
+		break;
+	case CharacterDisplayMenuType::PROFILE:
+		profile_->Draw();
+		break;
+	default:
+		break;
+	}
+
 	Object3dCommon::GetInstance()->DrawCommon(Object3dCommon::DrawCommonType::SkinningToon);
 	sizukuObject_->Draw();
 	SpriteCommon::GetInstance()->DrawCommon();

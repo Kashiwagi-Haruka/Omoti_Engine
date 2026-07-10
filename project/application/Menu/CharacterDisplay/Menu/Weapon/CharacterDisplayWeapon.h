@@ -1,2 +1,9 @@
 #pragma once
-class CharacterDisplayWeapon {};
+class CharacterDisplayWeapon {
+
+	public:
+	void Initialize();
+	void Update();
+	void Draw();
+
+};
