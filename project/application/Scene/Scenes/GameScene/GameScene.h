@@ -96,6 +96,7 @@ private:
 	bool dissolveEnabled_ = false;
 	float dissolveThreshold_ = 0.0f;
 	float dissolveEdgeWidth_ = 0.02f;
+	Vector4 dissolveEdgeColor_ = {0.35f, 0.95f, 1.0f, 1.0f};
 	Vector4 characterDeathDissolveStartColor_ = {1.0f, 1.0f, 1.0f, 1.0f};
 	bool isCharacterDeathDissolving_ = false;
 	float characterDeathDissolveTimer_ = 0.0f;

@@ -16,6 +16,7 @@ struct Material
     int dissolveEnabled;
     float dissolveThreshold;
     float dissolveEdgeWidth;
+    float4 dissolveEdgeColor;
 };
 struct DirectionalLight
 {
@@ -155,7 +156,7 @@ void ApplyDissolve(float3 worldPosition, float2 texcoord, inout float3 color)
         discard;
     }
     float edge = 1.0f - smoothstep(gMaterial.dissolveThreshold, gMaterial.dissolveThreshold + max(gMaterial.dissolveEdgeWidth, 0.0001f), mask);
-    color = lerp(color, float3(1.0f, 0.35f, 0.05f), saturate(edge));
+    color = lerp(color, gMaterial.dissolveEdgeColor.rgb, saturate(edge));
 }
 PixelShaderOutput main(Object3dVertexShaderOutput input)
 {

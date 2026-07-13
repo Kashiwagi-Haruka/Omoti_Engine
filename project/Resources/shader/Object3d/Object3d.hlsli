@@ -9,7 +9,6 @@ struct Object3dVertexShaderOutput
     float4 spotShadowPosition : TEXCOORD3;
     float4 areaShadowPosition : TEXCOORD4;
 };
-
 float3 ApplyEnvironmentMapToneMap(float3 color)
 {
     const float maxChannel = max(max(color.r, color.g), color.b);

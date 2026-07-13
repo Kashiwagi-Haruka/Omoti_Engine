@@ -34,6 +34,7 @@ void Object3d::Initialize() {
 	SetDissolveEnabled(false);
 	SetDissolveThreshold(0.0f);
 	SetDissolveEdgeWidth(0.02f);
+	SetDissolveEdgeColor({1.0f, 0.35f, 0.05f, 1.0f});
 }
 namespace {
 bool IsIdentityMatrix(const Matrix4x4& matrix) {
@@ -300,6 +301,11 @@ void Object3d::SetDissolveEdgeWidth(float width) {
 		materialData_->dissolveEdgeWidth = std::clamp(width, 0.0f, 0.5f);
 	}
 }
+void Object3d::SetDissolveEdgeColor(const Vector4& color) {
+	if (materialData_) {
+		materialData_->dissolveEdgeColor = color;
+	}
+}
 Vector4 Object3d::GetColor() const {
 	if (materialData_) {
 		return materialData_->color;
@@ -377,6 +383,12 @@ bool Object3d::IsSepiaEnabled() const {
 		return materialData_->sepiaEnabled != 0;
 	}
 	return false;
+}
+Vector4 Object3d::GetDissolveEdgeColor() const {
+	if (materialData_) {
+		return materialData_->dissolveEdgeColor;
+	}
+	return {1.0f, 0.35f, 0.05f, 1.0f};
 }
 void Object3d::CreateResources() {
 	transformResource_ = Object3dCommon::GetInstance()->CreateBufferResource(sizeof(TransformationMatrix));

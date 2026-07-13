@@ -449,6 +449,7 @@ void GameScene::Update() {
 			characterObject->SetDissolveEnabled(dissolveEnabled_);
 			characterObject->SetDissolveThreshold(dissolveThreshold_);
 			characterObject->SetDissolveEdgeWidth(dissolveEdgeWidth_);
+			characterObject->SetDissolveEdgeColor(dissolveEdgeColor_);
 		}
 
 		if (characterDeathDissolveTimer_ >= kCharacterDeathDissolveDuration_) {
@@ -576,6 +577,7 @@ void GameScene::Update() {
 					characterObject->SetDissolveEnabled(dissolveEnabled_);
 					characterObject->SetDissolveThreshold(dissolveThreshold_);
 					characterObject->SetDissolveEdgeWidth(dissolveEdgeWidth_);
+					characterObject->SetDissolveEdgeColor(dissolveEdgeColor_);
 				}
 			}
 		}

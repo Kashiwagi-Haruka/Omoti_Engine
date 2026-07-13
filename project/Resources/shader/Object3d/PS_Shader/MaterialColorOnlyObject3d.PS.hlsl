@@ -16,6 +16,7 @@ struct Material
     int dissolveEnabled;
     float dissolveThreshold;
     float dissolveEdgeWidth;
+    float4 dissolveEdgeColor;
 };
 ConstantBuffer<Material> gMaterial : register(b0);
 Texture2D<float4> gTexture : register(t0);

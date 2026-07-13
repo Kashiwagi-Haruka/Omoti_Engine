@@ -16,6 +16,7 @@ struct Material
     int dissolveEnabled;
     float dissolveThreshold;
     float dissolveEdgeWidth;
+    float4 dissolveEdgeColor;
 };
 struct Camera
 {

@@ -105,6 +105,7 @@ public:
 	void SetDissolveEnabled(bool enable);
 	void SetDissolveThreshold(float threshold);
 	void SetDissolveEdgeWidth(float width);
+	void SetDissolveEdgeColor(const Vector4& color);
 	Vector4 GetColor() const;
 	bool IsLightingEnabled() const;
 	float GetShininess() const;
@@ -112,6 +113,7 @@ public:
 	bool IsDissolveEnabled() const;
 	float GetDissolveThreshold() const;
 	float GetDissolveEdgeWidth() const;
+	Vector4 GetDissolveEdgeColor() const;
 	bool IsGrayscaleEnabled() const;
 	bool IsSepiaEnabled() const;
 	float GetDistortionStrength() const;

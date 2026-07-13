@@ -20,4 +20,5 @@ struct Material {
 	int dissolveEnabled;          // ディゾルブ有効フラグ
 	float dissolveThreshold;      // ディゾルブしきい値
 	float dissolveEdgeWidth;      // ディゾルブ縁幅
+	Vector4 dissolveEdgeColor;    // ディゾルブ縁色
 };
