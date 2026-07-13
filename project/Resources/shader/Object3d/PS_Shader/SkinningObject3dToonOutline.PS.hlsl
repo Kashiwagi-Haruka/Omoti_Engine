@@ -105,7 +105,25 @@ struct PixelShaderOutput
 {
     float4 color : SV_TARGET0;
 };
+float ComputeDissolveMask(float3 worldPosition, float2 texcoord)
+{
+    float3 seed = worldPosition * 3.1f + float3(texcoord, texcoord.x + texcoord.y) * 17.0f;
+    return frac(sin(dot(seed, float3(12.9898f, 78.233f, 37.719f))) * 43758.5453f);
+}
 
+void ApplyDissolve(float3 worldPosition, float2 texcoord)
+{
+    if (gMaterial.dissolveEnabled == 0)
+    {
+        return;
+    }
+
+    float mask = ComputeDissolveMask(worldPosition, texcoord);
+    if (mask <= gMaterial.dissolveThreshold)
+    {
+        discard;
+    }
+}
 static const float kToonShadowThreshold = 0.5f;
 static const float kToonShadowSoftness = 0.04f;
 static const float kToonShadowStrength = 0.35f;
@@ -131,7 +149,7 @@ PixelShaderOutput main(Object3dVertexShaderOutput input)
     {
         discard;
     }
-
+    ApplyDissolve(input.worldPosition, transformedUV.xy);
     float3 finalColor = gMaterial.color.rgb * textureColor.rgb;
 
     if (gMaterial.enableLighting != 0)
