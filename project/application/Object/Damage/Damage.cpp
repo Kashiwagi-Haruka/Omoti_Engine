@@ -102,6 +102,7 @@ void Damage::SetPosition(const Vector3& position) {
 	basePosition_ = position;
 	transform_.translate = basePosition_ + damagePositionOffset_;
 }
+void Damage::SetScale(const Vector3& scale) { transform_.scale = scale; }
 void Damage::Update() {
 	if (!isVisible_ || !camera_) {
 		return;

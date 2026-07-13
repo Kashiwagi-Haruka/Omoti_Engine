@@ -89,8 +89,8 @@ public:
 			hpBar_->SetCamera(camera_);
 		}
 	}
-	Vector3 GetPosition() { return transform_.translate; }
-	Vector3 GetScale() { return transform_.scale; }
+	Vector3 GetPosition() const { return transform_.translate; }
+	Vector3 GetScale() const { return transform_.scale; }
 	void SetPosition(const Vector3& position);
 	void ApplyFinalComboBackStep();
 	float GetAttackRange() const { return attackRange_; }
