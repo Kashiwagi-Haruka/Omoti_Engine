@@ -111,8 +111,8 @@ void TeamUI::Initialize(const Team& team) {
 
 		hpBarSprites_[i] = std::make_unique<Sprite>();
 		hpBarSprites_[i]->Initialize(hpBarTextureHandle);
-		hpBarSprites_[i]->SetAnchorPoint({1.0f, 0.5f});
-		hpBarSprites_[i]->SetPosition(iconPositions_[i] + kHpBarOffset);
+		hpBarSprites_[i]->SetAnchorPoint({0.0f, 0.5f});
+		hpBarSprites_[i]->SetPosition(iconPositions_[i] + kHpBarOffset-kHpBarMaxSize);
 		{
 			const int hpMax = team.GetMemberHPMax(i);
 			const float hpRate = hpMax > 0 ? std::clamp(static_cast<float>(team.GetMemberHP(i)) / static_cast<float>(hpMax), 0.0f, 1.0f) : 0.0f;
@@ -122,8 +122,8 @@ void TeamUI::Initialize(const Team& team) {
 
 		hpBarBackgroundSprites_[i] = std::make_unique<Sprite>();
 		hpBarBackgroundSprites_[i]->Initialize(hpBarBackgroundTextureHandle);
-		hpBarBackgroundSprites_[i]->SetAnchorPoint({1.0f, 0.5f});
-		hpBarBackgroundSprites_[i]->SetPosition(iconPositions_[i] + kHpBarOffset);
+		hpBarBackgroundSprites_[i]->SetAnchorPoint({0.0f, 0.5f});
+		hpBarBackgroundSprites_[i]->SetPosition(iconPositions_[i] + kHpBarOffset-kHpBarMaxSize);
 		hpBarBackgroundSprites_[i]->SetScale(kHpBarMaxSize);
 		hpBarBackgroundSprites_[i]->Update();
 
@@ -238,7 +238,7 @@ void TeamUI::Update(const Team& team) {
 		keyboardSprites_[i]->SetColor(i == team.GetActiveSlot() ? kInactiveColor : kActiveColor);
 		keyboardSprites_[i]->Update();		
 
-		hpBarSprites_[i]->SetPosition(iconPositions_[i] + kHpBarOffset);
+		hpBarSprites_[i]->SetPosition(iconPositions_[i] + kHpBarOffset-kHpBarMaxSize);
 		{
 			const int hpMax = team.GetMemberHPMax(i);
 			const float hpRate = hpMax > 0 ? std::clamp(static_cast<float>(team.GetMemberHP(i)) / static_cast<float>(hpMax), 0.0f, 1.0f) : 0.0f;
@@ -246,7 +246,7 @@ void TeamUI::Update(const Team& team) {
 		}
 		hpBarSprites_[i]->Update();
 
-		hpBarBackgroundSprites_[i]->SetPosition(iconPositions_[i] + kHpBarOffset);
+		hpBarBackgroundSprites_[i]->SetPosition(iconPositions_[i] + kHpBarOffset-kHpBarMaxSize);
 		hpBarBackgroundSprites_[i]->SetScale(kHpBarMaxSize);
 		hpBarBackgroundSprites_[i]->Update();
 

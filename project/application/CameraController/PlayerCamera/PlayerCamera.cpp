@@ -19,21 +19,10 @@ void PlayerCamera::Initialize() {
 }
 void PlayerCamera::Update() {
 
-#ifdef USE_IMGUI
-
-	/*if (ImGui::Begin("CameraController")) {
-	    ImGui::DragFloat3("CameraScale", &transform_.scale.x, 0.01f);
-	    ImGui::DragFloat("OrbitYaw", &orbitYaw_, 0.01f);
-	    ImGui::DragFloat("OrbitPitch", &orbitPitch_, 0.01f);
-	    ImGui::DragFloat3("CameraTranslate", &transform_.translate.x, 0.1f);
-	}
-	ImGui::End();*/
-
-#endif
 	const Vector2 mouseMove = Input::GetInstance()->GetMouseMove();
 	const Vector2 rightStick = Input::GetInstance()->GetJoyStickRXY();
 	orbitYaw_ += mouseMove.x * mouseSensitivity_ + rightStick.x * stickSensitivity_;
-	orbitPitch_ += mouseMove.y * mouseSensitivity_ + rightStick.y * stickSensitivity_;
+	orbitPitch_ += mouseMove.y * mouseSensitivity_ + -rightStick.y * stickSensitivity_;
 
 	const float maxPitch = 1.2f;
 	const float minPitch = -1.2f;

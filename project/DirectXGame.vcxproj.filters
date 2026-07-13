@@ -547,6 +547,7 @@
     <ClCompile Include="application\Menu\CharacterDisplay\Menu\Skilltree\CharacterDisplaySkilltree.cpp" />
     <ClCompile Include="application\Menu\CharacterDisplay\Menu\Status\CharacterDisplayStatus.cpp" />
     <ClCompile Include="application\Menu\CharacterDisplay\Menu\Weapon\CharacterDisplayWeapon.cpp" />
+    <ClCompile Include="application\Menu\CharacterDisplay\Icon\CharacterDisplayIcon.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Engine\Camera\Camera.h">
@@ -1083,6 +1084,7 @@
     <ClInclude Include="application\Menu\CharacterDisplay\Menu\Status\CharacterDisplayStatus.h" />
     <ClInclude Include="application\Menu\CharacterDisplay\Menu\Weapon\CharacterDisplayWeapon.h" />
     <ClInclude Include="application\Object\Characters\Playable\Base\SkilltreeType.h" />
+    <ClInclude Include="application\Menu\CharacterDisplay\Icon\CharacterDisplayIcon.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include=".editorconfig" />

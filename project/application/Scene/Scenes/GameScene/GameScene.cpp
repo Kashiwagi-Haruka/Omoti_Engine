@@ -29,6 +29,37 @@ constexpr Vector2 kDashRadialBlurCenter = {0.5f, 0.5f};
 constexpr float kDashRadialBlurWidth = 0.04f;
 constexpr int kDashRadialBlurSampleCount = 2;
 
+bool TryFindNearestAliveEnemy(Player& player, EnemyManager& enemyManager, Vector3* outEnemyPos) {
+	if (!outEnemyPos) {
+		return false;
+	}
+
+	const Vector3 playerPos = player.GetPosition();
+	bool found = false;
+	float nearestDistanceSq = 0.0f;
+	Vector3 nearestPos{};
+
+	for (const auto& enemy : enemyManager.GetEnemies()) {
+		if (!enemy || !enemy->GetIsAlive()) {
+			continue;
+		}
+
+		Vector3 toEnemy = enemy->GetPosition() - playerPos;
+		toEnemy.y = 0.0f;
+		const float distanceSq = Function::LengthSquared(toEnemy);
+		if (!found || distanceSq < nearestDistanceSq) {
+			found = true;
+			nearestDistanceSq = distanceSq;
+			nearestPos = enemy->GetPosition();
+		}
+	}
+
+	if (found) {
+		*outEnemyPos = nearestPos;
+	}
+	return found;
+}
+
 bool TryFindNearestEnemyInPlayerFront(Player& player, EnemyManager& enemyManager, Vector3* outEnemyPos) {
 	if (!outEnemyPos) {
 		return false;
@@ -423,6 +454,12 @@ void GameScene::Update() {
 	ParticleManager::GetInstance()->Update(cameraController->GetCamera());
 	skyDome->Update();
 	field->Update();
+	if (playAreaMode_ == PlayAreaMode::kSpiral && PlayCommand::GetNORMAL_ATTACK_TRIGGER()) {
+		Vector3 nearestEnemyPos{};
+		if (TryFindNearestAliveEnemy(*player, *rasen_->GetEnemyManager(), &nearestEnemyPos)) {
+			player->SetAttackApproachTarget(nearestEnemyPos);
+		}
+	}
 	player->Update();
 	const bool isDashing = player->IsDashing();
 	fullscreenFilterType_ = isDashing ? kRadialBlurFullscreenFilterType : kDefaultFullscreenFilterType;
