@@ -15,6 +15,7 @@
 #include "Menu/Profile/CharacterDisplayProfile.h"
 
 #include <numbers>
+#include <vector>
 #include "Light/CommonLight/DirectionalCommonLight.h"
 /// <summary>
 /// キャラクター画面
@@ -47,6 +48,9 @@ class CharacterDisplay {
 	std::unique_ptr<CharacterDisplaySkilltree> skilltree_;
 	std::unique_ptr<CharacterDisplayReinforcement> reinforcement_;
 	std::unique_ptr<CharacterDisplayProfile> profile_;
+
+	std::vector<std::unique_ptr<Sprite>> characterIcon_;
+	
 
 public:
 
