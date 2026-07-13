@@ -11,3 +11,6 @@ struct SkilltreeType{
 	std::array<bool, 6> rightSkilltreeLv_;
 
 };
+enum class Arcana{
+
+};
