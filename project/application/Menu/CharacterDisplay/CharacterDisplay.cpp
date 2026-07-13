@@ -100,7 +100,7 @@ void CharacterDisplay::Update() {
 	}
 
 
-
+	menuText_->SetMenuType(selectMenuType_);
 	menuText_->Update();
 }
 

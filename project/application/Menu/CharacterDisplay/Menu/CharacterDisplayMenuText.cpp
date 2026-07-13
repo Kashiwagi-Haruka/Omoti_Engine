@@ -5,6 +5,8 @@ namespace{
 	float textPosX = 70.0f;
 	float statusPosY = 140.0f;
     float textMarginY = 60.0f;
+    Vector4 noActiveColor = {0.5f, 0.5f, 0.5f, 0.5f};
+    Vector4 activeColor = {1.0f, 1.0f, 1.0f, 1.0f};
     }
 
 void CharacterDisplayMenuText::SetMenuType(CharacterDisplayMenuType menuType){ selectMenutype_ = menuType; }
@@ -62,6 +64,37 @@ void CharacterDisplayMenuText::Initialize(){
 }
 
 void CharacterDisplayMenuText::Update() { 
+
+	statusText_.SetColor(noActiveColor);
+	weaponText_.SetColor(noActiveColor);
+	equipText_.SetColor({noActiveColor});
+	skilltree_.SetColor({noActiveColor});
+	reinforcement_.SetColor({noActiveColor});
+	profileText_.SetColor({noActiveColor});
+	switch (selectMenutype_) {
+	case CharacterDisplayMenuType::STATUS:
+		statusText_.SetColor(activeColor);	
+		break;
+	case CharacterDisplayMenuType::WEAPON:
+		weaponText_.SetColor(activeColor);
+		break;
+	case CharacterDisplayMenuType::EQUIP:
+		equipText_.SetColor({activeColor});
+		break;
+	case CharacterDisplayMenuType::SKILLTREE:
+		skilltree_.SetColor({activeColor});
+		break;
+	case CharacterDisplayMenuType::REINFORCEMENT:
+		reinforcement_.SetColor({activeColor});
+		break;
+	case CharacterDisplayMenuType::PROFILE:
+		profileText_.SetColor({activeColor});
+		break;
+	default:
+		break;
+	}
+
+
 	statusText_.Update(); 
 	weaponText_.Update();
 	equipText_.Update();

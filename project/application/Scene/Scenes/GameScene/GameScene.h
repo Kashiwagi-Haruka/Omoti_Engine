@@ -96,6 +96,9 @@ private:
 	bool dissolveEnabled_ = false;
 	float dissolveThreshold_ = 0.0f;
 	float dissolveEdgeWidth_ = 0.02f;
+	bool isCharacterDeathDissolving_ = false;
+	float characterDeathDissolveTimer_ = 0.0f;
+	static constexpr float kCharacterDeathDissolveDuration_ = 1.0f;
 
 public:
 	GameScene();

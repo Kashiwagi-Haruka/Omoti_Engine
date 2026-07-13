@@ -224,6 +224,8 @@ void GameScene::Initialize() {
 	Object3dCommon::GetInstance()->SetRadialBlurCenter(radialBlurCenter_);
 	Object3dCommon::GetInstance()->SetRadialBlurWidth(radialBlurWidth_);
 	Object3dCommon::GetInstance()->SetRadialBlurSampleCount(radialBlurSampleCount_);
+	dissolveEnabled_ = false;
+	dissolveThreshold_ = 0.0f;
 	Object3dCommon::GetInstance()->SetDissolveEnabled(dissolveEnabled_);
 	Object3dCommon::GetInstance()->SetDissolveThreshold(dissolveThreshold_);
 	Object3dCommon::GetInstance()->SetDissolveEdgeWidth(dissolveEdgeWidth_);
@@ -394,7 +396,9 @@ void GameScene::Update() {
 		}
 	}
 	DebugImGui();
-	team_->Update();
+	if (!isCharacterDeathDissolving_) {
+		team_->Update();
+	}
 	if (isPartyMode_ && teamDisplay_) {
 		teamDisplay_->Update(*team_);
 	}
@@ -431,6 +435,36 @@ void GameScene::Update() {
 		fullscreenFilterType_ = kDefaultFullscreenFilterType;
 		Object3dCommon::GetInstance()->SetFullscreenFilterType(fullscreenFilterType_);
 		characterDisplay_->Update();
+		return;
+	}
+	if (isCharacterDeathDissolving_) {
+		characterDeathDissolveTimer_ += deltaTime;
+		dissolveEnabled_ = true;
+		dissolveThreshold_ = std::clamp(characterDeathDissolveTimer_ / kCharacterDeathDissolveDuration_, 0.0f, 1.0f);
+		Object3dCommon::GetInstance()->SetDissolveEnabled(dissolveEnabled_);
+		Object3dCommon::GetInstance()->SetDissolveThreshold(dissolveThreshold_);
+		Object3dCommon::GetInstance()->SetDissolveEdgeWidth(dissolveEdgeWidth_);
+
+		player->SetCamera(cameraController->GetCamera());
+		player->Update();
+		if (characterDeathDissolveTimer_ >= kCharacterDeathDissolveDuration_) {
+			isCharacterDeathDissolving_ = false;
+			characterDeathDissolveTimer_ = 0.0f;
+			dissolveEnabled_ = false;
+			dissolveThreshold_ = 0.0f;
+			Object3dCommon::GetInstance()->SetDissolveEnabled(dissolveEnabled_);
+			Object3dCommon::GetInstance()->SetDissolveThreshold(dissolveThreshold_);
+			if (team_->SwitchToNextAliveMember()) {
+				player->SetCharacterType(team_->GetActiveCharacterName());
+				pause->SetCurrentCharacterObj(player->GetCharacterObject3d());
+				pause->SetCurrentAttribute(player->GetCurrentAttribute());
+			}
+		}
+		uimanager->SetPlayerParameters(player->GetParameters());
+		uimanager->SetPlayerHPMax(team_->GetActiveCharacterHPMax());
+		uimanager->SetPlayerHP(team_->GetActiveCharacterHP());
+		uimanager->SetPlayerDashGauge(player->GetDashGauge(), player->GetDashGaugeMax());
+		uimanager->Update();
 		return;
 	}
 	if (player->GetIsSkillAttack()) {
@@ -521,6 +555,15 @@ void GameScene::Update() {
 			team_->DamageActiveCharacter(player->ConsumePendingDamage());
 			cameraController->StartShake(0.75f);
 			damageGrayscaleTimer_ = kDamageGrayscaleDuration_;
+			if (!team_->GetIsActiveCharacterAlive() && !team_->GetAreAllMembersDead()) {
+				isCharacterDeathDissolving_ = true;
+				characterDeathDissolveTimer_ = 0.0f;
+				dissolveEnabled_ = true;
+				dissolveThreshold_ = 0.0f;
+				Object3dCommon::GetInstance()->SetDissolveEnabled(dissolveEnabled_);
+				Object3dCommon::GetInstance()->SetDissolveThreshold(dissolveThreshold_);
+				Object3dCommon::GetInstance()->SetDissolveEdgeWidth(dissolveEdgeWidth_);
+			}
 		}
 	}
 	if (hitVinettTimer_ > 0.0f) {

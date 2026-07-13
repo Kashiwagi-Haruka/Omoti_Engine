@@ -36,8 +36,12 @@ public:
 	void DamageActiveCharacter(int amount);
 	/// 現在操作中のキャラクターが生存しているかを返す。
 	bool GetIsActiveCharacterAlive() const;
+	/// 指定スロットのキャラクターが生存しているかを返す。
+	bool GetIsMemberAlive(int slotIndex) const;
 	/// チーム内の全メンバーが戦闘不能かを返す。
 	bool GetAreAllMembersDead() const;
+	/// 現在スロットの次にいる生存キャラクターへ切り替える。
+	bool SwitchToNextAliveMember();
 	/// 現在操作中キャラクターの現在HPを返す。
 	int GetActiveCharacterHP() const;
 	/// 現在操作中キャラクターの最大HPを返す。
