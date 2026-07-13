@@ -31,6 +31,9 @@ void Object3d::Initialize() {
 	SetDistortionFalloff(1.0f);
 	SetOutlineColor({0.0f, 0.0f, 0.0f, 1.0f});
 	SetOutlineWidth(1.0f);
+	SetDissolveEnabled(false);
+	SetDissolveThreshold(0.0f);
+	SetDissolveEdgeWidth(0.02f);
 }
 namespace {
 bool IsIdentityMatrix(const Matrix4x4& matrix) {
@@ -282,6 +285,21 @@ void Object3d::SetEnvironmentCoefficient(float coefficient) {
 		materialData_->environmentCoefficient = coefficient;
 	}
 }
+void Object3d::SetDissolveEnabled(bool enable) {
+	if (materialData_) {
+		materialData_->dissolveEnabled = enable ? 1 : 0;
+	}
+}
+void Object3d::SetDissolveThreshold(float threshold) {
+	if (materialData_) {
+		materialData_->dissolveThreshold = std::clamp(threshold, 0.0f, 1.0f);
+	}
+}
+void Object3d::SetDissolveEdgeWidth(float width) {
+	if (materialData_) {
+		materialData_->dissolveEdgeWidth = std::clamp(width, 0.0f, 0.5f);
+	}
+}
 Vector4 Object3d::GetColor() const {
 	if (materialData_) {
 		return materialData_->color;
@@ -335,6 +353,24 @@ float Object3d::GetOutlineWidth() const {
 		return materialData_->outlineWidth;
 	}
 	return 1.0f;
+}
+bool Object3d::IsDissolveEnabled() const {
+	if (materialData_) {
+		return materialData_->dissolveEnabled != 0;
+	}
+	return false;
+}
+float Object3d::GetDissolveThreshold() const {
+	if (materialData_) {
+		return materialData_->dissolveThreshold;
+	}
+	return 0.0f;
+}
+float Object3d::GetDissolveEdgeWidth() const {
+	if (materialData_) {
+		return materialData_->dissolveEdgeWidth;
+	}
+	return 0.02f;
 }
 bool Object3d::IsSepiaEnabled() const {
 	if (materialData_) {

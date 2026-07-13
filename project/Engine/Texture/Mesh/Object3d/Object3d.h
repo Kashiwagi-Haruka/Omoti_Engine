@@ -102,10 +102,16 @@ public:
 	void SetUvAnchor(Vector2 anchor);
 	void SetShininess(float shininess);
 	void SetEnvironmentCoefficient(float coefficient);
+	void SetDissolveEnabled(bool enable);
+	void SetDissolveThreshold(float threshold);
+	void SetDissolveEdgeWidth(float width);
 	Vector4 GetColor() const;
 	bool IsLightingEnabled() const;
 	float GetShininess() const;
 	float GetEnvironmentCoefficient() const;
+	bool IsDissolveEnabled() const;
+	float GetDissolveThreshold() const;
+	float GetDissolveEdgeWidth() const;
 	bool IsGrayscaleEnabled() const;
 	bool IsSepiaEnabled() const;
 	float GetDistortionStrength() const;

@@ -17,5 +17,7 @@ struct Material {
 	float padding2[2];            // アライメント調整用
 	Vector4 outlineColor;         // アウトライン色
 	float outlineWidth;           // アウトライン太さ
-	float outlinePadding[3];      // アライメント調整用
+	int dissolveEnabled;          // ディゾルブ有効フラグ
+	float dissolveThreshold;      // ディゾルブしきい値
+	float dissolveEdgeWidth;      // ディゾルブ縁幅
 };

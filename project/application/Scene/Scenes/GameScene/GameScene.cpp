@@ -441,9 +441,11 @@ void GameScene::Update() {
 		characterDeathDissolveTimer_ += deltaTime;
 		dissolveEnabled_ = true;
 		dissolveThreshold_ = std::clamp(characterDeathDissolveTimer_ / kCharacterDeathDissolveDuration_, 0.0f, 1.0f);
-		Object3dCommon::GetInstance()->SetDissolveEnabled(dissolveEnabled_);
-		Object3dCommon::GetInstance()->SetDissolveThreshold(dissolveThreshold_);
-		Object3dCommon::GetInstance()->SetDissolveEdgeWidth(dissolveEdgeWidth_);
+		if (Object3d* characterObject = player->GetCharacterObject3d()) {
+			characterObject->SetDissolveEnabled(dissolveEnabled_);
+			characterObject->SetDissolveThreshold(dissolveThreshold_);
+			characterObject->SetDissolveEdgeWidth(dissolveEdgeWidth_);
+		}
 
 		player->SetCamera(cameraController->GetCamera());
 		player->Update();
@@ -452,8 +454,10 @@ void GameScene::Update() {
 			characterDeathDissolveTimer_ = 0.0f;
 			dissolveEnabled_ = false;
 			dissolveThreshold_ = 0.0f;
-			Object3dCommon::GetInstance()->SetDissolveEnabled(dissolveEnabled_);
-			Object3dCommon::GetInstance()->SetDissolveThreshold(dissolveThreshold_);
+			if (Object3d* characterObject = player->GetCharacterObject3d()) {
+				characterObject->SetDissolveEnabled(false);
+				characterObject->SetDissolveThreshold(0.0f);
+			}
 			if (team_->SwitchToNextAliveMember()) {
 				player->SetCharacterType(team_->GetActiveCharacterName());
 				pause->SetCurrentCharacterObj(player->GetCharacterObject3d());
@@ -560,9 +564,11 @@ void GameScene::Update() {
 				characterDeathDissolveTimer_ = 0.0f;
 				dissolveEnabled_ = true;
 				dissolveThreshold_ = 0.0f;
-				Object3dCommon::GetInstance()->SetDissolveEnabled(dissolveEnabled_);
-				Object3dCommon::GetInstance()->SetDissolveThreshold(dissolveThreshold_);
-				Object3dCommon::GetInstance()->SetDissolveEdgeWidth(dissolveEdgeWidth_);
+				if (Object3d* characterObject = player->GetCharacterObject3d()) {
+					characterObject->SetDissolveEnabled(dissolveEnabled_);
+					characterObject->SetDissolveThreshold(dissolveThreshold_);
+					characterObject->SetDissolveEdgeWidth(dissolveEdgeWidth_);
+				}
 			}
 		}
 	}

@@ -13,7 +13,9 @@ struct Material
     float distortionFalloff;
     float4 outlineColor;
     float outlineWidth;
-    float3 outlinePadding;
+    int dissolveEnabled;
+    float dissolveThreshold;
+    float dissolveEdgeWidth;
 };
 struct DirectionalLight
 {
@@ -135,7 +137,26 @@ float ComputeToonShadowMask(float NdotL)
         kToonShadowThreshold + kToonShadowSoftness,
         saturatedNdotL);
 }
+float ComputeDissolveMask(float3 worldPosition, float2 texcoord)
+{
+    float3 seed = worldPosition * 3.1f + float3(texcoord, texcoord.x + texcoord.y) * 17.0f;
+    return frac(sin(dot(seed, float3(12.9898f, 78.233f, 37.719f))) * 43758.5453f);
+}
 
+void ApplyDissolve(float3 worldPosition, float2 texcoord, inout float3 color)
+{
+    if (gMaterial.dissolveEnabled == 0)
+    {
+        return;
+    }
+    float mask = ComputeDissolveMask(worldPosition, texcoord);
+    if (mask <= gMaterial.dissolveThreshold)
+    {
+        discard;
+    }
+    float edge = 1.0f - smoothstep(gMaterial.dissolveThreshold, gMaterial.dissolveThreshold + max(gMaterial.dissolveEdgeWidth, 0.0001f), mask);
+    color = lerp(color, float3(1.0f, 0.35f, 0.05f), saturate(edge));
+}
 PixelShaderOutput main(Object3dVertexShaderOutput input)
 {
     PixelShaderOutput output;
@@ -214,7 +235,7 @@ PixelShaderOutput main(Object3dVertexShaderOutput input)
     {
         output.color = gMaterial.color * textureColor;
     }
-
+    ApplyDissolve(input.worldPosition, transformedUV.xy, output.color.rgb);
     output.color.rgb = ApplyGrayscale(output.color.rgb);
     output.color.rgb = ApplySepia(output.color.rgb);
 

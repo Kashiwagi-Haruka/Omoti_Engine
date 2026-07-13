@@ -15,7 +15,9 @@ struct Material
     float2 padding2;
     float4 outlineColor;
     float outlineWidth;
-    float3 outlinePadding;
+    int dissolveEnabled;
+    float dissolveThreshold;
+    float dissolveEdgeWidth;
 };
 struct DirectionalLight
 {

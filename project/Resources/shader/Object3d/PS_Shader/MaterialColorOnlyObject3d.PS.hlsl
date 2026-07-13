@@ -13,7 +13,9 @@ struct Material
     float distortionFalloff;
     float4 outlineColor;
     float outlineWidth;
-    float3 outlinePadding;
+    int dissolveEnabled;
+    float dissolveThreshold;
+    float dissolveEdgeWidth;
 };
 ConstantBuffer<Material> gMaterial : register(b0);
 Texture2D<float4> gTexture : register(t0);
