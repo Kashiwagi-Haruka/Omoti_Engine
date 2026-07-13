@@ -84,6 +84,7 @@ class Player {
 	bool attackApproachActive_ = false;
 	Vector3 attackApproachTarget_{};
 	float attackApproachStopDistance_ = 5.0f;
+	float attackApproachRange_ = 10.0f;
 	float attackApproachSpeed_ = 0.35f;
 
 public:

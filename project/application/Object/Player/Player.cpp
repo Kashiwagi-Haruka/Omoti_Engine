@@ -88,7 +88,12 @@ void Player::Move() {
 			toTarget.y = 0.0f;
 			const float distanceSq = Function::LengthSquared(toTarget);
 			const float stopDistanceSq = attackApproachStopDistance_ * attackApproachStopDistance_;
+			const float attackRange = attackApproachRange_ * attackApproachRange_;
 			isDash = false;
+			if (distanceSq > attackRange) {
+				attackApproachActive_ = false;
+				return;
+			}
 			if (distanceSq > stopDistanceSq) {
 				const Vector3 direction = Function::Normalize(toTarget);
 				const float moveSpeed = std::min(attackApproachSpeed_, std::sqrt(distanceSq) - attackApproachStopDistance_);
