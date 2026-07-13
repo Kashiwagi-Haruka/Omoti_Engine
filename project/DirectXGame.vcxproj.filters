@@ -548,6 +548,7 @@
     <ClCompile Include="application\Menu\CharacterDisplay\Menu\Status\CharacterDisplayStatus.cpp" />
     <ClCompile Include="application\Menu\CharacterDisplay\Menu\Weapon\CharacterDisplayWeapon.cpp" />
     <ClCompile Include="application\Menu\CharacterDisplay\Icon\CharacterDisplayIcon.cpp" />
+    <ClCompile Include="application\Object\Characters\Enemy\HostileIndicator\EnemyHostileIndicator.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Engine\Camera\Camera.h">
@@ -1085,6 +1086,7 @@
     <ClInclude Include="application\Menu\CharacterDisplay\Menu\Weapon\CharacterDisplayWeapon.h" />
     <ClInclude Include="application\Object\Characters\Playable\Base\SkilltreeType.h" />
     <ClInclude Include="application\Menu\CharacterDisplay\Icon\CharacterDisplayIcon.h" />
+    <ClInclude Include="application\Object\Characters\Enemy\HostileIndicator\EnemyHostileIndicator.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include=".editorconfig" />
