@@ -15,7 +15,7 @@ constexpr float kDamageTextSeparationRadius = 0.45f;
 constexpr float kDamageTextBaseScaleRate = 0.18f;
 constexpr float kDamageTextMinScale = 0.45f;
 constexpr float kDamageTextUpOffsetRate = 0.75f;
-constexpr float kDamageTextUpOffsetExtra = 0.45f;
+constexpr float kDamageTextUpOffsetExtra = -1.0f;
 constexpr int kDamageTextTargetOffsetCount = 12;
 constexpr std::array<Vector3, kDamageTextTargetOffsetCount> kDamageTextTargetOffsets = {
     Vector3{0.0f,   0.0f,  0.0f  },
