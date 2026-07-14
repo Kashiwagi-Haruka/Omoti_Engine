@@ -27,6 +27,7 @@ class Player;
 class CameraController;
 class Sky;
 class Boss;
+class Enemy;
 
 class GameScene : public BaseScene {
 
@@ -101,6 +102,9 @@ private:
 	bool isCharacterDeathDissolving_ = false;
 	float characterDeathDissolveTimer_ = 0.0f;
 	static constexpr float kCharacterDeathDissolveDuration_ = 1.0f;
+	Enemy* lockOnMarkerEnemy_ = nullptr;
+	float lockOnMarkerTimer_ = 0.0f;
+	static constexpr float kLockOnMarkerDuration_ = 0.8f;
 
 public:
 	GameScene();

@@ -3,6 +3,7 @@
 #include <memory>
 #include <array>
 #include <string>
+#include "Object/Characters/Playable/Base/Arcana.h"
 class CharacterDisplaySkilltree {
 
 	static const size_t kMaxskillTreeCount_ = 6;
@@ -15,7 +16,8 @@ class CharacterDisplaySkilltree {
 	std::array<std::unique_ptr<Sprite>, kMaxskillTreeCount_> leftSkilltreeSprites_;
 	std::array<std::unique_ptr<Sprite>, kMaxskillTreeCount_> rightSkilltreeSprites_;
 
-	std::string selectCharacterName;
+	std::string selectCharacterName_;
+	Arcana selectCharacterArcana_;
 	
 public:
 	CharacterDisplaySkilltree();

@@ -1089,6 +1089,8 @@
     <ClInclude Include="application\Menu\CharacterDisplay\Icon\CharacterDisplayIcon.h" />
     <ClInclude Include="application\Object\Characters\Enemy\HostileIndicator\EnemyHostileIndicator.h" />
     <ClInclude Include="application\Object\Characters\Enemy\LockOn\LockOnEnemy.h" />
+    <ClInclude Include="application\Object\Characters\Playable\Base\Arcana.h" />
+    <ClInclude Include="application\Object\Characters\Playable\Base\UPParametersType.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include=".editorconfig" />

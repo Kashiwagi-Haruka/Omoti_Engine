@@ -4,6 +4,7 @@
 #include "EnemyStun.h"
 #include "Object/Characters/Base/CharacterParameters.h"
 #include "Object/Characters/Enemy/HPBar/EnemyHPBar.h"
+#include "Object/Characters/Enemy/LockOn/LockOnEnemy.h"
 #include "Primitive/Primitive.h"
 #include "Transform.h"
 #include "Vector3.h"
@@ -50,6 +51,7 @@ class Enemy {
 	std::unique_ptr<EnemyAttack> enemyAttack_;
 	std::unique_ptr<Adhesion> adhesion_;
 	std::unique_ptr<EnemyHPBar> hpBar_;
+	std::unique_ptr<LockOnEnemy> lockOnEnemy_;
 
 	Camera* camera_ = nullptr;
 	float playerChaseRange_ = 8.0f;
@@ -88,6 +90,9 @@ public:
 		if (hpBar_) {
 			hpBar_->SetCamera(camera_);
 		}
+		if (lockOnEnemy_) {
+			lockOnEnemy_->SetCamera(camera_);
+		}
 	}
 	Vector3 GetPosition() const { return transform_.translate; }
 	Vector3 GetScale() const { return transform_.scale; }
@@ -113,4 +118,5 @@ public:
 	Attribute GetLastReactionAppliedAttribute() const;
 	const BaseParameter& GetBaseParameter() const { return baseParameter_; }
 	const Parameter& GetParameter() const { return parameter_; }
+	void SetLockOn(bool isLockOn);
 };

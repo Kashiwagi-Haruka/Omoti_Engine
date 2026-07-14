@@ -29,15 +29,10 @@ constexpr Vector2 kDashRadialBlurCenter = {0.5f, 0.5f};
 constexpr float kDashRadialBlurWidth = 0.04f;
 constexpr int kDashRadialBlurSampleCount = 2;
 
-bool TryFindNearestAliveEnemy(Player& player, EnemyManager& enemyManager, Vector3* outEnemyPos) {
-	if (!outEnemyPos) {
-		return false;
-	}
-
+Enemy* TryFindNearestAliveEnemy(Player& player, EnemyManager& enemyManager) {
 	const Vector3 playerPos = player.GetPosition();
-	bool found = false;
+	Enemy* nearestEnemy = nullptr;
 	float nearestDistanceSq = 0.0f;
-	Vector3 nearestPos{};
 
 	for (const auto& enemy : enemyManager.GetEnemies()) {
 		if (!enemy || !enemy->GetIsAlive() || enemy->IsDying() || enemy->GetHP() <= 0) {
@@ -47,32 +42,23 @@ bool TryFindNearestAliveEnemy(Player& player, EnemyManager& enemyManager, Vector
 		Vector3 toEnemy = enemy->GetPosition() - playerPos;
 		toEnemy.y = 0.0f;
 		const float distanceSq = Function::LengthSquared(toEnemy);
-		if (!found || distanceSq < nearestDistanceSq) {
-			found = true;
+		if (!nearestEnemy || distanceSq < nearestDistanceSq) {
+			nearestEnemy = enemy.get();
 			nearestDistanceSq = distanceSq;
-			nearestPos = enemy->GetPosition();
 		}
 	}
 
-	if (found) {
-		*outEnemyPos = nearestPos;
-	}
-	return found;
+	return nearestEnemy;
 }
 
-bool TryFindNearestEnemyInPlayerFront(Player& player, EnemyManager& enemyManager, Vector3* outEnemyPos) {
-	if (!outEnemyPos) {
-		return false;
-	}
-
+Enemy* TryFindNearestEnemyInPlayerFront(Player& player, EnemyManager& enemyManager) {
 	const Vector3 playerPos = player.GetPosition();
 	const float playerYaw = player.GetRotate().y;
 	const Vector3 playerForward = {std::sinf(playerYaw), 0.0f, std::cosf(playerYaw)};
 	const float minForwardDot = std::cos(kLockOnTargetMaxAngle);
 
-	bool found = false;
+	Enemy* nearestEnemy = nullptr;
 	float nearestDistanceSq = 0.0f;
-	Vector3 nearestPos{};
 
 	for (const auto& enemy : enemyManager.GetEnemies()) {
 		if (!enemy || !enemy->GetIsAlive() || enemy->IsDying() || enemy->GetHP() <= 0) {
@@ -92,17 +78,33 @@ bool TryFindNearestEnemyInPlayerFront(Player& player, EnemyManager& enemyManager
 			continue;
 		}
 
-		if (!found || distanceSq < nearestDistanceSq) {
-			found = true;
+		if (!nearestEnemy || distanceSq < nearestDistanceSq) {
+			nearestEnemy = enemy.get();
 			nearestDistanceSq = distanceSq;
-			nearestPos = enemy->GetPosition();
 		}
 	}
 
-	if (found) {
-		*outEnemyPos = nearestPos;
+	return nearestEnemy;
+}
+
+void ApplyLockOnMarker(EnemyManager& enemyManager, Enemy* lockOnEnemy) {
+	for (const auto& enemy : enemyManager.GetEnemies()) {
+		if (enemy) {
+			enemy->SetLockOn(enemy.get() == lockOnEnemy && enemy->GetIsAlive() && !enemy->IsDying() && enemy->GetHP() > 0);
+		}
 	}
-	return found;
+}
+
+bool ContainsLockOnEnemy(EnemyManager& enemyManager, Enemy* lockOnEnemy) {
+	if (!lockOnEnemy) {
+		return false;
+	}
+	for (const auto& enemy : enemyManager.GetEnemies()) {
+		if (enemy.get() == lockOnEnemy) {
+			return enemy->GetIsAlive() && !enemy->IsDying() && enemy->GetHP() > 0;
+		}
+	}
+	return false;
 }
 } // namespace
 
@@ -229,6 +231,8 @@ void GameScene::Initialize() {
 	Object3dCommon::GetInstance()->SetDissolveEnabled(dissolveEnabled_);
 	Object3dCommon::GetInstance()->SetDissolveThreshold(dissolveThreshold_);
 	Object3dCommon::GetInstance()->SetDissolveEdgeWidth(dissolveEdgeWidth_);
+	lockOnMarkerEnemy_ = nullptr;
+	lockOnMarkerTimer_ = 0.0f;
 }
 
 void GameScene::DebugImGui() {
@@ -496,9 +500,8 @@ void GameScene::Update() {
 	skyDome->Update();
 	field->Update();
 	if (playAreaMode_ == PlayAreaMode::kSpiral && PlayCommand::GetNORMAL_ATTACK_TRIGGER()) {
-		Vector3 nearestEnemyPos{};
-		if (TryFindNearestAliveEnemy(*player, *rasen_->GetEnemyManager(), &nearestEnemyPos)) {
-			player->SetAttackApproachTarget(nearestEnemyPos);
+		if (Enemy* nearestEnemy = TryFindNearestAliveEnemy(*player, *rasen_->GetEnemyManager())) {
+			player->SetAttackApproachTarget(nearestEnemy->GetPosition());
 		}
 	}
 	player->Update();
@@ -510,6 +513,9 @@ void GameScene::Update() {
 		EnemyManager* enemyManager = rasen_->GetEnemyManager();
 		if (enemyManager != nullptr && enemyManager->GetAliveEnemyCount() == 0 && enemyManager->IsWaveComplete()) {
 			cameraController->ClearAttackCameraTarget();
+			ApplyLockOnMarker(*enemyManager, nullptr);
+			lockOnMarkerEnemy_ = nullptr;
+			lockOnMarkerTimer_ = 0.0f;
 		}
 		if (rasen_->IsLevelSelecting()) {
 			return;
@@ -550,16 +556,26 @@ void GameScene::Update() {
 			hitVinettTimer_ = kHitVinettDuration_;
 		}
 		if (didNormalAttackHitEnemy) {
-			Vector3 cameraTargetPos{};
-			if (TryFindNearestEnemyInPlayerFront(*player, *rasen_->GetEnemyManager(), &cameraTargetPos) || TryFindNearestAliveEnemy(*player, *rasen_->GetEnemyManager(), &cameraTargetPos)) {
+			Enemy* cameraTargetEnemy = TryFindNearestEnemyInPlayerFront(*player, *rasen_->GetEnemyManager());
+			if (!cameraTargetEnemy) {
+				cameraTargetEnemy = TryFindNearestAliveEnemy(*player, *rasen_->GetEnemyManager());
+			}
+			if (cameraTargetEnemy) {
+				const Vector3 cameraTargetPos = cameraTargetEnemy->GetPosition();
 				const int normalAttackComboStep = player->GetSword()->GetComboStep();
 				if (normalAttackComboStep <= 1) {
-					cameraController->SetLockOnTarget(cameraTargetPos, 0.8f);
+					cameraController->SetLockOnTarget(cameraTargetPos, kLockOnMarkerDuration_);
+					lockOnMarkerEnemy_ = cameraTargetEnemy;
+					lockOnMarkerTimer_ = kLockOnMarkerDuration_;
 				} else {
 					cameraController->SetNormalAttackTarget(cameraTargetPos);
+					lockOnMarkerEnemy_ = nullptr;
+					lockOnMarkerTimer_ = 0.0f;
 				}
 			} else {
 				cameraController->ClearAttackCameraTarget();
+				lockOnMarkerEnemy_ = nullptr;
+				lockOnMarkerTimer_ = 0.0f;
 			}
 		}
 		if (player->ConsumeDamageTrigger()) {
@@ -601,6 +617,17 @@ void GameScene::Update() {
 		}
 	}
 	Object3dCommon::GetInstance()->SetFullScreenGrayscaleEnabled(damageGrayscaleTimer_ > 0.0f);
+	if (playAreaMode_ == PlayAreaMode::kSpiral && rasen_ && rasen_->GetEnemyManager()) {
+		EnemyManager& enemyManager = *rasen_->GetEnemyManager();
+		if (lockOnMarkerTimer_ > 0.0f) {
+			lockOnMarkerTimer_ = std::max(0.0f, lockOnMarkerTimer_ - deltaTime);
+		}
+		if (lockOnMarkerTimer_ <= 0.0f || !ContainsLockOnEnemy(enemyManager, lockOnMarkerEnemy_)) {
+			lockOnMarkerEnemy_ = nullptr;
+			lockOnMarkerTimer_ = 0.0f;
+		}
+		ApplyLockOnMarker(enemyManager, lockOnMarkerEnemy_);
+	}
 	uimanager->SetPlayerParameters(player->GetParameters());
 	uimanager->SetPlayerHPMax(team_->GetActiveCharacterHPMax());
 	uimanager->SetPlayerHP(team_->GetActiveCharacterHP());
