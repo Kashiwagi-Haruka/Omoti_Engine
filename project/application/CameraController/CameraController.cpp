@@ -174,6 +174,18 @@ void CameraController::InheritPlayerCameraRotation(CameraMode sourceMode) {
 	}
 }
 
+void CameraController::ReturnToPlayerCamera() {
+	if (cameraMode_ != CameraMode::kPlayerCamera) {
+		InheritPlayerCameraRotation(cameraMode_);
+	}
+	cameraMode_ = CameraMode::kPlayerCamera;
+	autoLockOnTimer_ = 0.0f;
+	normalAttackIdleTimer_ = 1.0f;
+	lockOnCamera_->ClearTarget();
+	normalAttackCamera_->ClearTarget();
+	isCameraSwitching_ = false;
+}
+
 Camera* CameraController::GetCamera() { return camera_; }
 void CameraController::StartShake(float durationSeconds) { playerCamera_->StartShake(durationSeconds); }
 void CameraController::SetLockOnTarget(const Vector3& targetPos, float durationSeconds) {
@@ -189,3 +201,4 @@ void CameraController::SetNormalAttackTarget(const Vector3& targetPos) {
 	lockOnCamera_->ClearTarget();
 	cameraMode_ = CameraMode::kNormalAttackCamera;
 }
+void CameraController::ClearAttackCameraTarget() { ReturnToPlayerCamera(); }

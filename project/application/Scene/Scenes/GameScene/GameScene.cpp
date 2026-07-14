@@ -507,6 +507,10 @@ void GameScene::Update() {
 	Object3dCommon::GetInstance()->SetFullscreenFilterType(fullscreenFilterType_);
 	if (playAreaMode_ == PlayAreaMode::kSpiral) {
 		rasen_->Update(cameraController->GetCamera(), player.get(), boss_.get());
+		EnemyManager* enemyManager = rasen_->GetEnemyManager();
+		if (enemyManager != nullptr && enemyManager->GetAliveEnemyCount() == 0 && enemyManager->IsWaveComplete()) {
+			cameraController->ClearAttackCameraTarget();
+		}
 		if (rasen_->IsLevelSelecting()) {
 			return;
 		}

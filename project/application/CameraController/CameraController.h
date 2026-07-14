@@ -43,6 +43,10 @@ class CameraController {
 	/// </summary>
 	/// <param name="sourceMode"> 引き継ぎ元のカメラモード </param>
 	void InheritPlayerCameraRotation(CameraMode sourceMode);
+	/// <summary>
+	/// 操作用プレイヤーカメラへ戻し、攻撃カメラのターゲットを解除する
+	/// </summary>
+	void ReturnToPlayerCamera();
 
 public:
 
@@ -103,4 +107,8 @@ public:
 	/// 通常攻撃カメラのターゲット設定
 	/// </summary>
 	void SetNormalAttackTarget(const Vector3& targetPos);
+	/// <summary>
+	/// 攻撃カメラを終了してプレイヤーカメラへ戻す
+	/// </summary>
+	void ClearAttackCameraTarget();
 };
