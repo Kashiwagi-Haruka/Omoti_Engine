@@ -204,13 +204,13 @@ void TeamUI::Update(const Team& team) {
 			const uint32_t hpBarTextureHandle = TextureManager::GetInstance()->GetTextureIndexByfilePath("Resources/2d/Team/UI/HPBar.png");
 			hpBarSprites_[i] = std::make_unique<Sprite>();
 			hpBarSprites_[i]->Initialize(hpBarTextureHandle);
-			hpBarSprites_[i]->SetAnchorPoint({1.0f, 0.5f});
+			hpBarSprites_[i]->SetAnchorPoint({0.0f, 0.5f});
 		}
 		if (!hpBarBackgroundSprites_[i]) {
 			const uint32_t hpBarBackgroundTextureHandle = TextureManager::GetInstance()->GetTextureIndexByfilePath("Resources/2d/Team/UI/HPBarBackground.png");
 			hpBarBackgroundSprites_[i] = std::make_unique<Sprite>();
 			hpBarBackgroundSprites_[i]->Initialize(hpBarBackgroundTextureHandle);
-			hpBarBackgroundSprites_[i]->SetAnchorPoint({1.0f, 0.5f});
+			hpBarBackgroundSprites_[i]->SetAnchorPoint({0.0f, 0.5f});
 		}
 		if (!specialGaugeFlameSprites_[i]) {
 			const uint32_t specialGaugeFlameTextureHandle = TextureManager::GetInstance()->GetTextureIndexByfilePath("Resources/2d/AttackOperation/special.png");
