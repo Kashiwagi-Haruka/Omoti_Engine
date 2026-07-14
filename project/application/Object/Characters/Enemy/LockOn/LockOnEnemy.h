@@ -6,5 +6,4 @@ class LockOnEnemy {
 	std::unique_ptr<Primitive> lockOnPrimitive_;
 
 
-
 };
