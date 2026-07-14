@@ -3,6 +3,7 @@
 #include "Input.h"
 #include <imgui.h>
 #include <random>
+#include <cmath>
 #include "Function.h"
 PlayerCamera::PlayerCamera() {}
 PlayerCamera::~PlayerCamera() {}
@@ -64,4 +65,15 @@ void PlayerCamera::SetOrbitRotation(const Vector3& rotate) {
 	orbitPitch_ = rotate.x;
 	orbitYaw_ = rotate.y;
 	transform_.rotate = {orbitPitch_, orbitYaw_, 0.0f};
+}
+void PlayerCamera::LookAtFromPlayerPosition(const Vector3& targetPos) {
+	Vector3 direction = targetPos - playerPos;
+	if (Function::LengthSquared(direction) <= 0.0001f) {
+		return;
+	}
+
+	direction = Function::Normalize(direction);
+	orbitYaw_ = std::atan2(direction.x, direction.z);
+	orbitPitch_ = std::asin(-direction.y);
+	SetOrbitRotation({orbitPitch_, orbitYaw_, 0.0f});
 }

@@ -608,6 +608,9 @@ void GameScene::Update() {
 	uimanager->Update();
 
 	cameraController->SetPlayerPos(player->GetPosition());
+	if (playAreaMode_ == PlayAreaMode::kSpiral && rasen_ && rasen_->GetHouse() && Input::GetInstance()->TriggerLeftTrigger()) {
+		cameraController->LookAtFromPlayerPosition(rasen_->GetHouse()->GetPosition());
+	}
 	cameraController->Update();
 
 	if (isTransitionIn || isTransitionOut) {

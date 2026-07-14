@@ -89,7 +89,11 @@ public:
 	/// </summary>
 	/// <param name="durationSeconds"> 振動時間（秒） </param>
 	void StartShake(float durationSeconds = 1.0f);
-
+	/// <summary>
+	/// プレイヤーカメラの視点を指定位置の方向へ向ける
+	/// </summary>
+	/// <param name="targetPos"> 視点を向ける位置 </param>
+	void LookAtFromPlayerPosition(const Vector3& targetPos);
 	/// <summary>
 	/// カメラモードの設定
 	/// </summary>

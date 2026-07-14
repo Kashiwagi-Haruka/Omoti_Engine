@@ -189,6 +189,11 @@ void CameraController::ReturnToPlayerCamera() {
 
 Camera* CameraController::GetCamera() { return camera_; }
 void CameraController::StartShake(float durationSeconds) { playerCamera_->StartShake(durationSeconds); }
+void CameraController::LookAtFromPlayerPosition(const Vector3& targetPos) {
+	ReturnToPlayerCamera();
+	playerCamera_->LookAtFromPlayerPosition(targetPos);
+}
+
 void CameraController::SetLockOnTarget(const Vector3& targetPos, float durationSeconds) {
 	lockOnCamera_->SetTargetPos(targetPos);
 	normalAttackIdleTimer_ = 0.0f;
