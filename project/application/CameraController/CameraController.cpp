@@ -111,7 +111,7 @@ void CameraController::Update() {
 	}
 
 	if (isCameraSwitching_) {
-		cameraSwitchTimer_ += 1.0f / 120.0f;
+		cameraSwitchTimer_ += 1.0f / (60.0f*3.0f);
 		const float t = std::clamp(cameraSwitchTimer_ / cameraSwitchDuration_, 0.0f, 1.0f);
 		Transform blendedTransform = targetTransform;
 		blendedTransform.translate = Function::Lerp(switchStartTransform_.translate, targetTransform.translate, t);

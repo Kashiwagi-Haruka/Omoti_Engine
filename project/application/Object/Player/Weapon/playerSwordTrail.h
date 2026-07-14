@@ -22,6 +22,8 @@ private:
 	static constexpr float kTipLocalOffset = 1.2f;
 	static constexpr float kSegmentWidth = 1.25f;
 	static constexpr float kHiltWidthScale = 1.6f;
+	static constexpr float kEndTaperWidthScale = 0.72f;
+	static constexpr float kEndTaperLength = 0.18f;
 	static constexpr float kMinPointDistance = 0.025f;
 	static constexpr size_t kMaxPoints = 28;
 

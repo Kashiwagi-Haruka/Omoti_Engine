@@ -1,5 +1,7 @@
+#define NOMINMAX
 #include "playerSwordTrail.h"
 #include "Function.h"
+#include <algorithm>
 #include <cmath>
 #include "Object3d/Object3dCommon.h"
 
@@ -101,8 +103,11 @@ void PlayerSwordTrail::UpdateTrailMesh() {
 		}
 		Vector3 normal = NormalizeOrFallback(Function::Cross(direction, side), {0.0f, 0.0f, 1.0f});
 		const float t = cumulativeLength[i] / totalLength;
-		const float widthScale = 1.0f + (kHiltWidthScale - 1.0f) * t;
-		const float halfWidth = kSegmentWidth * 0.5f * widthScale;
+		const float hiltWidthScale = 1.0f + (kHiltWidthScale - 1.0f) * t;
+		const float endDistance = std::min(t, 1.0f - t);
+		const float endTaperT = std::min(endDistance / kEndTaperLength, 1.0f);
+		const float endTaperScale = kEndTaperWidthScale + (1.0f - kEndTaperWidthScale) * endTaperT;
+		const float halfWidth = kSegmentWidth * 0.5f * hiltWidthScale * endTaperScale;
 		Vector3 left = points_[i] - side * halfWidth;
 		Vector3 right = points_[i] + side * halfWidth;
 		vertices.push_back({
