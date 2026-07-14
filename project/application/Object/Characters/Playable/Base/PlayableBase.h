@@ -23,7 +23,7 @@ protected:
 	Parameter parameter_;
 	SkilltreeType skilltree_;
 	// 強化量
-	int reinforcementAmount_;
+	int reinforcementAmount_ = 0;
 	bool isHaveCharacter_;
 
 public:
