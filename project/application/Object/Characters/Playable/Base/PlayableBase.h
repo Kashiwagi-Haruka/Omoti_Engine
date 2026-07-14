@@ -4,6 +4,7 @@
 #include "Object/Characters/Base/Attribute.h"
 #include "Object/Characters/Base/CharacterParameters.h"
 #include "Object/Characters/Playable/Base/WeaponTypes.h"
+#include "Object/Characters/Playable/Base/Arcana.h"
 #include "SkilltreeType.h"
 #include "Object3d/Object3d.h"
 #include <optional>
@@ -17,6 +18,7 @@ protected:
 	std::string romanizationName_;
 	Attribute attribute_ = Attribute::None;
 	WeaponTypes weaponTypes_ = WeaponTypes::NONE;
+	Arcana arcana_ = Arcana::FOOL;
 	BaseParameter baseParameter_;
 	Parameter parameter_;
 	SkilltreeType skilltree_;
@@ -49,4 +51,6 @@ public:
 	const std::string& GetName() const { return name_; }
 	void SetRomanizationName(const std::string& romanizationName) { romanizationName_ = romanizationName; }
 	const std::string& GetRomanizationName() const { return romanizationName_; }
+	void SetArcana(Arcana arcana) { arcana_ = arcana; }
+	Arcana GetArcana() const { return arcana_; }
 };

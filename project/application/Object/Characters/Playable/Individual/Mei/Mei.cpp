@@ -10,6 +10,7 @@ void Mei::Initialize() {
 	SetWeaponTypes(WeaponTypes::SPEAR);
 	SetName("メイ");
 	SetRomanizationName("Mei");
+	SetArcana(Arcana::Devile);
 	mei_ = std::make_unique<Object3d>();
 	mei_->SetModel("sizuku");
 	mei_->Initialize();

@@ -10,6 +10,7 @@ void Yuzuki::Initialize() {
 	SetWeaponTypes(WeaponTypes::GUN);
 	SetName("柚希");
 	SetRomanizationName("Yuzuki");
+	SetArcana(Arcana::Hermit);
 	yuzuki_ = std::make_unique<Object3d>();
 	yuzuki_->SetModel("sizuku");
 	yuzuki_->Initialize();
