@@ -40,7 +40,7 @@ bool TryFindNearestAliveEnemy(Player& player, EnemyManager& enemyManager, Vector
 	Vector3 nearestPos{};
 
 	for (const auto& enemy : enemyManager.GetEnemies()) {
-		if (!enemy || !enemy->GetIsAlive()) {
+		if (!enemy || !enemy->GetIsAlive() || enemy->IsDying() || enemy->GetHP() <= 0) {
 			continue;
 		}
 
@@ -75,7 +75,7 @@ bool TryFindNearestEnemyInPlayerFront(Player& player, EnemyManager& enemyManager
 	Vector3 nearestPos{};
 
 	for (const auto& enemy : enemyManager.GetEnemies()) {
-		if (!enemy || !enemy->GetIsAlive()) {
+		if (!enemy || !enemy->GetIsAlive() || enemy->IsDying() || enemy->GetHP() <= 0) {
 			continue;
 		}
 
@@ -550,16 +550,16 @@ void GameScene::Update() {
 			hitVinettTimer_ = kHitVinettDuration_;
 		}
 		if (didNormalAttackHitEnemy) {
-			Vector3 cameraTargetPos = hitEnemyPos;
-			if (!TryFindNearestEnemyInPlayerFront(*player, *rasen_->GetEnemyManager(), &cameraTargetPos)) {
-				cameraTargetPos = hitEnemyPos;
-			}
-
-			const int normalAttackComboStep = player->GetSword()->GetComboStep();
-			if (normalAttackComboStep <= 1) {
-				cameraController->SetLockOnTarget(cameraTargetPos, 0.8f);
+			Vector3 cameraTargetPos{};
+			if (TryFindNearestEnemyInPlayerFront(*player, *rasen_->GetEnemyManager(), &cameraTargetPos) || TryFindNearestAliveEnemy(*player, *rasen_->GetEnemyManager(), &cameraTargetPos)) {
+				const int normalAttackComboStep = player->GetSword()->GetComboStep();
+				if (normalAttackComboStep <= 1) {
+					cameraController->SetLockOnTarget(cameraTargetPos, 0.8f);
+				} else {
+					cameraController->SetNormalAttackTarget(cameraTargetPos);
+				}
 			} else {
-				cameraController->SetNormalAttackTarget(cameraTargetPos);
+				cameraController->ClearAttackCameraTarget();
 			}
 		}
 		if (player->ConsumeDamageTrigger()) {
