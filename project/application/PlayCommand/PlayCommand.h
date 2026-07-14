@@ -135,6 +135,15 @@ class PlayCommand {
 	/// <returns></returns>
 	static bool GetPadMenuOpen();
 
-
+	/// <summary>
+	/// 上入力したかUI
+	/// </summary>
+	/// <returns></returns>
+	static bool GetUpUI();
 	
+	/// <summary>
+	/// 下入力したかUI
+	/// </summary>
+	/// <returns></returns>
+	static bool GetDownUI();
 };

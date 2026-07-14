@@ -5,6 +5,7 @@
 #include <numbers>
 #include <imgui.h>
 #include "Input.h"
+#include "PlayCommand/PlayCommand.h"
 void CharacterDisplay::Initialize() {
 	if (!camera_) {
 	camera_ = std::make_unique<Camera>();
@@ -55,6 +56,7 @@ void CharacterDisplay::Update() {
 	camera_->SetTransform(cameraTransform_);
 	camera_->Update();
 	skyDome_->Update();
+
 #ifdef USE_IMGUI
 	if (ImGui::Begin("CharacterDisplay")) {
 		if (ImGui::TreeNode("Character Transform")) {
@@ -78,21 +80,51 @@ void CharacterDisplay::Update() {
 
 	switch (selectMenuType_) {
 	case CharacterDisplayMenuType::STATUS:
+		if (PlayCommand::GetDownUI()) {
+			selectMenuType_ = CharacterDisplayMenuType::WEAPON;
+		}
 		status_->Update();
 		break;
 	case CharacterDisplayMenuType::WEAPON:
+		if (PlayCommand::GetUpUI()) {
+			selectMenuType_ = CharacterDisplayMenuType::STATUS;
+		}
+		if (PlayCommand::GetDownUI()) {
+			selectMenuType_ = CharacterDisplayMenuType::EQUIP;
+		}
 		weapon_->Update();
 		break;
 	case CharacterDisplayMenuType::EQUIP:
+		if (PlayCommand::GetUpUI()) {
+			selectMenuType_ = CharacterDisplayMenuType::WEAPON;
+		}
+		if (PlayCommand::GetDownUI()) {
+			selectMenuType_ = CharacterDisplayMenuType::SKILLTREE;
+		}
 		equip_->Update();
 		break;
 	case CharacterDisplayMenuType::SKILLTREE:
+		if (PlayCommand::GetUpUI()) {
+			selectMenuType_ = CharacterDisplayMenuType::EQUIP;
+		}
+		if (PlayCommand::GetDownUI()) {
+			selectMenuType_ = CharacterDisplayMenuType::REINFORCEMENT;
+		}
 		skilltree_->Update();
 		break;
 	case CharacterDisplayMenuType::REINFORCEMENT:
+		if (PlayCommand::GetUpUI()) {
+			selectMenuType_ = CharacterDisplayMenuType::SKILLTREE;
+		}
+		if (PlayCommand::GetDownUI()) {
+			selectMenuType_ = CharacterDisplayMenuType ::PROFILE;
+		}
 		reinforcement_->Update();
 		break;
 	case CharacterDisplayMenuType::PROFILE:
+		if (PlayCommand::GetUpUI()) {
+			selectMenuType_ = CharacterDisplayMenuType::REINFORCEMENT;
+		}
 		profile_->Update();
 		break;
 	default:
@@ -115,9 +147,13 @@ void CharacterDisplay::Draw() {
 	switch (selectMenuType_) {
 	case CharacterDisplayMenuType::STATUS:
 		status_->Draw();
+		Object3dCommon::GetInstance()->DrawCommon(Object3dCommon::DrawCommonType::SkinningToon);
+		sizukuObject_->Draw();
 		break;
 	case CharacterDisplayMenuType::WEAPON:
 		weapon_->Draw();
+		Object3dCommon::GetInstance()->DrawCommon(Object3dCommon::DrawCommonType::SkinningToon);
+		sizukuObject_->Draw();
 		break;
 	case CharacterDisplayMenuType::EQUIP:
 		equip_->Draw();
@@ -130,13 +166,13 @@ void CharacterDisplay::Draw() {
 		break;
 	case CharacterDisplayMenuType::PROFILE:
 		profile_->Draw();
+		Object3dCommon::GetInstance()->DrawCommon(Object3dCommon::DrawCommonType::SkinningToon);
+		sizukuObject_->Draw();
 		break;
 	default:
 		break;
 	}
 
-	Object3dCommon::GetInstance()->DrawCommon(Object3dCommon::DrawCommonType::SkinningToon);
-	sizukuObject_->Draw();
 	SpriteCommon::GetInstance()->DrawCommon();
 	menuText_->Draw();
 }

@@ -16,8 +16,8 @@ class CharacterDisplaySkilltree {
 	std::array<std::unique_ptr<Sprite>, kMaxskillTreeCount_> leftSkilltreeSprites_;
 	std::array<std::unique_ptr<Sprite>, kMaxskillTreeCount_> rightSkilltreeSprites_;
 
-	std::string selectCharacterName_;
-	Arcana selectCharacterArcana_;
+	std::string selectCharacterName_ = "Sizuku";
+	Arcana selectCharacterArcana_ = Arcana::FOOL;
 	
 public:
 	CharacterDisplaySkilltree();

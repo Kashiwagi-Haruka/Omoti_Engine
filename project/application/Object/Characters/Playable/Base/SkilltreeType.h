@@ -2,6 +2,7 @@
 #include <array>
 struct SkilltreeType{
 
+
 	int normalAttackLv_;
 	int skillAttackLv_;
 	int specialAttackLv_;
