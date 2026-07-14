@@ -336,6 +336,7 @@ copy "$(WindowsSdkDir)\bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)\
     <ClCompile Include="application\UI\PadMenu\PadMenu.cpp" />
     <ClCompile Include="application\Menu\HelpDisplay\HelpDisplay.cpp" />
     <ClCompile Include="application\CameraController\CharacterCamera\SizukuSpecialCamera.cpp" />
+    <ClCompile Include="application\Object\Characters\Enemy\LockOn\LockOnEnemy.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include=".editorconfig" />
@@ -544,6 +545,7 @@ copy "$(WindowsSdkDir)\bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)\
     <ClInclude Include="application\UI\PadMenu\PadMenu.h" />
     <ClInclude Include="application\Menu\HelpDisplay\HelpDisplay.h" />
     <ClInclude Include="application\CameraController\CharacterCamera\SizukuSpecialCamera.h" />
+    <ClInclude Include="application\Object\Characters\Enemy\LockOn\LockOnEnemy.h" />
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="Resources\shader\FullScreenCopy\CopyImage.PS.hlsl">
