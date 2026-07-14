@@ -129,7 +129,7 @@ void PlayerSwordTrail::UpdateTrailMesh() {
 
 	trail_->SetCamera(camera_);
 	trail_->SetWorldMatrix(Function::MakeIdentity4x4());
-	/*trail_->SetColor({0.2f, 0.7f, 1.0f, 0.6f});*/
+	trail_->SetColor({1.0f, 1.0f, 1.0f, 0.55f});
 	trail_->SetMeshData(vertices, indices);
 	trail_->Update();
 }
