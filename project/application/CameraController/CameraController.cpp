@@ -48,7 +48,7 @@ void CameraController::Initialize() {
 
 void CameraController::Update() {
 	constexpr float kDeltaTime = 1.0f / 60.0f;
-	constexpr float kNormalAttackCameraReturnDelay = 1.5f;
+	constexpr float kNormalAttackCameraReturnDelay = 0.8f;
 
 	if (PlayCommand::GetNORMAL_ATTACK_PUSH()) {
 		normalAttackIdleTimer_ = 0.0f;
@@ -75,7 +75,8 @@ void CameraController::Update() {
 	const Vector2 mouseMove = Input::GetInstance()->GetMouseMove();
 	const Vector2 rightStick = Input::GetInstance()->GetJoyStickRXY();
 	const bool isCameraMoved = mouseMove.x != 0.0f || mouseMove.y != 0.0f || rightStick.x != 0.0f || rightStick.y != 0.0f;
-	if (isCameraMoved && cameraMode_ != CameraMode::kPlayerCamera) {
+	const bool canCameraInputReturnToPlayerCamera = cameraMode_ != CameraMode::kPlayerCamera && cameraMode_ != CameraMode::kNormalAttackCamera;
+	if (isCameraMoved && canCameraInputReturnToPlayerCamera) {
 		InheritPlayerCameraRotation(cameraMode_);
 		cameraMode_ = CameraMode::kPlayerCamera;
 		autoLockOnTimer_ = 0.0f;
