@@ -7,6 +7,4 @@ class LockOnEnemy {
 
 
 
-
-
 };
