@@ -38,9 +38,6 @@ private:
 		Node rootnode;
 	};
 
-
-	
-
 	ModelData modelData_;
 
 	D3D12_VERTEX_BUFFER_VIEW vertexBufferView_;
@@ -49,12 +46,15 @@ private:
 	Microsoft::WRL::ComPtr<ID3D12Resource> indexResource_;
 
 	Microsoft::WRL::ComPtr<ID3D12Resource> materialResource_;
+	Microsoft::WRL::ComPtr<ID3D12Resource> loadingMaterialResource_;
 	VertexData* vertexData = nullptr;
 	Material* mat3d = nullptr;
+	Material* loadingMat3d = nullptr;
+	void CreateMaterialResources();
+	bool IsMaterialTextureLoaded() const;
 	MaterialData LoadMaterialTemplateFile(const std::string& directoryPath, const std::string& filename);
 	Node NodeRead(aiNode* node);
 
-public:
 public:
 	void Initialize();
 	void LoadObjFile(const std::string& directoryPath, const std::string& filename);

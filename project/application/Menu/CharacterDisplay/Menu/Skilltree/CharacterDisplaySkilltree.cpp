@@ -67,9 +67,9 @@ void CharacterDisplaySkilltree::Update() {
 		specialAttackSprite_->SetPosition({AddAbilityRightSprite_->GetPosition().x+60.0f, AddAbilityRightSprite_->GetPosition().y-60.0f});
 		for (int i = 0; i < kMaxskillTreeCount_; i++) {
 			leftSkilltreeSprites_[i]->SetPosition(
-			    {AddAbilityLeftSprite_->GetPosition().x - (40.0f*sinf(std::numbers::pi_v<float> * ((i + 1.0f) / 6))), AddAbilityLeftSprite_->GetPosition().y + (20.0f * (i + 1))});
+			    {AddAbilityLeftSprite_->GetPosition().x - (60.0f*sinf(std::numbers::pi_v<float> * ((i + 1.0f) / 6))), AddAbilityLeftSprite_->GetPosition().y + (60.0f * (i + 1))});
 			rightSkilltreeSprites_[i]->SetPosition(
-			    {AddAbilityRightSprite_->GetPosition().x + (40.0f*sinf(std::numbers::pi_v<float> * ((i + 1.0f) / 6))), AddAbilityLeftSprite_->GetPosition().y + (20.0f * (i + 1))});
+			    {AddAbilityRightSprite_->GetPosition().x + (60.0f*sinf(std::numbers::pi_v<float> * ((i + 1.0f) / 6))), AddAbilityLeftSprite_->GetPosition().y + (60.0f * (i + 1))});
 		}
 		break;
 	case Arcana::Magician:
