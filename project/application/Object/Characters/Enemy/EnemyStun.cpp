@@ -3,15 +3,15 @@
 #include "GameBase.h"
 
 EnemyStun::EnemyStun() {
-	ModelManager::GetInstance()->LoadModel("Resources/3d","EnemyStun");
+
 	object_ = std::make_unique<Object3d>();
-	object_->SetModel("EnemyStun");
+
 }
 
 void EnemyStun::SetCamera(Camera* camera) { camera_ = camera; }
 void EnemyStun::SetTranslate(Vector3 translate) { transform_.translate = translate; };
 void EnemyStun::Initialize() { 
-	
+	object_->SetModel("EnemyStun");
 	object_->SetCamera(camera_);
 	object_->Initialize();
 	object_->SetTransform(transform_);

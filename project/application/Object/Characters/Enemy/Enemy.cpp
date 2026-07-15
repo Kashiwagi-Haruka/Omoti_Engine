@@ -21,6 +21,7 @@ Enemy::Enemy() {
 	adhesion_ = std::make_unique<Adhesion>();
 	hpBar_ = std::make_unique<EnemyHPBar>();
 	lockOnEnemy_ = std::make_unique<LockOnEnemy>();
+	enemyAttack_ = std::make_unique<EnemyAttack>();
 }
 void Enemy::Initialize(Camera* camera, Vector3 translates) {
 	isAlive = true;
@@ -51,7 +52,7 @@ void Enemy::Initialize(Camera* camera, Vector3 translates) {
 	object_->Update();
 
 	enemyStun->Initialize();
-	enemyAttack_ = std::make_unique<EnemyAttack>();
+
 	enemyAttack_->Initialize(camera_);
 	adhesion_->Initialize();
 	adhesion_->SetCamera(camera_);
