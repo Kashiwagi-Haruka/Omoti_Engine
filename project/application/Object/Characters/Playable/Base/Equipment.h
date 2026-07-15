@@ -27,7 +27,14 @@ enum class EquipUpParametersType{
 	AttributeAffinity,
 
 };
-class Equipment{
+struct EquipParameters{
+	EquipUpParametersType parameter;
+	int upgreatCount = 0;
+};
+class BaseEquipment{
 	EquipmentTypes equipmentType_;
-
+	EquipParameters parameterFirst_;
+	EquipParameters parameterSecond_;
+	EquipParameters parameterThird_;
+	EquipParameters parameterFour_;
 };
