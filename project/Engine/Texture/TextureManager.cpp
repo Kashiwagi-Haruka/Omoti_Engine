@@ -2,6 +2,7 @@
 #include "DirectXCommon.h"
 #include "SrvManager/SrvManager.h"
 #include "StringUtility.h"
+#include <chrono>
 std::unique_ptr<TextureManager> TextureManager::instance = nullptr;
 uint32_t TextureManager::kSRVIndexTop = 1;
 
@@ -20,6 +21,7 @@ void TextureManager::Initialize(DirectXCommon* dxCommon) {
 	srvManager_ = std::make_unique<SrvManager>();
 	srvManager_->Initialize(dxCommon_);
 	textureDatas.reserve(srvManager_->kMaxSRVCount_);
+	LoadTextureName(kDefaultWhiteTexturePath);
 }
 
 // インスタンスを破棄して終了処理を行う
@@ -33,15 +35,7 @@ void TextureManager::Finalize() {
 	instance.reset();
 }
 
-// ファイルパス指定でテクスチャを読み込み、SRV を作成する
-void TextureManager::LoadTextureName(const std::string& filePath) {
-
-	if (textureDatas.contains(filePath)) {
-		return;
-	}
-	assert(srvManager_->CanAllocate());
-
-	// テクスチャファイルを読んでプログラムで使えるようにする
+DirectX::ScratchImage TextureManager::LoadTextureImage(const std::string& filePath) {
 	DirectX::ScratchImage image{};
 	std::wstring filePathW = StringUtility::ConvertString_(filePath);
 	HRESULT hr_ = S_FALSE;
@@ -53,7 +47,6 @@ void TextureManager::LoadTextureName(const std::string& filePath) {
 	}
 	assert(SUCCEEDED(hr_));
 
-	// ミップマップの作成
 	DirectX::ScratchImage mipImages{};
 	if (DirectX::IsCompressed(image.GetMetadata().format)) {
 		mipImages = std::move(image);
@@ -61,22 +54,17 @@ void TextureManager::LoadTextureName(const std::string& filePath) {
 		hr_ = DirectX::GenerateMipMaps(image.GetImages(), image.GetImageCount(), image.GetMetadata(), DirectX::TEX_FILTER_SRGB, 0, mipImages);
 		assert(SUCCEEDED(hr_));
 	}
+	return mipImages;
+}
 
-	TextureData& textureData = textureDatas[filePath];
-	textureData.filePath = filePath;
+void TextureManager::ApplyTextureImage(TextureData& textureData, DirectX::ScratchImage&& mipImages, bool isDDS) {
 	textureData.metadata = mipImages.GetMetadata();
-	textureData.resource = CreateTextureResource(textureData.metadata);
 	if (isDDS && textureData.metadata.dimension == DirectX::TEX_DIMENSION_TEXTURE2D && textureData.metadata.arraySize >= 6 && (textureData.metadata.arraySize % 6) == 0 &&
 	    textureData.metadata.depth == 1) {
 		textureData.metadata.miscFlags |= DirectX::TEX_MISC_TEXTURECUBE;
 	}
-	// ★ ここを UploadTextureData に統一
+	textureData.resource = CreateTextureResource(textureData.metadata);
 	UploadTextureData(textureData.resource.Get(), mipImages);
-
-	// SRVハンドル設定
-	textureData.srvIndex = srvManager_->Allocate();
-	textureData.srvHandleCPU = srvManager_->GetCPUDescriptorHandle(textureData.srvIndex);
-	textureData.srvHandleGPU = srvManager_->GetGPUDescriptorHandle(textureData.srvIndex);
 
 	D3D12_SHADER_RESOURCE_VIEW_DESC srvDesc{};
 	srvDesc.Format = textureData.metadata.format;
@@ -90,12 +78,70 @@ void TextureManager::LoadTextureName(const std::string& filePath) {
 		srvDesc.ViewDimension = D3D12_SRV_DIMENSION_TEXTURE2D;
 		srvDesc.Texture2D.MipLevels = UINT(textureData.metadata.mipLevels);
 	}
-
 	dxCommon_->GetDevice()->CreateShaderResourceView(textureData.resource.Get(), &srvDesc, textureData.srvHandleCPU);
+	textureData.isLoaded = true;
+	textureData.isLoading = false;
+}
 
-	// デバッグログ出力
-	std::string log = "Texture Loaded: " + filePath + " | SRV Index: " + std::to_string(textureData.srvIndex) + " | GPU Handle: " + std::to_string(textureData.srvHandleGPU.ptr) + "\n";
-	OutputDebugStringA(log.c_str());
+void TextureManager::Update() { CompleteFinishedLoads(); }
+
+bool TextureManager::IsTextureLoaded(uint32_t srvIndex) {
+	CompleteFinishedLoads();
+	for (const auto& [key, data] : textureDatas) {
+		if (data.srvIndex == srvIndex) {
+			return data.isLoaded;
+		}
+	}
+	return true;
+}
+
+void TextureManager::CompleteFinishedLoads() {
+	for (auto& [filePath, textureData] : textureDatas) {
+		if (!textureData.isLoading || !textureData.loadFuture.valid()) {
+			continue;
+		}
+		if (textureData.loadFuture.wait_for(std::chrono::seconds(0)) != std::future_status::ready) {
+			continue;
+		}
+		DirectX::ScratchImage mipImages = textureData.loadFuture.get();
+		std::wstring filePathW = StringUtility::ConvertString_(filePath);
+		const bool isDDS = filePathW.size() >= 4 && _wcsicmp(filePathW.c_str() + (filePathW.size() - 4), L".dds") == 0;
+		ApplyTextureImage(textureData, std::move(mipImages), isDDS);
+
+		std::string log = "Texture Async Loaded: " + filePath + " | SRV Index: " + std::to_string(textureData.srvIndex) + " | GPU Handle: " + std::to_string(textureData.srvHandleGPU.ptr) + "\n";
+		OutputDebugStringA(log.c_str());
+	}
+}
+
+// ファイルパス指定でテクスチャを読み込み、SRV を作成する
+void TextureManager::LoadTextureName(const std::string& filePath) {
+	CompleteFinishedLoads();
+	if (textureDatas.contains(filePath)) {
+		return;
+	}
+	assert(srvManager_->CanAllocate());
+
+	TextureData& textureData = textureDatas[filePath];
+	textureData.filePath = filePath;
+	textureData.srvIndex = srvManager_->Allocate();
+	textureData.srvHandleCPU = srvManager_->GetCPUDescriptorHandle(textureData.srvIndex);
+	textureData.srvHandleGPU = srvManager_->GetGPUDescriptorHandle(textureData.srvIndex);
+
+	if (filePath == kDefaultWhiteTexturePath) {
+		DirectX::ScratchImage mipImages = LoadTextureImage(filePath);
+		ApplyTextureImage(textureData, std::move(mipImages), false);
+		std::string log = "Texture Loaded: " + filePath + " | SRV Index: " + std::to_string(textureData.srvIndex) + " | GPU Handle: " + std::to_string(textureData.srvHandleGPU.ptr) + "\n";
+		OutputDebugStringA(log.c_str());
+		return;
+	}
+
+	const auto whiteIt = textureDatas.find(kDefaultWhiteTexturePath);
+	assert(whiteIt != textureDatas.end());
+	textureData.metadata = whiteIt->second.metadata;
+	textureData.resource = whiteIt->second.resource;
+	dxCommon_->GetDevice()->CreateShaderResourceView(textureData.resource.Get(), nullptr, textureData.srvHandleCPU);
+	textureData.isLoading = true;
+	textureData.loadFuture = std::async(std::launch::async, [filePath]() { return LoadTextureImage(filePath); });
 }
 
 // メモリ上の画像データを読み込み、SRV を作成する

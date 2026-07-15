@@ -3,6 +3,7 @@
 #include <Windows.h>
 #include <cstdint>
 #include <d3d12.h>
+#include <future>
 #include <memory>
 #include <string>
 #include <unordered_map>
@@ -10,6 +11,8 @@
 
 class DirectXCommon;
 class SrvManager;
+
+constexpr const char* kDefaultWhiteTexturePath = "Resources/2d/white2x2.png";
 
 // テクスチャの読み込み・SRV管理を行うシングルトン
 class TextureManager {
@@ -23,6 +26,9 @@ private:
 		uint32_t srvIndex;                               // SRV 管理番号
 		D3D12_CPU_DESCRIPTOR_HANDLE srvHandleCPU;        // CPU 側 SRV ハンドル
 		D3D12_GPU_DESCRIPTOR_HANDLE srvHandleGPU;        // GPU 側 SRV ハンドル
+		bool isLoading = false;                          // 非同期ロード中か
+		bool isLoaded = false;                           // 本来のテクスチャ読み込み完了か
+		std::future<DirectX::ScratchImage> loadFuture;   // ファイル読み込み・mip 作成ジョブ
 	};
 
 	std::unordered_map<std::string, TextureData> textureDatas; // 読み込み済みテクスチャ一覧
@@ -33,6 +39,12 @@ private:
 	TextureManager(TextureManager&) = delete;
 	TextureManager& operator=(TextureManager&) = delete;
 
+	// テクスチャファイルを読み込み、mip まで作成する
+	static DirectX::ScratchImage LoadTextureImage(const std::string& filePath);
+	// TextureData に画像をアップロードし、SRV を設定する
+	void ApplyTextureImage(TextureData& textureData, DirectX::ScratchImage&& mipImages, bool isDDS);
+	// 非同期ロードが完了したテクスチャを GPU リソースへ反映する
+	void CompleteFinishedLoads();
 	// metadata から D3D12 テクスチャリソースを生成する
 	Microsoft::WRL::ComPtr<ID3D12Resource> CreateTextureResource(DirectX::TexMetadata& metadata);
 	// ScratchImage の各 mip データをリソースへ転送する
@@ -41,7 +53,7 @@ private:
 	DirectXCommon* dxCommon_ = nullptr;
 	std::unique_ptr<SrvManager> srvManager_;
 
-	//同じファイルネームからリフレッシュして新たにロードする Yoshida追加しました。
+	// 同じファイルネームからリフレッシュして新たにロードする
 	void RefreshTexture(const std::string& filePath);
 
 public:
@@ -54,6 +66,10 @@ public:
 	void Initialize(DirectXCommon* dxCommon);
 	// ファイルからテクスチャを読み込む（未読み込み時のみ）
 	void LoadTextureName(const std::string& filePath);
+	// 非同期ロードが完了したテクスチャを反映する
+	void Update();
+	// SRV インデックスの本来のテクスチャ読み込みが完了しているか
+	bool IsTextureLoaded(uint32_t srvIndex);
 	// メモリ上の画像データからテクスチャを読み込む
 	void LoadTextureFromMemory(const std::string& key, const uint8_t* data, size_t size);
 	// RGBA8 生データからテクスチャを作成する

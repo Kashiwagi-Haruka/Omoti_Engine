@@ -119,6 +119,7 @@ void GameBase::BeginFlame() {
 	dxCommon_->PreDraw();
 	imguiM_->Begin();
 	Input::GetInstance()->Update();
+	TextureManager::GetInstance()->Update();
 	Audio::GetInstance()->Update();
 }
 

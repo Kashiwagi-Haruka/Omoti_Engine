@@ -71,9 +71,24 @@ void Sprite::Initialize(uint32_t Handle) {
 
 	AdjustTextureSize();
 	SetTextureRange({0.0f, 0.0f}, textureSize);
+	waitingForTextureLoad_ = !TextureManager::GetInstance()->IsTextureLoaded(textureIndex);
+	useFullTextureOnLoad_ = true;
+	isInitialized_ = true;
 }
 
 void Sprite::Draw() {
+	if (waitingForTextureLoad_ && TextureManager::GetInstance()->IsTextureLoaded(textureIndex)) {
+		const Vector2 requestedLeftTop = textureLeftTop;
+		const Vector2 requestedSize = textureSize;
+		AdjustTextureSize();
+		if (useFullTextureOnLoad_) {
+			SetTextureRange({0.0f, 0.0f}, textureSize);
+		} else {
+			SetTextureRange(requestedLeftTop, requestedSize);
+		}
+		waitingForTextureLoad_ = false;
+	}
+
 	const SpriteCommon* spriteCommon = SpriteCommon::GetInstance();
 	if (!spriteCommon->ShouldDrawSprites()) {
 		return;
@@ -106,6 +121,18 @@ void Sprite::Draw() {
 
 void Sprite::Update() {
 
+	if (waitingForTextureLoad_ && TextureManager::GetInstance()->IsTextureLoaded(textureIndex)) {
+		const Vector2 requestedLeftTop = textureLeftTop;
+		const Vector2 requestedSize = textureSize;
+		AdjustTextureSize();
+		if (useFullTextureOnLoad_) {
+			SetTextureRange({0.0f, 0.0f}, textureSize);
+		} else {
+			SetTextureRange(requestedLeftTop, requestedSize);
+		}
+		waitingForTextureLoad_ = false;
+	}
+
 	if (isFlipX_ || isFripY_) {
 		if (isFlipX_) {
 			left = -left;
@@ -137,6 +164,11 @@ void Sprite::Update() {
 void Sprite::SetColor(const Vector4& color) { material->color = color; };
 
 void Sprite::SetTextureRange(const Vector2& leftTop, const Vector2& TextureSize) {
+	textureLeftTop = leftTop;
+	textureSize = TextureSize;
+	if (isInitialized_ && waitingForTextureLoad_) {
+		useFullTextureOnLoad_ = false;
+	}
 
 	const DirectX::TexMetadata& metaData = TextureManager::GetInstance()->GetMetaData(textureIndex);
 	float textureWidth = static_cast<float>(metaData.width);
@@ -171,4 +203,13 @@ void Sprite::AdjustTextureSize() {
 	}
 
 	textureSize = textureCutSize;
+}
+
+void Sprite::SetTextureHandle(uint32_t Handle) {
+	textureIndex = Handle;
+	AdjustTextureSize();
+	SetTextureRange({0.0f, 0.0f}, textureSize);
+	waitingForTextureLoad_ = !TextureManager::GetInstance()->IsTextureLoaded(textureIndex);
+	useFullTextureOnLoad_ = true;
+	isInitialized_ = true;
 }
