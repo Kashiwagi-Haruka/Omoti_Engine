@@ -249,9 +249,6 @@
     <ClCompile Include="application\Menu\CharacterDisplay\Background\CharacterDisplaySkyDome.cpp">
       <Filter>Application\Menu\CharacterDisplay</Filter>
     </ClCompile>
-    <ClCompile Include="application\Menu\CharacterDisplay\Text\CharacterDisplayText.cpp">
-      <Filter>Application\Menu\CharacterDisplay</Filter>
-    </ClCompile>
     <ClCompile Include="application\Object\Characters\Enemy\Enemy.cpp">
       <Filter>Application\Object\Character\Enemy</Filter>
     </ClCompile>
@@ -742,9 +739,6 @@
       <Filter>Application\Menu\CharacterDisplay</Filter>
     </ClInclude>
     <ClInclude Include="application\Menu\CharacterDisplay\Background\CharacterDisplaySkyDome.h">
-      <Filter>Application\Menu\CharacterDisplay</Filter>
-    </ClInclude>
-    <ClInclude Include="application\Menu\CharacterDisplay\Text\CharacterDisplayText.h">
       <Filter>Application\Menu\CharacterDisplay</Filter>
     </ClInclude>
     <ClInclude Include="application\Object\Characters\Enemy\Enemy.h">

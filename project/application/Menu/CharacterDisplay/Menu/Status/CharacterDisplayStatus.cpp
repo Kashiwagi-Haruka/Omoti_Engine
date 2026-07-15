@@ -1,4 +1,7 @@
 #include "CharacterDisplayStatus.h"
-void CharacterDisplayStatus::Initialize() {}
+#include "SpriteCommon.h"
+void CharacterDisplayStatus::Initialize() {
+
+}
 void CharacterDisplayStatus::Update() {}
 void CharacterDisplayStatus::Draw() {}
