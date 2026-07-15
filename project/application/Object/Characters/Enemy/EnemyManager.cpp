@@ -1,7 +1,9 @@
+#define NOMINMAX
 #include "EnemyManager.h"
 #include "Function.h"
 #include "Object3d/Object3dCommon.h"
 #include <algorithm>
+#include <array>
 #include <cmath>
 #include <cstdlib>
 
@@ -9,11 +11,46 @@ namespace {
 constexpr int kFinalWave = 5;
 constexpr float kEnemySeparationRadius = 1.0f;
 constexpr float kPlayerSeparationRadius = 1.0f;
-constexpr float kDamageTextSeparationRadius = 0.3f;
+constexpr float kDamageTextSeparationRadius = 0.45f;
+constexpr float kDamageTextBaseScaleRate = 0.18f;
+constexpr float kDamageTextMinScale = 0.45f;
+constexpr float kDamageTextUpOffsetRate = 0.75f;
+constexpr float kDamageTextUpOffsetExtra = -1.0f;
+constexpr int kDamageTextTargetOffsetCount = 12;
+constexpr std::array<Vector3, kDamageTextTargetOffsetCount> kDamageTextTargetOffsets = {
+    Vector3{0.0f,   0.0f,  0.0f  },
+    Vector3{0.32f,  0.18f, 0.0f  },
+    Vector3{-0.32f, 0.36f, 0.0f  },
+    Vector3{0.0f,   0.54f, 0.32f },
+    Vector3{0.0f,   0.24f, -0.32f},
+    Vector3{0.36f,  0.48f, 0.36f },
+    Vector3{-0.36f, 0.12f, -0.36f},
+    Vector3{0.48f,  0.66f, -0.24f},
+    Vector3{-0.48f, 0.30f, 0.24f },
+    Vector3{0.20f,  0.78f, 0.48f },
+    Vector3{-0.20f, 0.06f, -0.48f},
+    Vector3{0.0f,   0.90f, 0.0f  },
+};
 constexpr float kSeparationEpsilon = 0.0001f;
 constexpr int kSeparationIterations = 4;
 
 float LengthSquaredXZ(const Vector3& vector) { return vector.x * vector.x + vector.z * vector.z; }
+
+Vector3 MakeDamageTextPosition(const Enemy& enemy, const Vector3& targetOffset) {
+	Vector3 position = enemy.GetPosition();
+	const Vector3 scale = enemy.GetScale();
+	const float horizontalScale = std::max(scale.x, scale.z);
+	position.x += targetOffset.x * horizontalScale;
+	position.y += scale.y * kDamageTextUpOffsetRate + kDamageTextUpOffsetExtra + targetOffset.y * scale.y;
+	position.z += targetOffset.z * horizontalScale;
+	return position;
+}
+
+Vector3 MakeDamageTextScale(const Enemy& enemy) {
+	const Vector3 targetScale = enemy.GetScale();
+	const float textScale = std::max(kDamageTextMinScale, std::max({targetScale.x, targetScale.y, targetScale.z}) * kDamageTextBaseScaleRate);
+	return {textScale, textScale, textScale};
+}
 
 void PushAwayXZ(Vector3& position, const Vector3& otherPosition, float minDistance, const Vector3& fallbackDirection) {
 	Vector3 delta = position - otherPosition;
@@ -45,8 +82,8 @@ void EnemyManager::Clear() {
 	enemies.clear(); // unique_ptr が自動削除
 	hitEffects.clear();
 	damageTexts.clear();
+	nextDamageTextOffsetIndex_ = 0;
 }
-
 void EnemyManager::Initialize(Camera* camera) {
 	Clear();
 	camera_ = camera;
@@ -244,9 +281,7 @@ void EnemyManager::Update(Camera* camera, const Vector3& housePos, const Vector3
 
 	for (auto& entry : damageTexts) {
 		if (entry.enemy) {
-			Vector3 damagePos = entry.enemy->GetPosition();
-			damagePos.y += 2.0f;
-			entry.damageText->SetPosition(damagePos);
+			entry.damageText->SetPosition(MakeDamageTextPosition(*entry.enemy, entry.targetOffset));
 		}
 	}
 	ResolveDamageTextOverlaps();
@@ -406,9 +441,10 @@ void EnemyManager::OnEnemyDamaged(Enemy* enemy, int damage, Attribute attribute,
 
 	auto damageText = std::make_unique<Damage>();
 	damageText->Initialize(camera_);
-	Vector3 damagePos = enemy->GetPosition();
-	damagePos.y += 2.0f;
-	damageText->SetPosition(damagePos);
+	const Vector3 targetOffset = kDamageTextTargetOffsets[nextDamageTextOffsetIndex_ % kDamageTextTargetOffsets.size()];
+	nextDamageTextOffsetIndex_ = (nextDamageTextOffsetIndex_ + 1) % static_cast<int>(kDamageTextTargetOffsets.size());
+	damageText->SetPosition(MakeDamageTextPosition(*enemy, targetOffset));
+	damageText->SetScale(MakeDamageTextScale(*enemy));
 	if (reactionPreviousAttribute != Attribute::None && reactionPreviousAttribute != attribute) {
 		damageText->SetReactionAttribute(reactionPreviousAttribute, attribute);
 	} else {
@@ -416,7 +452,7 @@ void EnemyManager::OnEnemyDamaged(Enemy* enemy, int damage, Attribute attribute,
 	}
 	damageText->SetIsCritical(isCritical);
 	damageText->SetDamageValue(damage);
-	damageTexts.push_back({enemy, std::move(damageText)});
+	damageTexts.push_back({enemy, std::move(damageText), targetOffset});
 }
 void EnemyManager::ForceStartWave(int waveNumber) {
 	Clear();

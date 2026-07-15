@@ -74,4 +74,10 @@ public:
 	/// </summary>
 	/// <param name="pos"></param>
 	void SetPlayerPos(const Vector3& pos) { playerPos = pos; }
+
+		/// <summary>
+	/// プレイヤー位置を基準に指定位置の方向へ視点を向ける
+	/// </summary>
+	/// <param name="targetPos"> 視点を向ける位置 </param>
+	void LookAtFromPlayerPosition(const Vector3& targetPos);
 };

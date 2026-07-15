@@ -45,7 +45,10 @@ void Model::Initialize() {
 	mat3d->uvTransform = Function::MakeIdentity4x4();
 	mat3d->shininess = 40.0f;
 	mat3d->environmentCoefficient = 0.0f;
-
+	mat3d->dissolveEnabled = 0;
+	mat3d->dissolveThreshold = 0.0f;
+	mat3d->dissolveEdgeWidth = 0.02f;
+	mat3d->dissolveEdgeColor = Vector4(1.0f, 0.35f, 0.05f, 1.0f);
 	materialResource_->Unmap(0, nullptr);
 
 	TextureManager::GetInstance()->LoadTextureName(modelData_.material.textureFilePath);

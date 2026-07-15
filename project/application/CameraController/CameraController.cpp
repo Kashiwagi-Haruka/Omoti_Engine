@@ -48,7 +48,7 @@ void CameraController::Initialize() {
 
 void CameraController::Update() {
 	constexpr float kDeltaTime = 1.0f / 60.0f;
-	constexpr float kNormalAttackCameraReturnDelay = 1.0f;
+	constexpr float kNormalAttackCameraReturnDelay = 0.8f;
 
 	if (PlayCommand::GetNORMAL_ATTACK_PUSH()) {
 		normalAttackIdleTimer_ = 0.0f;
@@ -75,7 +75,8 @@ void CameraController::Update() {
 	const Vector2 mouseMove = Input::GetInstance()->GetMouseMove();
 	const Vector2 rightStick = Input::GetInstance()->GetJoyStickRXY();
 	const bool isCameraMoved = mouseMove.x != 0.0f || mouseMove.y != 0.0f || rightStick.x != 0.0f || rightStick.y != 0.0f;
-	if (isCameraMoved && cameraMode_ != CameraMode::kPlayerCamera) {
+	const bool canCameraInputReturnToPlayerCamera = cameraMode_ != CameraMode::kPlayerCamera && cameraMode_ != CameraMode::kNormalAttackCamera;
+	if (isCameraMoved && canCameraInputReturnToPlayerCamera) {
 		InheritPlayerCameraRotation(cameraMode_);
 		cameraMode_ = CameraMode::kPlayerCamera;
 		autoLockOnTimer_ = 0.0f;
@@ -111,7 +112,7 @@ void CameraController::Update() {
 	}
 
 	if (isCameraSwitching_) {
-		cameraSwitchTimer_ += 1.0f / 60.0f;
+		cameraSwitchTimer_ += 1.0f / (60.0f*3.0f);
 		const float t = std::clamp(cameraSwitchTimer_ / cameraSwitchDuration_, 0.0f, 1.0f);
 		Transform blendedTransform = targetTransform;
 		blendedTransform.translate = Function::Lerp(switchStartTransform_.translate, targetTransform.translate, t);
@@ -174,8 +175,25 @@ void CameraController::InheritPlayerCameraRotation(CameraMode sourceMode) {
 	}
 }
 
+void CameraController::ReturnToPlayerCamera() {
+	if (cameraMode_ != CameraMode::kPlayerCamera) {
+		InheritPlayerCameraRotation(cameraMode_);
+	}
+	cameraMode_ = CameraMode::kPlayerCamera;
+	autoLockOnTimer_ = 0.0f;
+	normalAttackIdleTimer_ = 1.0f;
+	lockOnCamera_->ClearTarget();
+	normalAttackCamera_->ClearTarget();
+	isCameraSwitching_ = false;
+}
+
 Camera* CameraController::GetCamera() { return camera_; }
 void CameraController::StartShake(float durationSeconds) { playerCamera_->StartShake(durationSeconds); }
+void CameraController::LookAtFromPlayerPosition(const Vector3& targetPos) {
+	ReturnToPlayerCamera();
+	playerCamera_->LookAtFromPlayerPosition(targetPos);
+}
+
 void CameraController::SetLockOnTarget(const Vector3& targetPos, float durationSeconds) {
 	lockOnCamera_->SetTargetPos(targetPos);
 	normalAttackIdleTimer_ = 0.0f;
@@ -189,3 +207,4 @@ void CameraController::SetNormalAttackTarget(const Vector3& targetPos) {
 	lockOnCamera_->ClearTarget();
 	cameraMode_ = CameraMode::kNormalAttackCamera;
 }
+void CameraController::ClearAttackCameraTarget() { ReturnToPlayerCamera(); }

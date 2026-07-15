@@ -29,22 +29,39 @@ constexpr Vector2 kDashRadialBlurCenter = {0.5f, 0.5f};
 constexpr float kDashRadialBlurWidth = 0.04f;
 constexpr int kDashRadialBlurSampleCount = 2;
 
-bool TryFindNearestEnemyInPlayerFront(Player& player, EnemyManager& enemyManager, Vector3* outEnemyPos) {
-	if (!outEnemyPos) {
-		return false;
+Enemy* TryFindNearestAliveEnemy(Player& player, EnemyManager& enemyManager) {
+	const Vector3 playerPos = player.GetPosition();
+	Enemy* nearestEnemy = nullptr;
+	float nearestDistanceSq = 0.0f;
+
+	for (const auto& enemy : enemyManager.GetEnemies()) {
+		if (!enemy || !enemy->GetIsAlive() || enemy->IsDying() || enemy->GetHP() <= 0) {
+			continue;
+		}
+
+		Vector3 toEnemy = enemy->GetPosition() - playerPos;
+		toEnemy.y = 0.0f;
+		const float distanceSq = Function::LengthSquared(toEnemy);
+		if (!nearestEnemy || distanceSq < nearestDistanceSq) {
+			nearestEnemy = enemy.get();
+			nearestDistanceSq = distanceSq;
+		}
 	}
 
+	return nearestEnemy;
+}
+
+Enemy* TryFindNearestEnemyInPlayerFront(Player& player, EnemyManager& enemyManager) {
 	const Vector3 playerPos = player.GetPosition();
 	const float playerYaw = player.GetRotate().y;
 	const Vector3 playerForward = {std::sinf(playerYaw), 0.0f, std::cosf(playerYaw)};
 	const float minForwardDot = std::cos(kLockOnTargetMaxAngle);
 
-	bool found = false;
+	Enemy* nearestEnemy = nullptr;
 	float nearestDistanceSq = 0.0f;
-	Vector3 nearestPos{};
 
 	for (const auto& enemy : enemyManager.GetEnemies()) {
-		if (!enemy || !enemy->GetIsAlive()) {
+		if (!enemy || !enemy->GetIsAlive() || enemy->IsDying() || enemy->GetHP() <= 0) {
 			continue;
 		}
 
@@ -61,17 +78,33 @@ bool TryFindNearestEnemyInPlayerFront(Player& player, EnemyManager& enemyManager
 			continue;
 		}
 
-		if (!found || distanceSq < nearestDistanceSq) {
-			found = true;
+		if (!nearestEnemy || distanceSq < nearestDistanceSq) {
+			nearestEnemy = enemy.get();
 			nearestDistanceSq = distanceSq;
-			nearestPos = enemy->GetPosition();
 		}
 	}
 
-	if (found) {
-		*outEnemyPos = nearestPos;
+	return nearestEnemy;
+}
+
+void ApplyLockOnMarker(EnemyManager& enemyManager, Enemy* lockOnEnemy) {
+	for (const auto& enemy : enemyManager.GetEnemies()) {
+		if (enemy) {
+			enemy->SetLockOn(enemy.get() == lockOnEnemy && enemy->GetIsAlive() && !enemy->IsDying() && enemy->GetHP() > 0);
+		}
 	}
-	return found;
+}
+
+bool ContainsLockOnEnemy(EnemyManager& enemyManager, Enemy* lockOnEnemy) {
+	if (!lockOnEnemy) {
+		return false;
+	}
+	for (const auto& enemy : enemyManager.GetEnemies()) {
+		if (enemy.get() == lockOnEnemy) {
+			return enemy->GetIsAlive() && !enemy->IsDying() && enemy->GetHP() > 0;
+		}
+	}
+	return false;
 }
 } // namespace
 
@@ -193,9 +226,13 @@ void GameScene::Initialize() {
 	Object3dCommon::GetInstance()->SetRadialBlurCenter(radialBlurCenter_);
 	Object3dCommon::GetInstance()->SetRadialBlurWidth(radialBlurWidth_);
 	Object3dCommon::GetInstance()->SetRadialBlurSampleCount(radialBlurSampleCount_);
+	dissolveEnabled_ = false;
+	dissolveThreshold_ = 0.0f;
 	Object3dCommon::GetInstance()->SetDissolveEnabled(dissolveEnabled_);
 	Object3dCommon::GetInstance()->SetDissolveThreshold(dissolveThreshold_);
 	Object3dCommon::GetInstance()->SetDissolveEdgeWidth(dissolveEdgeWidth_);
+	lockOnMarkerEnemy_ = nullptr;
+	lockOnMarkerTimer_ = 0.0f;
 }
 
 void GameScene::DebugImGui() {
@@ -363,7 +400,9 @@ void GameScene::Update() {
 		}
 	}
 	DebugImGui();
-	team_->Update();
+	if (!isCharacterDeathDissolving_) {
+		team_->Update();
+	}
 	if (isPartyMode_ && teamDisplay_) {
 		teamDisplay_->Update(*team_);
 	}
@@ -402,6 +441,43 @@ void GameScene::Update() {
 		characterDisplay_->Update();
 		return;
 	}
+	if (isCharacterDeathDissolving_) {
+		characterDeathDissolveTimer_ += deltaTime;
+		dissolveEnabled_ = true;
+		dissolveThreshold_ = std::clamp(characterDeathDissolveTimer_ / kCharacterDeathDissolveDuration_, 0.0f, 1.0f);
+		const float dissolveAlpha = std::clamp(1.0f - (characterDeathDissolveTimer_ / kCharacterDeathDissolveDuration_), 0.0f, 1.0f);
+		if (Object3d* characterObject = player->GetCharacterObject3d()) {
+			Vector4 dissolveColor = characterDeathDissolveStartColor_;
+			dissolveColor.w *= dissolveAlpha;
+			characterObject->SetColor(dissolveColor);
+			characterObject->SetDissolveEnabled(dissolveEnabled_);
+			characterObject->SetDissolveThreshold(dissolveThreshold_);
+			characterObject->SetDissolveEdgeWidth(dissolveEdgeWidth_);
+			characterObject->SetDissolveEdgeColor(dissolveEdgeColor_);
+		}
+
+		if (characterDeathDissolveTimer_ >= kCharacterDeathDissolveDuration_) {
+			isCharacterDeathDissolving_ = false;
+			characterDeathDissolveTimer_ = 0.0f;
+			dissolveEnabled_ = false;
+			dissolveThreshold_ = 0.0f;
+			if (Object3d* characterObject = player->GetCharacterObject3d()) {
+				characterObject->SetColor(characterDeathDissolveStartColor_);
+				characterObject->SetDissolveEnabled(false);
+				characterObject->SetDissolveThreshold(0.0f);
+			}
+			if (team_->SwitchToNextAliveMember()) {
+				player->SetCharacterType(team_->GetActiveCharacterName());
+				if (Object3d* characterObject = player->GetCharacterObject3d()) {
+					characterObject->SetColor(characterDeathDissolveStartColor_);
+					characterObject->SetDissolveEnabled(false);
+					characterObject->SetDissolveThreshold(0.0f);
+				}
+				pause->SetCurrentCharacterObj(player->GetCharacterObject3d());
+				pause->SetCurrentAttribute(player->GetCurrentAttribute());
+			}
+		}
+	}
 	if (player->GetIsSkillAttack()) {
 		pointLights_[1].intensity = 1.0f;
 		pointLights_[1].position = {player->GetSkillPosition().x, player->GetSkillPosition().y + 4, player->GetSkillPosition().z};
@@ -423,12 +499,24 @@ void GameScene::Update() {
 	ParticleManager::GetInstance()->Update(cameraController->GetCamera());
 	skyDome->Update();
 	field->Update();
+	if (playAreaMode_ == PlayAreaMode::kSpiral && PlayCommand::GetNORMAL_ATTACK_TRIGGER()) {
+		if (Enemy* nearestEnemy = TryFindNearestAliveEnemy(*player, *rasen_->GetEnemyManager())) {
+			player->SetAttackApproachTarget(nearestEnemy->GetPosition());
+		}
+	}
 	player->Update();
 	const bool isDashing = player->IsDashing();
 	fullscreenFilterType_ = isDashing ? kRadialBlurFullscreenFilterType : kDefaultFullscreenFilterType;
 	Object3dCommon::GetInstance()->SetFullscreenFilterType(fullscreenFilterType_);
 	if (playAreaMode_ == PlayAreaMode::kSpiral) {
 		rasen_->Update(cameraController->GetCamera(), player.get(), boss_.get());
+		EnemyManager* enemyManager = rasen_->GetEnemyManager();
+		if (enemyManager != nullptr && enemyManager->GetAliveEnemyCount() == 0 && enemyManager->IsWaveComplete()) {
+			cameraController->ClearAttackCameraTarget();
+			ApplyLockOnMarker(*enemyManager, nullptr);
+			lockOnMarkerEnemy_ = nullptr;
+			lockOnMarkerTimer_ = 0.0f;
+		}
 		if (rasen_->IsLevelSelecting()) {
 			return;
 		}
@@ -468,22 +556,50 @@ void GameScene::Update() {
 			hitVinettTimer_ = kHitVinettDuration_;
 		}
 		if (didNormalAttackHitEnemy) {
-			Vector3 cameraTargetPos = hitEnemyPos;
-			if (!TryFindNearestEnemyInPlayerFront(*player, *rasen_->GetEnemyManager(), &cameraTargetPos)) {
-				cameraTargetPos = hitEnemyPos;
+			Enemy* cameraTargetEnemy = TryFindNearestEnemyInPlayerFront(*player, *rasen_->GetEnemyManager());
+			if (!cameraTargetEnemy) {
+				cameraTargetEnemy = TryFindNearestAliveEnemy(*player, *rasen_->GetEnemyManager());
 			}
-
-			const int normalAttackComboStep = player->GetSword()->GetComboStep();
-			if (normalAttackComboStep <= 1) {
-				cameraController->SetLockOnTarget(cameraTargetPos, 0.8f);
+			if (cameraTargetEnemy) {
+				const Vector3 cameraTargetPos = cameraTargetEnemy->GetPosition();
+				const int normalAttackComboStep = player->GetSword()->GetComboStep();
+				if (normalAttackComboStep <= 1) {
+					cameraController->SetLockOnTarget(cameraTargetPos, kLockOnMarkerDuration_);
+					lockOnMarkerEnemy_ = cameraTargetEnemy;
+					lockOnMarkerTimer_ = kLockOnMarkerDuration_;
+				} else {
+					cameraController->SetNormalAttackTarget(cameraTargetPos);
+					lockOnMarkerEnemy_ = nullptr;
+					lockOnMarkerTimer_ = 0.0f;
+				}
 			} else {
-				cameraController->SetNormalAttackTarget(cameraTargetPos);
+				cameraController->ClearAttackCameraTarget();
+				lockOnMarkerEnemy_ = nullptr;
+				lockOnMarkerTimer_ = 0.0f;
 			}
 		}
 		if (player->ConsumeDamageTrigger()) {
 			team_->DamageActiveCharacter(player->ConsumePendingDamage());
 			cameraController->StartShake(0.75f);
-			damageGrayscaleTimer_ = kDamageGrayscaleDuration_;
+			if (!team_->GetIsActiveCharacterAlive()) {
+				damageGrayscaleTimer_ = 0.0f;
+				Object3dCommon::GetInstance()->SetFullScreenGrayscaleEnabled(false);
+			} else {
+				damageGrayscaleTimer_ = kDamageGrayscaleDuration_;
+			}
+			if (!team_->GetIsActiveCharacterAlive() && !team_->GetAreAllMembersDead()) {
+				isCharacterDeathDissolving_ = true;
+				characterDeathDissolveTimer_ = 0.0f;
+				dissolveEnabled_ = true;
+				dissolveThreshold_ = 0.0f;
+				if (Object3d* characterObject = player->GetCharacterObject3d()) {
+					characterDeathDissolveStartColor_ = characterObject->GetColor();
+					characterObject->SetDissolveEnabled(dissolveEnabled_);
+					characterObject->SetDissolveThreshold(dissolveThreshold_);
+					characterObject->SetDissolveEdgeWidth(dissolveEdgeWidth_);
+					characterObject->SetDissolveEdgeColor(dissolveEdgeColor_);
+				}
+			}
 		}
 	}
 	if (hitVinettTimer_ > 0.0f) {
@@ -501,6 +617,17 @@ void GameScene::Update() {
 		}
 	}
 	Object3dCommon::GetInstance()->SetFullScreenGrayscaleEnabled(damageGrayscaleTimer_ > 0.0f);
+	if (playAreaMode_ == PlayAreaMode::kSpiral && rasen_ && rasen_->GetEnemyManager()) {
+		EnemyManager& enemyManager = *rasen_->GetEnemyManager();
+		if (lockOnMarkerTimer_ > 0.0f) {
+			lockOnMarkerTimer_ = std::max(0.0f, lockOnMarkerTimer_ - deltaTime);
+		}
+		if (lockOnMarkerTimer_ <= 0.0f || !ContainsLockOnEnemy(enemyManager, lockOnMarkerEnemy_)) {
+			lockOnMarkerEnemy_ = nullptr;
+			lockOnMarkerTimer_ = 0.0f;
+		}
+		ApplyLockOnMarker(enemyManager, lockOnMarkerEnemy_);
+	}
 	uimanager->SetPlayerParameters(player->GetParameters());
 	uimanager->SetPlayerHPMax(team_->GetActiveCharacterHPMax());
 	uimanager->SetPlayerHP(team_->GetActiveCharacterHP());
@@ -508,6 +635,9 @@ void GameScene::Update() {
 	uimanager->Update();
 
 	cameraController->SetPlayerPos(player->GetPosition());
+	if (playAreaMode_ == PlayAreaMode::kSpiral && rasen_ && rasen_->GetHouse() && Input::GetInstance()->TriggerLeftTrigger()) {
+		cameraController->LookAtFromPlayerPosition(rasen_->GetHouse()->GetPosition());
+	}
 	cameraController->Update();
 
 	if (isTransitionIn || isTransitionOut) {

@@ -134,7 +134,7 @@ void ResultScene::Update() {
 		timeDigitSP_[i].sprite->Update();
 	}
 	houseHpStringSP_.sprite->Update();
-	if (Input::GetInstance()->TriggerKey(DIK_SPACE) && !isTransitionOut) {
+	if ((Input::GetInstance()->TriggerKey(DIK_SPACE)||Input::GetInstance()->TriggerButton(Input::PadButton::kButtonA)) && !isTransitionOut) {
 		transition->Initialize(true);
 		isTransitionOut = true;
 	}

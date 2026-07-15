@@ -27,6 +27,7 @@ Pause::Pause() {
 
 	BG_->Initialize(Primitive::PrimitiveName::Plane, "Resources/2d/Pause/Pause.png");
 	BG_->SetCamera(camera_.get());
+	BG_->SetColor({0.9f,0.9f,0.9f,1.0f});
 	selectRotation_[0] = 0.0f;
 	selectRotation_[1] = 1.0f;
 	selectRotation_[2] = 2.0f;

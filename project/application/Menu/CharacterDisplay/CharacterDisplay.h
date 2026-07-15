@@ -1,31 +1,31 @@
 #pragma once
 #include "Camera.h"
+#include "CharacterDisplayMenuType.h"
 #include "Object3d/Object3d.h"
 #include "Transform.h"
 #include "Background/CharacterDisplaySkyDome.h"
+#include "Menu/CharacterDisplayMenuText.h"
 #include <memory>
 #include "Object/Characters/Playable/Individual/Sizuku/Sizuku.h"
+#include "Menu/Status/CharacterDisplayStatus.h"
+#include "Menu/Weapon/CharacterDisplayWeapon.h"
+#include "Menu/Equip/CharacterDisplayEquip.h"
+#include "Menu/Skilltree/CharacterDisplaySkilltree.h"
+#include "Menu/Reinforcement/CharacterDisplayReinforcement.h"
+#include "Menu/Profile/CharacterDisplayProfile.h"
+
 #include <numbers>
+#include <vector>
 #include "Light/CommonLight/DirectionalCommonLight.h"
 /// <summary>
 /// キャラクター画面
 /// </summary>
 class CharacterDisplay {
 
-	/// <summary>
-	/// 項目
-	/// </summary>
-	enum class Menu { 
-		WEAPON, // 武器
-		EQUIP,  // 装備
-		SKILLTREE, // スキルツリー
-		REINFORCEMENT, // 強化
-		PROFILE,       // プロフィール
-	};
-
 	std::unique_ptr<Sizuku> sizukuObject_ = nullptr;
 	std::unique_ptr<CharacterDisplaySkyDome> skyDome_ = nullptr;
 	std::unique_ptr<Camera> camera_ = nullptr;
+	std::unique_ptr<CharacterDisplayMenuText> menuText_ = nullptr;
 	Transform characterTransform_ = {
 	    .scale{1.0f, 1.0f, 1.0f},
 	    .rotate{0.0f,  std::numbers::pi_v<float>,  0.0f },
@@ -39,6 +39,17 @@ class CharacterDisplay {
 	float rotateSpeed_ = 0.01f;
 	bool isActive_ = true;
 	DirectionalCommonLight directionalLight{.color{1,1,1,},.direction{0,-1,1.0f},.intensity{0.5f}};
+
+	CharacterDisplayMenuType selectMenuType_;
+
+	std::unique_ptr<CharacterDisplayStatus> status_;
+	std::unique_ptr<CharacterDisplayWeapon> weapon_;
+	std::unique_ptr<CharacterDisplayEquip> equip_;
+	std::unique_ptr<CharacterDisplaySkilltree> skilltree_;
+	std::unique_ptr<CharacterDisplayReinforcement> reinforcement_;
+	std::unique_ptr<CharacterDisplayProfile> profile_;
+
+
 
 public:
 

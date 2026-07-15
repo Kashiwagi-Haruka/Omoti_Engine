@@ -55,7 +55,7 @@ void NormalAttackCamera::Update() {
 		orbitPitch_ = minPitch;
 	}
 	if (!hasTarget_ && hasFollowPosition_) {
-		Vector3 toFollow = followPosition_ - playerPos;
+		Vector3 toFollow = playerPos - followPosition_;
 		if (Function::LengthSquared(toFollow) > 0.0001f) {
 			orbitYaw_ = GetNearestAngle(orbitYaw_, std::atan2f(toFollow.x, toFollow.z));
 		}

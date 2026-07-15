@@ -168,7 +168,7 @@ void TeamDisplay::Initialize(const Team& team) {
 	uint32_t cursorTextureHandle = TextureManager::GetInstance()->GetTextureIndexByfilePath("Resources/2d/Cursor.png");
 	cursorSprite_->Initialize(cursorTextureHandle);
 	cursorSprite_->SetPosition(cursorPos_);
-	cursorSprite_->SetScale({100.0f, 100.0f});
+	cursorSprite_->SetScale({30.0f, 30.0f});
 	cursorSprite_->Update();
 }
 

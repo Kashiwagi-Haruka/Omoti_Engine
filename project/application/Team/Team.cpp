@@ -77,7 +77,7 @@ void Team::Update() {
 	};
 
 	for (int i = 0; i < kMaxMembersCount; ++i) {
-		if (characterChangeCommands[i] && occupiedSlots_[i]) {
+		if (characterChangeCommands[i] && occupiedSlots_[i] && GetIsMemberAlive(i)) {
 			SetActiveSlot(i);
 		}
 	}
@@ -111,6 +111,11 @@ void Team::AssignCharacterToSlot(int slotIndex, int characterIndex) {
 	if (characterIndex < 0 || characterIndex >= static_cast<int>(ownedCharacterIconHandles_.size())) {
 		return;
 	}
+	for (int i = 0; i < kMaxMembersCount; ++i) {
+		if (occupiedSlots_[i] && teamMemberCharacterIndices_[i] == characterIndex && !GetIsMemberAlive(i)) {
+			return;
+		}
+	}
 	const int previousActiveCharacterIndex = GetMemberCharacterIndex(activeSlotIndex_);
 	occupiedSlots_[slotIndex] = true;
 	activeSlotIndex_ = slotIndex;
@@ -123,7 +128,7 @@ void Team::AssignCharacterToSlot(int slotIndex, int characterIndex) {
 }
 
 void Team::SetActiveSlot(int slotIndex) {
-	if (slotIndex < 0 || slotIndex >= kMaxMembersCount || !occupiedSlots_[slotIndex]) {
+	if (slotIndex < 0 || slotIndex >= kMaxMembersCount || !occupiedSlots_[slotIndex] || !GetIsMemberAlive(slotIndex)) {
 		return;
 	}
 	if (activeSlotIndex_ != slotIndex) {
@@ -175,6 +180,9 @@ void Team::DamageActiveCharacter(int amount) {
 }
 
 bool Team::GetIsActiveCharacterAlive() const { return GetActiveCharacterHP() > 0; }
+
+bool Team::GetIsMemberAlive(int slotIndex) const { return GetMemberHP(slotIndex) > 0; }
+
 bool Team::GetAreAllMembersDead() const {
 	for (int i = 0; i < kMaxMembersCount; ++i) {
 		if (occupiedSlots_[i] && memberHP_[i] > 0) {
@@ -183,6 +191,18 @@ bool Team::GetAreAllMembersDead() const {
 	}
 	return true;
 }
+
+bool Team::SwitchToNextAliveMember() {
+	for (int offset = 1; offset <= kMaxMembersCount; ++offset) {
+		const int nextSlotIndex = (activeSlotIndex_ + offset) % kMaxMembersCount;
+		if (occupiedSlots_[nextSlotIndex] && GetIsMemberAlive(nextSlotIndex)) {
+			SetActiveSlot(nextSlotIndex);
+			return true;
+		}
+	}
+	return false;
+}
+
 int Team::GetActiveCharacterHP() const { return GetMemberHP(activeSlotIndex_); }
 
 int Team::GetActiveCharacterHPMax() const { return GetMemberHPMax(activeSlotIndex_); }

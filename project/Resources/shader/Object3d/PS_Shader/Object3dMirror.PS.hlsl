@@ -13,7 +13,10 @@ struct Material
     float distortionFalloff;
     float4 outlineColor;
     float outlineWidth;
-    float3 outlinePadding;
+    int dissolveEnabled;
+    float dissolveThreshold;
+    float dissolveEdgeWidth;
+    float4 dissolveEdgeColor;
 };
 struct Camera
 {

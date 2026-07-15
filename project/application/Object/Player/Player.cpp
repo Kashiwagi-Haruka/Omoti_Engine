@@ -57,6 +57,12 @@ void Player::Initialize(Camera* camera) {
 	attack_->Initialize();
 	dashGauge_ = dashGaugeMax_;
 	isDashGaugeRecovery_ = false;
+	attackApproachActive_ = false;
+}
+
+void Player::SetAttackApproachTarget(const Vector3& target) {
+	attackApproachTarget_ = target;
+	attackApproachActive_ = true;
 }
 void Player::SetCharacterType(const std::string& characterName) {
 	if (models_) {
@@ -74,6 +80,35 @@ void Player::Move() {
 		return;
 	}
 
+	if (attackApproachActive_) {
+		if (!attack_->IsAttacking() || attack_->IsFallingAttacking() || attack_->isSkillAttacking() || attack_->isSpecialAttacking()) {
+			attackApproachActive_ = false;
+		} else {
+			Vector3 toTarget = attackApproachTarget_ - transform_.translate;
+			toTarget.y = 0.0f;
+			const float distanceSq = Function::LengthSquared(toTarget);
+			const float stopDistanceSq = attackApproachStopDistance_ * attackApproachStopDistance_;
+			const float attackRange = attackApproachRange_ * attackApproachRange_;
+			isDash = false;
+			if (distanceSq > attackRange) {
+				attackApproachActive_ = false;
+				return;
+			}
+			if (distanceSq > stopDistanceSq) {
+				const Vector3 direction = Function::Normalize(toTarget);
+				const float moveSpeed = std::min(attackApproachSpeed_, std::sqrt(distanceSq) - attackApproachStopDistance_);
+				velocity_.x = direction.x * moveSpeed;
+				velocity_.z = direction.z * moveSpeed;
+				const float targetAngle = std::atan2(direction.x, direction.z);
+				transform_.rotate.y = targetAngle;
+			} else {
+				velocity_.x = 0.0f;
+				velocity_.z = 0.0f;
+				attackApproachActive_ = false;
+			}
+			return;
+		}
+	}
 	// 入力方向を記録する変数
 	Vector3 inputDirection = {0.0f, 0.0f, 0.0f};
 	Vector3 inputAxis = {0.0f, 0.0f, 0.0f};

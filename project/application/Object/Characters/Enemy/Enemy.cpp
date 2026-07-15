@@ -20,6 +20,7 @@ Enemy::Enemy() {
 	enemyStun = std::make_unique<EnemyStun>();
 	adhesion_ = std::make_unique<Adhesion>();
 	hpBar_ = std::make_unique<EnemyHPBar>();
+	lockOnEnemy_ = std::make_unique<LockOnEnemy>();
 }
 void Enemy::Initialize(Camera* camera, Vector3 translates) {
 	isAlive = true;
@@ -59,6 +60,9 @@ void Enemy::Initialize(Camera* camera, Vector3 translates) {
 	hpBar_->SetHP(HP);
 	hpBar_->SetPosition(transform_.translate);
 	hpBar_->Initialize();
+	lockOnEnemy_->SetCamera(camera_);
+	lockOnEnemy_->SetPosition(transform_.translate);
+	lockOnEnemy_->Initialize();
 	object_->SetColor(kDefaultColor);
 }
 void Enemy::Update(const Vector3& housePos, const Vector3& houseScale, const Vector3& playerPos, bool isPlayerAlive) {
@@ -80,6 +84,11 @@ void Enemy::Update(const Vector3& housePos, const Vector3& houseScale, const Vec
 			hpBar_->SetHP(HP);
 			hpBar_->SetPosition(transform_.translate);
 			hpBar_->Update();
+		}
+		if (lockOnEnemy_) {
+			lockOnEnemy_->SetCamera(camera_);
+			lockOnEnemy_->SetPosition(transform_.translate);
+			lockOnEnemy_->Update();
 		}
 		if (progress >= 1.0f) {
 			isAlive = false;
@@ -123,6 +132,11 @@ void Enemy::Update(const Vector3& housePos, const Vector3& houseScale, const Vec
 			hpBar_->SetHP(HP);
 			hpBar_->SetPosition(transform_.translate);
 			hpBar_->Update();
+		}
+		if (lockOnEnemy_) {
+			lockOnEnemy_->SetCamera(camera_);
+			lockOnEnemy_->SetPosition(transform_.translate);
+			lockOnEnemy_->Update();
 		}
 		return;
 	}
@@ -178,6 +192,11 @@ void Enemy::Update(const Vector3& housePos, const Vector3& houseScale, const Vec
 		hpBar_->SetPosition(transform_.translate);
 		hpBar_->Update();
 	}
+	if (lockOnEnemy_) {
+		lockOnEnemy_->SetCamera(camera_);
+		lockOnEnemy_->SetPosition(transform_.translate);
+		lockOnEnemy_->Update();
+	}
 	// 攻撃開始条件
 	bool inAttackRange = false;
 	if (!isStun_) {
@@ -222,6 +241,9 @@ void Enemy::Draw() {
 	if (hpBar_) {
 		hpBar_->Draw();
 	}
+	if (lockOnEnemy_) {
+		lockOnEnemy_->Draw();
+	}
 	if (!isDying_ && enemyAttack_) {
 		enemyAttack_->Draw();
 	}
@@ -256,6 +278,9 @@ void Enemy::SetPosition(const Vector3& position) {
 	}
 	if (adhesion_) {
 		adhesion_->SetTransform(transform_);
+	}
+	if (lockOnEnemy_) {
+		lockOnEnemy_->SetPosition(transform_.translate);
 	}
 }
 void Enemy::SetIsStun(bool IsStun) { isStun_ = IsStun; }
@@ -308,3 +333,8 @@ bool Enemy::AddAdhesionAttribute(Attribute attribute) {
 Attribute Enemy::GetLastReactionPreviousAttribute() const { return adhesion_ ? adhesion_->GetLastReactionPreviousAttribute() : Attribute::None; }
 
 Attribute Enemy::GetLastReactionAppliedAttribute() const { return adhesion_ ? adhesion_->GetLastReactionAppliedAttribute() : Attribute::None; }
+void Enemy::SetLockOn(bool isLockOn) {
+	if (lockOnEnemy_) {
+		lockOnEnemy_->SetActive(isLockOn);
+	}
+}

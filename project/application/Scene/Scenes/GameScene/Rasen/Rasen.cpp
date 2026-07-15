@@ -212,21 +212,23 @@ void Rasen::Update(Camera* camera, Player* player, Boss* boss) {
 	}
 
 	if (enemyManager->AreAllWavesComplete() && !isBossActive_) {
-		const float deltaTime = 1.0f / 60.0f;
-		if (!isWarningActive_) {
-			isWarningActive_ = true;
-			warningTimer_ = 0.0f;
-		}
-		warningTimer_ += deltaTime;
-		float pulse = 1.0f + std::sin(warningTimer_ * 6.0f) * 0.05f;
-		warningSprite_->SetScale({warningSpriteBaseScale_.x * pulse, warningSpriteBaseScale_.y * pulse});
-		warningSprite_->SetPosition({640.0f - warningSpriteBaseScale_.x * pulse / 2.0f, 360.0f - warningSpriteBaseScale_.y * pulse / 2.0f});
-		warningSprite_->Update();
-		if (warningTimer_ >= warningDuration_) {
-			isWarningActive_ = false;
-			isBossActive_ = true;
-			boss->Initialize(camera, {10.0f, 2.5f, -40.0f});
-		}
+		//const float deltaTime = 1.0f / 60.0f;
+		//if (!isWarningActive_) {
+		//	isWarningActive_ = true;
+		//	warningTimer_ = 0.0f;
+		//}
+		//warningTimer_ += deltaTime;
+		//float pulse = 1.0f + std::sin(warningTimer_ * 6.0f) * 0.05f;
+		//warningSprite_->SetScale({warningSpriteBaseScale_.x * pulse, warningSpriteBaseScale_.y * pulse});
+		//warningSprite_->SetPosition({640.0f - warningSpriteBaseScale_.x * pulse / 2.0f, 360.0f - warningSpriteBaseScale_.y * pulse / 2.0f});
+		//warningSprite_->Update();
+		//if (warningTimer_ >= warningDuration_) {
+		//	isWarningActive_ = false;
+		//	isBossActive_ = true;
+		//	boss->Initialize(camera, {10.0f, 2.5f, -40.0f});
+		//}
+		isWarningActive_ = false;
+		goalActive = true;
 	}
 
 	if (isBossActive_ && boss->GetIsAlive()) {

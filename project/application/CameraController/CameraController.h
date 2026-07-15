@@ -43,6 +43,10 @@ class CameraController {
 	/// </summary>
 	/// <param name="sourceMode"> 引き継ぎ元のカメラモード </param>
 	void InheritPlayerCameraRotation(CameraMode sourceMode);
+	/// <summary>
+	/// 操作用プレイヤーカメラへ戻し、攻撃カメラのターゲットを解除する
+	/// </summary>
+	void ReturnToPlayerCamera();
 
 public:
 
@@ -85,7 +89,11 @@ public:
 	/// </summary>
 	/// <param name="durationSeconds"> 振動時間（秒） </param>
 	void StartShake(float durationSeconds = 1.0f);
-
+	/// <summary>
+	/// プレイヤーカメラの視点を指定位置の方向へ向ける
+	/// </summary>
+	/// <param name="targetPos"> 視点を向ける位置 </param>
+	void LookAtFromPlayerPosition(const Vector3& targetPos);
 	/// <summary>
 	/// カメラモードの設定
 	/// </summary>
@@ -103,4 +111,8 @@ public:
 	/// 通常攻撃カメラのターゲット設定
 	/// </summary>
 	void SetNormalAttackTarget(const Vector3& targetPos);
+	/// <summary>
+	/// 攻撃カメラを終了してプレイヤーカメラへ戻す
+	/// </summary>
+	void ClearAttackCameraTarget();
 };

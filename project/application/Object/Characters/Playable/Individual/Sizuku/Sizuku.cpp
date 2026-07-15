@@ -7,6 +7,7 @@ void Sizuku::Initialize(){
 	SetWeaponTypes(WeaponTypes::SWORD);
 	SetName("雫");
 	SetRomanizationName("Sizuku");
+	SetArcana(Arcana::FOOL);
 	Sizuku_ = std::make_unique<Object3d>();
 
 	Sizuku_->SetModel("sizuku");

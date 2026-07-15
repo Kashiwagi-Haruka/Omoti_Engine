@@ -48,7 +48,7 @@ bool CollisionManager::HandleGameSceneCollisions(
 	};
 
 	for (auto& enemy : enemyManager.GetEnemies()) {
-		if (!enemy->GetIsAlive()) {
+		if (!enemy->GetIsAlive() || enemy->IsDying() || enemy->GetHP() <= 0) {
 			continue;
 		}
 

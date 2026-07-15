@@ -15,7 +15,10 @@ struct Material
     float2 padding2;
     float4 outlineColor;
     float outlineWidth;
-    float3 outlinePadding;
+    int dissolveEnabled;
+    float dissolveThreshold;
+    float dissolveEdgeWidth;
+    float4 dissolveEdgeColor;
 };
 struct DirectionalLight
 {
@@ -109,7 +112,25 @@ struct PixelShaderOutput
 {
     float4 color : SV_TARGET0;
 };
+float ComputeDissolveMask(float3 worldPosition, float2 texcoord)
+{
+    float3 seed = worldPosition * 3.1f + float3(texcoord, texcoord.x + texcoord.y) * 17.0f;
+    return frac(sin(dot(seed, float3(12.9898f, 78.233f, 37.719f))) * 43758.5453f);
+}
 
+void ApplyDissolve(float3 worldPosition, float2 texcoord)
+{
+    if (gMaterial.dissolveEnabled == 0)
+    {
+        return;
+    }
+
+    float mask = ComputeDissolveMask(worldPosition, texcoord);
+    if (mask <= gMaterial.dissolveThreshold)
+    {
+        discard;
+    }
+}
 float ComputeMicroShadow(float3 normal, float3 toLight, float3 toEye)
 {
     float NdotL = saturate(dot(normal, toLight));
@@ -171,6 +192,7 @@ PixelShaderOutput main(Object3dVertexShaderOutput input)
     float2 uv = transformedUV.xy;
 
     float4 textureColor = gTexture.Sample(gSampler, uv);
+    ApplyDissolve(input.worldPosition, uv);
     float3 litColor = textureColor.rgb * gMaterial.color.rgb;
 
     if (gMaterial.enableLighting != 0)

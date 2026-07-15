@@ -10,6 +10,7 @@ void Arte::Initialize() {
 	SetWeaponTypes(WeaponTypes::BOW);
 	SetName("アルテ");
 	SetRomanizationName("Arte");
+	SetArcana(Arcana::Moon);
 	arte_ = std::make_unique<Object3d>();
 	arte_->SetModel("sizuku");
 	arte_->Initialize();

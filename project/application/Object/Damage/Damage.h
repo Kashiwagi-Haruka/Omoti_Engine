@@ -16,6 +16,7 @@ public:
 	void Draw();
 	void SetDamageValue(int damage);
 	void SetPosition(const Vector3& position);
+	void SetScale(const Vector3& scale);
 	const Vector3& GetPosition() const { return transform_.translate; }
 	bool IsVisible() const { return isVisible_; }
 	void SetAttribute(Attribute attribute);

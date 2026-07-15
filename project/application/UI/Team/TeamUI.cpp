@@ -22,8 +22,10 @@ constexpr Vector2 kRightTopAnchor{1.0f, 0.0f};
 constexpr Vector2 kLeftTopAnchor{0.0f, 0.0f};
 constexpr Vector4 kActiveColor{1.0f, 1.0f, 1.0f, 1.0f};
 constexpr Vector4 kInactiveColor{0.65f, 0.65f, 0.65f, 0.78f};
+constexpr Vector4 kDeadColor{0.28f, 0.28f, 0.28f, 0.72f};
 constexpr Vector4 kCharacterNameColor{1.0f, 1.0f, 1.0f, 1.0f};
 constexpr Vector4 kInactiveCharacterNameColor{0.75f, 0.75f, 0.75f, 0.78f};
+constexpr Vector4 kDeadCharacterNameColor{0.45f, 0.45f, 0.45f, 0.72f};
 constexpr std::array<const char*, Team::kMaxMembersCount> kPadTexturePaths{
     "Resources/2d/Team/UI/Pad/UP.png",
     "Resources/2d/Team/UI/Pad/RIGHT.png",
@@ -90,7 +92,7 @@ void TeamUI::Initialize(const Team& team) {
 		iconSprites_[i]->SetAnchorPoint(kRightTopAnchor);
 		iconSprites_[i]->SetPosition(iconPositions_[i]);
 		iconSprites_[i]->SetScale(i == team.GetActiveSlot() ? kActiveIconSize : kIconSize);
-		iconSprites_[i]->SetColor(i == team.GetActiveSlot() ? kActiveColor : kInactiveColor);
+		iconSprites_[i]->SetColor(!team.GetIsMemberAlive(i) ? kDeadColor : (i == team.GetActiveSlot() ? kActiveColor : kInactiveColor));
 		iconSprites_[i]->Update();
 
 		padSprites_[i] = std::make_unique<Sprite>();
@@ -98,7 +100,7 @@ void TeamUI::Initialize(const Team& team) {
 		padSprites_[i]->SetAnchorPoint(kLeftTopAnchor);
 		padSprites_[i]->SetPosition(iconPositions_[i] + Vector2{kPadIconGap, 0.0f});
 		padSprites_[i]->SetScale(kPadIconSize);
-		padSprites_[i]->SetColor(i == team.GetActiveSlot() ? kActiveColor : kInactiveColor);
+		padSprites_[i]->SetColor(!team.GetIsMemberAlive(i) ? kDeadColor : (i == team.GetActiveSlot() ? kActiveColor : kInactiveColor));
 		padSprites_[i]->Update();
 
 		keyboardSprites_[i] = std::make_unique<Sprite>();
@@ -106,13 +108,13 @@ void TeamUI::Initialize(const Team& team) {
 		keyboardSprites_[i]->SetAnchorPoint(kLeftTopAnchor);
 		keyboardSprites_[i]->SetPosition(iconPositions_[i] + Vector2{kPadIconGap, 0.0f});
 		keyboardSprites_[i]->SetScale(kPadIconSize);
-		keyboardSprites_[i]->SetColor(i == team.GetActiveSlot() ? kActiveColor : kInactiveColor);
+		keyboardSprites_[i]->SetColor(!team.GetIsMemberAlive(i) ? kDeadColor : (i == team.GetActiveSlot() ? kActiveColor : kInactiveColor));
 		keyboardSprites_[i]->Update();
 
 		hpBarSprites_[i] = std::make_unique<Sprite>();
 		hpBarSprites_[i]->Initialize(hpBarTextureHandle);
-		hpBarSprites_[i]->SetAnchorPoint({1.0f, 0.5f});
-		hpBarSprites_[i]->SetPosition(iconPositions_[i] + kHpBarOffset);
+		hpBarSprites_[i]->SetAnchorPoint({0.0f, 0.5f});
+		hpBarSprites_[i]->SetPosition(iconPositions_[i] + kHpBarOffset - kHpBarMaxSize);
 		{
 			const int hpMax = team.GetMemberHPMax(i);
 			const float hpRate = hpMax > 0 ? std::clamp(static_cast<float>(team.GetMemberHP(i)) / static_cast<float>(hpMax), 0.0f, 1.0f) : 0.0f;
@@ -122,8 +124,8 @@ void TeamUI::Initialize(const Team& team) {
 
 		hpBarBackgroundSprites_[i] = std::make_unique<Sprite>();
 		hpBarBackgroundSprites_[i]->Initialize(hpBarBackgroundTextureHandle);
-		hpBarBackgroundSprites_[i]->SetAnchorPoint({1.0f, 0.5f});
-		hpBarBackgroundSprites_[i]->SetPosition(iconPositions_[i] + kHpBarOffset);
+		hpBarBackgroundSprites_[i]->SetAnchorPoint({0.0f, 0.5f});
+		hpBarBackgroundSprites_[i]->SetPosition(iconPositions_[i] + kHpBarOffset - kHpBarMaxSize);
 		hpBarBackgroundSprites_[i]->SetScale(kHpBarMaxSize);
 		hpBarBackgroundSprites_[i]->Update();
 
@@ -143,7 +145,7 @@ void TeamUI::Initialize(const Team& team) {
 
 		characterNameTexts_[i].SetString(team.GetCharacterNameByIndex(characterIndex));
 		characterNameTexts_[i].SetPosition(iconPositions_[i] + kCharacterNameOffset);
-		characterNameTexts_[i].SetColor(i == team.GetActiveSlot() ? kCharacterNameColor : kInactiveCharacterNameColor);
+		characterNameTexts_[i].SetColor(!team.GetIsMemberAlive(i) ? kDeadCharacterNameColor : (i == team.GetActiveSlot() ? kCharacterNameColor : kInactiveCharacterNameColor));
 		characterNameTexts_[i].UpdateLayout(false);
 	}
 
@@ -155,6 +157,7 @@ void TeamUI::Initialize(const Team& team) {
 	selectedBackgroundSprite_->SetColor({0.4f, 0.4f, 0.5f, 0.7f});
 	selectedBackgroundSprite_->Update();
 }
+
 
 void TeamUI::Update(const Team& team) {
 	UpdateInputDisplayMode();
@@ -201,13 +204,13 @@ void TeamUI::Update(const Team& team) {
 			const uint32_t hpBarTextureHandle = TextureManager::GetInstance()->GetTextureIndexByfilePath("Resources/2d/Team/UI/HPBar.png");
 			hpBarSprites_[i] = std::make_unique<Sprite>();
 			hpBarSprites_[i]->Initialize(hpBarTextureHandle);
-			hpBarSprites_[i]->SetAnchorPoint({1.0f, 0.5f});
+			hpBarSprites_[i]->SetAnchorPoint({0.0f, 0.5f});
 		}
 		if (!hpBarBackgroundSprites_[i]) {
 			const uint32_t hpBarBackgroundTextureHandle = TextureManager::GetInstance()->GetTextureIndexByfilePath("Resources/2d/Team/UI/HPBarBackground.png");
 			hpBarBackgroundSprites_[i] = std::make_unique<Sprite>();
 			hpBarBackgroundSprites_[i]->Initialize(hpBarBackgroundTextureHandle);
-			hpBarBackgroundSprites_[i]->SetAnchorPoint({1.0f, 0.5f});
+			hpBarBackgroundSprites_[i]->SetAnchorPoint({0.0f, 0.5f});
 		}
 		if (!specialGaugeFlameSprites_[i]) {
 			const uint32_t specialGaugeFlameTextureHandle = TextureManager::GetInstance()->GetTextureIndexByfilePath("Resources/2d/AttackOperation/special.png");
@@ -225,20 +228,20 @@ void TeamUI::Update(const Team& team) {
 		displayedCharacterIndices_[i] = characterIndex;
 		iconSprites_[i]->SetPosition(iconPositions_[i]);
 		iconSprites_[i]->SetScale(i == team.GetActiveSlot() ? kActiveIconSize : kIconSize);
-		iconSprites_[i]->SetColor(i == team.GetActiveSlot() ? kActiveColor : kInactiveColor);
+		iconSprites_[i]->SetColor(!team.GetIsMemberAlive(i) ? kDeadColor : (i == team.GetActiveSlot() ? kActiveColor : kInactiveColor));
 		iconSprites_[i]->Update();
 
 		padSprites_[i]->SetPosition(iconPositions_[i] + Vector2{kPadIconGap, 0.0f});
 		padSprites_[i]->SetScale(kPadIconSize);
-		padSprites_[i]->SetColor(i == team.GetActiveSlot() ? kInactiveColor : kActiveColor);
+		padSprites_[i]->SetColor(!team.GetIsMemberAlive(i) ? kDeadColor : (i == team.GetActiveSlot() ? kInactiveColor : kActiveColor));
 		padSprites_[i]->Update();
 
 		keyboardSprites_[i]->SetPosition(iconPositions_[i] + Vector2{kPadIconGap, 0.0f});
 		keyboardSprites_[i]->SetScale(kPadIconSize);
-		keyboardSprites_[i]->SetColor(i == team.GetActiveSlot() ? kInactiveColor : kActiveColor);
-		keyboardSprites_[i]->Update();		
+		keyboardSprites_[i]->SetColor(!team.GetIsMemberAlive(i) ? kDeadColor : (i == team.GetActiveSlot() ? kInactiveColor : kActiveColor));
+		keyboardSprites_[i]->Update();
 
-		hpBarSprites_[i]->SetPosition(iconPositions_[i] + kHpBarOffset);
+		hpBarSprites_[i]->SetPosition(iconPositions_[i] + kHpBarOffset - kHpBarMaxSize);
 		{
 			const int hpMax = team.GetMemberHPMax(i);
 			const float hpRate = hpMax > 0 ? std::clamp(static_cast<float>(team.GetMemberHP(i)) / static_cast<float>(hpMax), 0.0f, 1.0f) : 0.0f;
@@ -246,7 +249,7 @@ void TeamUI::Update(const Team& team) {
 		}
 		hpBarSprites_[i]->Update();
 
-		hpBarBackgroundSprites_[i]->SetPosition(iconPositions_[i] + kHpBarOffset);
+		hpBarBackgroundSprites_[i]->SetPosition(iconPositions_[i] + kHpBarOffset - kHpBarMaxSize);
 		hpBarBackgroundSprites_[i]->SetScale(kHpBarMaxSize);
 		hpBarBackgroundSprites_[i]->Update();
 
@@ -261,13 +264,14 @@ void TeamUI::Update(const Team& team) {
 
 		characterNameTexts_[i].SetString(team.GetCharacterNameByIndex(characterIndex));
 		characterNameTexts_[i].SetPosition(iconPositions_[i] + kCharacterNameOffset);
-		characterNameTexts_[i].SetColor(i == team.GetActiveSlot() ? kCharacterNameColor : kInactiveCharacterNameColor);
+		characterNameTexts_[i].SetColor(!team.GetIsMemberAlive(i) ? kDeadCharacterNameColor : (i == team.GetActiveSlot() ? kCharacterNameColor : kInactiveCharacterNameColor));
 		characterNameTexts_[i].UpdateLayout(false);
 		characterNameTexts_[i].Update(false);
 	}
 	selectedBackgroundSprite_->SetPosition(iconPositions_[team.GetActiveSlot()]);
 	selectedBackgroundSprite_->Update();
 }
+
 
 void TeamUI::Draw() {
 	selectedBackgroundSprite_->Draw();

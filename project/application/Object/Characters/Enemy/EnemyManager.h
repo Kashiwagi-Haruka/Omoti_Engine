@@ -23,11 +23,13 @@ private:
 	struct DamageTextEntry {
 		Enemy* enemy;
 		std::unique_ptr<Damage> damageText;
+		Vector3 targetOffset;
 	};
 	std::vector<std::unique_ptr<Enemy>> enemies;
 	std::vector<HitEffectEntry> hitEffects;
 	std::vector<DamageTextEntry> damageTexts;
 	Camera* camera_ = nullptr;
+	int nextDamageTextOffsetIndex_ = 0;
 
 	// ウェーブシステム
 	int currentWave_ = 0;        // 現在のウェーブ番号
@@ -37,6 +39,7 @@ private:
 	int totalEnemiesKilled_ = 0; // 倒した敵の総数
 	bool allWavesComplete_ = false;
 	int maxWave_ = 5;
+
 
 public:
 	EnemyManager() {}

@@ -62,9 +62,9 @@ bool PlayCommand::GetSKILL_ATTACK() {
 	return false;
 }
 bool PlayCommand::GetSPECIAL_ATTACK() {
-	if (Input::GetInstance()->TriggerKey(DIK_Q) || Input::GetInstance()->TriggerButton(Input::PadButton::kButtonY)) {
+	/*if (Input::GetInstance()->TriggerKey(DIK_Q) || Input::GetInstance()->TriggerButton(Input::PadButton::kButtonY)) {
 		return true;
-	}
+	}*/
 	return false;
 }
 bool PlayCommand::GetDESIDE() {
@@ -140,4 +140,16 @@ bool PlayCommand::GetPadMenuOpen(){
 		return true;
 	}
 	return false;
+}
+bool PlayCommand::GetUpUI(){
+	if (Input::GetInstance()->TriggerButton(Input::PadButton::kButtonUp) || Input::GetInstance()->TriggerKey(DIK_W) || Input::GetInstance()->TriggerKey(DIK_UP)) {
+		return true;
+	}
+	return false; 
+}
+bool PlayCommand::GetDownUI(){ 
+	if (Input::GetInstance()->TriggerButton(Input::PadButton::kButtonDown) || Input::GetInstance()->TriggerKey(DIK_S) || Input::GetInstance()->TriggerKey(DIK_DOWN)) {
+		return true;
+	}	
+	return false; 
 }

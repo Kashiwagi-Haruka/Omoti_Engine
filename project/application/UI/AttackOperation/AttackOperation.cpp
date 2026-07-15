@@ -98,11 +98,11 @@ void AttackOperation::Update() {
 	skillIconSPData_.translate = {1200.0f, 400.0f};
 	UpdateOperationSprite(skillIconSPData_, PlayCommand::GetSKILL_ATTACK());
 
-	dashSPData_.translate = {skillIconSPData_.translate.x, skillIconSPData_.translate.y+skillIconSPData_.size.y/2.0f+40.0f};
+	dashSPData_.translate = {skillIconSPData_.translate.x, skillIconSPData_.translate.y+skillIconSPData_.size.y/2.0f+80.0f};
 	UpdateOperationSprite(dashSPData_, PlayCommand::GetDASH());
 
 
-	specialAttackSPData_.translate = {dashSPData_.translate.x-80.0f, dashSPData_.translate.y + dashSPData_.size.y + 20.0f};
+	specialAttackSPData_.translate = {dashSPData_.translate.x-80.0f, dashSPData_.translate.y + dashSPData_.size.y};
 	UpdateOperationSprite(specialAttackSPData_, PlayCommand::GetSPECIAL_ATTACK());
 
 	normalAttackSPData_.translate = {specialAttackSPData_.translate.x - specialAttackSPData_.size.x - 20.0f, specialAttackSPData_.translate.y + specialAttackSPData_.size.y/2.0f+20.0f};
