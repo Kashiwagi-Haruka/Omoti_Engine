@@ -2,6 +2,7 @@
 #include "Enemy.h"
 #include "EnemyHitEffect.h"
 #include "Object/Damage/Damage.h"
+#include <cstddef>
 #include <memory>
 #include <vector>
 class EnemyManager {
@@ -39,7 +40,8 @@ private:
 	int totalEnemiesKilled_ = 0; // 倒した敵の総数
 	bool allWavesComplete_ = false;
 	int maxWave_ = 5;
-
+	std::vector<Vector3> pendingSpawnPositions_;
+	std::size_t nextSpawnIndex_ = 0;
 
 public:
 	EnemyManager() {}
@@ -52,9 +54,10 @@ public:
 	void Clear();
 	void OnEnemyDamaged(Enemy* enemy, int damage = 1, Attribute attribute = Attribute::None, bool isCritical = false, Attribute reactionPreviousAttribute = Attribute::None);
 	// ウェーブシステム関連
-	void StartNextWave();     // 次のウェーブを開始
-	void SpawnWaveEnemies();  // ウェーブに応じた敵を生成
-	void CheckWaveComplete(); // ウェーブクリア判定
+	void StartNextWave();        // 次のウェーブを開始
+	void SpawnWaveEnemies();     // ウェーブに応じた敵の生成位置を準備
+	void SpawnNextQueuedEnemy(); // 準備済みの敵を1フレームに1体生成
+	void CheckWaveComplete();    // ウェーブクリア判定
 	void ResolveOverlaps(const Vector3& playerPos, bool isPlayerAlive);
 	void ResolveDamageTextOverlaps();
 

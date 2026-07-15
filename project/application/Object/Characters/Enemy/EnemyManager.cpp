@@ -82,6 +82,8 @@ void EnemyManager::Clear() {
 	enemies.clear(); // unique_ptr が自動削除
 	hitEffects.clear();
 	damageTexts.clear();
+	pendingSpawnPositions_.clear();
+	nextSpawnIndex_ = 0;
 	nextDamageTextOffsetIndex_ = 0;
 }
 void EnemyManager::Initialize(Camera* camera) {
@@ -108,7 +110,7 @@ void EnemyManager::StartNextWave() {
 	waveState_ = WaveState::kSpawning;
 	waveTimer_ = 0.0f;
 
-	// 現在のウェーブに基づいて敵を生成
+	// 現在のウェーブに基づいて敵の生成位置を準備
 	SpawnWaveEnemies();
 }
 
@@ -162,12 +164,14 @@ void EnemyManager::SpawnWaveEnemies() {
 		break;
 	}
 
-	// 敵を生成
+	// 敵の生成位置を準備
 	float spacing = (config.endX - config.startX) / config.enemyCount;
 	const float minDistance = 2.0f;
 	const float minDistanceSq = minDistance * minDistance;
 	const int maxAttempts = 40;
-	std::vector<Vector3> spawnPositions;
+	pendingSpawnPositions_.clear();
+	nextSpawnIndex_ = 0;
+	std::vector<Vector3>& spawnPositions = pendingSpawnPositions_;
 	spawnPositions.reserve(config.enemyCount);
 
 	for (int i = 0; i < config.enemyCount; i++) {
@@ -216,10 +220,20 @@ void EnemyManager::SpawnWaveEnemies() {
 		}
 
 		spawnPositions.push_back(pos);
-		AddEnemy(camera_, pos);
+	}
+}
+
+void EnemyManager::SpawnNextQueuedEnemy() {
+	if (nextSpawnIndex_ >= pendingSpawnPositions_.size()) {
+		waveState_ = WaveState::kActive;
+		return;
 	}
 
-	waveState_ = WaveState::kActive;
+	AddEnemy(camera_, pendingSpawnPositions_[nextSpawnIndex_]);
+	++nextSpawnIndex_;
+	if (nextSpawnIndex_ >= pendingSpawnPositions_.size()) {
+		waveState_ = WaveState::kActive;
+	}
 }
 
 void EnemyManager::AddEnemy(Camera* camera, const Vector3& pos) {
@@ -244,6 +258,11 @@ void EnemyManager::Update(Camera* camera, const Vector3& housePos, const Vector3
 		if (waveTimer_ >= waveDelay_) {
 			StartNextWave();
 		}
+		break;
+
+	case WaveState::kSpawning:
+		// 敵生成中：1フレームにつき1体だけ生成
+		SpawnNextQueuedEnemy();
 		break;
 
 	case WaveState::kActive:
