@@ -68,6 +68,7 @@ class CharacterDisplay {
 	Text characterNameText_{};
 	Text characterSwitchGuideText_{};
 	std::unique_ptr<Sprite> characterSwitchLeftGuideSprite_{};
+	std::unique_ptr<Sprite> characterSwitchRightGuideSprite_{};
 	uint32_t characterNameFontHandle_ = 0;
 	size_t selectedCharacterIndex_ = 0;
 
