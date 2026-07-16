@@ -2,6 +2,7 @@
 #include "Background/CharacterDisplaySkyDome.h"
 #include "Camera.h"
 #include "CharacterDisplayMenuType.h"
+#include "Icon/CharacterDisplayIcon.h"
 #include "Menu/CharacterDisplayMenuText.h"
 #include "Menu/Equip/CharacterDisplayEquip.h"
 #include "Menu/Profile/CharacterDisplayProfile.h"
@@ -32,6 +33,7 @@ class CharacterDisplay {
 	std::unique_ptr<CharacterDisplaySkyDome> skyDome_ = nullptr;
 	std::unique_ptr<Camera> camera_ = nullptr;
 	std::unique_ptr<CharacterDisplayMenuText> menuText_ = nullptr;
+	std::unique_ptr<CharacterDisplayIcon> characterDisplayIcon_ = nullptr;
 	Transform characterTransform_ = {
 	    .scale{1.0f, 1.0f,                      1.0f},
 	    .rotate{0.0f, std::numbers::pi_v<float>, 0.0f},

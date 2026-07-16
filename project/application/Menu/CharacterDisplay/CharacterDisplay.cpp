@@ -23,6 +23,9 @@ void CharacterDisplay::Initialize(const Team& team) {
 	menuText_ = std::make_unique<CharacterDisplayMenuText>();
 	menuText_->Initialize();
 
+	characterDisplayIcon_ = std::make_unique<CharacterDisplayIcon>();
+	characterDisplayIcon_->Initialize(team);
+
 	characterNameFontHandle_ = FreeTypeManager::CreateFace("Resources/Font/irohakakuC-Bold.ttf", 0);
 	FreeTypeManager::SetPixelSizes(characterNameFontHandle_, 36, 36);
 	characterNameText_.Initialize(characterNameFontHandle_);
@@ -41,6 +44,10 @@ void CharacterDisplay::Initialize(const Team& team) {
 
 	RebuildOwnedCharacters(team);
 	ChangeDisplayedCharacter(selectedCharacterIndex_);
+
+	if (characterDisplayIcon_) {
+		characterDisplayIcon_->Update(selectedCharacterIndex_);
+	}
 
 	status_ = std::make_unique<CharacterDisplayStatus>();
 	status_->Initialize();
@@ -133,6 +140,10 @@ void CharacterDisplay::Update() {
 	currentPlayable_->SetTransform(characterTransform_);
 	currentPlayable_->Update();
 	characterNameText_.UpdateLayout(false);
+
+	if (characterDisplayIcon_) {
+		characterDisplayIcon_->Update(selectedCharacterIndex_);
+	}
 
 	switch (selectMenuType_) {
 	case CharacterDisplayMenuType::STATUS:
@@ -236,7 +247,11 @@ void CharacterDisplay::Draw() {
 	}
 
 	SpriteCommon::GetInstance()->DrawCommon();
+	if (characterDisplayIcon_) {
+		characterDisplayIcon_->Draw();
+	}
 	characterNameText_.Draw();
 	characterSwitchGuideText_.Draw();
+
 	menuText_->Draw();
 }
