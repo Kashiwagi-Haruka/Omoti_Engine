@@ -49,8 +49,6 @@ class CharacterDisplay {
 	std::unique_ptr<CharacterDisplayReinforcement> reinforcement_;
 	std::unique_ptr<CharacterDisplayProfile> profile_;
 
-	std::vector<std::unique_ptr<Sprite>> iconSprites_;
-
 
 public:
 
