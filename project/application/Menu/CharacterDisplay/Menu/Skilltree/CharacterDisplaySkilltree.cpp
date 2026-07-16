@@ -101,6 +101,12 @@ void CharacterDisplaySkilltree::Update() {
 		AddAbilityLeftSprite_->SetPosition(
 		    {normalAttackSprite_->GetPosition().x + sinf(std::numbers::pi_v<float> * 2.0f / 8.0f) * 60.0f, normalAttackSprite_->GetPosition().y + sinf(std::numbers::pi_v<float>*2.0f / 8.0f) * 60.0f});
 
+		for (int i = 0; i < kMaxskillTreeCount_-1; i++) {
+			leftSkilltreeSprites_[i]->SetPosition(
+			    {AddAbilityLeftSprite_->GetPosition().x + (20.0f*i), AddAbilityLeftSprite_->GetPosition().y + (60.0f * (i + 1))});
+			rightSkilltreeSprites_[i]->SetPosition({AddAbilityLeftSprite_->GetPosition().x - (20.0f * i), AddAbilityLeftSprite_->GetPosition().y + (60.0f * (i + 1))});
+		}
+
 		break;
 	case Arcana::Fortune:
 		break;
