@@ -201,7 +201,7 @@ void GameScene::Initialize() {
 	pause->Initialize();
 	pause->SetCurrentCharacterObj(player->GetCharacterObject3d());
 	pause->SetCurrentAttribute(player->GetCurrentAttribute());
-	characterDisplay_->Initialize();
+	characterDisplay_->Initialize(*team_);
 	characterDisplay_->SetActive(false);
 	UnloadTeamDisplay();
 	

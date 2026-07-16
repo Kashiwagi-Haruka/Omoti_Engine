@@ -1,46 +1,58 @@
 #pragma once
+#include "Background/CharacterDisplaySkyDome.h"
 #include "Camera.h"
 #include "CharacterDisplayMenuType.h"
-#include "Object3d/Object3d.h"
-#include "Transform.h"
-#include "Background/CharacterDisplaySkyDome.h"
 #include "Menu/CharacterDisplayMenuText.h"
-#include <memory>
-#include "Object/Characters/Playable/Individual/Sizuku/Sizuku.h"
+#include "Menu/Equip/CharacterDisplayEquip.h"
+#include "Menu/Profile/CharacterDisplayProfile.h"
+#include "Menu/Reinforcement/CharacterDisplayReinforcement.h"
+#include "Menu/Skilltree/CharacterDisplaySkilltree.h"
 #include "Menu/Status/CharacterDisplayStatus.h"
 #include "Menu/Weapon/CharacterDisplayWeapon.h"
-#include "Menu/Equip/CharacterDisplayEquip.h"
-#include "Menu/Skilltree/CharacterDisplaySkilltree.h"
-#include "Menu/Reinforcement/CharacterDisplayReinforcement.h"
-#include "Menu/Profile/CharacterDisplayProfile.h"
+#include "Object/Characters/Playable/PlayableManager.h"
+#include "Object3d/Object3d.h"
+#include "Text/Text.h"
+#include "Transform.h"
+#include <cstdint>
+#include <memory>
+#include <string>
 
+#include "Light/CommonLight/DirectionalCommonLight.h"
 #include <numbers>
 #include <vector>
-#include "Light/CommonLight/DirectionalCommonLight.h"
 /// <summary>
 /// キャラクター画面
 /// </summary>
+class Team;
+
 class CharacterDisplay {
 
-	std::unique_ptr<Sizuku> sizukuObject_ = nullptr;
+	PlayableManager playableManager_;
+	PlayableBase* currentPlayable_ = nullptr;
 	std::unique_ptr<CharacterDisplaySkyDome> skyDome_ = nullptr;
 	std::unique_ptr<Camera> camera_ = nullptr;
 	std::unique_ptr<CharacterDisplayMenuText> menuText_ = nullptr;
 	Transform characterTransform_ = {
-	    .scale{1.0f, 1.0f, 1.0f},
-	    .rotate{0.0f,  std::numbers::pi_v<float>,  0.0f },
-	    .translate{0.0f,  2.0f, 0.0f },
+	    .scale{1.0f, 1.0f,                      1.0f},
+	    .rotate{0.0f, std::numbers::pi_v<float>, 0.0f},
+	    .translate{0.0f, 2.0f,                      0.0f},
 	};
 	Transform cameraTransform_ = {
-	    .scale{1.0f, 1.0f, 1.0f  },
-	    .rotate{0.1f, 0.0f, 0.0f  },
+	    .scale{1.0f, 1.0f, 1.0f },
+	    .rotate{0.1f, 0.0f, 0.0f },
 	    .translate{0.0f, 2.0f, -5.0f},
 	};
 	float rotateSpeed_ = 0.01f;
 	bool isActive_ = true;
-	DirectionalCommonLight directionalLight{.color{1,1,1,},.direction{0,-1,1.0f},.intensity{0.5f}};
+	DirectionalCommonLight directionalLight{
+	    .color{
+	           1, 1,
+	           1, },
+	    .direction{0, -1, 1.0f},
+	    .intensity{0.5f}
+    };
 
-	CharacterDisplayMenuType selectMenuType_;
+	CharacterDisplayMenuType selectMenuType_ = CharacterDisplayMenuType::STATUS;
 
 	std::unique_ptr<CharacterDisplayStatus> status_;
 	std::unique_ptr<CharacterDisplayWeapon> weapon_;
@@ -49,13 +61,21 @@ class CharacterDisplay {
 	std::unique_ptr<CharacterDisplayReinforcement> reinforcement_;
 	std::unique_ptr<CharacterDisplayProfile> profile_;
 
+	std::vector<std::string> ownedPlayableNames_{};
+	std::vector<std::u32string> ownedDisplayNames_{};
+	Text characterNameText_{};
+	Text characterSwitchGuideText_{};
+	uint32_t characterNameFontHandle_ = 0;
+	size_t selectedCharacterIndex_ = 0;
+
+	void RebuildOwnedCharacters(const Team& team);
+	void ChangeDisplayedCharacter(size_t characterIndex);
 
 public:
-
 	/// <summary>
 	/// 初期化
 	/// </summary>
-	void Initialize();
+	void Initialize(const Team& team);
 
 	/// <summary>
 	/// 更新
