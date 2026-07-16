@@ -2,15 +2,16 @@
 
 #include "Animation/Animation.h"
 #include "CameraForGPU.h"
+#include "Data/VertexData.h"
 #include "Light/CommonLight/DirectionalCommonLight.h"
 #include "Matrix4x4.h"
 #include "Model/Model.h"
 #include "Transform.h"
 #include "Vector2.h"
 #include "Vector4.h"
-#include "Data/VertexData.h"
 #include <Windows.h>
 #include <d3d12.h>
+#include <future>
 #include <memory>
 #include <string>
 #include <wrl.h>
@@ -48,6 +49,7 @@ class Object3d {
 	Matrix4x4 worldViewProjectionMatrix;
 	bool isUseSetWorld;
 	std::unique_ptr<Model> modelInstance_;
+	std::future<std::unique_ptr<Model>> modelLoadFuture_;
 	const Animation::AnimationData* animation_ = nullptr;
 	float animationTime_ = 0.0f;
 	bool isLoopAnimation_ = true;
@@ -58,6 +60,8 @@ class Object3d {
 	Vector2 uvAnchor_ = {0.0f, 0.0f};
 	std::string editorId_;
 	std::string modelFilePath_;
+	void CompleteAsyncModelLoadIfReady();
+	Model* GetDrawableModel() const;
 
 public:
 	Object3d() = default;

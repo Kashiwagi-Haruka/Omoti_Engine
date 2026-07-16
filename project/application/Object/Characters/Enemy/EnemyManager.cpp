@@ -142,15 +142,15 @@ void EnemyManager::SpawnWaveEnemies() {
 		break;
 
 	case 3: // ウェーブ3: 多数、バラバラの高さ12
-		config = {2, -40.0f, 0.0f, 1.5f, 4.0f, true, -60.0f, -20.0f};
+		config = {12, -40.0f, 0.0f, 1.5f, 4.0f, true, -60.0f, -20.0f};
 		break;
 
 	case 4: // ウェーブ4: 密集、高低差大15
-		config = {3, -40.0f, 0.0f, 1.0f, 5.0f, true, -60.0f, -20.0f};
+		config = {15, -40.0f, 0.0f, 1.0f, 5.0f, true, -60.0f, -20.0f};
 		break;
 
 	case 5: // ウェーブ5: 大量、ランダム配置20
-		config = {4, -40.0f, 0.0f, 1.0f, 6.0f, true, -60.0f, -20.0f};
+		config = {20, -40.0f, 0.0f, 1.0f, 6.0f, true, -60.0f, -20.0f};
 		break;
 
 	default: // ウェーブ6以降: どんどん増える
