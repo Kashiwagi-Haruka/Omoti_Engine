@@ -7,6 +7,8 @@
 #include "Vector4.h"
 #include "Data/VertexData.h"
 #include <cstdint>
+#include <future>
+#include <utility>
 #include <d3d12.h>
 #include <string>
 #include <vector>
@@ -79,6 +81,8 @@ private:
 	bool usePortalProjection_ = false;
 	std::string editorId_;
 	std::string texturePath_;
+	std::future<std::pair<std::vector<VertexData>, std::vector<uint32_t>>> pendingMeshFuture_;
+	std::string pendingTexturePath_;
 
 public:
 	~Primitive();
@@ -166,7 +170,7 @@ public:
 	Vector3 GetUvRotate() const { return uvRotate_; }
 	Vector3 GetUvTranslate() const { return uvTranslate_; }
 	Vector2 GetUvAnchor() const { return uvAnchor_; }
-	const std::string& GetTexturePath() const { return texturePath_; }
+	const std::string& GetTexturePath() const { return pendingTexturePath_.empty() ? texturePath_ : pendingTexturePath_; }
 	const Matrix4x4& GetWorldMatrix() const { return worldMatrix; };
 
 private:
@@ -180,4 +184,8 @@ private:
 	uint32_t slices_ = 32;
 	// Sphere/Torus の縦分割数
 	uint32_t stacks_ = 16;
+	void InitializeResourcesForAsyncPrimitive(const std::string& finalTexturePath);
+	void StartAsyncMeshBuild();
+	void TryApplyAsyncMeshBuild();
+	void UploadMeshData(const std::vector<VertexData>& vertices, const std::vector<uint32_t>& indices);
 };

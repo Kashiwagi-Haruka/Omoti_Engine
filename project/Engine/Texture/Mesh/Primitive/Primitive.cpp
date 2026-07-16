@@ -9,8 +9,10 @@
 #include "TextureManager.h"
 #include "WinApp.h"
 #include <algorithm>
+#include <chrono>
 #include <cmath>
 #include <cstring>
+#include <utility>
 
 namespace {
 constexpr uint32_t kDefaultSlices = 32;
@@ -502,22 +504,14 @@ MeshData BuildMeshByPrimitiveName(Primitive::PrimitiveName primitiveName, uint32
 }
 } // namespace
 Primitive::~Primitive() { Hierarchy::GetInstance()->UnregisterPrimitive(this); }
-// 既定テクスチャでプリミティブを初期化
-void Primitive::Initialize(PrimitiveName name) { Initialize(name, kDefaultSlices); }
-// 指定分割数で既定テクスチャ初期化
-void Primitive::Initialize(PrimitiveName name, uint32_t slices) {
-	primitiveName_ = name;
-	slices_ = ClampSlices(slices);
-	stacks_ = ComputeStacksFromSlices(slices_);
-	camera_ = nullptr;
-	transformResource_ = Object3dCommon::GetInstance()->CreateBufferResource(sizeof(TransformationMatrix));
-	cameraResource_ = Object3dCommon::GetInstance()->CreateBufferResource(sizeof(CameraForGpu));
-	textureViewProjection0_ = Function::MakeIdentity4x4();
-	textureViewProjection1_ = Function::MakeIdentity4x4();
-	usePortalProjection_ = false;
-	MeshData mesh = BuildMeshByPrimitiveName(primitiveName_, slices_, stacks_);
-	vertices_ = std::move(mesh.vertices);
-	indices_ = std::move(mesh.indices);
+// メッシュデータを GPU バッファへアップロード
+void Primitive::UploadMeshData(const std::vector<VertexData>& vertices, const std::vector<uint32_t>& indices) {
+	if (vertices.empty() || indices.empty()) {
+		return;
+	}
+
+	vertices_ = vertices;
+	indices_ = indices;
 
 	vertexResource_ = Object3dCommon::GetInstance()->CreateBufferResource(sizeof(VertexData) * vertices_.size());
 	vertexBufferView_.BufferLocation = vertexResource_->GetGPUVirtualAddress();
@@ -536,6 +530,21 @@ void Primitive::Initialize(PrimitiveName name, uint32_t slices) {
 	indexResource_->Map(0, nullptr, &mappedIndex);
 	std::memcpy(mappedIndex, indices_.data(), sizeof(uint32_t) * indices_.size());
 	indexResource_->Unmap(0, nullptr);
+}
+
+// 非同期生成中に描画できる板ポリゴンと uvChecker テクスチャで初期化
+void Primitive::InitializeResourcesForAsyncPrimitive(const std::string& finalTexturePath) {
+	camera_ = nullptr;
+	transformResource_ = Object3dCommon::GetInstance()->CreateBufferResource(sizeof(TransformationMatrix));
+	cameraResource_ = Object3dCommon::GetInstance()->CreateBufferResource(sizeof(CameraForGpu));
+	textureViewProjection0_ = Function::MakeIdentity4x4();
+	textureViewProjection1_ = Function::MakeIdentity4x4();
+	portalCameraWorld0_ = Function::MakeIdentity4x4();
+	portalCameraWorld1_ = Function::MakeIdentity4x4();
+	usePortalProjection_ = false;
+
+	MeshData placeholderMesh = BuildPlane();
+	UploadMeshData(placeholderMesh.vertices, placeholderMesh.indices);
 
 	size_t alignedSize = (sizeof(Material) + 0xFF) & ~0xFF;
 	materialResource_ = Object3dCommon::GetInstance()->CreateBufferResource(alignedSize);
@@ -552,10 +561,50 @@ void Primitive::Initialize(PrimitiveName name, uint32_t slices) {
 	materialResource_->Unmap(0, nullptr);
 
 	texturePath_ = "Resources/3d/uvChecker.png";
+	pendingTexturePath_ = finalTexturePath.empty() ? texturePath_ : finalTexturePath;
 	TextureManager::GetInstance()->LoadTextureName(texturePath_);
 	textureIndex_ = TextureManager::GetInstance()->GetTextureIndexByfilePath(texturePath_);
 
 	isUseSetWorld = false;
+}
+
+void Primitive::StartAsyncMeshBuild() {
+	const PrimitiveName primitiveName = primitiveName_;
+	const uint32_t slices = slices_;
+	const uint32_t stacks = stacks_;
+	pendingMeshFuture_ = std::async(std::launch::async, [primitiveName, slices, stacks]() {
+		MeshData mesh = BuildMeshByPrimitiveName(primitiveName, slices, stacks);
+		return std::make_pair(std::move(mesh.vertices), std::move(mesh.indices));
+	});
+}
+
+void Primitive::TryApplyAsyncMeshBuild() {
+	if (!pendingMeshFuture_.valid()) {
+		return;
+	}
+	if (pendingMeshFuture_.wait_for(std::chrono::seconds(0)) != std::future_status::ready) {
+		return;
+	}
+
+	auto mesh = pendingMeshFuture_.get();
+	UploadMeshData(mesh.first, mesh.second);
+	if (!pendingTexturePath_.empty() && pendingTexturePath_ != texturePath_) {
+		texturePath_ = pendingTexturePath_;
+		TextureManager::GetInstance()->LoadTextureName(texturePath_);
+		textureIndex_ = TextureManager::GetInstance()->GetTextureIndexByfilePath(texturePath_);
+	}
+	pendingTexturePath_.clear();
+}
+
+// 既定テクスチャでプリミティブを初期化
+void Primitive::Initialize(PrimitiveName name) { Initialize(name, kDefaultSlices); }
+// 指定分割数で既定テクスチャ初期化
+void Primitive::Initialize(PrimitiveName name, uint32_t slices) {
+	primitiveName_ = name;
+	slices_ = ClampSlices(slices);
+	stacks_ = ComputeStacksFromSlices(slices_);
+	InitializeResourcesForAsyncPrimitive("Resources/3d/uvChecker.png");
+	StartAsyncMeshBuild();
 }
 // 指定テクスチャでプリミティブを初期化
 void Primitive::Initialize(PrimitiveName name, const std::string& texturePath) { Initialize(name, texturePath, kDefaultSlices); }
@@ -564,56 +613,12 @@ void Primitive::Initialize(PrimitiveName name, const std::string& texturePath, u
 	primitiveName_ = name;
 	slices_ = ClampSlices(slices);
 	stacks_ = ComputeStacksFromSlices(slices_);
-	camera_ = nullptr;
-	transformResource_ = Object3dCommon::GetInstance()->CreateBufferResource(sizeof(TransformationMatrix));
-	cameraResource_ = Object3dCommon::GetInstance()->CreateBufferResource(sizeof(CameraForGpu));
-	textureViewProjection0_ = Function::MakeIdentity4x4();
-	textureViewProjection1_ = Function::MakeIdentity4x4();
-	usePortalProjection_ = false;
-	MeshData mesh = BuildMeshByPrimitiveName(primitiveName_, slices_, stacks_);
-	vertices_ = std::move(mesh.vertices);
-	indices_ = std::move(mesh.indices);
-
-	vertexResource_ = Object3dCommon::GetInstance()->CreateBufferResource(sizeof(VertexData) * vertices_.size());
-	vertexBufferView_.BufferLocation = vertexResource_->GetGPUVirtualAddress();
-	vertexBufferView_.SizeInBytes = static_cast<UINT>(sizeof(VertexData) * vertices_.size());
-	vertexBufferView_.StrideInBytes = sizeof(VertexData);
-	VertexData* vertexData = nullptr;
-	vertexResource_->Map(0, nullptr, reinterpret_cast<void**>(&vertexData));
-	std::memcpy(vertexData, vertices_.data(), sizeof(VertexData) * vertices_.size());
-	vertexResource_->Unmap(0, nullptr);
-
-	indexResource_ = Object3dCommon::GetInstance()->CreateBufferResource(sizeof(uint32_t) * indices_.size());
-	indexBufferView_.BufferLocation = indexResource_->GetGPUVirtualAddress();
-	indexBufferView_.SizeInBytes = static_cast<UINT>(sizeof(uint32_t) * indices_.size());
-	indexBufferView_.Format = DXGI_FORMAT_R32_UINT;
-	void* mappedIndex = nullptr;
-	indexResource_->Map(0, nullptr, &mappedIndex);
-	std::memcpy(mappedIndex, indices_.data(), sizeof(uint32_t) * indices_.size());
-	indexResource_->Unmap(0, nullptr);
-
-	size_t alignedSize = (sizeof(Material) + 0xFF) & ~0xFF;
-	materialResource_ = Object3dCommon::GetInstance()->CreateBufferResource(alignedSize);
-	materialResource_->Map(0, nullptr, reinterpret_cast<void**>(&materialData_));
-	materialData_->color = Vector4(1.0f, 1.0f, 1.0f, 1.0f);
-	materialData_->enableLighting = 1;
-	materialData_->uvTransform = Function::MakeIdentity4x4();
-	materialData_->shininess = 40.0f;
-	materialData_->environmentCoefficient = 0.0f;
-	materialData_->grayscaleEnabled = 0;
-	materialData_->sepiaEnabled = 0;
-	materialData_->distortionStrength = 0.0f;
-	materialData_->distortionFalloff = 1.0f;
-	materialResource_->Unmap(0, nullptr);
-
-	texturePath_ = texturePath;
-	TextureManager::GetInstance()->LoadTextureName(texturePath_);
-	textureIndex_ = TextureManager::GetInstance()->GetTextureIndexByfilePath(texturePath_);
-
-	isUseSetWorld = false;
+	InitializeResourcesForAsyncPrimitive(texturePath);
+	StartAsyncMeshBuild();
 }
 // 座標変換やマテリアル定数を更新
 void Primitive::Update() {
+	TryApplyAsyncMeshBuild();
 	if (primitiveName_ == Primitive::Line && useLinePositions_) {
 		vertices_[0].position = {lineStart_.x, lineStart_.y, lineStart_.z, 1.0f};
 		vertices_[1].position = {lineEnd_.x, lineEnd_.y, lineEnd_.z, 1.0f};
@@ -676,6 +681,7 @@ void Primitive::UpdateCameraMatrices() {
 }
 // 設定済みのメッシュを描画
 void Primitive::Draw() {
+	TryApplyAsyncMeshBuild();
 	ID3D12DescriptorHeap* descriptorHeaps[] = {TextureManager::GetInstance()->GetSrvManager()->GetDescriptorHeap().Get()};
 	Object3dCommon::GetInstance()->GetDxCommon()->GetCommandList()->SetDescriptorHeaps(_countof(descriptorHeaps), descriptorHeaps);
 
@@ -754,29 +760,19 @@ void Primitive::SetRingDiameterXY(const Vector2& innerDiameter, const Vector2& o
 }
 // 外部メッシュへ置き換え、GPU バッファを再作成
 void Primitive::SetMeshData(const std::vector<VertexData>& vertices, const std::vector<uint32_t>& indices) {
-	if (vertices.empty() || indices.empty()) {
-		return;
+	std::string texturePathToApply;
+	if (pendingMeshFuture_.valid()) {
+		texturePathToApply = pendingTexturePath_;
+		pendingMeshFuture_.wait();
+		pendingMeshFuture_ = {};
+		pendingTexturePath_.clear();
 	}
-	vertices_ = vertices;
-	indices_ = indices;
-
-	vertexResource_ = Object3dCommon::GetInstance()->CreateBufferResource(sizeof(VertexData) * vertices_.size());
-	vertexBufferView_.BufferLocation = vertexResource_->GetGPUVirtualAddress();
-	vertexBufferView_.SizeInBytes = static_cast<UINT>(sizeof(VertexData) * vertices_.size());
-	vertexBufferView_.StrideInBytes = sizeof(VertexData);
-	VertexData* vertexData = nullptr;
-	vertexResource_->Map(0, nullptr, reinterpret_cast<void**>(&vertexData));
-	std::memcpy(vertexData, vertices_.data(), sizeof(VertexData) * vertices_.size());
-	vertexResource_->Unmap(0, nullptr);
-
-	indexResource_ = Object3dCommon::GetInstance()->CreateBufferResource(sizeof(uint32_t) * indices_.size());
-	indexBufferView_.BufferLocation = indexResource_->GetGPUVirtualAddress();
-	indexBufferView_.SizeInBytes = static_cast<UINT>(sizeof(uint32_t) * indices_.size());
-	indexBufferView_.Format = DXGI_FORMAT_R32_UINT;
-	void* mappedIndex = nullptr;
-	indexResource_->Map(0, nullptr, &mappedIndex);
-	std::memcpy(mappedIndex, indices_.data(), sizeof(uint32_t) * indices_.size());
-	indexResource_->Unmap(0, nullptr);
+	UploadMeshData(vertices, indices);
+	if (!texturePathToApply.empty() && texturePathToApply != texturePath_) {
+		texturePath_ = texturePathToApply;
+		TextureManager::GetInstance()->LoadTextureName(texturePath_);
+		textureIndex_ = TextureManager::GetInstance()->GetTextureIndexByfilePath(texturePath_);
+	}
 }
 void Primitive::SetColor(Vector4 color) {
 	materialResource_->Map(0, nullptr, reinterpret_cast<void**>(&materialData_));
@@ -851,6 +847,10 @@ void Primitive::SetDistortionFalloff(float falloff) {
 void Primitive::SetTextureIndex(uint32_t textureIndex) { textureIndex_ = textureIndex; }
 void Primitive::SetTexturePath(const std::string& texturePath) {
 	if (texturePath.empty()) {
+		return;
+	}
+	if (pendingMeshFuture_.valid()) {
+		pendingTexturePath_ = texturePath;
 		return;
 	}
 	texturePath_ = texturePath;

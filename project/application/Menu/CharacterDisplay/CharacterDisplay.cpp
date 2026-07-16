@@ -6,6 +6,7 @@
 #include "SpriteCommon.h"
 #include "Team/Team.h"
 #include "Text/FreeTypeManager/FreeTypeManager.h"
+#include "TextureManager.h"
 #include <algorithm>
 #include <imgui.h>
 #include <numbers>
@@ -32,7 +33,13 @@ void CharacterDisplay::Initialize(const Team& team) {
 	characterNameText_.SetSize({360.0f, 60.0f});
 	characterNameText_.SetPosition({640.0f, 80.0f});
 	characterNameText_.SetAlign(TextAlign::Center);
-	characterNameText_.SetColor({1.0f, 1.0f, 1.0f, 1.0f});
+
+	switchLeftGuideSprite_ = std::make_unique<Sprite>();
+	switchRightGuideSprite_ = std::make_unique<Sprite>();
+
+	uint32_t switchHandle = TextureManager::GetInstance()->GetTextureIndexByfilePath("Resources/2d/CharacterDIsplay/LeftRight.png");
+
+	switchLeftGuideSprite_->Initialize(switchHandle);
 
 	characterSwitchGuideText_.Initialize(characterNameFontHandle_);
 	characterSwitchGuideText_.SetSize({480.0f, 40.0f});
