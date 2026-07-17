@@ -6,7 +6,7 @@ namespace{
 float skillTreeIconSize = 40.0f;
 float skillTreeTextureSize = 200.0f;
 Vector4 activeColor = {1.0f, 1.0f, 1.0f, 1.0f};
-Vector4 noActiveColor = {0.5f, 0.5f, 0.5f, 0.5f};
+Vector4 noActiveColor = {0.5f, 0.5f, 0.5f, 1.0f};
 }
 CharacterDisplaySkilltree::CharacterDisplaySkilltree() {
 
