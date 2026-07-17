@@ -850,7 +850,13 @@ void Primitive::SetTexturePath(const std::string& texturePath) {
 		return;
 	}
 	if (pendingMeshFuture_.valid()) {
+		if (texturePath == pendingTexturePath_) {
+			return;
+		}
 		pendingTexturePath_ = texturePath;
+		return;
+	}
+	if (texturePath == texturePath_) {
 		return;
 	}
 	texturePath_ = texturePath;
