@@ -104,6 +104,9 @@ void CharacterDisplay::ChangeDisplayedCharacter(size_t characterIndex) {
 		skilltree_->SetSkilltreeType(currentPlayable_->GetSkilltreeType());
 		skilltree_->SetArcana(currentPlayable_->GetArcana());
 	}
+	if (reinforcement_) {
+		reinforcement_->SetReinforcementCount(currentPlayable_->GetReinforcement());
+	}
 	characterNameText_.SetString(ownedDisplayNames_[selectedCharacterIndex_]);
 	characterNameText_.UpdateLayout(false);
 }
