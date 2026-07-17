@@ -844,7 +844,11 @@ void Primitive::SetDistortionFalloff(float falloff) {
 	materialData_->distortionFalloff = falloff;
 	materialResource_->Unmap(0, nullptr);
 }
-void Primitive::SetTextureIndex(uint32_t textureIndex) { textureIndex_ = textureIndex; }
+void Primitive::SetTextureIndex(uint32_t textureIndex) {
+	textureIndex_ = textureIndex;
+	pendingTexturePath_.clear();
+	texturePath_.clear();
+}
 void Primitive::SetTexturePath(const std::string& texturePath) {
 	if (texturePath.empty()) {
 		return;
