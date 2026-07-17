@@ -5,6 +5,8 @@
 namespace{
 float skillTreeIconSize = 40.0f;
 float skillTreeTextureSize = 200.0f;
+Vector4 activeColor = {1.0f, 1.0f, 1.0f, 1.0f};
+Vector4 noActiveColor = {0.5f, 0.5f, 0.5f, 0.5f};
 }
 CharacterDisplaySkilltree::CharacterDisplaySkilltree() {
 
@@ -70,7 +72,7 @@ void CharacterDisplaySkilltree::Update() {
 			    {AddAbilityLeftSprite_->GetPosition().x - (90.0f * sinf(std::numbers::pi_v<float> * ((i + 1.0f) / 8))),
 			     AddAbilityLeftSprite_->GetPosition().y + (60.0f * (i + 1))});
 			rightSkilltreeSprites_[i]->SetPosition(
-			    {AddAbilityRightSprite_->GetPosition().x + (90.0f*sinf(std::numbers::pi_v<float> * ((i + 1.0f) / 8))), AddAbilityLeftSprite_->GetPosition().y + (60.0f * (i + 1))});
+			    {AddAbilityRightSprite_->GetPosition().x + (90.0f*sinf(std::numbers::pi_v<float> * ((i + 1.0f) / 8))), AddAbilityLeftSprite_->GetPosition().y + (60.0f * (i + 1))});			
 		}
 		break;
 	case Arcana::Magician:
@@ -135,12 +137,17 @@ void CharacterDisplaySkilltree::Update() {
 	default:
 		break;
 	}
+	AddAbilityLeftSprite_->SetColor(skilltreeType_.AddAbilityLeftLv_ ? activeColor : noActiveColor);
+	AddAbilityRightSprite_->SetColor(skilltreeType_.AddAbilityRightLv_ ? activeColor : noActiveColor);
+
 	normalAttackSprite_->Update();
 	skillAttackSprite_->Update();
 	specialAttackSprite_->Update();
 	AddAbilityLeftSprite_->Update();
 	AddAbilityRightSprite_->Update();
 	for (int i = 0; i < kMaxskillTreeCount_; i++) {
+		leftSkilltreeSprites_[i]->SetColor(skilltreeType_.leftSkilltreeLv_[i] ? activeColor : noActiveColor);
+		rightSkilltreeSprites_[i]->SetColor(skilltreeType_.rightSkilltreeLv_[i] ? activeColor : noActiveColor);
 		leftSkilltreeSprites_[i]->Update();
 		rightSkilltreeSprites_[i]->Update();
 	}
@@ -159,3 +166,5 @@ void CharacterDisplaySkilltree::Draw() {
 }
 
 void CharacterDisplaySkilltree::SetCharacterName(std::string name) { selectCharacterName_ = name; }
+
+void CharacterDisplaySkilltree::SetSkilltreeType(const SkilltreeType& skilltreeType) { skilltreeType_ = skilltreeType; }

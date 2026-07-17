@@ -1,9 +1,10 @@
 #pragma once
-#include "Sprite.h"
-#include <memory>
-#include <array>
-#include <string>
 #include "Object/Characters/Playable/Base/Arcana.h"
+#include "Object/Characters/Playable/Base/SkilltreeType.h"
+#include "Sprite.h"
+#include <array>
+#include <memory>
+#include <string>
 class CharacterDisplaySkilltree {
 
 	static const size_t kMaxskillTreeCount_ = 6;
@@ -18,12 +19,14 @@ class CharacterDisplaySkilltree {
 
 	std::string selectCharacterName_ = "Sizuku";
 	Arcana selectCharacterArcana_ = Arcana::FOOL;
-	
+	SkilltreeType skilltreeType_{};
+
 public:
 	CharacterDisplaySkilltree();
-	~CharacterDisplaySkilltree()=default;
+	~CharacterDisplaySkilltree() = default;
 	void Initialize();
 	void Update();
 	void Draw();
 	void SetCharacterName(std::string name);
+	void SetSkilltreeType(const SkilltreeType& skilltreeType);
 };

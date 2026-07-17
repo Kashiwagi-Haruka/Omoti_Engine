@@ -100,6 +100,9 @@ void CharacterDisplay::ChangeDisplayedCharacter(size_t characterIndex) {
 	currentPlayable_->SetAnimation("InitIdle");
 	currentPlayable_->SetTransform(characterTransform_);
 	currentPlayable_->Update();
+	if (skilltree_) {
+		skilltree_->SetSkilltreeType(currentPlayable_->GetSkilltreeType());
+	}
 	characterNameText_.SetString(ownedDisplayNames_[selectedCharacterIndex_]);
 	characterNameText_.UpdateLayout(false);
 }
