@@ -25,4 +25,5 @@ public:
 	void Initialize();
 	void Update();
 	void Draw();
+	void SetReinforcementCount(int count);
 };

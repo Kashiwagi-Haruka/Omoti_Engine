@@ -57,3 +57,5 @@ void CharacterDisplayReinforcement::Draw() {
 	
 
 }
+
+void CharacterDisplayReinforcement::SetReinforcementCount(int count) { haveCount_ = count; }
