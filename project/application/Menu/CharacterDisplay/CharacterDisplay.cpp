@@ -102,6 +102,7 @@ void CharacterDisplay::ChangeDisplayedCharacter(size_t characterIndex) {
 	currentPlayable_->Update();
 	if (skilltree_) {
 		skilltree_->SetSkilltreeType(currentPlayable_->GetSkilltreeType());
+		skilltree_->SetArcana(currentPlayable_->GetArcana());
 	}
 	characterNameText_.SetString(ownedDisplayNames_[selectedCharacterIndex_]);
 	characterNameText_.UpdateLayout(false);

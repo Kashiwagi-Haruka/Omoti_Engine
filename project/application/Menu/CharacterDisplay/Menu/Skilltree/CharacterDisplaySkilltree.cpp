@@ -168,3 +168,5 @@ void CharacterDisplaySkilltree::Draw() {
 void CharacterDisplaySkilltree::SetCharacterName(std::string name) { selectCharacterName_ = name; }
 
 void CharacterDisplaySkilltree::SetSkilltreeType(const SkilltreeType& skilltreeType) { skilltreeType_ = skilltreeType; }
+
+void CharacterDisplaySkilltree::SetArcana(const Arcana& arcana) { selectCharacterArcana_ = arcana; }

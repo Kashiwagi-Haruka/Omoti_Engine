@@ -1085,6 +1085,7 @@
     <ClInclude Include="application\Object\Characters\Enemy\LockOn\LockOnEnemy.h" />
     <ClInclude Include="application\Object\Characters\Playable\Base\Arcana.h" />
     <ClInclude Include="application\Object\Characters\Playable\Base\UPParametersType.h" />
+    <ClInclude Include="application\BagItem\reinforcementAmount\BaserinforcementAmountItem.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include=".editorconfig" />

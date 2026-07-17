@@ -357,6 +357,7 @@ copy "$(WindowsSdkDir)\bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)\
     <None Include="Resources\shader\Sprite\Sprite.hlsli" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="application\BagItem\reinforcementAmount\BaserinforcementAmountItem.h" />
     <ClInclude Include="application\Menu\CharacterDisplay\CharacterDisplayMenuType.h" />
     <ClInclude Include="application\Object\Characters\Playable\Base\Arcana.h" />
     <ClInclude Include="application\Object\Characters\Playable\Base\SkilltreeType.h" />

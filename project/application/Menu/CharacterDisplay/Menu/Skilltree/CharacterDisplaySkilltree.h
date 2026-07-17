@@ -29,4 +29,5 @@ public:
 	void Draw();
 	void SetCharacterName(std::string name);
 	void SetSkilltreeType(const SkilltreeType& skilltreeType);
+	void SetArcana(const Arcana& arcana);
 };
