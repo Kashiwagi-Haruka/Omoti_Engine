@@ -73,25 +73,37 @@ void SaveJson(const std::string& path, const json& j) {
 	}
 }
 
+int LoadReinforcementAmount(const std::string& name) {
+	std::ifstream ifs("Resources/JSON/Character/" + name + "/current_parameters.json");
+	json root;
+	if (!ifs.is_open() || !(ifs >> root)) {
+		return 0;
+	}
+	return std::max(0, root.value("reinforcementAmount", 0));
+}
+
 void SaveCharacterTuningJson(
-    const std::string& name, const BaseParameter& lv1Base, const Parameter& lv1Parameter, const BaseParameter& levelUpBase, const BaseParameter& currentBase, const Parameter& currentParameter) {
+    const std::string& name, const BaseParameter& lv1Base, const Parameter& lv1Parameter, const BaseParameter& levelUpBase, const BaseParameter& currentBase, const Parameter& currentParameter,
+    int reinforcementAmount) {
 	const std::string directory = "Resources/JSON/Character/" + name;
 	std::filesystem::create_directories(directory);
+	reinforcementAmount = std::clamp(reinforcementAmount, 0, 999);
 
 	SaveJson(
 	    directory + "/lv1_parameters.json", json{
-	                                            {"base",        {{"HP", lv1Base.HP}, {"Attack", lv1Base.Attack}, {"Deffence", lv1Base.Deffence}}            },
-	                                            {"baseLevelUp", {{"HP", levelUpBase.HP}, {"Attack", levelUpBase.Attack}, {"Deffence", levelUpBase.Deffence}}},
-	                                            {"parameter",   ToJson(lv1Parameter)                                                                        }
+	                                            {"base",                {{"HP", lv1Base.HP}, {"Attack", lv1Base.Attack}, {"Deffence", lv1Base.Deffence}}            },
+	                                            {"baseLevelUp",         {{"HP", levelUpBase.HP}, {"Attack", levelUpBase.Attack}, {"Deffence", levelUpBase.Deffence}}},
+	                                            {"parameter",           ToJson(lv1Parameter)                                                                        },
+	                                            {"reinforcementAmount", reinforcementAmount                                                                         }
     });
 	SaveJson(
 	    directory + "/current_parameters.json", json{
-	                                                {"base",        {{"HP", currentBase.HP}, {"Attack", currentBase.Attack}, {"Deffence", currentBase.Deffence}}},
-	                                                {"baseLevelUp", {{"HP", levelUpBase.HP}, {"Attack", levelUpBase.Attack}, {"Deffence", levelUpBase.Deffence}}},
-	                                                {"parameter",   ToJson(currentParameter)                                                                    }
+	                                                {"base",                {{"HP", currentBase.HP}, {"Attack", currentBase.Attack}, {"Deffence", currentBase.Deffence}}},
+	                                                {"baseLevelUp",         {{"HP", levelUpBase.HP}, {"Attack", levelUpBase.Attack}, {"Deffence", levelUpBase.Deffence}}},
+	                                                {"parameter",           ToJson(currentParameter)                                                                    },
+	                                                {"reinforcementAmount", reinforcementAmount                                                                         }
     });
 }
-
 #ifdef USE_IMGUI
 void DrawBaseParameterEditor(const char* label, BaseParameter& parameter) {
 	ImGui::SeparatorText(label);
@@ -1126,6 +1138,7 @@ void Hierarchy::DrawCharacterParameterHierarchy() {
 			characterParameterEditorDatas_[i].lv1Base = {100.0f, 20.0f, 10.0f};
 			characterParameterEditorDatas_[i].lv1Parameter = CreateDefaultCharacterParameter();
 			characterParameterEditorDatas_[i].levelUpBase = {0.0f, 0.0f, 0.0f};
+			characterParameterEditorDatas_[i].reinforcementAmount = LoadReinforcementAmount(names[i]);
 			characterParameterEditorDatas_[i].currentBase =
 			    CalculateCurrentBaseParameter(characterParameterEditorDatas_[i].lv1Base, characterParameterEditorDatas_[i].levelUpBase, characterParameterEditorDatas_[i].currentParameter.level);
 			characterParameterEditorDatas_[i].currentParameter =
@@ -1170,11 +1183,13 @@ void Hierarchy::DrawCharacterParameterInspector() {
 	ImGui::PopID();
 	DrawParameterEditor("LV1 Parameter", data.lv1Parameter);
 	DrawParameterEditor("Current Level Parameter", data.currentParameter, true);
+	ImGui::SeparatorText("Reinforcement");
+	ImGui::DragInt("Reinforcement Amount", &data.reinforcementAmount, 1.0f, 0, 6);
 	data.currentBase = CalculateCurrentBaseParameter(data.lv1Base, data.levelUpBase, data.currentParameter.level);
 	data.currentParameter = CalculateCurrentParameter(data.lv1Parameter, data.levelUpBase, data.currentParameter.level);
 
 	if (ImGui::Button("Save Character Json")) {
-		SaveCharacterTuningJson(data.name, data.lv1Base, data.lv1Parameter, data.levelUpBase, data.currentBase, data.currentParameter);
+		SaveCharacterTuningJson(data.name, data.lv1Base, data.lv1Parameter, data.levelUpBase, data.currentBase, data.currentParameter, data.reinforcementAmount);
 		saveStatusMessage_ = "Saved character parameters: " + data.name;
 	}
 #endif

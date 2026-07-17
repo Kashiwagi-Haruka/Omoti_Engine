@@ -25,8 +25,24 @@ void CharacterDisplayReinforcement::Initialize(){
 	std::string TextureName = "Resources/2d/Character/Reinforcement/" + selectCharacterName + "/full.png";
 	uint32_t FullHandle = TextureManager::GetInstance() -> GetTextureIndexByfilePath(TextureName);
 	fullSprite_->Initialize(FullHandle);
-	for (int i = 0; i < kMaxSprit_; i++) {
-	}
+	std::string spritTextureNamefirst = "Resources/2d/Character/Reinforcement/" + selectCharacterName + "/1.png";
+	std::string spritTextureNamesecond = "Resources/2d/Character/Reinforcement/" + selectCharacterName + "/2.png";
+	std::string spritTextureNamethird = "Resources/2d/Character/Reinforcement/" + selectCharacterName + "/3.png";
+	std::string spritTextureNamefour = "Resources/2d/Character/Reinforcement/" + selectCharacterName + "/4.png";
+	std::string spritTextureNamefive = "Resources/2d/Character/Reinforcement/" + selectCharacterName + "/5.png";
+	std::string spritTextureNamesix = "Resources/2d/Character/Reinforcement/" + selectCharacterName + "/6.png";
+	uint32_t spritTextureNameHandle = TextureManager::GetInstance()->GetTextureIndexByfilePath(spritTextureNamefirst);
+	spritSprites_[0]->Initialize(spritTextureNameHandle);
+	spritTextureNameHandle = TextureManager::GetInstance()->GetTextureIndexByfilePath(spritTextureNamesecond);
+	spritSprites_[1]->Initialize(spritTextureNameHandle);
+	spritTextureNameHandle = TextureManager::GetInstance()->GetTextureIndexByfilePath(spritTextureNamethird);
+	spritSprites_[2]->Initialize(spritTextureNameHandle);
+	spritTextureNameHandle = TextureManager::GetInstance()->GetTextureIndexByfilePath(spritTextureNamefour);
+	spritSprites_[3]->Initialize(spritTextureNameHandle);
+	spritTextureNameHandle = TextureManager::GetInstance()->GetTextureIndexByfilePath(spritTextureNamefive);
+	spritSprites_[4]->Initialize(spritTextureNameHandle);
+	spritTextureNameHandle = TextureManager::GetInstance()->GetTextureIndexByfilePath(spritTextureNamesix);
+	spritSprites_[5]->Initialize(spritTextureNameHandle);
 	
 }
 void CharacterDisplayReinforcement::Update() {
@@ -36,9 +52,10 @@ void CharacterDisplayReinforcement::Update() {
 	if (haveCount_ = 0) {
 		return;
 	} else if (haveCount_ = kMaxSprit_) {
-
+		fullSprite_->Update();
 	} else {
 		for (int i = 0; i <= haveCount_; i++) {
+			spritSprites_[i]->Update();
 		}
 	}
 
@@ -48,10 +65,10 @@ void CharacterDisplayReinforcement::Draw() {
 	if (haveCount_ = 0) {
 		return;
 	}else if (haveCount_ = kMaxSprit_) {
-
+		fullSprite_->Draw();
 	} else {
 		for (int i = 0; i <haveCount_; i++) {
-
+			spritSprites_[i];
 		}
 	}
 	

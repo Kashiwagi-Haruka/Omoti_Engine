@@ -54,5 +54,6 @@ public:
 	void SetArcana(Arcana arcana) { arcana_ = arcana; }
 	Arcana GetArcana() const { return arcana_; }
 	const SkilltreeType& GetSkilltreeType() const { return skilltree_; }
+	void SetReinforcementAmount(int reinforcementAmount) { reinforcementAmount_ = reinforcementAmount; }
 	const int GetReinforcement() const { return reinforcementAmount_; }
 };

@@ -4,8 +4,14 @@
     "Deffence": 10.0,
     "HP": 100.0
   },
+  "baseLevelUp": {
+    "Attack": 0.0,
+    "Deffence": 0.0,
+    "HP": 0.0
+  },
   "parameter": {
     "Attack": 20.0,
+    "AttributeAffinity": 1.0,
     "AttributeDamageRate": [
       0.0,
       0.0,
@@ -24,12 +30,12 @@
       0.0,
       0.0
     ],
-    "CriticalDamage": 0.5,
+    "CriticalDamage": 1.5,
     "CriticalRate": 0.05000000074505806,
     "Deffence": 10.0,
     "HP": 100.0,
     "Level": 1,
-    "Speed": 1.0,
-    "AttributeAffinity": 1.0
-  }
+    "Speed": 1.0
+  },
+  "reinforcementAmount": 3
 }

@@ -54,6 +54,7 @@ private:
 		BaseParameter levelUpBase{};
 		BaseParameter currentBase{};
 		Parameter currentParameter{};
+		int reinforcementAmount = 0;
 	};
 
 	struct EditorSnapshot {

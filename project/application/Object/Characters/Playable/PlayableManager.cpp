@@ -37,9 +37,11 @@ bool PlayableManager::ChangePlayable(const std::string& name) {
 
 	BaseParameter baseParameter{};
 	Parameter parameter{};
-	if (CharacterParameterLoader::LoadCurrentParameters(name, baseParameter, parameter)) {
+	int reinforcementAmount = 0;
+	if (CharacterParameterLoader::LoadCurrentParameters(name, baseParameter, parameter, &reinforcementAmount)) {
 		nextPlayable->SetBaseParameter(baseParameter);
 		nextPlayable->SetParameter(parameter);
+		nextPlayable->SetReinforcementAmount(reinforcementAmount);
 	}
 
 	currentPlayable_ = std::move(nextPlayable);
