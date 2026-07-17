@@ -124,8 +124,6 @@ void EnemyManager::SpawnWaveEnemies() {
 		float startX;      // 開始X位置
 		float endX;        // 終了X位置
 		float minY;        // 最小Y位置
-		float maxY;        // 最大Y位置
-		bool randomHeight; // ランダムな高さにするか
 		float minZ;        // Z最小
 		float maxZ;        // Z最大
 	};
@@ -134,23 +132,23 @@ void EnemyManager::SpawnWaveEnemies() {
 
 		switch (currentWave_) {
 	case 1: // ウェーブ1: 少数、低い位置、広い間隔5
-		config = {5, -40.0f, 0.0f, 1.5f, 2.0f, false, -60.0f, -20.0f};
+		config = {5, -40.0f, 0.0f, 1.5f,-60.0f, -20.0f};
 		break;
 
 	case 2: // ウェーブ2: 中数、やや高い位置8
-		config = {8, -40.0f, 0.0f, 1.5f, 3.0f, true, -60.0f, -20.0f};
+		config = {8, -40.0f, 0.0f, 1.5f,-60.0f, -20.0f};
 		break;
 
 	case 3: // ウェーブ3: 多数、バラバラの高さ12
-		config = {12, -40.0f, 0.0f, 1.5f, 4.0f, true, -60.0f, -20.0f};
+		config = {12, -40.0f, 0.0f, 1.5f, -60.0f, -20.0f};
 		break;
 
 	case 4: // ウェーブ4: 密集、高低差大15
-		config = {15, -40.0f, 0.0f, 1.0f, 5.0f, true, -60.0f, -20.0f};
+		config = {15, -40.0f, 0.0f, 1.5f,-60.0f, -20.0f};
 		break;
 
 	case 5: // ウェーブ5: 大量、ランダム配置20
-		config = {20, -40.0f, 0.0f, 1.0f, 6.0f, true, -60.0f, -20.0f};
+		config = {20, -40.0f, 0.0f, 1.5f, -60.0f, -20.0f};
 		break;
 
 	default: // ウェーブ6以降: どんどん増える
@@ -159,8 +157,6 @@ void EnemyManager::SpawnWaveEnemies() {
 		    10.0f,
 		    0.0f + (currentWave_ - 5) * 5.0f,
 		    1.0f,
-		    6.0f,
-		    true,
 		    -60.0f,
 		    -20.0f};
 		break;
@@ -187,14 +183,7 @@ void EnemyManager::SpawnWaveEnemies() {
 				x = config.startX + ((float)rand() / RAND_MAX) * (config.endX - config.startX);
 			}
 
-			float y;
-			if (config.randomHeight) {
-				// ランダムな高さ
-				y = config.minY + ((float)rand() / RAND_MAX) * (config.maxY - config.minY);
-			} else {
-				// 固定の高さ
-				y = config.minY;
-			}
+			float y = config.minY;
 
 			// ランダムなZ位置のバリエーション
 			float z = config.minZ + ((float)rand() / RAND_MAX) * (config.maxZ - config.minZ);
