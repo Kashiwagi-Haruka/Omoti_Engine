@@ -465,6 +465,7 @@ void GameScene::Update() {
 	if (playAreaMode_ == PlayAreaMode::kSpiral && PlayCommand::GetNORMAL_ATTACK_TRIGGER()) {
 		if (Enemy* nearestEnemy = TryFindNearestAliveEnemy(*player, *rasen_->GetEnemyManager())) {
 			player->SetAttackApproachTarget(nearestEnemy->GetPosition());
+			cameraController->SetNormalAttackTarget(nearestEnemy->GetPosition());
 		}
 	}
 	player->Update();
