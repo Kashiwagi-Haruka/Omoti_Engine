@@ -639,7 +639,7 @@ void GameScene::DrawRemoteCameraScene(Camera* camera) {
 	field->Draw();
 
 	player->SetCamera(camera);
-	player->Draw();
+	player->Draw(false);
 	if (playAreaMode_ == PlayAreaMode::kSpiral) {
 		remoteCamera_->RestoreRenderTarget();
 		rasen_->SetCamera(camera);

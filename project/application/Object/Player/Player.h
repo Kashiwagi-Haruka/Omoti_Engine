@@ -93,7 +93,7 @@ public:
 	void Initialize(Camera* camera);
 	void Move();
 	void Update();
-	void Draw();
+	void Draw(bool drawOutline = true);
 	void SetAttackApproachTarget(const Vector3& target);
 	void Jump();
 	void Falling();

@@ -81,12 +81,15 @@ void PlayerModels::Update() {
 #endif
 }
 
-void PlayerModels::Draw() {
+void PlayerModels::Draw(bool drawOutline) {
 	if (!currentCharacter_) {
 		return;
 	}
 	Object3dCommon::GetInstance()->DrawCommon(Object3dCommon::DrawCommonType::SkinningToon);
 	currentCharacter_->Draw();
+	if (!drawOutline) {
+		return;
+	}
 	Object3dCommon::GetInstance()->DrawCommon(Object3dCommon::DrawCommonType::SkinningToonOutline);
 	currentCharacter_->Draw();
 	Object3dCommon::GetInstance()->EndOutlineDraw();
@@ -97,6 +100,7 @@ std::optional<Matrix4x4> PlayerModels::GetJointWorldMatrix(const std::string& jo
 	}
 	return currentCharacter_->GetJointWorldMatrix(jointName);
 }
+
 
 bool PlayerModels::IsAttackAnimationFinished() const { return currentCharacter_ ? currentCharacter_->IsAnimationFinished() : false; }
 

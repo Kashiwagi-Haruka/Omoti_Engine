@@ -389,9 +389,9 @@ void Player::Update() {
 
 void Player::EXPMath() { parameters_.EXP += 15; }
 
-void Player::Draw() {
+void Player::Draw(bool drawOutline) {
 
-	models_->Draw();
+	models_->Draw(drawOutline);
 	Object3dCommon::GetInstance()->DrawCommon();
 	attack_->Draw();
 }
