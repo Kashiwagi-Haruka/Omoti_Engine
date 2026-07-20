@@ -4,6 +4,8 @@
 #include "Function.h"
 #include "Object3d/Object3dCommon.h"
 #include "Primitive/Primitive.h"
+#include "SrvManager/SrvManager.h"
+#include "TextureManager.h"
 
 RemoteCamera::~RemoteCamera() = default;
 
@@ -44,6 +46,11 @@ bool RemoteCamera::BeginRender() {
 	}
 
 	renderTexture_.BeginRender();
+	// Some drawables fall back to Object3dCommon's default camera when they do
+	// not own a camera.  Switch that fallback for the entire off-screen pass.
+	Object3dCommon* const object3dCommon = Object3dCommon::GetInstance();
+	previousDefaultCamera_ = object3dCommon->GetDefaultCamera();
+	object3dCommon->SetDefaultCamera(&camera_);
 	return true;
 }
 void RemoteCamera::RestoreRenderTarget() {
@@ -59,7 +66,12 @@ void RemoteCamera::EndRender() {
 	}
 
 	renderTexture_.TransitionToShaderResource();
-	Object3dCommon::GetInstance()->GetDxCommon()->RestoreMainRenderTarget();
+	DirectXCommon* const dxCommon = Object3dCommon::GetInstance()->GetDxCommon();
+	dxCommon->ExecuteCommandListAndWait();
+	TextureManager::GetInstance()->GetSrvManager()->PreDraw();
+	dxCommon->SetMainRenderTarget();
+	Object3dCommon::GetInstance()->SetDefaultCamera(previousDefaultCamera_);
+	previousDefaultCamera_ = nullptr;
 }
 
 void RemoteCamera::Draw() {
