@@ -58,7 +58,7 @@ public:
 	void Initialize();
 	void Update();
 	void Draw();
-	void SetCamera(Camera* camera) { camera_ = camera; }
+	void SetCamera(Camera* camera);
 	void StartAttack(const Transform& playerTransform);
 	void StartSpecialAttack(const Transform& playerTransform, int iceCount);
 	void UpdateSpecialAttack(const Transform& playerTransform);

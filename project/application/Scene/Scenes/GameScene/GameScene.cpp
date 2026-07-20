@@ -31,8 +31,8 @@ constexpr uint32_t kRemoteCameraWidth = 512;
 constexpr uint32_t kRemoteCameraHeight = 288;
 const Transform kRemoteCameraTransform = {
     {1.0f,   1.0f,  1.0f  },
-    {0.35f,  0.26f, 0.0f  },
-    {-20.0f, 30.0f, -75.0f},
+    {0.35f,  -2.0f, 0.0f  },
+    {6.0f, 10.0f, 3.0f},
 };
 const Transform kRemoteCameraScreenTransform = {
     {8.0f,  4.5f, 1.0f},
