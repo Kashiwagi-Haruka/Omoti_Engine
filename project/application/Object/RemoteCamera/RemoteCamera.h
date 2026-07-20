@@ -4,7 +4,6 @@
 #include "RenderTexture2D.h"
 #include "Transform.h"
 #include <cstdint>
-#include <functional>
 #include <memory>
 
 class Primitive;
@@ -12,12 +11,12 @@ class Primitive;
 // リモートカメラの映像を板ポリゴンへ表示する。
 class RemoteCamera {
 public:
-	using SceneRenderer = std::function<void(Camera*)>;
 	~RemoteCamera();
 
 	void Initialize(uint32_t width, uint32_t height, Camera* displayCamera);
 	void Update();
-	void Render(const SceneRenderer& renderScene);
+	bool BeginRender();
+	void EndRender();
 	void Draw();
 
 	Camera* GetCamera() { return &camera_; }

@@ -35,13 +35,20 @@ void RemoteCamera::Update() {
 	}
 }
 
-void RemoteCamera::Render(const SceneRenderer& renderScene) {
-	if (!renderTexture_.IsReady() || !renderScene) {
-		return;
+bool RemoteCamera::BeginRender() {
+	if (!renderTexture_.IsReady()) {
+		return false;
 	}
 
 	renderTexture_.BeginRender();
-	renderScene(&camera_);
+	return true;
+}
+
+void RemoteCamera::EndRender() {
+	if (!renderTexture_.IsReady()) {
+		return;
+	}
+
 	renderTexture_.TransitionToShaderResource();
 	Object3dCommon::GetInstance()->GetDxCommon()->RestoreMainRenderTarget();
 }

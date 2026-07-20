@@ -27,6 +27,18 @@ constexpr int kRadialBlurFullscreenFilterType = 2;
 constexpr Vector2 kDashRadialBlurCenter = {0.5f, 0.5f};
 constexpr float kDashRadialBlurWidth = 0.04f;
 constexpr int kDashRadialBlurSampleCount = 2;
+constexpr uint32_t kRemoteCameraWidth = 512;
+constexpr uint32_t kRemoteCameraHeight = 288;
+const Transform kRemoteCameraTransform = {
+    {1.0f,  1.0f,  1.0f  },
+    {0.35f, 0.0f,  0.0f  },
+    {0.0f,  24.0f, -35.0f},
+};
+const Transform kRemoteCameraScreenTransform = {
+    {8.0f, 4.5f, 1.0f },
+    {0.0f, 0.0f, 0.0f },
+    {0.0f, 8.0f, -8.0f},
+};
 
 Enemy* TryFindNearestAliveEnemy(Player& player, EnemyManager& enemyManager) {
 	const Vector3 playerPos = player.GetPosition();
@@ -129,6 +141,11 @@ void GameScene::Initialize() {
 	rasen_->Initialize(cameraController->GetCamera());
 	openWorld_->Initialize(cameraController->GetCamera());
 	playAreaMode_ = PlayAreaMode::kSpiral;
+
+	remoteCamera_ = std::make_unique<RemoteCamera>();
+	remoteCamera_->Initialize(kRemoteCameraWidth, kRemoteCameraHeight, cameraController->GetCamera());
+	remoteCamera_->SetCameraTransform(kRemoteCameraTransform);
+	remoteCamera_->SetScreenTransform(kRemoteCameraScreenTransform);
 
 	activePointLightCount_ = 3;
 	pointLights_[0].color = {1.0f, 1.0f, 1.0f, 1.0f};
@@ -594,6 +611,10 @@ void GameScene::Update() {
 	}
 	cameraController->Update();
 
+	if (remoteCamera_) {
+		remoteCamera_->Update();
+	}
+
 	if (isTransitionIn || isTransitionOut) {
 		sceneTransition->Update();
 		if (sceneTransition->IsEnd() && isTransitionIn) {
@@ -604,6 +625,20 @@ void GameScene::Update() {
 		}
 	}
 }
+
+void GameScene::DrawRemoteCameraScene(Camera* camera) {
+	if (!camera) {
+		return;
+	}
+	skyDome->SetCamera(camera);
+	skyDome->Update();
+	field->SetCamera(camera);
+	field->Update();
+
+	skyDome->Draw();
+	field->Draw();
+}
+
 void GameScene::Draw() {
 	if (isCharacterDisplayMode_) {
 		characterDisplay_->Draw();
@@ -626,6 +661,14 @@ void GameScene::Draw() {
 		}
 		return;
 	}
+	if (remoteCamera_ && remoteCamera_->BeginRender()) {
+		DrawRemoteCameraScene(remoteCamera_->GetCamera());
+		remoteCamera_->EndRender();
+		skyDome->SetCamera(cameraController->GetCamera());
+		skyDome->Update();
+		field->SetCamera(cameraController->GetCamera());
+		field->Update();
+	}
 	Object3dCommon::GetInstance()->DrawCommon();
 	skyDome->Draw();
 	Object3dCommon::GetInstance()->DrawCommon();
@@ -640,6 +683,9 @@ void GameScene::Draw() {
 		}
 	} else {
 		openWorld_->Draw();
+	}
+	if (remoteCamera_) {
+		remoteCamera_->Draw();
 	}
 
 	SpriteCommon::GetInstance()->DrawCommon();
