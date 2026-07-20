@@ -77,7 +77,7 @@ public:
 		isfalling = isFalling;
 	}
 	void SetAttacking(bool isAttacking) { isAttacking_ = isAttacking; }
-	void SetCamera(Camera* camera) { camera_ = camera; }
+	void SetCamera(Camera* camera);
 	void SetTransform(const Transform& transform) { playerTransform_ = transform; }
 	void SetModels(PlayerModels* models) { models_ = models; }
 

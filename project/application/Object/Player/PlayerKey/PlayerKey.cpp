@@ -42,18 +42,21 @@ void PlayerKey::Initialize() {
 
 	keyHoleObj_->Initialize(Primitive::Plane,"Resources/2d/KeyPrimitive/KeyHole.png");
 	planeCircleObj_->Initialize(Primitive::Plane, "Resources/2d/KeyPrimitive/KeyCircle.png");
-
+	isInitialized_ = true;
 }
 void PlayerKey::SetCamera(Camera* camera) {
 	camera_ = camera;
-	if (keyObj_) {
+	if (isInitialized_ && keyObj_) {
 		keyObj_->SetCamera(camera_);
+		keyObj_->UpdateCameraMatrices();
 	}
-	if (keyHoleObj_) {
+	if (isInitialized_ && keyHoleObj_) {
 		keyHoleObj_->SetCamera(camera_);
+		keyHoleObj_->UpdateCameraMatrices();
 	}
-	if (planeCircleObj_) {
+	if (isInitialized_ && planeCircleObj_) {
 		planeCircleObj_->SetCamera(camera_);
+		planeCircleObj_->UpdateCameraMatrices();
 	}
 }
 void PlayerKey::Update() {

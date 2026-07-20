@@ -77,6 +77,7 @@ void Enemy::SetCamera(Camera* camera) {
 	}
 	if (hpBar_) {
 		hpBar_->SetCamera(camera_);
+		hpBar_->Update();
 	}
 	if (lockOnEnemy_) {
 		lockOnEnemy_->SetCamera(camera_);
