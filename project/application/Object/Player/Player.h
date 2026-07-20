@@ -14,6 +14,7 @@
 class Camera;
 class PlayerBullet;
 class Field;
+class Enemy;
 
 class Player {
 
@@ -79,13 +80,14 @@ class Player {
 	// ダッシュゲージが0になったか
 	bool isDashGaugeRecovery_ = false;
 
-	Vector3 movementLimitCenter_{0.0f,2.5f,0.0f};
+Vector3 movementLimitCenter_{0.0f, 2.5f, 0.0f};
 	float movementLimitRadius_ = 50.0f;
 	bool attackApproachActive_ = false;
 	Vector3 attackApproachTarget_{};
 	float attackApproachStopDistance_ = 5.0f;
 	float attackApproachRange_ = 10.0f;
 	float attackApproachSpeed_ = 0.35f;
+	Enemy* lockOnTarget_ = nullptr;
 
 public:
 	Player();
@@ -95,6 +97,9 @@ public:
 	void Update();
 	void Draw(bool drawOutline = true);
 	void SetAttackApproachTarget(const Vector3& target);
+	void SetLockOnTarget(Enemy* target) { lockOnTarget_ = target; }
+	void ClearLockOnTarget() { lockOnTarget_ = nullptr; }
+	Enemy* GetLockOnTarget() const { return lockOnTarget_; }
 	void Jump();
 	void Falling();
 	PlayerSkill* GetSkill() { return attack_->GetSkill(); }

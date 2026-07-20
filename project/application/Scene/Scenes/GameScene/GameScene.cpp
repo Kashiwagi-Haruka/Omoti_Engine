@@ -480,9 +480,19 @@ void GameScene::Update() {
 	skyDome->Update();
 	field->Update();
 	if (playAreaMode_ == PlayAreaMode::kSpiral && PlayCommand::GetNORMAL_ATTACK_TRIGGER()) {
-		if (Enemy* nearestEnemy = TryFindNearestAliveEnemy(*player, *rasen_->GetEnemyManager())) {
+		EnemyManager* enemyManager = rasen_->GetEnemyManager();
+		if (Enemy* nearestEnemy = TryFindNearestAliveEnemy(*player, *enemyManager)) {
+			if (player->GetLockOnTarget() != nearestEnemy) {
+				cameraController->ClearAttackCameraTarget();
+				ApplyLockOnMarker(*enemyManager, nullptr);
+				lockOnMarkerEnemy_ = nullptr;
+				lockOnMarkerTimer_ = 0.0f;
+			}
+			player->SetLockOnTarget(nearestEnemy);
 			player->SetAttackApproachTarget(nearestEnemy->GetPosition());
 			cameraController->SetNormalAttackTarget(nearestEnemy->GetPosition());
+		} else {
+			player->ClearLockOnTarget();
 		}
 	}
 	player->Update();
@@ -494,6 +504,7 @@ void GameScene::Update() {
 		EnemyManager* enemyManager = rasen_->GetEnemyManager();
 		if (enemyManager != nullptr && enemyManager->GetAliveEnemyCount() == 0 && enemyManager->IsWaveComplete()) {
 			cameraController->ClearAttackCameraTarget();
+			player->ClearLockOnTarget();
 			ApplyLockOnMarker(*enemyManager, nullptr);
 			lockOnMarkerEnemy_ = nullptr;
 			lockOnMarkerTimer_ = 0.0f;
@@ -538,13 +549,18 @@ void GameScene::Update() {
 		if (didPlayerAttackHitEnemy) {
 			hitVinettTimer_ = kHitVinettDuration_;
 		}
-		if (didNormalAttackHitEnemy && normalAttackHitEnemy) {
+		Enemy* playerLockOnTarget = player->GetLockOnTarget();
+		if (playerLockOnTarget && !ContainsLockOnEnemy(*rasen_->GetEnemyManager(), playerLockOnTarget)) {
+			player->ClearLockOnTarget();
+			playerLockOnTarget = nullptr;
+		}
+		if (didNormalAttackHitEnemy && normalAttackHitEnemy && normalAttackHitEnemy == playerLockOnTarget) {
 			// ロック中は、同じ敵に命中した場合だけロックオン時間を延長する。
 			if (!lockOnMarkerEnemy_ || !ContainsLockOnEnemy(*rasen_->GetEnemyManager(), lockOnMarkerEnemy_)) {
-				lockOnMarkerEnemy_ = normalAttackHitEnemy;
+				lockOnMarkerEnemy_ = playerLockOnTarget;
 			}
-			if (lockOnMarkerEnemy_ == normalAttackHitEnemy) {
-				cameraController->SetLockOnTarget(normalAttackHitEnemy->GetPosition(), kLockOnMarkerDuration_);
+			if (lockOnMarkerEnemy_ == playerLockOnTarget) {
+				cameraController->SetLockOnTarget(playerLockOnTarget->GetPosition(), kLockOnMarkerDuration_);
 				lockOnMarkerTimer_ = kLockOnMarkerDuration_;
 			}
 		}
@@ -593,6 +609,9 @@ void GameScene::Update() {
 			lockOnMarkerTimer_ = std::max(0.0f, lockOnMarkerTimer_ - deltaTime);
 		}
 		if (lockOnMarkerEnemy_ && (lockOnMarkerTimer_ <= 0.0f || !ContainsLockOnEnemy(enemyManager, lockOnMarkerEnemy_))) {
+			if (player->GetLockOnTarget() == lockOnMarkerEnemy_) {
+				player->ClearLockOnTarget();
+			}
 			lockOnMarkerEnemy_ = nullptr;
 			lockOnMarkerTimer_ = 0.0f;
 			cameraController->ClearAttackCameraTarget();

@@ -58,6 +58,7 @@ void Player::Initialize(Camera* camera) {
 	dashGauge_ = dashGaugeMax_;
 	isDashGaugeRecovery_ = false;
 	attackApproachActive_ = false;
+	lockOnTarget_ = nullptr;
 }
 
 void Player::SetAttackApproachTarget(const Vector3& target) {
