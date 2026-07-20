@@ -36,8 +36,9 @@ void ApplyAttributeDamage(Enemy& enemy, EnemyManager& enemyManager, Attribute at
 
 
 bool CollisionManager::HandleGameSceneCollisions(
-    Player& player, EnemyManager& enemyManager, House& house, Boss* boss, Vector3* outHitEnemyPos, bool* outDidPlayerAttackHitEnemy) {
+    Player& player, EnemyManager& enemyManager, House& house, Boss* boss, Vector3* outHitEnemyPos, bool* outDidPlayerAttackHitEnemy, Enemy** outNormalAttackHitEnemy) {
 	bool didNormalAttackHitEnemy = false;
+	Enemy* normalAttackHitEnemy = nullptr;
 	bool didPlayerAttackHitEnemy = false;
 	AABB playerAabb = MakeAabb(player.GetPosition(), player.GetScale());
 	AABB houseAabb = MakeAabb(house.GetPosition(), house.GetScale());
@@ -103,6 +104,7 @@ bool CollisionManager::HandleGameSceneCollisions(
 				const int swordComboStep = player.GetSword()->GetComboStep();
 				if (IsNormalAttackComboStep(swordComboStep)) {
 					didNormalAttackHitEnemy = true;
+					normalAttackHitEnemy = enemy.get();
 					if (outHitEnemyPos) {
 						*outHitEnemyPos = enemy->GetPosition();
 					}
@@ -242,6 +244,9 @@ bool CollisionManager::HandleGameSceneCollisions(
 
 	if (outDidPlayerAttackHitEnemy) {
 		*outDidPlayerAttackHitEnemy = didPlayerAttackHitEnemy;
+	}
+	if (outNormalAttackHitEnemy) {
+		*outNormalAttackHitEnemy = normalAttackHitEnemy;
 	}
 	return didNormalAttackHitEnemy;
 }

@@ -104,7 +104,7 @@ private:
 	static constexpr float kCharacterDeathDissolveDuration_ = 1.0f;
 	Enemy* lockOnMarkerEnemy_ = nullptr;
 	float lockOnMarkerTimer_ = 0.0f;
-	static constexpr float kLockOnMarkerDuration_ = 0.8f;
+	static constexpr float kLockOnMarkerDuration_ = 3.0f;
 
 public:
 	GameScene();

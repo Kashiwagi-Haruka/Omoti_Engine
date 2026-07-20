@@ -22,7 +22,6 @@
 #include <numbers>
 
 namespace {
-constexpr float kLockOnTargetMaxAngle = std::numbers::pi_v<float> / 4.0f;
 constexpr int kDefaultFullscreenFilterType = 1;
 constexpr int kRadialBlurFullscreenFilterType = 2;
 constexpr Vector2 kDashRadialBlurCenter = {0.5f, 0.5f};
@@ -42,42 +41,6 @@ Enemy* TryFindNearestAliveEnemy(Player& player, EnemyManager& enemyManager) {
 		Vector3 toEnemy = enemy->GetPosition() - playerPos;
 		toEnemy.y = 0.0f;
 		const float distanceSq = Function::LengthSquared(toEnemy);
-		if (!nearestEnemy || distanceSq < nearestDistanceSq) {
-			nearestEnemy = enemy.get();
-			nearestDistanceSq = distanceSq;
-		}
-	}
-
-	return nearestEnemy;
-}
-
-Enemy* TryFindNearestEnemyInPlayerFront(Player& player, EnemyManager& enemyManager) {
-	const Vector3 playerPos = player.GetPosition();
-	const float playerYaw = player.GetRotate().y;
-	const Vector3 playerForward = {std::sinf(playerYaw), 0.0f, std::cosf(playerYaw)};
-	const float minForwardDot = std::cos(kLockOnTargetMaxAngle);
-
-	Enemy* nearestEnemy = nullptr;
-	float nearestDistanceSq = 0.0f;
-
-	for (const auto& enemy : enemyManager.GetEnemies()) {
-		if (!enemy || !enemy->GetIsAlive() || enemy->IsDying() || enemy->GetHP() <= 0) {
-			continue;
-		}
-
-		Vector3 toEnemy = enemy->GetPosition() - playerPos;
-		toEnemy.y = 0.0f;
-		const float distanceSq = Function::LengthSquared(toEnemy);
-		if (distanceSq < 0.0001f) {
-			continue;
-		}
-
-		const Vector3 directionToEnemy = Function::Normalize(toEnemy);
-		const float forwardDot = Function::Dot(playerForward, directionToEnemy);
-		if (forwardDot < minForwardDot) {
-			continue;
-		}
-
 		if (!nearestEnemy || distanceSq < nearestDistanceSq) {
 			nearestEnemy = enemy.get();
 			nearestDistanceSq = distanceSq;
@@ -551,31 +514,20 @@ void GameScene::Update() {
 		Boss* activeBoss = (rasen_->IsBossActive() && boss_->GetIsAlive()) ? boss_.get() : nullptr;
 		Vector3 hitEnemyPos{};
 		bool didPlayerAttackHitEnemy = false;
-		const bool didNormalAttackHitEnemy = collisionManager_.HandleGameSceneCollisions(*player, *rasen_->GetEnemyManager(), *rasen_->GetHouse(), activeBoss, &hitEnemyPos, &didPlayerAttackHitEnemy);
+		Enemy* normalAttackHitEnemy = nullptr;
+		const bool didNormalAttackHitEnemy =
+		    collisionManager_.HandleGameSceneCollisions(*player, *rasen_->GetEnemyManager(), *rasen_->GetHouse(), activeBoss, &hitEnemyPos, &didPlayerAttackHitEnemy, &normalAttackHitEnemy);
 		if (didPlayerAttackHitEnemy) {
 			hitVinettTimer_ = kHitVinettDuration_;
 		}
-		if (didNormalAttackHitEnemy) {
-			Enemy* cameraTargetEnemy = TryFindNearestEnemyInPlayerFront(*player, *rasen_->GetEnemyManager());
-			if (!cameraTargetEnemy) {
-				cameraTargetEnemy = TryFindNearestAliveEnemy(*player, *rasen_->GetEnemyManager());
+		if (didNormalAttackHitEnemy && normalAttackHitEnemy) {
+			// ロック中は、同じ敵に命中した場合だけロックオン時間を延長する。
+			if (!lockOnMarkerEnemy_ || !ContainsLockOnEnemy(*rasen_->GetEnemyManager(), lockOnMarkerEnemy_)) {
+				lockOnMarkerEnemy_ = normalAttackHitEnemy;
 			}
-			if (cameraTargetEnemy) {
-				const Vector3 cameraTargetPos = cameraTargetEnemy->GetPosition();
-				const int normalAttackComboStep = player->GetSword()->GetComboStep();
-				if (normalAttackComboStep <= 1) {
-					cameraController->SetLockOnTarget(cameraTargetPos, kLockOnMarkerDuration_);
-					lockOnMarkerEnemy_ = cameraTargetEnemy;
-					lockOnMarkerTimer_ = kLockOnMarkerDuration_;
-				} else {
-					cameraController->SetNormalAttackTarget(cameraTargetPos);
-					lockOnMarkerEnemy_ = nullptr;
-					lockOnMarkerTimer_ = 0.0f;
-				}
-			} else {
-				cameraController->ClearAttackCameraTarget();
-				lockOnMarkerEnemy_ = nullptr;
-				lockOnMarkerTimer_ = 0.0f;
+			if (lockOnMarkerEnemy_ == normalAttackHitEnemy) {
+				cameraController->SetLockOnTarget(normalAttackHitEnemy->GetPosition(), kLockOnMarkerDuration_);
+				lockOnMarkerTimer_ = kLockOnMarkerDuration_;
 			}
 		}
 		if (player->ConsumeDamageTrigger()) {
@@ -622,9 +574,10 @@ void GameScene::Update() {
 		if (lockOnMarkerTimer_ > 0.0f) {
 			lockOnMarkerTimer_ = std::max(0.0f, lockOnMarkerTimer_ - deltaTime);
 		}
-		if (lockOnMarkerTimer_ <= 0.0f || !ContainsLockOnEnemy(enemyManager, lockOnMarkerEnemy_)) {
+		if (lockOnMarkerEnemy_ && (lockOnMarkerTimer_ <= 0.0f || !ContainsLockOnEnemy(enemyManager, lockOnMarkerEnemy_))) {
 			lockOnMarkerEnemy_ = nullptr;
 			lockOnMarkerTimer_ = 0.0f;
+			cameraController->ClearAttackCameraTarget();
 		}
 		ApplyLockOnMarker(enemyManager, lockOnMarkerEnemy_);
 	}

@@ -60,12 +60,11 @@ void CameraController::Update() {
 		autoLockOnTimer_ -= kDeltaTime;
 		cameraMode_ = CameraMode::kLockOnCamera;
 		if (autoLockOnTimer_ <= 0.0f) {
-			autoLockOnTimer_ = 0.0f;
-			lockOnCamera_->ClearTarget();
+			ReturnToPlayerCamera();
 		}
 	}
 
-	if ((cameraMode_ == CameraMode::kLockOnCamera || cameraMode_ == CameraMode::kNormalAttackCamera) && normalAttackIdleTimer_ >= kNormalAttackCameraReturnDelay) {
+	if (cameraMode_ == CameraMode::kNormalAttackCamera && normalAttackIdleTimer_ >= kNormalAttackCameraReturnDelay) {
 		cameraMode_ = CameraMode::kPlayerCamera;
 		autoLockOnTimer_ = 0.0f;
 		lockOnCamera_->ClearTarget();
