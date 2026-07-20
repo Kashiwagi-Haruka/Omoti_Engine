@@ -16,6 +16,7 @@ public:
 	void Initialize(uint32_t width, uint32_t height, Camera* displayCamera);
 	void Update();
 	bool BeginRender();
+	void RestoreRenderTarget();
 	void EndRender();
 	void Draw();
 

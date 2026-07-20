@@ -641,6 +641,7 @@ void GameScene::DrawRemoteCameraScene(Camera* camera) {
 	player->SetCamera(camera);
 	player->Draw();
 	if (playAreaMode_ == PlayAreaMode::kSpiral) {
+		remoteCamera_->RestoreRenderTarget();
 		rasen_->SetCamera(camera);
 		rasen_->DrawRemoteCameraScene();
 	}

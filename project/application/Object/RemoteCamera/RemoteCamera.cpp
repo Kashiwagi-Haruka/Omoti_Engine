@@ -46,7 +46,13 @@ bool RemoteCamera::BeginRender() {
 	renderTexture_.BeginRender();
 	return true;
 }
+void RemoteCamera::RestoreRenderTarget() {
+	if (!renderTexture_.IsReady()) {
+		return;
+	}
 
+	renderTexture_.BindRenderTarget();
+}
 void RemoteCamera::EndRender() {
 	if (!renderTexture_.IsReady()) {
 		return;

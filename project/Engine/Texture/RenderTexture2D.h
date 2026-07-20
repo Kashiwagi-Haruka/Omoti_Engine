@@ -18,6 +18,7 @@ public:
 	void TransitionToRenderTarget(ID3D12GraphicsCommandList* commandList);
 	void TransitionToShaderResource();
 	void BeginRender();
+	void BindRenderTarget();
 
 private:
 	DirectXCommon* dxCommon_ = nullptr;
