@@ -1,2 +1,33 @@
 #pragma once
-class RemoteCamera {};
+
+#include "Camera.h"
+#include "RenderTexture2D.h"
+#include "Transform.h"
+#include <cstdint>
+#include <functional>
+#include <memory>
+
+class Primitive;
+
+// リモートカメラの映像を板ポリゴンへ表示する。
+class RemoteCamera {
+public:
+	using SceneRenderer = std::function<void(Camera*)>;
+	~RemoteCamera();
+
+	void Initialize(uint32_t width, uint32_t height, Camera* displayCamera);
+	void Update();
+	void Render(const SceneRenderer& renderScene);
+	void Draw();
+
+	Camera* GetCamera() { return &camera_; }
+	const Camera* GetCamera() const { return &camera_; }
+	void SetCameraTransform(const Transform& transform) { camera_.SetTransform(transform); }
+	void SetScreenTransform(const Transform& transform);
+
+private:
+	Camera camera_{};
+	Camera* displayCamera_ = nullptr;
+	RenderTexture2D renderTexture_{};
+	std::unique_ptr<Primitive> screen_;
+};
