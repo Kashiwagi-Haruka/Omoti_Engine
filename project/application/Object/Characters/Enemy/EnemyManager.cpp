@@ -300,7 +300,14 @@ void EnemyManager::Update(Camera* camera, const Vector3& housePos, const Vector3
 	}
 	damageTexts.erase(std::remove_if(damageTexts.begin(), damageTexts.end(), [](const DamageTextEntry& entry) { return !entry.damageText || !entry.damageText->IsVisible(); }), damageTexts.end());
 }
-
+void EnemyManager::SetCamera(Camera* camera) {
+	camera_ = camera;
+	for (const auto& enemy : enemies) {
+		if (enemy) {
+			enemy->SetCamera(camera_);
+		}
+	}
+}
 void EnemyManager::ResolveDamageTextOverlaps() {
 	for (size_t i = 0; i < damageTexts.size(); ++i) {
 		Damage* damageA = damageTexts[i].damageText.get();

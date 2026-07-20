@@ -64,6 +64,20 @@ void Player::SetAttackApproachTarget(const Vector3& target) {
 	attackApproachTarget_ = target;
 	attackApproachActive_ = true;
 }
+
+void Player::SetCamera(Camera* camera) {
+	camera_ = camera;
+	if (models_) {
+		models_->SetCamera(camera_);
+		if (Object3d* character = models_->GetCharacterObject3d()) {
+			character->SetCamera(camera_);
+			character->UpdateCameraMatrices();
+		}
+	}
+	if (attack_) {
+		attack_->SetCamera(camera_);
+	}
+}
 void Player::SetCharacterType(const std::string& characterName) {
 	if (models_) {
 		models_->SetCharacterType(characterName);

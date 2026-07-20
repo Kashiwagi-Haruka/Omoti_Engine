@@ -50,6 +50,7 @@ public:
 	void Initialize(Camera* camera);
 	void AddEnemy(Camera* camera, const Vector3& pos);
 	void Update(Camera* camera, const Vector3& housePos, const Vector3& houseScale, const Vector3& playerPos, bool isPlayerAlive);
+	void SetCamera(Camera* camera);	
 	void Draw();
 	void Clear();
 	void OnEnemyDamaged(Enemy* enemy, int damage = 1, Attribute attribute = Attribute::None, bool isCritical = false, Attribute reactionPreviousAttribute = Attribute::None);

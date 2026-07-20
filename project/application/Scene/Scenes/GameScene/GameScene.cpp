@@ -30,9 +30,9 @@ constexpr int kDashRadialBlurSampleCount = 2;
 constexpr uint32_t kRemoteCameraWidth = 512;
 constexpr uint32_t kRemoteCameraHeight = 288;
 const Transform kRemoteCameraTransform = {
-    {1.0f,  1.0f,  1.0f  },
-    {0.35f, 0.0f,  0.0f  },
-    {0.0f,  24.0f, -35.0f},
+    {1.0f,   1.0f,  1.0f  },
+    {0.45f,  0.0f,  0.0f  },
+    {-20.0f, 30.0f, -75.0f},
 };
 const Transform kRemoteCameraScreenTransform = {
     {8.0f,  4.5f, 1.0f},
@@ -637,6 +637,13 @@ void GameScene::DrawRemoteCameraScene(Camera* camera) {
 
 	skyDome->Draw();
 	field->Draw();
+
+	player->SetCamera(camera);
+	player->Draw();
+	if (playAreaMode_ == PlayAreaMode::kSpiral) {
+		rasen_->SetCamera(camera);
+		rasen_->DrawRemoteCameraScene();
+	}
 }
 
 void GameScene::Draw() {
@@ -664,6 +671,10 @@ void GameScene::Draw() {
 	if (remoteCamera_ && remoteCamera_->BeginRender()) {
 		DrawRemoteCameraScene(remoteCamera_->GetCamera());
 		remoteCamera_->EndRender();
+		player->SetCamera(cameraController->GetCamera());
+		if (playAreaMode_ == PlayAreaMode::kSpiral) {
+			rasen_->SetCamera(cameraController->GetCamera());
+		}
 		skyDome->SetCamera(cameraController->GetCamera());
 		skyDome->Update();
 		field->SetCamera(cameraController->GetCamera());

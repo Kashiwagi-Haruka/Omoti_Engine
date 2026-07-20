@@ -81,6 +81,16 @@ void House::Update(Camera* camera) {
 	hpbar_->Update();
 }
 
+void House::SetCamera(Camera* camera) {
+	if (!object_ || !hpbar_ || !hpflame_) {
+		return;
+	}
+	object_->SetCamera(camera);
+	object_->UpdateCameraMatrices();
+
+	
+	Update(camera);
+}
 void House::Draw() {
 
 	object_->Draw();

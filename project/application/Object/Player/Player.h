@@ -99,7 +99,7 @@ public:
 	void Falling();
 	PlayerSkill* GetSkill() { return attack_->GetSkill(); }
 
-	void SetCamera(Camera* camera) { camera_ = camera; }
+	void SetCamera(Camera* camera);
 	void SetMap(Field* map) { map_ = map; }
 	Vector3 GetPosition() { return transform_.translate; }
 	Vector3 GetVelocity() { return velocity_; }

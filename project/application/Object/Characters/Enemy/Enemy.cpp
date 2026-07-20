@@ -66,6 +66,23 @@ void Enemy::Initialize(Camera* camera, Vector3 translates) {
 	lockOnEnemy_->Initialize();
 	object_->SetColor(kDefaultColor);
 }
+void Enemy::SetCamera(Camera* camera) {
+	camera_ = camera;
+	if (object_) {
+		object_->SetCamera(camera_);
+		object_->UpdateCameraMatrices();
+	}
+	if (adhesion_) {
+		adhesion_->SetCamera(camera_);
+	}
+	if (hpBar_) {
+		hpBar_->SetCamera(camera_);
+	}
+	if (lockOnEnemy_) {
+		lockOnEnemy_->SetCamera(camera_);
+	}
+}
+
 void Enemy::Update(const Vector3& housePos, const Vector3& houseScale, const Vector3& playerPos, bool isPlayerAlive) {
 	const float deltaTime = 1.0f / 60.0f;
 	if (isDying_) {
