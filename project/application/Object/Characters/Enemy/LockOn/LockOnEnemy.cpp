@@ -28,7 +28,15 @@ void LockOnEnemy::Draw() {
 
 void LockOnEnemy::SetPosition(const Vector3& position) { position_ = position; }
 
-void LockOnEnemy::SetCamera(Camera* camera) { camera_ = camera; }
+void LockOnEnemy::SetCamera(Camera* camera) {
+	camera_ = camera;
+	if (!lockOnPrimitive_) {
+		return;
+	}
+	lockOnPrimitive_->SetCamera(camera_);
+	ApplyBillboardTransform();
+	lockOnPrimitive_->UpdateCameraMatrices();
+}
 
 void LockOnEnemy::SetActive(bool isActive) { isActive_ = isActive; }
 
