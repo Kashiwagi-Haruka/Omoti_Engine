@@ -16,6 +16,14 @@ void EnemyAttack::Initialize(Camera* camera) {
 	object_->SetCamera(camera_);
 }
 
+void EnemyAttack::SetCamera(Camera* camera) {
+	camera_ = camera;
+	if (object_) {
+		object_->SetCamera(camera_);
+		object_->UpdateCameraMatrices();
+	}
+}
+
 void EnemyAttack::Start(const Transform& enemyTransform) {
 	state_ = State::SwingDown;
 	timer_ = 0.0f;

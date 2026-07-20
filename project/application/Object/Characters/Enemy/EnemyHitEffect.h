@@ -43,11 +43,14 @@ class EnemyHitEffect {
 
 public:
 	void Initialize();
-	void SetCamera(Camera* camera) { camera_ = camera; };
+	void SetCamera(Camera* camera);
 	void SetPosition(const Vector3& position) { enemyPosition_ = position; };
 	void SetScale(const Vector3& scale) { enemyScale_ = scale; };
 	void Activate(const Vector3& position);
 	bool IsActive() const { return isActive_; }
 	void Update();
 	void Draw();
+
+private:
+	void RefreshCameraMatrices();
 };

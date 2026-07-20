@@ -307,6 +307,16 @@ void EnemyManager::SetCamera(Camera* camera) {
 			enemy->SetCamera(camera_);
 		}
 	}
+	for (const auto& entry : hitEffects) {
+		if (entry.effect) {
+			entry.effect->SetCamera(camera_);
+		}
+	}
+	for (const auto& entry : damageTexts) {
+		if (entry.damageText) {
+			entry.damageText->SetCamera(camera_);
+		}
+	}
 }
 void EnemyManager::ResolveDamageTextOverlaps() {
 	for (size_t i = 0; i < damageTexts.size(); ++i) {

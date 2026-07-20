@@ -82,6 +82,9 @@ void Enemy::SetCamera(Camera* camera) {
 	if (lockOnEnemy_) {
 		lockOnEnemy_->SetCamera(camera_);
 	}
+	if (enemyAttack_) {
+		enemyAttack_->SetCamera(camera_);
+	}
 }
 
 void Enemy::Update(const Vector3& housePos, const Vector3& houseScale, const Vector3& playerPos, bool isPlayerAlive) {
