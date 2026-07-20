@@ -1,6 +1,7 @@
 #include "RemoteCamera.h"
 
 #include "DirectXCommon.h"
+#include "Function.h"
 #include "Object3d/Object3dCommon.h"
 #include "Primitive/Primitive.h"
 
@@ -25,12 +26,14 @@ void RemoteCamera::Initialize(uint32_t width, uint32_t height, Camera* displayCa
 	screen_->SetTextureIndex(renderTexture_.GetSrvIndex());
 	screen_->SetEnableLighting(false);
 	screen_->SetCamera(displayCamera_);
+	UpdateScreenTransform();
 }
 
 void RemoteCamera::Update() {
 	camera_.Update();
 	if (screen_) {
 		screen_->SetCamera(displayCamera_);
+		UpdateScreenTransform();
 		screen_->Update();
 	}
 }
@@ -62,7 +65,16 @@ void RemoteCamera::Draw() {
 }
 
 void RemoteCamera::SetScreenTransform(const Transform& transform) {
-	if (screen_) {
-		screen_->SetTransform(transform);
+	screenTransform_ = transform;
+	UpdateScreenTransform();
+}
+
+void RemoteCamera::UpdateScreenTransform() {
+	if (!screen_) {
+		return;
 	}
+
+	const Matrix4x4 localMatrix = Function::MakeAffineMatrix(screenTransform_.scale, screenTransform_.rotate, screenTransform_.translate);
+	const Matrix4x4 displayCameraWorldMatrix = displayCamera_ ? displayCamera_->GetWorldMatrix() : Function::MakeIdentity4x4();
+	screen_->SetWorldMatrix(Function::Multiply(localMatrix, displayCameraWorldMatrix));
 }

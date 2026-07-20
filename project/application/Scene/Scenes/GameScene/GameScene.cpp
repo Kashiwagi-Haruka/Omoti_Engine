@@ -35,9 +35,9 @@ const Transform kRemoteCameraTransform = {
     {0.0f,  24.0f, -35.0f},
 };
 const Transform kRemoteCameraScreenTransform = {
-    {8.0f, 4.5f, 1.0f },
-    {0.0f, 0.0f, 0.0f },
-    {0.0f, 8.0f, -8.0f},
+    {8.0f,  4.5f, 1.0f},
+    {0.0f,  0.0f, 0.0f},
+    {-8.0f, 4.5f, 8.0f},
 };
 
 Enemy* TryFindNearestAliveEnemy(Player& player, EnemyManager& enemyManager) {

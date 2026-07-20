@@ -29,4 +29,7 @@ private:
 	Camera* displayCamera_ = nullptr;
 	RenderTexture2D renderTexture_{};
 	std::unique_ptr<Primitive> screen_;
+	Transform screenTransform_{};
+
+	void UpdateScreenTransform();
 };
