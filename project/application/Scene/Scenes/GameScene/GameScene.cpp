@@ -28,6 +28,7 @@ constexpr Vector2 kDashRadialBlurCenter = {0.5f, 0.5f};
 constexpr float kDashRadialBlurWidth = 0.04f;
 constexpr int kDashRadialBlurSampleCount = 2;
 constexpr float kAttackCameraLockOnRange = 10.0f;
+constexpr float kLockOnFrontDotThreshold = 0.0f;
 constexpr uint32_t kRemoteCameraWidth = 512;
 constexpr uint32_t kRemoteCameraHeight = 288;
 const Transform kRemoteCameraTransform = {
@@ -43,6 +44,8 @@ const Transform kRemoteCameraScreenTransform = {
 
 Enemy* TryFindNearestAliveEnemy(Player& player, EnemyManager& enemyManager, float maxDistance) {
 	const Vector3 playerPos = player.GetPosition();
+	const float playerYaw = player.GetRotate().y;
+	const Vector3 playerForward = {std::sinf(playerYaw), 0.0f, std::cosf(playerYaw)};
 	Enemy* nearestEnemy = nullptr;
 	float nearestDistanceSq = 0.0f;
 	const float maxDistanceSq = maxDistance * maxDistance;
@@ -56,6 +59,9 @@ Enemy* TryFindNearestAliveEnemy(Player& player, EnemyManager& enemyManager, floa
 		toEnemy.y = 0.0f;
 		const float distanceSq = Function::LengthSquared(toEnemy);
 		if (distanceSq > maxDistanceSq) {
+			continue;
+		}
+		if (Function::Dot(playerForward, toEnemy) <= kLockOnFrontDotThreshold) {
 			continue;
 		}
 		if (!nearestEnemy || distanceSq < nearestDistanceSq) {
