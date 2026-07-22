@@ -27,6 +27,7 @@ constexpr int kRadialBlurFullscreenFilterType = 2;
 constexpr Vector2 kDashRadialBlurCenter = {0.5f, 0.5f};
 constexpr float kDashRadialBlurWidth = 0.04f;
 constexpr int kDashRadialBlurSampleCount = 2;
+constexpr float kAttackCameraLockOnRange = 10.0f;
 constexpr uint32_t kRemoteCameraWidth = 512;
 constexpr uint32_t kRemoteCameraHeight = 288;
 const Transform kRemoteCameraTransform = {
@@ -40,10 +41,11 @@ const Transform kRemoteCameraScreenTransform = {
     {-8.0f, 4.5f, 8.0f},
 };
 
-Enemy* TryFindNearestAliveEnemy(Player& player, EnemyManager& enemyManager) {
+Enemy* TryFindNearestAliveEnemy(Player& player, EnemyManager& enemyManager, float maxDistance) {
 	const Vector3 playerPos = player.GetPosition();
 	Enemy* nearestEnemy = nullptr;
 	float nearestDistanceSq = 0.0f;
+	const float maxDistanceSq = maxDistance * maxDistance;
 
 	for (const auto& enemy : enemyManager.GetEnemies()) {
 		if (!enemy || !enemy->GetIsAlive() || enemy->IsDying() || enemy->GetHP() <= 0) {
@@ -53,6 +55,9 @@ Enemy* TryFindNearestAliveEnemy(Player& player, EnemyManager& enemyManager) {
 		Vector3 toEnemy = enemy->GetPosition() - playerPos;
 		toEnemy.y = 0.0f;
 		const float distanceSq = Function::LengthSquared(toEnemy);
+		if (distanceSq > maxDistanceSq) {
+			continue;
+		}
 		if (!nearestEnemy || distanceSq < nearestDistanceSq) {
 			nearestEnemy = enemy.get();
 			nearestDistanceSq = distanceSq;
@@ -481,7 +486,7 @@ void GameScene::Update() {
 	field->Update();
 	if (playAreaMode_ == PlayAreaMode::kSpiral && PlayCommand::GetNORMAL_ATTACK_TRIGGER()) {
 		EnemyManager* enemyManager = rasen_->GetEnemyManager();
-		if (Enemy* nearestEnemy = TryFindNearestAliveEnemy(*player, *enemyManager)) {
+		if (Enemy* nearestEnemy = TryFindNearestAliveEnemy(*player, *enemyManager, kAttackCameraLockOnRange)) {
 			if (player->GetLockOnTarget() != nearestEnemy) {
 				cameraController->ClearAttackCameraTarget();
 				ApplyLockOnMarker(*enemyManager, nullptr);
