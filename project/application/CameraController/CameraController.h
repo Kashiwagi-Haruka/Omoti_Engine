@@ -126,6 +126,12 @@ public:
 	void SetLockOnTarget(const Vector3& targetPos, float durationSeconds = 1.0f);
 
 	/// <summary>
+	/// 現在ロックオン中のターゲット位置を更新する
+	/// </summary>
+	/// <param name="targetPos">ターゲットの現在位置</param>
+	void UpdateLockOnTargetPosition(const Vector3& targetPos);
+
+	/// <summary>
 	/// 通常攻撃カメラのターゲット設定
 	/// </summary>
 	void SetNormalAttackTarget(const Vector3& targetPos);

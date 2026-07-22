@@ -217,6 +217,9 @@ void CameraController::SetLockOnTarget(const Vector3& targetPos, float durationS
 	autoLockOnTimer_ = durationSeconds;
 	RequestCameraMode(CameraMode::kLockOnCamera);
 }
+
+void CameraController::UpdateLockOnTargetPosition(const Vector3& targetPos) { lockOnCamera_->SetTargetPos(targetPos); }
+
 void CameraController::SetNormalAttackTarget(const Vector3& targetPos) {
 	normalAttackCamera_->SetTargetPos(targetPos);
 	normalAttackIdleTimer_ = 0.0f;

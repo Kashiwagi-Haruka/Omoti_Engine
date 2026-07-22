@@ -106,6 +106,7 @@ private:
 	float characterDeathDissolveTimer_ = 0.0f;
 	static constexpr float kCharacterDeathDissolveDuration_ = 1.0f;
 	Enemy* lockOnMarkerEnemy_ = nullptr;
+	Enemy* normalAttackTargetEnemy_ = nullptr;
 	float lockOnMarkerTimer_ = 0.0f;
 	static constexpr float kLockOnMarkerDuration_ = 3.0f;
 
