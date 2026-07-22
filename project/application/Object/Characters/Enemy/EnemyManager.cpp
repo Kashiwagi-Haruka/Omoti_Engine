@@ -10,7 +10,7 @@
 
 namespace {
 constexpr int kFinalWave = 5;
-constexpr float kEnemySeparationRadius = 1.0f;
+constexpr float kEnemySeparationRadius = 3.0f;
 constexpr float kPlayerSeparationRadius = 1.0f;
 constexpr float kDamageTextSeparationRadius = 0.45f;
 constexpr float kDamageTextBaseScaleRate = 0.18f;
