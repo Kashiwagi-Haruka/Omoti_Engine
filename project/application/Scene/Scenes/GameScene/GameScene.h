@@ -108,7 +108,7 @@ private:
 	Enemy* lockOnMarkerEnemy_ = nullptr;
 	Enemy* normalAttackTargetEnemy_ = nullptr;
 	float lockOnMarkerTimer_ = 0.0f;
-	static constexpr float kLockOnMarkerDuration_ = 3.0f;
+	static constexpr float kLockOnMarkerDuration_ = 0.3f;
 
 	void DrawRemoteCameraScene(Camera* camera);
 
