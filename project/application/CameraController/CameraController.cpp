@@ -107,7 +107,13 @@ void CameraController::Update() {
 		isCameraSwitching_ = true;
 		cameraSwitchTimer_ = 0.0f;
 		switchStartTransform_ = blendCamera_->GetTransform();
-		cameraSwitchDuration_ = (preCameraMode_ == CameraMode::kNormalAttackCamera && cameraMode_ == CameraMode::kLockOnCamera) ? kNormalAttackToLockOnSwitchDuration_ : kDefaultCameraSwitchDuration_;
+		if (IsPlayerCameraTransition(preCameraMode_, cameraMode_)) {
+			cameraSwitchDuration_ = kPlayerCameraSwitchDuration_;
+		} else if (preCameraMode_ == CameraMode::kNormalAttackCamera && cameraMode_ == CameraMode::kLockOnCamera) {
+			cameraSwitchDuration_ = kNormalAttackToLockOnSwitchDuration_;
+		} else {
+			cameraSwitchDuration_ = kDefaultCameraSwitchDuration_;
+		}
 	}
 
 	if (isCameraSwitching_) {
@@ -174,7 +180,7 @@ void CameraController::InheritPlayerCameraRotation(CameraMode sourceMode) {
 		playerCamera_->SetOrbitRotation(normalAttackCamera_->GetTransform().rotate);
 	}
 }
-
+bool CameraController::IsPlayerCameraTransition(CameraMode from, CameraMode to) const { return from == CameraMode::kPlayerCamera || to == CameraMode::kPlayerCamera; }
 void CameraController::ReturnToPlayerCamera() {
 	if (cameraMode_ != CameraMode::kPlayerCamera) {
 		InheritPlayerCameraRotation(cameraMode_);

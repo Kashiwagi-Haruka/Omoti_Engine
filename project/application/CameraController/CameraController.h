@@ -35,6 +35,7 @@ class CameraController {
 	float cameraSwitchTimer_ = 0.0f; // カメラ切り替えのタイマー
 	float cameraSwitchDuration_ = 0.2f; // 現在のカメラ切り替えの時間
 	static constexpr float kDefaultCameraSwitchDuration_ = 0.2f;
+	static constexpr float kPlayerCameraSwitchDuration_ = 0.35f;
 	static constexpr float kNormalAttackToLockOnSwitchDuration_ = 0.35f;
 	float autoLockOnTimer_ = 0.0f;      // 自動ロックオンのタイマー
 	float normalAttackIdleTimer_ = 1.0f; // 通常攻撃ボタンが押されていない時間
@@ -45,6 +46,11 @@ class CameraController {
 	/// </summary>
 	/// <param name="sourceMode"> 引き継ぎ元のカメラモード </param>
 	void InheritPlayerCameraRotation(CameraMode sourceMode);
+
+		/// <summary>
+	/// プレイヤーカメラを出入りする切り替えかどうかを判定する
+	/// </summary>
+	bool IsPlayerCameraTransition(CameraMode from, CameraMode to) const;
 	/// <summary>
 	/// 操作用プレイヤーカメラへ戻し、攻撃カメラのターゲットを解除する
 	/// </summary>
