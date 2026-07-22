@@ -107,6 +107,7 @@ void CameraController::Update() {
 		isCameraSwitching_ = true;
 		cameraSwitchTimer_ = 0.0f;
 		switchStartTransform_ = blendCamera_->GetTransform();
+		cameraSwitchDuration_ = (preCameraMode_ == CameraMode::kNormalAttackCamera && cameraMode_ == CameraMode::kLockOnCamera) ? kNormalAttackToLockOnSwitchDuration_ : kDefaultCameraSwitchDuration_;
 	}
 
 	if (isCameraSwitching_) {
