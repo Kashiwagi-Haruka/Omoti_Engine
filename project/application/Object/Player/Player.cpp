@@ -4,6 +4,7 @@
 #include "Function.h"
 #include "Input.h"
 #include "Model/ModelManager.h"
+#include "Object/Characters/Enemy/Enemy.h"
 #include <algorithm>
 #include <numbers>
 #include "Object3d/Object3dCommon.h"
@@ -276,7 +277,27 @@ void Player::Move() {
 		bulletVelocity_.x = 1;
 	}
 }
+void Player::FaceLockOnTarget() {
+	if (!lockOnTarget_ || !lockOnTarget_->GetIsAlive() || lockOnTarget_->IsDying() || lockOnTarget_->GetHP() <= 0) {
+		return;
+	}
 
+	Vector3 toTarget = lockOnTarget_->GetPosition() - transform_.translate;
+	toTarget.y = 0.0f;
+	if (Function::LengthSquared(toTarget) <= 0.0001f) {
+		return;
+	}
+
+	const float targetAngle = std::atan2(toTarget.x, toTarget.z);
+	float angleDiff = targetAngle - transform_.rotate.y;
+	while (angleDiff > std::numbers::pi_v<float>) {
+		angleDiff -= 2.0f * std::numbers::pi_v<float>;
+	}
+	while (angleDiff < -std::numbers::pi_v<float>) {
+		angleDiff += 2.0f * std::numbers::pi_v<float>;
+	}
+	transform_.rotate.y = Function::Lerp(transform_.rotate.y, transform_.rotate.y + angleDiff, rotateTimer);
+}
 void Player::Jump() {
 	if (PlayCommand::GetJUMP() && !isJump && !isfalling && !attack_->IsFallingAttacking()) {
 		isJump = true;
@@ -336,6 +357,7 @@ void Player::Update() {
 	attack_->SetAirState(isJump, isfalling);
 	attack_->Update();
 	Move();
+	FaceLockOnTarget();
 	Jump();
 	Falling();
 

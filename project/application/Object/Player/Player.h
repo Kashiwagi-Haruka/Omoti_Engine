@@ -88,6 +88,8 @@ Vector3 movementLimitCenter_{0.0f, 2.5f, 0.0f};
 	float attackApproachRange_ = 10.0f;
 	float attackApproachSpeed_ = 0.35f;
 	Enemy* lockOnTarget_ = nullptr;
+	// ロックオン中は移動入力に関係なく対象へ体の正面を維持する。
+	void FaceLockOnTarget();
 
 public:
 	Player();
