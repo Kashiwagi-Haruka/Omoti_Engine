@@ -89,13 +89,6 @@ const BaseParameter& Player::GetCurrentBaseParameter() const { return models_->G
 const Parameter& Player::GetCurrentCombatParameter() const { return models_->GetCurrentParameter(); }
 void Player::Move() {
 
-	if (!attack_->IsCanMove()) {
-		isDash = false;
-		velocity_.x = 0.0f;
-		velocity_.z = 0.0f;
-		return;
-	}
-
 	if (attackApproachActive_) {
 		if (!attack_->IsAttacking() || attack_->IsFallingAttacking() || attack_->isSkillAttacking() || attack_->isSpecialAttacking()) {
 			attackApproachActive_ = false;
@@ -125,6 +118,14 @@ void Player::Move() {
 			return;
 		}
 	}
+
+	if (!attack_->IsCanMove()) {
+		isDash = false;
+		velocity_.x = 0.0f;
+		velocity_.z = 0.0f;
+		return;
+	}
+
 	// 入力方向を記録する変数
 	Vector3 inputDirection = {0.0f, 0.0f, 0.0f};
 	Vector3 inputAxis = {0.0f, 0.0f, 0.0f};
