@@ -34,6 +34,8 @@ class CameraController {
 	bool isCameraSwitching_ = false; // カメラ切り替え中かどうかのフラグ
 	float cameraSwitchTimer_ = 0.0f; // カメラ切り替えのタイマー
 	float cameraSwitchDuration_ = 0.2f; // 現在のカメラ切り替えの時間
+	bool hasPendingCameraMode_ = false;                        // 補間完了後に切り替えるカメラモードがあるか
+	CameraMode pendingCameraMode_ = CameraMode::kPlayerCamera; // 補間完了後に切り替えるカメラモード
 	static constexpr float kDefaultCameraSwitchDuration_ = 0.2f;
 	static constexpr float kPlayerCameraSwitchDuration_ = 0.35f;
 	static constexpr float kNormalAttackToLockOnSwitchDuration_ = 0.35f;
@@ -51,6 +53,10 @@ class CameraController {
 	/// プレイヤーカメラを出入りする切り替えかどうかを判定する
 	/// </summary>
 	bool IsPlayerCameraTransition(CameraMode from, CameraMode to) const;
+	/// <summary>
+	/// カメラモードの切り替えを要求する。補間中の要求は完了後まで保留する
+	/// </summary>
+	void RequestCameraMode(CameraMode mode);
 	/// <summary>
 	/// 操作用プレイヤーカメラへ戻し、攻撃カメラのターゲットを解除する
 	/// </summary>
@@ -106,7 +112,7 @@ public:
 	/// カメラモードの設定
 	/// </summary>
 	/// <param name="mode"> カメラモード </param>
-	void SetCameraMode(CameraMode mode) { cameraMode_ = mode; }
+	void SetCameraMode(CameraMode mode) { RequestCameraMode(mode); }
 
 	/// <summary>
 	/// ロックオンターゲットの設定

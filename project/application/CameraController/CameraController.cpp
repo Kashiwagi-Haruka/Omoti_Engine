@@ -49,6 +49,10 @@ void CameraController::Initialize() {
 void CameraController::Update() {
 	constexpr float kDeltaTime = 1.0f / 60.0f;
 	constexpr float kNormalAttackCameraReturnDelay = 0.8f;
+	if (!isCameraSwitching_ && hasPendingCameraMode_) {
+		cameraMode_ = pendingCameraMode_;
+		hasPendingCameraMode_ = false;
+	}
 
 	if (PlayCommand::GetNORMAL_ATTACK_PUSH()) {
 		normalAttackIdleTimer_ = 0.0f;
@@ -58,14 +62,14 @@ void CameraController::Update() {
 
 	if (autoLockOnTimer_ > 0.0f) {
 		autoLockOnTimer_ -= kDeltaTime;
-		cameraMode_ = CameraMode::kLockOnCamera;
+		RequestCameraMode(CameraMode::kLockOnCamera);
 		if (autoLockOnTimer_ <= 0.0f) {
 			ReturnToPlayerCamera();
 		}
 	}
 
 	if (cameraMode_ == CameraMode::kNormalAttackCamera && normalAttackIdleTimer_ >= kNormalAttackCameraReturnDelay) {
-		cameraMode_ = CameraMode::kPlayerCamera;
+		RequestCameraMode(CameraMode::kPlayerCamera);
 		autoLockOnTimer_ = 0.0f;
 		lockOnCamera_->ClearTarget();
 		normalAttackCamera_->ClearTarget();
@@ -77,7 +81,7 @@ void CameraController::Update() {
 	const bool canCameraInputReturnToPlayerCamera = cameraMode_ != CameraMode::kPlayerCamera && cameraMode_ != CameraMode::kNormalAttackCamera;
 	if (isCameraMoved && canCameraInputReturnToPlayerCamera) {
 		InheritPlayerCameraRotation(cameraMode_);
-		cameraMode_ = CameraMode::kPlayerCamera;
+		RequestCameraMode(CameraMode::kPlayerCamera);
 		autoLockOnTimer_ = 0.0f;
 	}
 	if (preCameraMode_ != cameraMode_ && cameraMode_ == CameraMode::kPlayerCamera) {
@@ -181,11 +185,19 @@ void CameraController::InheritPlayerCameraRotation(CameraMode sourceMode) {
 	}
 }
 bool CameraController::IsPlayerCameraTransition(CameraMode from, CameraMode to) const { return from == CameraMode::kPlayerCamera || to == CameraMode::kPlayerCamera; }
+void CameraController::RequestCameraMode(CameraMode mode) {
+	if (isCameraSwitching_) {
+		pendingCameraMode_ = mode;
+		hasPendingCameraMode_ = true;
+		return;
+	}
+	cameraMode_ = mode;
+}
 void CameraController::ReturnToPlayerCamera() {
 	if (cameraMode_ != CameraMode::kPlayerCamera) {
 		InheritPlayerCameraRotation(cameraMode_);
 	}
-	cameraMode_ = CameraMode::kPlayerCamera;
+	RequestCameraMode(CameraMode::kPlayerCamera);
 	autoLockOnTimer_ = 0.0f;
 	normalAttackIdleTimer_ = 1.0f;
 	lockOnCamera_->ClearTarget();
@@ -203,13 +215,13 @@ void CameraController::SetLockOnTarget(const Vector3& targetPos, float durationS
 	lockOnCamera_->SetTargetPos(targetPos);
 	normalAttackIdleTimer_ = 0.0f;
 	autoLockOnTimer_ = durationSeconds;
-	cameraMode_ = CameraMode::kLockOnCamera;
+	RequestCameraMode(CameraMode::kLockOnCamera);
 }
 void CameraController::SetNormalAttackTarget(const Vector3& targetPos) {
 	normalAttackCamera_->SetTargetPos(targetPos);
 	normalAttackIdleTimer_ = 0.0f;
 	autoLockOnTimer_ = 0.0f;
 	lockOnCamera_->ClearTarget();
-	cameraMode_ = CameraMode::kNormalAttackCamera;
+	RequestCameraMode(CameraMode::kNormalAttackCamera);
 }
 void CameraController::ClearAttackCameraTarget() { ReturnToPlayerCamera(); }
