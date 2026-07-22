@@ -27,7 +27,7 @@ Vector3 LerpRotationShortest(const Vector3& start, const Vector3& end, float rat
 	    Function::Lerp(start.z, start.z + NormalizeAngle(end.z - start.z), ratio),
 	};
 }
-
+float SmoothStep(float ratio) { return ratio * ratio * (3.0f - 2.0f * ratio); }
 } // namespace
 void CameraController::Initialize() {
 	playerCamera_ = std::make_unique<PlayerCamera>();
@@ -79,7 +79,6 @@ void CameraController::Update() {
 		InheritPlayerCameraRotation(cameraMode_);
 		cameraMode_ = CameraMode::kPlayerCamera;
 		autoLockOnTimer_ = 0.0f;
-		isCameraSwitching_ = false;
 	}
 	if (preCameraMode_ != cameraMode_ && cameraMode_ == CameraMode::kPlayerCamera) {
 		InheritPlayerCameraRotation(preCameraMode_);
@@ -111,13 +110,14 @@ void CameraController::Update() {
 	}
 
 	if (isCameraSwitching_) {
-		cameraSwitchTimer_ += 1.0f / (60.0f*3.0f);
-		const float t = std::clamp(cameraSwitchTimer_ / cameraSwitchDuration_, 0.0f, 1.0f);
+		cameraSwitchTimer_ += kDeltaTime;
+		const float linearT = std::clamp(cameraSwitchTimer_ / cameraSwitchDuration_, 0.0f, 1.0f);
+		const float t = SmoothStep(linearT);
 		Transform blendedTransform = targetTransform;
 		blendedTransform.translate = Function::Lerp(switchStartTransform_.translate, targetTransform.translate, t);
 		blendedTransform.rotate = LerpRotationShortest(switchStartTransform_.rotate, targetTransform.rotate, t);
 		blendCamera_->SetTransform(blendedTransform);
-		if (t >= 1.0f) {
+		if (linearT >= 1.0f) {
 			isCameraSwitching_ = false;
 		}
 	} else {
@@ -183,7 +183,6 @@ void CameraController::ReturnToPlayerCamera() {
 	normalAttackIdleTimer_ = 1.0f;
 	lockOnCamera_->ClearTarget();
 	normalAttackCamera_->ClearTarget();
-	isCameraSwitching_ = false;
 }
 
 Camera* CameraController::GetCamera() { return camera_; }
