@@ -278,6 +278,10 @@ void Player::Move() {
 	}
 }
 void Player::FaceLockOnTarget() {
+	if (!attack_->IsAnyAttackActive()) {
+		return;
+	}
+
 	if (!lockOnTarget_ || !lockOnTarget_->GetIsAlive() || lockOnTarget_->IsDying() || lockOnTarget_->GetHP() <= 0) {
 		return;
 	}
