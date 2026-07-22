@@ -113,7 +113,11 @@ public:
 	/// </summary>
 	/// <param name="mode"> カメラモード </param>
 	void SetCameraMode(CameraMode mode) { RequestCameraMode(mode); }
-
+	/// <summary>
+	/// ロックオンカメラが使用中かどうかを取得する
+	/// </summary>
+	/// <returns>ロックオンカメラの使用中はtrue</returns>
+	bool IsLockOnCameraActive() const { return cameraMode_ == CameraMode::kLockOnCamera; }
 	/// <summary>
 	/// ロックオンターゲットの設定
 	/// </summary>

@@ -490,7 +490,7 @@ void GameScene::Update() {
 	ParticleManager::GetInstance()->Update(cameraController->GetCamera());
 	skyDome->Update();
 	field->Update();
-	if (playAreaMode_ == PlayAreaMode::kSpiral && PlayCommand::GetNORMAL_ATTACK_TRIGGER()) {
+	if (playAreaMode_ == PlayAreaMode::kSpiral && PlayCommand::GetNORMAL_ATTACK_TRIGGER() && !cameraController->IsLockOnCameraActive()) {
 		EnemyManager* enemyManager = rasen_->GetEnemyManager();
 		if (Enemy* nearestEnemy = TryFindNearestAliveEnemy(*player, *enemyManager, kAttackCameraLockOnRange)) {
 			if (player->GetLockOnTarget() != nearestEnemy) {
