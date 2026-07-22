@@ -69,7 +69,8 @@ public:
 	bool IsFallingAttacking() const { return isFallingAttack_; } // 落下攻撃中かどうかを返す関数
 	bool isSkillAttacking() const { return isSkillAttack; }      // スキル攻撃中かどうかを返す関数
 	bool isSpecialAttacking() const { return isSpecialAttack; }  // 必殺技攻撃中かどうかを返す関数
-	bool IsCanMove() const { return canMove_; }                  // プレイヤーが移動できるかどうかを返す関数
+	bool IsCanMove() const { return !isAttacking_ && !isFallingAttack_ && !isSkillAttack && !isSpecialAttack; }
+	// プレイヤーが移動できるかどうかを返す関数
 
 	void SetIsFallingAttack(bool isFalling) { isFallingAttack_ = isFalling; }
 	void SetAirState(bool isJumping, bool isFalling) {

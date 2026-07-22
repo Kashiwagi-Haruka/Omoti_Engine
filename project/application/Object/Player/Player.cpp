@@ -89,9 +89,10 @@ const BaseParameter& Player::GetCurrentBaseParameter() const { return models_->G
 const Parameter& Player::GetCurrentCombatParameter() const { return models_->GetCurrentParameter(); }
 void Player::Move() {
 
-	// ★ 落下攻撃中は移動できない
 	if (!attack_->IsCanMove()) {
 		isDash = false;
+		velocity_.x = 0.0f;
+		velocity_.z = 0.0f;
 		return;
 	}
 
