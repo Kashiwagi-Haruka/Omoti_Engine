@@ -22,6 +22,7 @@ void SizukuSpecial::Initialize() {
         {0.0f, 0.0f,  0.0f }
     };
 	skydomeObj_->SetTransform(skydomeTransform_);
+	animationTime_ = 0.0f;
 }
 void SizukuSpecial::Start() {
 	isStarted_ = true;
