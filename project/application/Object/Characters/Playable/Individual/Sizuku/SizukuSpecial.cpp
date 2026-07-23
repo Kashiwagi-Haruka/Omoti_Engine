@@ -56,6 +56,7 @@ void SizukuSpecial::Update() {
 		}
 		fieldPlane_->SetTransform(fieldPlaneTransform_);
 		fieldPlane_->Update();
+		skydomeTransform_.translate = sizukuTransform_.translate;
 		skydomeObj_->SetTransform(skydomeTransform_);
 		skydomeObj_->Update();
 	}

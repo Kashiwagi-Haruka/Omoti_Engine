@@ -22,9 +22,9 @@ class SizukuSpecial{
 	std::unique_ptr<Primitive> fieldPlane_;
 	std::unique_ptr<Object3d> skydomeObj_;
 	std::vector<std::unique_ptr<Object3d>> iceRains_;
-	Transform sizukuTransform_;
-	Transform fieldPlaneTransform_;
-	Transform skydomeTransform_;
+	Transform sizukuTransform_{};
+	Transform fieldPlaneTransform_{};
+	Transform skydomeTransform_{};
 	Camera* camera_ = nullptr;
 
 public:
