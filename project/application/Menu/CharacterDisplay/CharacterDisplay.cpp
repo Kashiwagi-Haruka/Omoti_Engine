@@ -28,10 +28,10 @@ void CharacterDisplay::Initialize(const Team& team) {
 	characterDisplayIcon_->Initialize(team);
 
 	characterNameFontHandle_ = FreeTypeManager::CreateFace("Resources/Font/irohakakuC-Bold.ttf", 0);
-	FreeTypeManager::SetPixelSizes(characterNameFontHandle_, 36, 36);
+	FreeTypeManager::SetPixelSizes(characterNameFontHandle_, 24, 24);
 	characterNameText_.Initialize(characterNameFontHandle_);
 	characterNameText_.SetSize({360.0f, 60.0f});
-	characterNameText_.SetPosition({640.0f, 80.0f});
+	characterNameText_.SetPosition({140.0f, 80.0f});
 	characterNameText_.SetAlign(TextAlign::Center);
 
 	switchLeftGuideSprite_ = std::make_unique<Sprite>();
