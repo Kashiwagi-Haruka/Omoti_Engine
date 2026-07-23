@@ -38,6 +38,6 @@ public:
 	void SetCamera(Camera* camera) { camera_ = camera; }
 	void SetSizukuTransform(Transform transform) { sizukuTransform_ = transform; }
 	void SetSizukuHeight(float height) {sizukuHeight_ = height; }
-	bool isEnd() { return isEnd_; }
-
+	bool isEnd() { return IsAnimationFinished(); }
+	bool IsAnimationFinished() const { return animationTime_ >= animationTimeMax_; }
 };

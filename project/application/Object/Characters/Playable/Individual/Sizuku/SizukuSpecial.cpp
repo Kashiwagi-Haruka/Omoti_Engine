@@ -1,44 +1,48 @@
 #define NOMINMAX
 #include "SizukuSpecial.h"
-#include "Object3d/Object3dCommon.h"
+#include "GameBase.h"
 #include "Model/ModelManager.h"
+#include "Object3d/Object3dCommon.h"
+#include <algorithm>
 
-SizukuSpecial::SizukuSpecial(){ 
-	fieldPlane_ = std::make_unique<Primitive>(); 
+SizukuSpecial::SizukuSpecial() {
+	fieldPlane_ = std::make_unique<Primitive>();
 	skydomeObj_ = std::make_unique<Object3d>();
 	ModelManager::GetInstance()->LoadModel("Resources/3d/iceFlower", "iceFlower");
 	ModelManager::GetInstance()->LoadModel("Resources/3d/Character/Sizuku/Special/skydome", "sizukuSpecialDome");
 }
-void SizukuSpecial::Initialize() { 
+void SizukuSpecial::Initialize() {
 	fieldPlane_->Initialize(Primitive::Plane, "Resources/2d/Effect/sizukuField.png");
 	skydomeObj_->Initialize();
 	skydomeObj_->SetEnableLighting(false);
 	skydomeObj_->SetModel("sizukuSpecialDome");
 	skydomeTransform_ = {
-	    {10.0,  10.0f, 10.0f},
-        {0.0f, 0.0f, 0.0f},
-        {0.0f, 0.0f, 0.0f}
+	    {10.0, 10.0f, 10.0f},
+        {0.0f, 0.0f,  0.0f },
+        {0.0f, 0.0f,  0.0f }
     };
 	skydomeObj_->SetTransform(skydomeTransform_);
 }
-void SizukuSpecial::Start() { 
-	isStarted_ = true; 
+void SizukuSpecial::Start() {
+	isStarted_ = true;
 	isEnd_ = false;
-	duration_ = 0; 
-	rainTimer_ = 0; 
-	iceRains_.clear(); 
+	duration_ = 0;
+	rainTimer_ = 0;
+	animationTime_ = 0.0f;
+	iceRains_.clear();
 	fieldPlaneTransform_.translate = sizukuTransform_.translate;
 	fieldPlaneTransform_.translate.y -= sizukuHeight_ * 0.5f;
 	skydomeTransform_.translate = sizukuTransform_.translate;
 }
-void SizukuSpecial::End() { 
-	isStarted_ = false; 
+void SizukuSpecial::End() {
+	isStarted_ = false;
 	isEnd_ = true;
 	fieldPlaneTransform_.scale = {0.0f, 0.0f, 1.0f};
-	iceRains_.clear(); 
+	iceRains_.clear();
 }
-void SizukuSpecial::Update() { 
+void SizukuSpecial::Update() {
 	if (isStarted_) {
+		animationTime_ = std::min(animationTime_ + GameBase::GetInstance()->GetDeltaTime(), animationTimeMax_);
 		float fieldsize = fieldPlaneTransform_.scale.x;
 		fieldsize += 0.02f;
 		fieldPlaneTransform_.scale.x = std::min(fieldsize, fieldSize_);
@@ -49,14 +53,12 @@ void SizukuSpecial::Update() {
 			if (duration_ >= durationMax_) {
 				End();
 			}
-
 		}
 		fieldPlane_->SetTransform(fieldPlaneTransform_);
 		fieldPlane_->Update();
 		skydomeObj_->SetTransform(skydomeTransform_);
 		skydomeObj_->Update();
 	}
-
 }
 void SizukuSpecial::Draw() {
 	if (!isStarted_) {
@@ -70,9 +72,9 @@ void SizukuSpecial::Draw() {
 	Object3dCommon::GetInstance()->SetBlendMode(BlendMode::kBlendModeAlpha);
 	Object3dCommon::GetInstance()->DrawCommon();
 	skydomeObj_->Draw();
-	//for (const auto& iceRain : iceRains_) {
+	// for (const auto& iceRain : iceRains_) {
 	//	if (iceRain) {
 	//		iceRain->Draw();
 	//	}
-	//}
+	// }
 }

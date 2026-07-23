@@ -1,9 +1,9 @@
 #pragma once
+#include "Object/Characters/Playable/Individual/Sizuku/SizukuSpecial.h"
 #include "Object3d/Object3d.h"
 #include "Transform.h"
 #include <memory>
 #include <vector>
-#include "Object/Characters/Playable/Individual/Sizuku/SizukuSpecial.h"
 class PlayerSpecialAttack {
 
 	std::unique_ptr<SizukuSpecial> sizuku_;
@@ -20,4 +20,5 @@ public:
 	void SetCamera(Camera* camera) { camera_ = camera; }
 	void SetPlayerTransform(const Transform& playerTransform);
 	bool IsEnd() { return sizuku_->isEnd(); };
+	bool IsAnimationFinished() const { return sizuku_->IsAnimationFinished(); }
 };
