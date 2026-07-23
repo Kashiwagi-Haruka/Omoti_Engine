@@ -27,12 +27,22 @@ enum class EquipUpParametersType{
 	AttributeAffinity,
 
 };
+
+enum class EquipmentName {
+	// 旅立ちの日
+	TheDayofDeparture,
+	// 科学者
+	Scientist
+
+};
+
 struct EquipParameters{
 	EquipUpParametersType parameter;
 	int upgreatCount = 0;
 };
 class BaseEquipment{
-	EquipmentTypes equipmentType_;
+	EquipmentTypes type_;
+	EquipmentName name_;
 	EquipParameters parameterFirst_;
 	EquipParameters parameterSecond_;
 	EquipParameters parameterThird_;
