@@ -41,14 +41,6 @@ void CharacterDisplay::Initialize(const Team& team) {
 
 	switchLeftGuideSprite_->Initialize(switchHandle);
 
-	characterSwitchGuideText_.Initialize(characterNameFontHandle_);
-	characterSwitchGuideText_.SetSize({480.0f, 40.0f});
-	characterSwitchGuideText_.SetPosition({640.0f, 130.0f});
-	characterSwitchGuideText_.SetAlign(TextAlign::Center);
-	characterSwitchGuideText_.SetColor({1.0f, 1.0f, 1.0f, 0.8f});
-	characterSwitchGuideText_.SetString(U"A/D:キャラクター切り替え");
-	characterSwitchGuideText_.UpdateLayout(false);
-
 	RebuildOwnedCharacters(team);
 	ChangeDisplayedCharacter(selectedCharacterIndex_);
 
@@ -265,7 +257,6 @@ void CharacterDisplay::Draw() {
 		characterDisplayIcon_->Draw();
 	}
 	characterNameText_.Draw();
-	characterSwitchGuideText_.Draw();
 
 	menuText_->Draw();
 }

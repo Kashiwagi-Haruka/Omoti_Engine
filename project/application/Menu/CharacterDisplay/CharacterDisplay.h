@@ -66,7 +66,6 @@ class CharacterDisplay {
 	std::vector<std::string> ownedPlayableNames_{};
 	std::vector<std::u32string> ownedDisplayNames_{};
 	Text characterNameText_{};
-	Text characterSwitchGuideText_{};
 	std::unique_ptr<Sprite> switchLeftGuideSprite_{};
 	std::unique_ptr<Sprite> switchRightGuideSprite_{};
 	uint32_t characterNameFontHandle_ = 0;

@@ -14,7 +14,7 @@ class CharacterDisplayIcon {
 	// チームフレームスプライト
 	std::vector<std::unique_ptr<Sprite>> flameSprites_;
 
-	Vector2 basePosition_{640.0f, 190.0f};
+	Vector2 basePosition_{640.0f, 40.0f};
 	Vector2 iconSize_{56.0f, 56.0f};
 	Vector2 selectedIconSize_{66.0f, 66.0f};
 	float iconSpacing_ = 18.0f;
