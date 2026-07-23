@@ -260,13 +260,14 @@ void Player::Move() {
 		velocity_.z *= parameters_.dashMagnification;
 		}
 	} else {
-		if (isDashGaugeRecovery_) {
 		dashGauge_ += dashGaugeRecovery_;
-			if (dashGauge_ >= dashGaugeMax_) {
-				dashGauge_ = dashGaugeMax_;
+		if (dashGauge_ >= dashGaugeMax_) {
+			dashGauge_ = dashGaugeMax_;
+			if (isDashGaugeRecovery_) {
 				isDashGaugeRecovery_ = false;
 			}
 		}
+
 	}
 	
 
