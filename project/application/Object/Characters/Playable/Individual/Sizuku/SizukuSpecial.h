@@ -5,7 +5,7 @@
 #include <vector>
 #include <memory>
 class Camera;
-class SizukuSpecial{
+class SizukuSpecial{ 
 
 	bool isStarted_ = false; // 開始フラグ
 	bool isEnd_ = false;
@@ -17,9 +17,11 @@ class SizukuSpecial{
 	float fieldSize_ = 5.0f;    // フィールドのサイズ
 
 	std::unique_ptr<Primitive> fieldPlane_;
+	std::unique_ptr<Object3d> skydomeObj_;
 	std::vector<std::unique_ptr<Object3d>> iceRains_;
 	Transform sizukuTransform_;
 	Transform fieldPlaneTransform_;
+	Transform skydomeTransform_;
 	Camera* camera_ = nullptr;
 
 public:

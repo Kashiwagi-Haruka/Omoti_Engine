@@ -5,11 +5,22 @@
 
 SizukuSpecial::SizukuSpecial(){ 
 	fieldPlane_ = std::make_unique<Primitive>(); 
+	skydomeObj_ = std::make_unique<Object3d>();
 	ModelManager::GetInstance()->LoadModel("Resources/3d/iceFlower", "iceFlower");
-
+	ModelManager::GetInstance()->LoadModel("Resources/3d/Character/Sizuku/Special/skydome", "sizukuSpecialDome");
 }
 void SizukuSpecial::Initialize() { 
-	fieldPlane_->Initialize(Primitive::Plane, "Resources/2d/Effect/sizukuField.png"); }
+	fieldPlane_->Initialize(Primitive::Plane, "Resources/2d/Effect/sizukuField.png");
+	skydomeObj_->Initialize();
+	skydomeObj_->SetEnableLighting(false);
+	skydomeObj_->SetModel("sizukuSpecialDome");
+	skydomeTransform_ = {
+	    {10.0,  10.0f, 10.0f},
+        {0.0f, 0.0f, 0.0f},
+        {0.0f, 0.0f, 0.0f}
+    };
+	skydomeObj_->SetTransform(skydomeTransform_);
+}
 void SizukuSpecial::Start() { 
 	isStarted_ = true; 
 	isEnd_ = false;
@@ -18,6 +29,7 @@ void SizukuSpecial::Start() {
 	iceRains_.clear(); 
 	fieldPlaneTransform_.translate = sizukuTransform_.translate;
 	fieldPlaneTransform_.translate.y -= sizukuHeight_ * 0.5f;
+	skydomeTransform_.translate = sizukuTransform_.translate;
 }
 void SizukuSpecial::End() { 
 	isStarted_ = false; 
@@ -39,8 +51,11 @@ void SizukuSpecial::Update() {
 			}
 
 		}
+		fieldPlane_->SetTransform(fieldPlaneTransform_);
+		fieldPlane_->Update();
+		skydomeObj_->SetTransform(skydomeTransform_);
+		skydomeObj_->Update();
 	}
-
 
 }
 void SizukuSpecial::Draw() {
@@ -54,6 +69,7 @@ void SizukuSpecial::Draw() {
 	}
 	Object3dCommon::GetInstance()->SetBlendMode(BlendMode::kBlendModeAlpha);
 	Object3dCommon::GetInstance()->DrawCommon();
+	skydomeObj_->Draw();
 	//for (const auto& iceRain : iceRains_) {
 	//	if (iceRain) {
 	//		iceRain->Draw();
