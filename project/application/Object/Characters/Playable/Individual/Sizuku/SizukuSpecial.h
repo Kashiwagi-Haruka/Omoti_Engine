@@ -10,11 +10,14 @@ class SizukuSpecial{
 	bool isStarted_ = false; // 開始フラグ
 	bool isEnd_ = false;
 	float duration_ = 0;     // 継続時間
-	float durationMax_ = 1; // 最大継続時間(秒)
+	float durationMax_ = 15; // 最大継続時間(秒)
 	float sizukuHeight_ = 0; // 雫の高さ
 	float rainInterval_ = 0.5f; // 雨の降る間隔(秒)
 	float rainTimer_ = 0;       // 雨のタイマー
 	float fieldSize_ = 5.0f;    // フィールドのサイズ
+
+	float animationTime_ = 0 ; //アニメーション時間
+	float animationTimeMax_ = 3; //最大アニメーション時間
 
 	std::unique_ptr<Primitive> fieldPlane_;
 	std::unique_ptr<Object3d> skydomeObj_;
