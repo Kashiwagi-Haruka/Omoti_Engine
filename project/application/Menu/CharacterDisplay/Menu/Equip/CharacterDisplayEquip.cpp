@@ -9,6 +9,8 @@ void CharacterDisplayEquip::Initialize() {
 		viewEquipment_[i] = std::make_unique<Primitive>();
 		viewEquipment_[i]->Initialize(Primitive::PrimitiveName::Circle);
 		viewEquipment_[i]->SetEnableLighting(false);
+		viewEquipmentTransform_[i].scale = {1.0f, 1.0f, 1.0f};
+		viewEquipmentTransform_[i].rotate = {std::numbers::pi_v<float>/2.0f, 0.0f, 0.0f};
 		viewEquipmentTransform_[i].translate = {std::sinf(std::numbers::pi_v<float> * (1.0f*i / 5.0f)) * distance_, 0.0f, std::cosf(std::numbers::pi_v<float> * (1.0f*i / 5.0f)) * distance_};
 	}
 
