@@ -80,6 +80,7 @@ public:
 	/// <returns></returns>
 	Camera* GetCamera();
 
+
 	/// <summary>
 	/// カメラのトランスフォームの取得
 	/// </summary>
