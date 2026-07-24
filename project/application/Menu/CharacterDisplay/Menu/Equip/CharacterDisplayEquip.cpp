@@ -8,7 +8,8 @@ void CharacterDisplayEquip::Initialize() {
 	for (int i = 0; i < 5; i++) {
 		viewEquipment_[i] = std::make_unique<Primitive>();
 		viewEquipment_[i]->Initialize(Primitive::PrimitiveName::Circle);
-		viewEquipmentTransform_[i]->translate = {std::sinf(std::numbers::pi_v<float> * (1.0f / 5.0f * i)) * distance_, 0.0f, std::cosf(std::numbers::pi_v<float> * (1.0f / 5.0f * i)) * distance_};
+		viewEquipment_[i]->SetEnableLighting(false);
+		viewEquipmentTransform_[i].translate = {std::sinf(std::numbers::pi_v<float> * (1.0f*i / 5.0f)) * distance_, 0.0f, std::cosf(std::numbers::pi_v<float> * (1.0f*i / 5.0f)) * distance_};
 	}
 
 
@@ -16,7 +17,7 @@ void CharacterDisplayEquip::Initialize() {
 }
 void CharacterDisplayEquip::Update() {
 	for (int i = 0; i < 5; i++) {
-		viewEquipment_[i]->SetTranslate(centerTranslate_);
+		viewEquipment_[i]->SetTranslate(viewEquipmentTransform_[i].translate + centerTranslate_);
 		viewEquipment_[i]->Update();
 	}
 

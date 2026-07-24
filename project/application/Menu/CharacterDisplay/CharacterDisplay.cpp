@@ -174,6 +174,7 @@ void CharacterDisplay::Update() {
 		if (PlayCommand::GetDownUI()) {
 			selectMenuType_ = CharacterDisplayMenuType::SKILLTREE;
 		}
+		equip_->SetTranslate(characterTransform_.translate);
 		equip_->Update();
 		break;
 	case CharacterDisplayMenuType::SKILLTREE:

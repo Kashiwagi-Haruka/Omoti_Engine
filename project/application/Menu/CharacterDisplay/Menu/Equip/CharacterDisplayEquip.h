@@ -5,8 +5,8 @@
 class CharacterDisplayEquip {
 
 	std::array<std::unique_ptr<Primitive>, 5> viewEquipment_;
-	std::array<std::unique_ptr<Transform>, 5> viewEquipmentTransform_;
-	float distance_ = 2.0f; //中心からの距離
+	std::array<Transform, 5> viewEquipmentTransform_;
+	float distance_ = 0.0f; //中心からの距離
 	Vector3 centerTranslate_;
 
 
