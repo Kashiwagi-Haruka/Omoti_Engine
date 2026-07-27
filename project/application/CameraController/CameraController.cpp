@@ -226,6 +226,7 @@ void CameraController::SetSizukuSpecialCameraActive(bool isActive) {
 		lockOnCamera_->ClearTarget();
 		normalAttackCamera_->ClearTarget();
 		RequestCameraMode(CameraMode::kSizukuSpecialCamera);
+		sizukuSpecialCamera_->Start();
 	} else if (cameraMode_ == CameraMode::kSizukuSpecialCamera || pendingCameraMode_ == CameraMode::kSizukuSpecialCamera) {
 		hasPendingCameraMode_ = false;
 		ReturnToPlayerCamera();

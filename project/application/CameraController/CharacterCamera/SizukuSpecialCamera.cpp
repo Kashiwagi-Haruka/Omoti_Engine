@@ -14,6 +14,12 @@ void SizukuSpecialCamera::Initialize() {
 	camera_->Update();
 	cameraCut_ = CameraCut::TURN;
 }
+void SizukuSpecialCamera::Start() { 
+	isEnd_ = false; 
+	cameraCut_ = CameraCut::TURN;
+	animationTime_ = 0.0f;
+}
+
 
 void SizukuSpecialCamera::Update() {
 	if (isEnd_) {
@@ -58,7 +64,6 @@ void SizukuSpecialCamera::Update() {
 			animationTime_ += GameBase::GetInstance()->GetDeltaTime() / FingerSnapAnimationTime_;
 			if (animationTime_ >= 1.0f) {
 				animationTime_ = 0.0f;
-				cameraCut_ = CameraCut::TURN;
 				isEnd_ = true;
 			}
 

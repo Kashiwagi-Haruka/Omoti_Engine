@@ -32,6 +32,8 @@ class SizukuSpecialCamera {
 public:
 	void Initialize();
 	void Update();
+	void Start();
+	bool GetIsEnd() { return isEnd_; };
 
 	void SetPlayerTransform(const Transform& transform) { playerTransform_ = transform; }
 	Camera* GetCamera() const { return camera_.get(); }
