@@ -126,7 +126,7 @@ void GameScene::Finalize() {
 }
 
 void GameScene::Initialize() {
-
+	isPause = false;
 	sceneEndClear = false;
 	sceneEndOver = false;
 	isCharacterDisplayMode_ = false;
