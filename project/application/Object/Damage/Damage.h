@@ -12,6 +12,7 @@ class Damage {
 
 public:
 	void Initialize(Camera* camera);
+	void SetCamera(Camera* camera);
 	void Update();
 	void Draw();
 	void SetDamageValue(int damage);
@@ -50,4 +51,6 @@ private:
 	float appearTimer_ = 0.0f;
 	float alpha_ = 1.0f;
 	float digitSpacing_ = 0.55f;
+
+	void RefreshCameraMatrices();
 };

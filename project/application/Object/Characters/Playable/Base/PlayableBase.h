@@ -3,10 +3,10 @@
 #include "Engine/math/Transform.h"
 #include "Object/Characters/Base/Attribute.h"
 #include "Object/Characters/Base/CharacterParameters.h"
-#include "Object/Characters/Playable/Base/WeaponTypes.h"
 #include "Object/Characters/Playable/Base/Arcana.h"
-#include "SkilltreeType.h"
+#include "Object/Characters/Playable/Base/WeaponTypes.h"
 #include "Object3d/Object3d.h"
+#include "SkilltreeType.h"
 #include <optional>
 #include <string>
 
@@ -21,7 +21,7 @@ protected:
 	Arcana arcana_ = Arcana::FOOL;
 	BaseParameter baseParameter_;
 	Parameter parameter_;
-	SkilltreeType skilltree_;
+	SkilltreeType skilltree_{};
 	// 強化量
 	int reinforcementAmount_ = 0;
 	bool isHaveCharacter_;
@@ -53,4 +53,7 @@ public:
 	const std::string& GetRomanizationName() const { return romanizationName_; }
 	void SetArcana(Arcana arcana) { arcana_ = arcana; }
 	Arcana GetArcana() const { return arcana_; }
+	const SkilltreeType& GetSkilltreeType() const { return skilltree_; }
+	void SetReinforcementAmount(int reinforcementAmount) { reinforcementAmount_ = reinforcementAmount; }
+	const int GetReinforcement() const { return reinforcementAmount_; }
 };

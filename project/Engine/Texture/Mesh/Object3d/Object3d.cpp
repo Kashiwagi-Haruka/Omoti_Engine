@@ -2,17 +2,24 @@
 #include "Object3d/Object3d.h"
 #include "Camera.h"
 #include "DirectXCommon.h"
-#include "Function.h"
 #include "Engine/Editor/EditorTool/Hierarchy/Hierarchy.h"
+#include "Function.h"
 #include "Model/Model.h"
 #include "Model/ModelManager.h"
 #include "Object3d/Object3dCommon.h"
 #include "TextureManager.h"
 #include <algorithm>
 #include <cassert>
+#include <chrono>
 #include <cmath>
+#include <future>
 
-Object3d::~Object3d() { Hierarchy::GetInstance()->UnregisterObject3d(this); }
+Object3d::~Object3d() {
+	if (modelLoadFuture_.valid()) {
+		modelLoadFuture_.wait();
+	}
+	Hierarchy::GetInstance()->UnregisterObject3d(this);
+}
 
 void Object3d::Initialize() {
 
@@ -49,12 +56,39 @@ bool IsIdentityMatrix(const Matrix4x4& matrix) {
 }
 } // namespace
 
+void Object3d::CompleteAsyncModelLoadIfReady() {
+	if (!modelLoadFuture_.valid()) {
+		return;
+	}
+	if (modelLoadFuture_.wait_for(std::chrono::seconds(0)) != std::future_status::ready) {
+		return;
+	}
+	modelInstance_ = modelLoadFuture_.get();
+	if (modelInstance_) {
+		model_ = modelInstance_.get();
+		return;
+	}
+	model_ = ModelManager::GetInstance()->FindModel(modelFilePath_);
+}
+
+Model* Object3d::GetDrawableModel() const {
+	if (model_) {
+		return model_;
+	}
+	if (modelLoadFuture_.valid()) {
+		return Object3dCommon::GetInstance()->GetLoadingCubeModel();
+	}
+	return nullptr;
+}
+
 void Object3d::Update() {
+	CompleteAsyncModelLoadIfReady();
 	// [0]=モデル描画用で使う
 
+	Model* drawableModel = GetDrawableModel();
 	const Model::Node* baseNode = nullptr;
-	if (model_) {
-		const auto& rootNode = model_->GetModelData().rootnode;
+	if (drawableModel) {
+		const auto& rootNode = drawableModel->GetModelData().rootnode;
 		baseNode = &rootNode;
 		if (IsIdentityMatrix(rootNode.localMatrix) && rootNode.children.size() == 1) {
 			baseNode = &rootNode.children.front();
@@ -92,13 +126,14 @@ void Object3d::Update() {
 	UpdateCameraMatrices();
 }
 
-void Object3d::UpdateBillboard()
-{
+void Object3d::UpdateBillboard() {
+	CompleteAsyncModelLoadIfReady();
 	// [0]=モデル描画用で使う
 
+	Model* drawableModel = GetDrawableModel();
 	const Model::Node* baseNode = nullptr;
-	if (model_) {
-		const auto& rootNode = model_->GetModelData().rootnode;
+	if (drawableModel) {
+		const auto& rootNode = drawableModel->GetModelData().rootnode;
 		baseNode = &rootNode;
 		if (IsIdentityMatrix(rootNode.localMatrix) && rootNode.children.size() == 1) {
 			baseNode = &rootNode.children.front();
@@ -188,24 +223,30 @@ void Object3d::UpdateCameraMatrices() {
 	cameraResource_->Unmap(0, nullptr);
 }
 void Object3d::Draw() {
+	CompleteAsyncModelLoadIfReady();
 
 	// --- 座標変換行列CBufferの場所を設定 ---
 	Object3dCommon::GetInstance()->GetDxCommon()->GetCommandList()->SetGraphicsRootConstantBufferView(1, transformResource_->GetGPUVirtualAddress());
 	// --- 平行光源CBufferの場所を設定 ---
 	Object3dCommon::GetInstance()->GetDxCommon()->GetCommandList()->SetGraphicsRootConstantBufferView(4, cameraResource_->GetGPUVirtualAddress());
-	if (model_) {
-		model_->Draw(skinCluster_, materialResource_.Get());
+	Model* drawableModel = GetDrawableModel();
+	if (drawableModel) {
+		drawableModel->Draw(drawableModel == model_ ? skinCluster_ : nullptr, materialResource_.Get());
 	}
 }
 
 void Object3d::SetModel(const std::string& filePath) {
 	modelFilePath_ = filePath;
-	modelInstance_ = ModelManager::GetInstance()->CreateModelInstance(filePath);
-	if (modelInstance_) {
-		model_ = modelInstance_.get();
-		return;
+	if (modelLoadFuture_.valid()) {
+		modelLoadFuture_.wait();
 	}
-	model_ = ModelManager::GetInstance()->FindModel(filePath);
+	model_ = nullptr;
+	modelInstance_.reset();
+	modelLoadFuture_ = std::async(std::launch::async, [filePath]() { return ModelManager::GetInstance()->CreateModelInstance(filePath); });
+	CompleteAsyncModelLoadIfReady();
+	if (!model_ && !modelLoadFuture_.valid()) {
+		model_ = ModelManager::GetInstance()->FindModel(filePath);
+	}
 }
 void Object3d::SetCamera(Camera* camera) { camera_ = camera; }
 void Object3d::SetScale(Vector3 scale) {

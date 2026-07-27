@@ -14,6 +14,7 @@
 class Camera;
 class PlayerBullet;
 class Field;
+class Enemy;
 
 class Player {
 
@@ -79,13 +80,16 @@ class Player {
 	// ダッシュゲージが0になったか
 	bool isDashGaugeRecovery_ = false;
 
-	Vector3 movementLimitCenter_{0.0f,2.5f,0.0f};
+Vector3 movementLimitCenter_{0.0f, 2.5f, 0.0f};
 	float movementLimitRadius_ = 50.0f;
 	bool attackApproachActive_ = false;
 	Vector3 attackApproachTarget_{};
 	float attackApproachStopDistance_ = 5.0f;
 	float attackApproachRange_ = 10.0f;
 	float attackApproachSpeed_ = 0.35f;
+	Enemy* lockOnTarget_ = nullptr;
+	// 攻撃中のみロックオン対象へ体の正面を維持する。
+	void FaceLockOnTarget();
 
 public:
 	Player();
@@ -93,19 +97,23 @@ public:
 	void Initialize(Camera* camera);
 	void Move();
 	void Update();
-	void Draw();
+	void Draw(bool drawOutline = true);
 	void SetAttackApproachTarget(const Vector3& target);
+	void SetLockOnTarget(Enemy* target) { lockOnTarget_ = target; }
+	void ClearLockOnTarget() { lockOnTarget_ = nullptr; }
+	Enemy* GetLockOnTarget() const { return lockOnTarget_; }
 	void Jump();
 	void Falling();
 	PlayerSkill* GetSkill() { return attack_->GetSkill(); }
 
-	void SetCamera(Camera* camera) { camera_ = camera; }
+	void SetCamera(Camera* camera);
 	void SetMap(Field* map) { map_ = map; }
 	Vector3 GetPosition() { return transform_.translate; }
 	Vector3 GetVelocity() { return velocity_; }
 	bool GetIsAlive() { return isAlive; }
 	bool IsDashing() const { return isDash; }
 	bool GetIsSkillAttack() { return attack_->isSkillAttacking(); }
+	bool GetIsSpecialAttack() const { return attack_->isSpecialAttacking(); }
 	Vector3 GetSkillPosition() { return attack_->GetSkillDamagePosition(); }
 	Parameters GetParameters() { return parameters_; }
 	void SetParameters(const Parameters& p) { parameters_ = p; }

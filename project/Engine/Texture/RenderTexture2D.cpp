@@ -135,9 +135,18 @@ void RenderTexture2D::BeginRender() {
 		return;
 	}
 	TransitionToRenderTarget(Object3dCommon::GetInstance()->GetDxCommon()->GetCommandList());
-	Object3dCommon::GetInstance()->GetDxCommon()->GetCommandList()->OMSetRenderTargets(1, &rtvHandle_, false, &dsvHandle_);
+	BindRenderTarget();
 
+	Object3dCommon::GetInstance()->GetDxCommon()->GetCommandList()->ClearRenderTargetView(rtvHandle_, clearColor_.data(), 0, nullptr);
 	Object3dCommon::GetInstance()->GetDxCommon()->GetCommandList()->ClearDepthStencilView(dsvHandle_, D3D12_CLEAR_FLAG_DEPTH, 1.0f, 0, 0, nullptr);
+}
+
+void RenderTexture2D::BindRenderTarget() {
+	if (!initialized_) {
+		return;
+	}
+
+	Object3dCommon::GetInstance()->GetDxCommon()->GetCommandList()->OMSetRenderTargets(1, &rtvHandle_, false, &dsvHandle_);
 	D3D12_VIEWPORT viewport{};
 	viewport.TopLeftX = 0.0f;
 	viewport.TopLeftY = 0.0f;
@@ -153,7 +162,4 @@ void RenderTexture2D::BeginRender() {
 	scissorRect.right = static_cast<LONG>(width_);
 	scissorRect.bottom = static_cast<LONG>(height_);
 	Object3dCommon::GetInstance()->GetDxCommon()->GetCommandList()->RSSetScissorRects(1, &scissorRect);
-
-	Object3dCommon::GetInstance()->GetDxCommon()->GetCommandList()->ClearRenderTargetView(rtvHandle_, clearColor_.data(), 0, nullptr);
-	Object3dCommon::GetInstance()->GetDxCommon()->GetCommandList()->ClearDepthStencilView(dsvHandle_, D3D12_CLEAR_FLAG_DEPTH, 1.0f, 0, 0, nullptr);
 }

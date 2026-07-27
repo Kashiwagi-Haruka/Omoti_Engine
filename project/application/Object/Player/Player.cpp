@@ -4,6 +4,7 @@
 #include "Function.h"
 #include "Input.h"
 #include "Model/ModelManager.h"
+#include "Object/Characters/Enemy/Enemy.h"
 #include <algorithm>
 #include <numbers>
 #include "Object3d/Object3dCommon.h"
@@ -58,11 +59,26 @@ void Player::Initialize(Camera* camera) {
 	dashGauge_ = dashGaugeMax_;
 	isDashGaugeRecovery_ = false;
 	attackApproachActive_ = false;
+	lockOnTarget_ = nullptr;
 }
 
 void Player::SetAttackApproachTarget(const Vector3& target) {
 	attackApproachTarget_ = target;
 	attackApproachActive_ = true;
+}
+
+void Player::SetCamera(Camera* camera) {
+	camera_ = camera;
+	if (models_) {
+		models_->SetCamera(camera_);
+		if (Object3d* character = models_->GetCharacterObject3d()) {
+			character->SetCamera(camera_);
+			character->UpdateCameraMatrices();
+		}
+	}
+	if (attack_) {
+		attack_->SetCamera(camera_);
+	}
 }
 void Player::SetCharacterType(const std::string& characterName) {
 	if (models_) {
@@ -73,12 +89,6 @@ Attribute Player::GetCurrentAttribute() const { return /*models_ ? */models_->Ge
 const BaseParameter& Player::GetCurrentBaseParameter() const { return models_->GetCurrentBaseParameter(); }
 const Parameter& Player::GetCurrentCombatParameter() const { return models_->GetCurrentParameter(); }
 void Player::Move() {
-
-	// ★ 落下攻撃中は移動できない
-	if (!attack_->IsCanMove()) {
-		isDash = false;
-		return;
-	}
 
 	if (attackApproachActive_) {
 		if (!attack_->IsAttacking() || attack_->IsFallingAttacking() || attack_->isSkillAttacking() || attack_->isSpecialAttacking()) {
@@ -109,6 +119,14 @@ void Player::Move() {
 			return;
 		}
 	}
+
+	if (!attack_->IsCanMove()) {
+		isDash = false;
+		velocity_.x = 0.0f;
+		velocity_.z = 0.0f;
+		return;
+	}
+
 	// 入力方向を記録する変数
 	Vector3 inputDirection = {0.0f, 0.0f, 0.0f};
 	Vector3 inputAxis = {0.0f, 0.0f, 0.0f};
@@ -242,13 +260,14 @@ void Player::Move() {
 		velocity_.z *= parameters_.dashMagnification;
 		}
 	} else {
-		if (isDashGaugeRecovery_) {
 		dashGauge_ += dashGaugeRecovery_;
-			if (dashGauge_ >= dashGaugeMax_) {
-				dashGauge_ = dashGaugeMax_;
+		if (dashGauge_ >= dashGaugeMax_) {
+			dashGauge_ = dashGaugeMax_;
+			if (isDashGaugeRecovery_) {
 				isDashGaugeRecovery_ = false;
 			}
 		}
+
 	}
 	
 
@@ -259,7 +278,31 @@ void Player::Move() {
 		bulletVelocity_.x = 1;
 	}
 }
+void Player::FaceLockOnTarget() {
+	if (!attack_->IsAnyAttackActive()) {
+		return;
+	}
 
+	if (!lockOnTarget_ || !lockOnTarget_->GetIsAlive() || lockOnTarget_->IsDying() || lockOnTarget_->GetHP() <= 0) {
+		return;
+	}
+
+	Vector3 toTarget = lockOnTarget_->GetPosition() - transform_.translate;
+	toTarget.y = 0.0f;
+	if (Function::LengthSquared(toTarget) <= 0.0001f) {
+		return;
+	}
+
+	const float targetAngle = std::atan2(toTarget.x, toTarget.z);
+	float angleDiff = targetAngle - transform_.rotate.y;
+	while (angleDiff > std::numbers::pi_v<float>) {
+		angleDiff -= 2.0f * std::numbers::pi_v<float>;
+	}
+	while (angleDiff < -std::numbers::pi_v<float>) {
+		angleDiff += 2.0f * std::numbers::pi_v<float>;
+	}
+	transform_.rotate.y = Function::Lerp(transform_.rotate.y, transform_.rotate.y + angleDiff, rotateTimer);
+}
 void Player::Jump() {
 	if (PlayCommand::GetJUMP() && !isJump && !isfalling && !attack_->IsFallingAttacking()) {
 		isJump = true;
@@ -319,6 +362,7 @@ void Player::Update() {
 	attack_->SetAirState(isJump, isfalling);
 	attack_->Update();
 	Move();
+	FaceLockOnTarget();
 	Jump();
 	Falling();
 
@@ -375,9 +419,9 @@ void Player::Update() {
 
 void Player::EXPMath() { parameters_.EXP += 15; }
 
-void Player::Draw() {
+void Player::Draw(bool drawOutline) {
 
-	models_->Draw();
+	models_->Draw(drawOutline);
 	Object3dCommon::GetInstance()->DrawCommon();
 	attack_->Draw();
 }

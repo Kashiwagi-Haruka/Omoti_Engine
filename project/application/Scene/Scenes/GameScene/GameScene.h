@@ -7,8 +7,10 @@
 #include "Light/CommonLight/PointCommonLight.h"
 #include "Light/CommonLight/SpotCommonLight.h"
 #include "Menu/CharacterDisplay/CharacterDisplay.h"
+#include "Menu/TeamDisplay/TeamDisplay.h"
 #include "Object/Characters/Model/CharacterModel.h"
 #include "Object/Field/Field.h"
+#include "Object/RemoteCamera/RemoteCamera.h"
 #include "Object3d/Object3d.h"
 #include "OpenWorld/OpenWorld.h"
 #include "Pause/Pause.h"
@@ -16,7 +18,6 @@
 #include "SceneTransition/SceneTransition.h"
 #include "Sprite.h"
 #include "Team/Team.h"
-#include "Menu/TeamDisplay/TeamDisplay.h"
 #include "UI/UIManager/UIManager.h"
 #include "Vector2.h"
 #include <array>
@@ -28,6 +29,7 @@ class CameraController;
 class Sky;
 class Boss;
 class Enemy;
+class Camera;
 
 class GameScene : public BaseScene {
 
@@ -37,7 +39,7 @@ private:
 	bool IsKeyboard = true;
 
 	uint32_t color;
-	
+
 	std::unique_ptr<UIManager> uimanager;
 	std::unique_ptr<SceneTransition> sceneTransition;
 	std::unique_ptr<Player> player;
@@ -45,6 +47,7 @@ private:
 	std::unique_ptr<CameraController> cameraController;
 	std::unique_ptr<Field> field;
 	std::unique_ptr<Pause> pause;
+	std::unique_ptr<RemoteCamera> remoteCamera_;
 
 	CollisionManager collisionManager_;
 
@@ -103,8 +106,11 @@ private:
 	float characterDeathDissolveTimer_ = 0.0f;
 	static constexpr float kCharacterDeathDissolveDuration_ = 1.0f;
 	Enemy* lockOnMarkerEnemy_ = nullptr;
+	Enemy* normalAttackTargetEnemy_ = nullptr;
 	float lockOnMarkerTimer_ = 0.0f;
-	static constexpr float kLockOnMarkerDuration_ = 0.8f;
+	static constexpr float kLockOnMarkerDuration_ = 0.5f;
+
+	void DrawRemoteCameraScene(Camera* camera);
 
 public:
 	GameScene();

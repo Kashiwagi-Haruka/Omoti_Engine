@@ -43,6 +43,22 @@ void PlayerSword::EndAttack() {
 }
 
 Vector3 PlayerSword::GetPosition() const { return hitTransform_.translate; }
+void PlayerSword::SetCamera(Camera* cam) {
+	camera = cam;
+	if (swordObject_) {
+		swordObject_->SetCamera(camera);
+		swordObject_->UpdateCameraMatrices();
+	}
+	if (swordTrail_) {
+		swordTrail_->SetCamera(camera);
+	}
+#ifdef _DEBUG
+	if (debugBox_) {
+		debugBox_->SetCamera(camera);
+		debugBox_->UpdateCameraMatrices();
+	}
+#endif // _DEBUG
+}
 
 void PlayerSword::Update(const Transform& playerTransform, const std::optional<Matrix4x4>& jointWorldMatrix) {
 

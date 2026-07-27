@@ -2,7 +2,7 @@
   "base": {
     "Attack": 20.0,
     "Deffence": 10.0,
-    "HP": 100.0
+    "HP": 289.0
   },
   "baseLevelUp": {
     "Attack": 0.0,
@@ -11,7 +11,7 @@
   },
   "parameter": {
     "Attack": 20.0,
-    "AttributeAffinity": 10.300000190734863,
+    "AttributeAffinity": 1.0,
     "AttributeDamageRate": [
       0.0,
       0.0,
@@ -36,5 +36,6 @@
     "HP": 100.0,
     "Level": 1,
     "Speed": 1.0
-  }
+  },
+  "reinforcementAmount": 0
 }

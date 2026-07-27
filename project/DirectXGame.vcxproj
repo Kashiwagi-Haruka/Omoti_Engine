@@ -336,6 +336,7 @@ copy "$(WindowsSdkDir)\bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)\
     <ClCompile Include="application\Menu\HelpDisplay\HelpDisplay.cpp" />
     <ClCompile Include="application\CameraController\CharacterCamera\SizukuSpecialCamera.cpp" />
     <ClCompile Include="application\Object\Characters\Enemy\LockOn\LockOnEnemy.cpp" />
+    <ClCompile Include="application\Object\RemoteCamera\RemoteCamera.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include=".editorconfig" />
@@ -357,6 +358,7 @@ copy "$(WindowsSdkDir)\bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)\
     <None Include="Resources\shader\Sprite\Sprite.hlsli" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="application\BagItem\reinforcementAmount\BaserinforcementAmountItem.h" />
     <ClInclude Include="application\Menu\CharacterDisplay\CharacterDisplayMenuType.h" />
     <ClInclude Include="application\Object\Characters\Playable\Base\Arcana.h" />
     <ClInclude Include="application\Object\Characters\Playable\Base\SkilltreeType.h" />
@@ -546,6 +548,7 @@ copy "$(WindowsSdkDir)\bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)\
     <ClInclude Include="application\Menu\HelpDisplay\HelpDisplay.h" />
     <ClInclude Include="application\CameraController\CharacterCamera\SizukuSpecialCamera.h" />
     <ClInclude Include="application\Object\Characters\Enemy\LockOn\LockOnEnemy.h" />
+    <ClInclude Include="application\Object\RemoteCamera\RemoteCamera.h" />
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="Resources\shader\FullScreenCopy\CopyImage.PS.hlsl">

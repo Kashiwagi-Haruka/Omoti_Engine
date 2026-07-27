@@ -3,6 +3,7 @@
 #include "Vector3.h"
 #include <string>
 #include <vector>
+class Enemy;
 class EnemyManager;
 class House;
 class Player;
@@ -13,7 +14,6 @@ class Boss;
 /// </summary>
 class CollisionManager {
 public:
-
 	/// <summary>
 	/// コライダーを追加する
 	/// </summary>
@@ -45,7 +45,8 @@ public:
 	/// <param name="boss"> ボス </param>
 	/// <param name="outHitEnemyPos"> 衝突した敵の位置 </param>
 	/// <param name="outDidPlayerAttackHitEnemy"> プレイヤーの攻撃が敵に当たったかどうか </param>
+	/// <param name="outNormalAttackHitEnemy"> 通常攻撃が命中した敵 </param>
 	/// <returns></returns>
 	bool HandleGameSceneCollisions(
-	    Player& player, EnemyManager& enemyManager,House& house, Boss* boss, Vector3* outHitEnemyPos = nullptr, bool* outDidPlayerAttackHitEnemy = nullptr);
+	    Player& player, EnemyManager& enemyManager, House& house, Boss* boss, Vector3* outHitEnemyPos = nullptr, bool* outDidPlayerAttackHitEnemy = nullptr, Enemy** outNormalAttackHitEnemy = nullptr);
 };

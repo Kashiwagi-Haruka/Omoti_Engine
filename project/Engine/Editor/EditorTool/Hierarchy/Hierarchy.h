@@ -54,6 +54,8 @@ private:
 		BaseParameter levelUpBase{};
 		BaseParameter currentBase{};
 		Parameter currentParameter{};
+		int reinforcementAmount = 0;
+		bool hasUnsavedChanges = false;
 	};
 
 	struct EditorSnapshot {
@@ -74,6 +76,7 @@ private:
 	void DrawCharacterParameterHierarchy();
 	void DrawCharacterParameterInspector();
 	void DrawCameraBillboards();
+	void StartPlayMode();
 	void HandleHierarchyAssetDrop();
 	void SyncSelectionBoxToTarget();
 	Transform GetSelectedTransform() const;

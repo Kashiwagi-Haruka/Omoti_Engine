@@ -82,18 +82,7 @@ public:
 	int GetHP() { return HP; }
 	bool GetIsAlive() { return isAlive; }
 	bool IsDying() const { return isDying_; }
-	void SetCamera(Camera* camera) {
-		camera_ = camera;
-		if (adhesion_) {
-			adhesion_->SetCamera(camera_);
-		}
-		if (hpBar_) {
-			hpBar_->SetCamera(camera_);
-		}
-		if (lockOnEnemy_) {
-			lockOnEnemy_->SetCamera(camera_);
-		}
-	}
+	void SetCamera(Camera* camera);
 	Vector3 GetPosition() const { return transform_.translate; }
 	Vector3 GetScale() const { return transform_.scale; }
 	void SetPosition(const Vector3& position);

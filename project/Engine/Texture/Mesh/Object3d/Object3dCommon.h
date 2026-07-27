@@ -14,6 +14,7 @@
 #include <wrl.h>
 class Camera;
 class DirectXCommon;
+class Model;
 
 // 3Dオブジェクト描画に必要なPSO・ライト・描画共通状態を一元管理するシングルトン
 class Object3dCommon {
@@ -122,6 +123,8 @@ private:
 	uint32_t areaShadowMapSrvIndex_ = 0;
 	// 現在利用中の環境マップパス
 	std::string environmentMapPath_;
+	// 非同期生成中のObject3dで一時表示するCubeモデル
+	Model* loadingCubeModel_ = nullptr;
 	// シャドウマップ深度テクスチャ
 	Microsoft::WRL::ComPtr<ID3D12Resource> directionalShadowMapResource_ = nullptr;
 	Microsoft::WRL::ComPtr<ID3D12Resource> pointShadowMapResource_ = nullptr;
@@ -231,6 +234,8 @@ public:
 	void SetDefaultCamera(Camera* camera) { this->defaultCamera = camera; }
 	// 既定カメラ取得
 	Camera* GetDefaultCamera() const { return defaultCamera; };
+	// 非同期生成中に表示するCubeモデル取得
+	Model* GetLoadingCubeModel() const { return loadingCubeModel_; }
 #pragma region DrawCommon
 	// 描画設定
 	void DrawCommon(DrawCommonType type = DrawCommonType::Default);

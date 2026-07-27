@@ -33,8 +33,17 @@ void Model::Initialize() {
 		std::memcpy(indexData, modelData_.indices.data(), sizeof(uint32_t) * modelData_.indices.size());
 		indexResource_->Unmap(0, nullptr);
 	}
+	CreateMaterialResources();
+
+	if (modelData_.material.textureFilePath.empty()) {
+		modelData_.material.textureFilePath = kDefaultWhiteTexturePath;
+	}
+	TextureManager::GetInstance()->LoadTextureName(modelData_.material.textureFilePath);
+	modelData_.material.textureIndex = TextureManager::GetInstance()->GetTextureIndexByfilePath(modelData_.material.textureFilePath);
+}
+
+void Model::CreateMaterialResources() {
 	// --- マテリアル用リソース ---
-	// 3D用（球など陰影つけたいもの）
 	// 必ず256バイト単位で切り上げる
 	size_t alignedSize = (sizeof(Material) + 0xFF) & ~0xFF;
 	materialResource_ = ModelCommon::GetInstance()->CreateBufferResource(alignedSize);
@@ -51,9 +60,22 @@ void Model::Initialize() {
 	mat3d->dissolveEdgeColor = Vector4(1.0f, 0.35f, 0.05f, 1.0f);
 	materialResource_->Unmap(0, nullptr);
 
-	TextureManager::GetInstance()->LoadTextureName(modelData_.material.textureFilePath);
-	modelData_.material.textureIndex = TextureManager::GetInstance()->GetTextureIndexByfilePath(modelData_.material.textureFilePath);
+	loadingMaterialResource_ = ModelCommon::GetInstance()->CreateBufferResource(alignedSize);
+	loadingMat3d = nullptr;
+	loadingMaterialResource_->Map(0, nullptr, reinterpret_cast<void**>(&loadingMat3d));
+	loadingMat3d->color = Vector4(0.5f, 0.5f, 0.5f, 1.0f);
+	loadingMat3d->enableLighting = false;
+	loadingMat3d->uvTransform = Function::MakeIdentity4x4();
+	loadingMat3d->shininess = 40.0f;
+	loadingMat3d->environmentCoefficient = 0.0f;
+	loadingMat3d->dissolveEnabled = 0;
+	loadingMat3d->dissolveThreshold = 0.0f;
+	loadingMat3d->dissolveEdgeWidth = 0.02f;
+	loadingMat3d->dissolveEdgeColor = Vector4(1.0f, 0.35f, 0.05f, 1.0f);
+	loadingMaterialResource_->Unmap(0, nullptr);
 }
+
+bool Model::IsMaterialTextureLoaded() const { return TextureManager::GetInstance()->IsTextureLoaded(modelData_.material.textureIndex); }
 void Model::SetColor(Vector4 color) {
 
 	materialResource_->Map(0, nullptr, reinterpret_cast<void**>(&mat3d));
@@ -100,10 +122,11 @@ void Model::Draw(const SkinCluster* skinCluster, const ID3D12Resource* materialR
 	}
 
 	// --- マテリアルCBufferの場所を設定 ---
-    const D3D12_GPU_VIRTUAL_ADDRESS materialAddress =
-        materialResourceOverride
-            ? const_cast<ID3D12Resource*>(materialResourceOverride)->GetGPUVirtualAddress()
-            : materialResource_.Get()->GetGPUVirtualAddress();
+	const ID3D12Resource* drawMaterialResource = materialResourceOverride;
+	if (!drawMaterialResource) {
+		drawMaterialResource = IsMaterialTextureLoaded() ? materialResource_.Get() : loadingMaterialResource_.Get();
+	}
+	const D3D12_GPU_VIRTUAL_ADDRESS materialAddress = const_cast<ID3D12Resource*>(drawMaterialResource)->GetGPUVirtualAddress();
 	ModelCommon::GetInstance()->GetDxCommon()->GetCommandList()->SetGraphicsRootConstantBufferView(0, materialAddress);
 	// --- SRVのDescriptorTableの先頭を設定 ---
 	// TextureManagerからSRVのGPUハンドルを取得

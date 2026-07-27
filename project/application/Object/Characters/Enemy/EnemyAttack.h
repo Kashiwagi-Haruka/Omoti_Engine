@@ -18,7 +18,7 @@ public:
 	void Draw();
 	void Cancel();
 	bool ConsumeHit();
-
+	void SetCamera(Camera* camera);
 	bool IsAttacking() const { return state_ != State::Idle; }
 	bool IsHitActive() const { return hitActive_; }
 

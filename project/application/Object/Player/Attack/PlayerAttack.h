@@ -69,7 +69,9 @@ public:
 	bool IsFallingAttacking() const { return isFallingAttack_; } // 落下攻撃中かどうかを返す関数
 	bool isSkillAttacking() const { return isSkillAttack; }      // スキル攻撃中かどうかを返す関数
 	bool isSpecialAttacking() const { return isSpecialAttack; }  // 必殺技攻撃中かどうかを返す関数
-	bool IsCanMove() const { return canMove_; }                  // プレイヤーが移動できるかどうかを返す関数
+	bool IsAnyAttackActive() const { return isAttacking_ || isFallingAttack_ || isSkillAttack || isSpecialAttack; }
+	bool IsCanMove() const { return !isAttacking_ && !isFallingAttack_ && !isSkillAttack && !isSpecialAttack; }
+	// プレイヤーが移動できるかどうかを返す関数
 
 	void SetIsFallingAttack(bool isFalling) { isFallingAttack_ = isFalling; }
 	void SetAirState(bool isJumping, bool isFalling) {
@@ -77,7 +79,7 @@ public:
 		isfalling = isFalling;
 	}
 	void SetAttacking(bool isAttacking) { isAttacking_ = isAttacking; }
-	void SetCamera(Camera* camera) { camera_ = camera; }
+	void SetCamera(Camera* camera);
 	void SetTransform(const Transform& transform) { playerTransform_ = transform; }
 	void SetModels(PlayerModels* models) { models_ = models; }
 

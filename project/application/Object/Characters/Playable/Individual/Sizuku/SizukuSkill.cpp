@@ -10,6 +10,31 @@ SizukuSkill::SizukuSkill() {
 	isSpecialEnd_ = true;
 	ModelManager::GetInstance()->LoadModel("Resources/3d/iceFlower", "iceFlower");
 }
+void SizukuSkill::SetCamera(Camera* camera) {
+	camera_ = camera;
+
+	auto updateCameraMatrices = [this](const std::unique_ptr<Object3d>& object) {
+		if (object) {
+			object->SetCamera(camera_);
+			object->UpdateCameraMatrices();
+		}
+	};
+
+	updateCameraMatrices(debugBox_);
+	updateCameraMatrices(debugDamageBox1_);
+	updateCameraMatrices(debugDamageBox2_);
+	updateCameraMatrices(skillUpObject_);
+	updateCameraMatrices(skillUnderObject_);
+	updateCameraMatrices(specialDebugBox_);
+
+	if (iceFlowers_) {
+		for (Object3d& iceFlower : *iceFlowers_) {
+			iceFlower.SetCamera(camera_);
+			iceFlower.UpdateCameraMatrices();
+		}
+	}
+}
+
 void SizukuSkill::Initialize() {
 	debugBox_ = std::make_unique<Object3d>();
 	debugBox_->Initialize();

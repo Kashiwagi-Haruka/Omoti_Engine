@@ -49,6 +49,9 @@ class Sprite {
 
 	bool isFlipX_ = false;
 	bool isFripY_ = false;
+	bool waitingForTextureLoad_ = false;
+	bool useFullTextureOnLoad_ = true;
+	bool isInitialized_ = false;
 
 	int handle_ = 0;
 
@@ -80,7 +83,7 @@ public:
 	void Update();
 
 	void Draw();
-	void SetTextureHandle(uint32_t Handle) { textureIndex = Handle; }
+	void SetTextureHandle(uint32_t Handle);
 	void SetPosition(const Vector2& pos) {
 		transform_.translate.x = pos.x;
 		transform_.translate.y = pos.y;

@@ -73,7 +73,10 @@ void Font::Initialize(uint32_t Handle) {
 }
 
 void Font::Draw() {
-
+	const SpriteCommon* spriteCommon = SpriteCommon::GetInstance();
+	if (!spriteCommon->ShouldDrawSprites()) {
+		return;
+	}
 	// 頂点バッファビューとインデックスバッファビューをセット（オフセット指定）
 	UINT offset = currentSpriteVertexOffset_;
 	D3D12_VERTEX_BUFFER_VIEW vbv = vertexBufferView;

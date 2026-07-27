@@ -18,6 +18,8 @@ public:
 	void Initialize(Camera* camera);
 	void Update(Camera* camera, Player* player, Boss* boss);
 	void Draw(Boss* boss);
+	void SetCamera(Camera* camera);
+	void DrawRemoteCameraScene();
 	void Finalize();
 	void DebugImGui(Boss* boss, Camera* camera);
 

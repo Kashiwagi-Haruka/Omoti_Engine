@@ -28,6 +28,7 @@ class PlayerKey {
 
 	bool isAninmationStarted_ = false;
 	Attribute attribute_ = Attribute::None;
+	bool isInitialized_ = false;
 
 	void AttibuteColorSetting();
 

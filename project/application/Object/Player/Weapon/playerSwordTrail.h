@@ -14,7 +14,7 @@ public:
 	void Draw();
 	void Clear();
 
-	void SetCamera(Camera* camera) { camera_ = camera; }
+	void SetCamera(Camera* camera);
 
 private:
 	void UpdateTrailMesh();

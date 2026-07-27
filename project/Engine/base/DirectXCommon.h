@@ -146,6 +146,7 @@ public:
 	void PreDraw();
 	void PostDraw();
 	void SetMainRenderTarget();
+	void RestoreMainRenderTarget();
 	void ExecuteCommandListAndWait();
 	void DrawSceneTextureToBackBuffer();
 	void EnsureSceneTextureCopiedToBackBuffer();

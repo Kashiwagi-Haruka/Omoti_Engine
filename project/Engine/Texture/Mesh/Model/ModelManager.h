@@ -1,6 +1,7 @@
 #pragma once
 #include <map>
 #include <memory>
+#include <mutex>
 #include <string>
 
 class Model;
@@ -20,6 +21,7 @@ class ModelManager {
 		bool isGltf = false;
 	};
 	std::map<std::string, ModelSource> modelSources;
+	mutable std::mutex mutex_;
 
 public:
 	ModelManager() = default;

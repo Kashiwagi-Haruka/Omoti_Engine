@@ -1,7 +1,8 @@
 #pragma once
+#include "CharacterCamera/SizukuSpecialCamera.h"
 #include "LockOnCamera/LockOnCamera.h"
-#include "PlayerCamera/PlayerCamera.h"
 #include "NormalAttackCamera/NormalAttackCamera.h"
+#include "PlayerCamera/PlayerCamera.h"
 #include "Transform.h"
 #include "Vector3.h"
 #include <memory>
@@ -15,34 +16,51 @@ class CameraController {
 	/// <summary>
 	/// カメラのモード
 	/// </summary>
-	enum class CameraMode { 
-		kPlayerCamera, // プレイヤーカメラ
-		kLockOnCamera, // ロックオンカメラ
-		kNormalAttackCamera // 通常攻撃カメラ
+	enum class CameraMode {
+		kPlayerCamera,       // プレイヤーカメラ
+		kLockOnCamera,       // ロックオンカメラ
+		kNormalAttackCamera, // 通常攻撃カメラ
+		kSizukuSpecialCamera // シズク必殺技カメラ
 	};
-	CameraMode cameraMode_ = CameraMode::kPlayerCamera; // 現在のカメラモード
-	CameraMode preCameraMode_ = CameraMode::kPlayerCamera; // 前回のカメラモード
-	std::unique_ptr<PlayerCamera> playerCamera_;           // プレイヤーカメラのインスタンス
-	std::unique_ptr<LockOnCamera> lockOnCamera_;           // ロックオンカメラのインスタンス
-	std::unique_ptr<NormalAttackCamera> normalAttackCamera_;//通常攻撃カメラのインスタンス
-	std::unique_ptr<Camera> blendCamera_;                  // ブレンドカメラのインスタンス
+	CameraMode cameraMode_ = CameraMode::kPlayerCamera;        // 現在のカメラモード
+	CameraMode preCameraMode_ = CameraMode::kPlayerCamera;     // 前回のカメラモード
+	std::unique_ptr<PlayerCamera> playerCamera_;               // プレイヤーカメラのインスタンス
+	std::unique_ptr<LockOnCamera> lockOnCamera_;               // ロックオンカメラのインスタンス
+	std::unique_ptr<NormalAttackCamera> normalAttackCamera_;   // 通常攻撃カメラのインスタンス
+	std::unique_ptr<SizukuSpecialCamera> sizukuSpecialCamera_; // シズク必殺技カメラ
+	std::unique_ptr<Camera> blendCamera_;                      // ブレンドカメラのインスタンス
 
 	Vector3 playerPos = {0.0f, 0.0f, 0.0f}; // プレイヤーの位置
 	Transform transform_{};                 // カメラの変換情報
 	Camera* camera_ = nullptr;              // カメラのインスタンス
 
-	bool isCameraSwitching_ = false; // カメラ切り替え中かどうかのフラグ
-	float cameraSwitchTimer_ = 0.0f; // カメラ切り替えのタイマー
-	float cameraSwitchDuration_ = 0.2f; // カメラ切り替えの時間
-	float autoLockOnTimer_ = 0.0f;      // 自動ロックオンのタイマー
+	bool isCameraSwitching_ = false;                           // カメラ切り替え中かどうかのフラグ
+	float cameraSwitchTimer_ = 0.0f;                           // カメラ切り替えのタイマー
+	float cameraSwitchDuration_ = 0.2f;                        // 現在のカメラ切り替えの時間
+	bool hasPendingCameraMode_ = false;                        // 補間完了後に切り替えるカメラモードがあるか
+	bool isSizukuSpecialCameraActive_ = false;                 // シズク必殺技カメラの開始要求が有効か
+	CameraMode pendingCameraMode_ = CameraMode::kPlayerCamera; // 補間完了後に切り替えるカメラモード
+	static constexpr float kDefaultCameraSwitchDuration_ = 0.2f;
+	static constexpr float kPlayerCameraSwitchDuration_ = 0.35f;
+	static constexpr float kNormalAttackToLockOnSwitchDuration_ = 0.35f;
+	float autoLockOnTimer_ = 0.0f;       // 自動ロックオンのタイマー
 	float normalAttackIdleTimer_ = 1.0f; // 通常攻撃ボタンが押されていない時間
-	Transform switchStartTransform_{};  // カメラ切り替え開始時の変換情報
+	Transform switchStartTransform_{};   // カメラ切り替え開始時の変換情報
 
 	/// <summary>
 	/// 指定されたカメラモードの回転をプレイヤーカメラへ引き継ぐ
 	/// </summary>
 	/// <param name="sourceMode"> 引き継ぎ元のカメラモード </param>
 	void InheritPlayerCameraRotation(CameraMode sourceMode);
+
+		/// <summary>
+	/// プレイヤーカメラを出入りする切り替えかどうかを判定する
+	/// </summary>
+	bool IsPlayerCameraTransition(CameraMode from, CameraMode to) const;
+	/// <summary>
+	/// カメラモードの切り替えを要求する。補間中の要求は完了後まで保留する
+	/// </summary>
+	void RequestCameraMode(CameraMode mode);
 	/// <summary>
 	/// 操作用プレイヤーカメラへ戻し、攻撃カメラのターゲットを解除する
 	/// </summary>
@@ -66,6 +84,7 @@ public:
 	/// <returns></returns>
 	Camera* GetCamera();
 
+
 	/// <summary>
 	/// カメラのトランスフォームの取得
 	/// </summary>
@@ -84,6 +103,10 @@ public:
 	/// <param name="pos"> プレイヤーの位置 </param>
 	void SetPlayerPos(const Vector3& pos) { playerPos = pos; }
 
+	/// <summary>プレイヤーの向きを含むトランスフォームを設定する。</summary>
+	void SetPlayerTransform(const Transform& transform);
+	/// <summary>シズクの必殺技カメラの使用状態を設定する。</summary>
+	void SetSizukuSpecialCameraActive(bool isActive);
 	/// <summary>
 	/// カメラを振動させる
 	/// </summary>
@@ -98,14 +121,24 @@ public:
 	/// カメラモードの設定
 	/// </summary>
 	/// <param name="mode"> カメラモード </param>
-	void SetCameraMode(CameraMode mode) { cameraMode_ = mode; }
-
+	void SetCameraMode(CameraMode mode) { RequestCameraMode(mode); }
+	/// <summary>
+	/// ロックオンカメラが使用中かどうかを取得する
+	/// </summary>
+	/// <returns>ロックオンカメラの使用中はtrue</returns>
+	bool IsLockOnCameraActive() const { return cameraMode_ == CameraMode::kLockOnCamera; }
 	/// <summary>
 	/// ロックオンターゲットの設定
 	/// </summary>
 	/// <param name="targetPos"> ターゲットの位置 </param>
 	/// <param name="durationSeconds"> 持続時間（秒） </param>
 	void SetLockOnTarget(const Vector3& targetPos, float durationSeconds = 1.0f);
+
+	/// <summary>
+	/// 現在ロックオン中のターゲット位置を更新する
+	/// </summary>
+	/// <param name="targetPos">ターゲットの現在位置</param>
+	void UpdateLockOnTargetPosition(const Vector3& targetPos);
 
 	/// <summary>
 	/// 通常攻撃カメラのターゲット設定

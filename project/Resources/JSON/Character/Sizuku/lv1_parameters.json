@@ -2,12 +2,12 @@
   "base": {
     "Attack": 20.0,
     "Deffence": 10.0,
-    "HP": 100.0
+    "HP": 152.0
   },
   "baseLevelUp": {
-    "Attack": 3.0,
-    "Deffence": 3.5999999046325684,
-    "HP": 43.0
+    "Attack": 0.0,
+    "Deffence": 0.0,
+    "HP": 0.0
   },
   "parameter": {
     "Attack": 20.0,
@@ -36,5 +36,6 @@
     "HP": 100.0,
     "Level": 1,
     "Speed": 1.0
-  }
+  },
+  "reinforcementAmount": 3
 }

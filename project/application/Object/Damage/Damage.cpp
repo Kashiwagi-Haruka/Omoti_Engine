@@ -103,6 +103,11 @@ void Damage::SetPosition(const Vector3& position) {
 	transform_.translate = basePosition_ + damagePositionOffset_;
 }
 void Damage::SetScale(const Vector3& scale) { transform_.scale = scale; }
+void Damage::SetCamera(Camera* camera) {
+	camera_ = camera;
+	RefreshCameraMatrices();
+}
+
 void Damage::Update() {
 	if (!isVisible_ || !camera_) {
 		return;
@@ -128,6 +133,14 @@ void Damage::Update() {
 		} else if (isFading_) {
 			alpha_ = std::clamp(timer_ / kFadeDuration_, 0.0f, 1.0f);
 		}
+	}
+
+	RefreshCameraMatrices();
+}
+
+void Damage::RefreshCameraMatrices() {
+	if (!isVisible_ || !camera_) {
+		return;
 	}
 
 	Matrix4x4 billboardMatrix = Function::Inverse(camera_->GetViewMatrix());

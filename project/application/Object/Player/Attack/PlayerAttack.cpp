@@ -10,6 +10,21 @@ PlayerAttack::PlayerAttack() {
 }
 PlayerAttack::~PlayerAttack() {
 };
+void PlayerAttack::SetCamera(Camera* camera) {
+	camera_ = camera;
+	if (sword_) {
+		sword_->SetCamera(camera_);
+	}
+	if (skill_) {
+		skill_->SetCamera(camera_);
+	}
+	if (special_) {
+		special_->SetCamera(camera_);
+	}
+	if (key_) {
+		key_->SetCamera(camera_);
+	}
+}
 void PlayerAttack::Initialize() {
 	isAttacking_ = false;
 	// コンボ関連の初期化

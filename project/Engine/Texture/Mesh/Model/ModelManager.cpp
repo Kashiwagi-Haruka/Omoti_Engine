@@ -16,6 +16,7 @@ void ModelManager::Initialize(DirectXCommon* dxCommon) { ModelCommon::GetInstanc
 
 void ModelManager::LoadModel(const std::string& directionalPath, const std::string& filePath) {
 
+	std::lock_guard<std::mutex> lock(mutex_);
 	if (models.contains(filePath)) {
 		return;
 	}
@@ -38,6 +39,7 @@ void ModelManager::LoadModel(const std::string& directionalPath, const std::stri
 	modelSources[filePath] = ModelSource{directoryPath.string(), filename, false};
 }
 void ModelManager::LoadGltfModel(const std::string& directionalPath, const std::string& filePath) {
+	std::lock_guard<std::mutex> lock(mutex_);
 	if (models.contains(filePath)) {
 		return;
 	}
@@ -74,11 +76,14 @@ void ModelManager::LoadGltfModel(const std::string& directionalPath, const std::
 }
 
 std::unique_ptr<Model> ModelManager::CreateModelInstance(const std::string& filePath) {
-	if (!modelSources.contains(filePath)) {
-		return nullptr;
+	ModelSource source;
+	{
+		std::lock_guard<std::mutex> lock(mutex_);
+		if (!modelSources.contains(filePath)) {
+			return nullptr;
+		}
+		source = modelSources.at(filePath);
 	}
-
-	const ModelSource& source = modelSources.at(filePath);
 	std::unique_ptr<Model> model = std::make_unique<Model>();
 	if (source.isGltf) {
 		model->LoadObjFileGltf(source.directoryPath, source.filePath);
@@ -89,10 +94,12 @@ std::unique_ptr<Model> ModelManager::CreateModelInstance(const std::string& file
 	return model;
 }
 void ModelManager::UnloadModel(const std::string& filePath) {
+	std::lock_guard<std::mutex> lock(mutex_);
 	models.erase(filePath);
 	modelSources.erase(filePath);
 }
 Model* ModelManager::FindModel(const std::string& filePath) {
+	std::lock_guard<std::mutex> lock(mutex_);
 	if (models.contains(filePath)) {
 		return models.at(filePath).get();
 	}
@@ -100,6 +107,10 @@ Model* ModelManager::FindModel(const std::string& filePath) {
 }
 
 void ModelManager::Finalize() {
-	modelSources.clear();
+	{
+		std::lock_guard<std::mutex> lock(mutex_);
+		models.clear();
+		modelSources.clear();
+	}
 	instance.reset();
 }

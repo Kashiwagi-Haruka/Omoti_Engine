@@ -26,7 +26,13 @@ void PlayerSwordTrail::Initialize() {
 }
 
 void PlayerSwordTrail::Clear() { points_.clear(); }
-
+void PlayerSwordTrail::SetCamera(Camera* camera) {
+	camera_ = camera;
+	if (trail_) {
+		trail_->SetCamera(camera_);
+		trail_->UpdateCameraMatrices();
+	}
+}
 void PlayerSwordTrail::Update(const Matrix4x4& swordWorldMatrix, bool isAttacking) {
 	if (!isAttacking) {
 		Clear();

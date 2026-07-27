@@ -193,6 +193,16 @@ void Adhesion::SetCamera(Camera* camera) {
 	preAttributePlane_->SetCamera(camera_);
 	AttributePlane_->SetCamera(camera_);
 	AttributeReactionPlane_->SetCamera(camera_);
+	if (hasBaseTransform_) {
+		if (isComparisonDisplayActive_) {
+			RefreshComparisonTransform();
+		} else {
+			SetTransform(baseTransform_);
+		}
+	}
+	preAttributePlane_->UpdateCameraMatrices();
+	AttributePlane_->UpdateCameraMatrices();
+	AttributeReactionPlane_->UpdateCameraMatrices();
 }
 
 bool Adhesion::AddAttribute(Attribute attribute) {

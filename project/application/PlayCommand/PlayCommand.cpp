@@ -62,9 +62,9 @@ bool PlayCommand::GetSKILL_ATTACK() {
 	return false;
 }
 bool PlayCommand::GetSPECIAL_ATTACK() {
-	/*if (Input::GetInstance()->TriggerKey(DIK_Q) || Input::GetInstance()->TriggerButton(Input::PadButton::kButtonY)) {
+	if (Input::GetInstance()->TriggerKey(DIK_Q) || Input::GetInstance()->TriggerButton(Input::PadButton::kButtonY)) {
 		return true;
-	}*/
+	}
 	return false;
 }
 bool PlayCommand::GetDESIDE() {

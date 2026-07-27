@@ -23,7 +23,7 @@ public:
 	void Initialize(Camera* camera);
 	void Update(Camera* camera);
 	void Draw();
-
+	void SetCamera(Camera* camera);
 	Vector3 GetPosition() const { return position_; }
 	Vector3 GetScale() const { return object_->GetTransform().scale; }
 	int GetHP() const { return hp_; }

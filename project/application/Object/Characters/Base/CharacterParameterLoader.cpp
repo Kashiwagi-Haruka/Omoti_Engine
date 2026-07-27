@@ -53,7 +53,7 @@ bool LoadJsonFile(const std::string& filePath, nlohmann::json& outRoot) {
 
 namespace CharacterParameterLoader {
 
-bool LoadCurrentParameters(const std::string& characterName, BaseParameter& outBaseParameter, Parameter& outParameter) {
+bool LoadCurrentParameters(const std::string& characterName, BaseParameter& outBaseParameter, Parameter& outParameter, int* outReinforcementAmount) {
 	const std::string characterDirectory = "Resources/JSON/Character/" + characterName + "/";
 	const std::array<std::string, 2> filePaths{
 	    characterDirectory + "current_parameters.json",
@@ -65,11 +65,15 @@ bool LoadCurrentParameters(const std::string& characterName, BaseParameter& outB
 		if (LoadJsonFile(filePath, root)) {
 			outBaseParameter = LoadBaseParameter(root.value("base", nlohmann::json::object()));
 			outParameter = LoadParameter(root.value("parameter", nlohmann::json::object()));
+			if (outReinforcementAmount) {
+				*outReinforcementAmount = std::max(0, root.value("reinforcementAmount", 0));
+			}
 			return true;
 		}
 	}
 
 	return false;
 }
+
 
 } // namespace CharacterParameterLoader

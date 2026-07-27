@@ -41,9 +41,11 @@ void Team::Initialize() {
 		character->Initialize();
 		BaseParameter baseParameter{};
 		Parameter parameter{};
-		if (CharacterParameterLoader::LoadCurrentParameters(character->GetRomanizationName(), baseParameter, parameter)) {
+		int reinforcementAmount = 0;
+		if (CharacterParameterLoader::LoadCurrentParameters(character->GetRomanizationName(), baseParameter, parameter, &reinforcementAmount)) {
 			character->SetBaseParameter(baseParameter);
 			character->SetParameter(parameter);
+			character->SetReinforcementAmount(reinforcementAmount);
 		}
 		ownedCharacterDisplayNames_.push_back(ToU32String(character->GetName()));
 	}

@@ -38,6 +38,6 @@ public:
 	float GetHitSize() const { return 2.2f; }
 	int GetComboStep() const { return currentComboStep_; }
 
-	void SetCamera(Camera* cam) { camera = cam; }
+	void SetCamera(Camera* cam);
 	void SetPlayerYaw(float yaw) { playerYaw_ = yaw; }
 };

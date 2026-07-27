@@ -39,7 +39,7 @@ public:
 	void SetCharacterType(const std::string& characterName);
 	void Initialize();
 	void Update();
-	void Draw();
+	void Draw(bool drawOutline = true);
 	std::optional<Matrix4x4> GetJointWorldMatrix(const std::string& jointName) const;
 	bool IsAttackAnimationFinished() const;
 	Object3d* GetCharacterObject3d();

@@ -985,6 +985,14 @@ void DirectXCommon::SetMainRenderTarget() {
 	commandList_->ClearDepthStencilView(dsvHandle, D3D12_CLEAR_FLAG_DEPTH, 1.0f, 0, 0, nullptr);
 	TextureManager::GetInstance()->GetSrvManager()->PreDraw();
 }
+
+void DirectXCommon::RestoreMainRenderTarget() {
+	inOutlineRenderTarget_ = false;
+	D3D12_CPU_DESCRIPTOR_HANDLE dsvHandle = dsvDescriptorHeap_->GetCPUDescriptorHandleForHeapStart();
+	commandList_->OMSetRenderTargets(1, &sceneRtvHandle_, false, &dsvHandle);
+	commandList_->RSSetViewports(1, &viewport_);
+	commandList_->RSSetScissorRects(1, &scissorRect_);
+}
 void DirectXCommon::BeginOutlineRenderTarget() {
 	if (sceneOutlineResource_ == nullptr || sceneOutlineRtvHandle_.ptr == 0) {
 		inOutlineRenderTarget_ = false;

@@ -5,7 +5,7 @@
 #include "Model/ModelManager.h"
 
 EnemyAttack::EnemyAttack() {
-	ModelManager::GetInstance()->LoadModel("Resources/3d","EnemyAttack"); // 鎌モデル
+
 	object_ = std::make_unique<Object3d>();
 }
 
@@ -14,6 +14,14 @@ void EnemyAttack::Initialize(Camera* camera) {
 	object_->Initialize();
 	object_->SetModel("EnemyAttack");
 	object_->SetCamera(camera_);
+}
+
+void EnemyAttack::SetCamera(Camera* camera) {
+	camera_ = camera;
+	if (object_) {
+		object_->SetCamera(camera_);
+		object_->UpdateCameraMatrices();
+	}
 }
 
 void EnemyAttack::Start(const Transform& enemyTransform) {

@@ -110,7 +110,10 @@ void EnemyHitEffect::Initialize() {
 
 	enemyPosition_ = {0.0f, 0.0f, 0.0f};
 }
-
+void EnemyHitEffect::SetCamera(Camera* camera) {
+	camera_ = camera;
+	RefreshCameraMatrices();
+}
 void EnemyHitEffect::Activate(const Vector3& position) {
 	isActive_ = true;
 	activeTimer_ = activeDuration_;
@@ -207,6 +210,39 @@ void EnemyHitEffect::Update() {
 	hitEffect_->SetCamera(camera_);
 	hitEffect_->SetWorldMatrix(world);
 	hitEffect_->Update();
+}
+void EnemyHitEffect::RefreshCameraMatrices() {
+	if (!isActive_ || !camera_) {
+		return;
+	}
+
+	Matrix4x4 billboardMatrix = Function::Inverse(camera_->GetViewMatrix());
+	billboardMatrix.m[3][0] = billboardMatrix.m[3][1] = billboardMatrix.m[3][2] = 0.0f;
+	for (auto& billboard : hitBillboards_) {
+		const Matrix4x4 scaleMatrix = Function::MakeScaleMatrix(billboard.transform.scale);
+		const Matrix4x4 angleMatrix = Function::MakeRotateZMatrix(billboard.randomAngle);
+		const Matrix4x4 translateMatrix = Function::MakeTranslateMatrix(billboard.transform.translate);
+		const Matrix4x4 worldMatrix = Function::Multiply(Function::Multiply(scaleMatrix, Function::Multiply(angleMatrix, billboardMatrix)), translateMatrix);
+		if (billboard.primitive) {
+			billboard.primitive->SetCamera(camera_);
+			billboard.primitive->SetWorldMatrix(worldMatrix);
+			billboard.primitive->UpdateCameraMatrices();
+		}
+	}
+	for (auto& shard : iceShards_) {
+		if (shard.object) {
+			shard.object->SetCamera(camera_);
+			shard.object->UpdateCameraMatrices();
+		}
+	}
+
+	Matrix4x4 cameraWorldMatrix = camera_->GetWorldMatrix();
+	cameraWorldMatrix.m[3][0] = cameraWorldMatrix.m[3][1] = cameraWorldMatrix.m[3][2] = 0.0f;
+	const Matrix4x4 worldMatrix = Function::Multiply(cameraWorldMatrix, Function::MakeAffineMatrix(hitTransform_.scale, hitTransform_.rotate, hitTransform_.translate));
+	ParticleManager::GetInstance()->SetCamera(camera_);
+	hitEffect_->SetCamera(camera_);
+	hitEffect_->SetWorldMatrix(worldMatrix);
+	hitEffect_->UpdateCameraMatrices();
 }
 
 void EnemyHitEffect::Draw() {

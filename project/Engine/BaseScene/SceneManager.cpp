@@ -43,6 +43,12 @@ void SceneManager::Update() {
 		scene_->Finalize();
 		scene_->Initialize();
 		isSceneReinitializeRequested_ = false;
+#ifdef USE_IMGUI
+		Hierarchy* hierarchy = Hierarchy::GetInstance();
+		if (hierarchy && hierarchy->IsEditorPreviewActive()) {
+			scene_->Update();
+		}
+#endif
 	}
 
 	// シーン切り替え（全シーン共通フェード）

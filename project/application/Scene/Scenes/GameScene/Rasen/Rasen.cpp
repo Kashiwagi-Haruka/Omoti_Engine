@@ -258,3 +258,13 @@ void Rasen::Draw(Boss* boss) {
 		warningSprite_->Draw();
 	}
 }
+void Rasen::SetCamera(Camera* camera) {
+	house->SetCamera(camera);
+	enemyManager->SetCamera(camera);
+}
+
+void Rasen::DrawRemoteCameraScene() {
+	// Deliberately omit phase and boss UI from the remote-camera render texture.
+	enemyManager->Draw();
+	house->Draw();
+}

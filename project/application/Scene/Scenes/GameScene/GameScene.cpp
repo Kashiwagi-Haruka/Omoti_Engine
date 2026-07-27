@@ -22,43 +22,33 @@
 #include <numbers>
 
 namespace {
-constexpr float kLockOnTargetMaxAngle = std::numbers::pi_v<float> / 4.0f;
 constexpr int kDefaultFullscreenFilterType = 1;
 constexpr int kRadialBlurFullscreenFilterType = 2;
 constexpr Vector2 kDashRadialBlurCenter = {0.5f, 0.5f};
 constexpr float kDashRadialBlurWidth = 0.04f;
 constexpr int kDashRadialBlurSampleCount = 2;
+constexpr float kAttackCameraLockOnRange = 10.0f;
+constexpr float kLockOnFrontDotThreshold = 0.0f;
+constexpr uint32_t kRemoteCameraWidth = 512;
+constexpr uint32_t kRemoteCameraHeight = 288;
+const Transform kRemoteCameraTransform = {
+    {1.0f,   1.0f,  1.0f  },
+    {0.35f,  -2.0f, 0.0f  },
+    {6.0f, 10.0f, 3.0f},
+};
+const Transform kRemoteCameraScreenTransform = {
+    {8.0f,  4.5f, 1.0f},
+    {0.0f,  0.0f, 0.0f},
+    {-8.0f, 4.5f, 8.0f},
+};
 
-Enemy* TryFindNearestAliveEnemy(Player& player, EnemyManager& enemyManager) {
-	const Vector3 playerPos = player.GetPosition();
-	Enemy* nearestEnemy = nullptr;
-	float nearestDistanceSq = 0.0f;
-
-	for (const auto& enemy : enemyManager.GetEnemies()) {
-		if (!enemy || !enemy->GetIsAlive() || enemy->IsDying() || enemy->GetHP() <= 0) {
-			continue;
-		}
-
-		Vector3 toEnemy = enemy->GetPosition() - playerPos;
-		toEnemy.y = 0.0f;
-		const float distanceSq = Function::LengthSquared(toEnemy);
-		if (!nearestEnemy || distanceSq < nearestDistanceSq) {
-			nearestEnemy = enemy.get();
-			nearestDistanceSq = distanceSq;
-		}
-	}
-
-	return nearestEnemy;
-}
-
-Enemy* TryFindNearestEnemyInPlayerFront(Player& player, EnemyManager& enemyManager) {
+Enemy* TryFindNearestAliveEnemy(Player& player, EnemyManager& enemyManager, float maxDistance) {
 	const Vector3 playerPos = player.GetPosition();
 	const float playerYaw = player.GetRotate().y;
 	const Vector3 playerForward = {std::sinf(playerYaw), 0.0f, std::cosf(playerYaw)};
-	const float minForwardDot = std::cos(kLockOnTargetMaxAngle);
-
 	Enemy* nearestEnemy = nullptr;
 	float nearestDistanceSq = 0.0f;
+	const float maxDistanceSq = maxDistance * maxDistance;
 
 	for (const auto& enemy : enemyManager.GetEnemies()) {
 		if (!enemy || !enemy->GetIsAlive() || enemy->IsDying() || enemy->GetHP() <= 0) {
@@ -68,16 +58,12 @@ Enemy* TryFindNearestEnemyInPlayerFront(Player& player, EnemyManager& enemyManag
 		Vector3 toEnemy = enemy->GetPosition() - playerPos;
 		toEnemy.y = 0.0f;
 		const float distanceSq = Function::LengthSquared(toEnemy);
-		if (distanceSq < 0.0001f) {
+		if (distanceSq > maxDistanceSq) {
 			continue;
 		}
-
-		const Vector3 directionToEnemy = Function::Normalize(toEnemy);
-		const float forwardDot = Function::Dot(playerForward, directionToEnemy);
-		if (forwardDot < minForwardDot) {
+		if (Function::Dot(playerForward, toEnemy) <= kLockOnFrontDotThreshold) {
 			continue;
 		}
-
 		if (!nearestEnemy || distanceSq < nearestDistanceSq) {
 			nearestEnemy = enemy.get();
 			nearestDistanceSq = distanceSq;
@@ -140,7 +126,7 @@ void GameScene::Finalize() {
 }
 
 void GameScene::Initialize() {
-
+	isPause = false;
 	sceneEndClear = false;
 	sceneEndOver = false;
 	isCharacterDisplayMode_ = false;
@@ -166,6 +152,11 @@ void GameScene::Initialize() {
 	rasen_->Initialize(cameraController->GetCamera());
 	openWorld_->Initialize(cameraController->GetCamera());
 	playAreaMode_ = PlayAreaMode::kSpiral;
+
+	remoteCamera_ = std::make_unique<RemoteCamera>();
+	remoteCamera_->Initialize(kRemoteCameraWidth, kRemoteCameraHeight, cameraController->GetCamera());
+	remoteCamera_->SetCameraTransform(kRemoteCameraTransform);
+	remoteCamera_->SetScreenTransform(kRemoteCameraScreenTransform);
 
 	activePointLightCount_ = 3;
 	pointLights_[0].color = {1.0f, 1.0f, 1.0f, 1.0f};
@@ -201,7 +192,7 @@ void GameScene::Initialize() {
 	pause->Initialize();
 	pause->SetCurrentCharacterObj(player->GetCharacterObject3d());
 	pause->SetCurrentAttribute(player->GetCurrentAttribute());
-	characterDisplay_->Initialize();
+	characterDisplay_->Initialize(*team_);
 	characterDisplay_->SetActive(false);
 	UnloadTeamDisplay();
 	
@@ -231,6 +222,7 @@ void GameScene::Initialize() {
 	Object3dCommon::GetInstance()->SetDissolveEnabled(dissolveEnabled_);
 	Object3dCommon::GetInstance()->SetDissolveThreshold(dissolveThreshold_);
 	Object3dCommon::GetInstance()->SetDissolveEdgeWidth(dissolveEdgeWidth_);
+	normalAttackTargetEnemy_ = nullptr;
 	lockOnMarkerEnemy_ = nullptr;
 	lockOnMarkerTimer_ = 0.0f;
 }
@@ -496,12 +488,17 @@ void GameScene::Update() {
 	player->SetCamera(cameraController->GetCamera());
 	field->SetCamera(cameraController->GetCamera());
 
-	ParticleManager::GetInstance()->Update(cameraController->GetCamera());
+		ParticleManager::GetInstance()->Update(cameraController->GetCamera());
 	skyDome->Update();
 	field->Update();
-	if (playAreaMode_ == PlayAreaMode::kSpiral && PlayCommand::GetNORMAL_ATTACK_TRIGGER()) {
-		if (Enemy* nearestEnemy = TryFindNearestAliveEnemy(*player, *rasen_->GetEnemyManager())) {
+	if (playAreaMode_ == PlayAreaMode::kSpiral && PlayCommand::GetNORMAL_ATTACK_TRIGGER() && !cameraController->IsLockOnCameraActive()) {
+		EnemyManager* enemyManager = rasen_->GetEnemyManager();
+		if (Enemy* nearestEnemy = TryFindNearestAliveEnemy(*player, *enemyManager, kAttackCameraLockOnRange)) {
+			normalAttackTargetEnemy_ = nearestEnemy;
 			player->SetAttackApproachTarget(nearestEnemy->GetPosition());
+			cameraController->SetNormalAttackTarget(nearestEnemy->GetPosition());
+		} else {
+			normalAttackTargetEnemy_ = nullptr;
 		}
 	}
 	player->Update();
@@ -513,6 +510,8 @@ void GameScene::Update() {
 		EnemyManager* enemyManager = rasen_->GetEnemyManager();
 		if (enemyManager != nullptr && enemyManager->GetAliveEnemyCount() == 0 && enemyManager->IsWaveComplete()) {
 			cameraController->ClearAttackCameraTarget();
+			player->ClearLockOnTarget();
+			normalAttackTargetEnemy_ = nullptr;
 			ApplyLockOnMarker(*enemyManager, nullptr);
 			lockOnMarkerEnemy_ = nullptr;
 			lockOnMarkerTimer_ = 0.0f;
@@ -551,32 +550,23 @@ void GameScene::Update() {
 		Boss* activeBoss = (rasen_->IsBossActive() && boss_->GetIsAlive()) ? boss_.get() : nullptr;
 		Vector3 hitEnemyPos{};
 		bool didPlayerAttackHitEnemy = false;
-		const bool didNormalAttackHitEnemy = collisionManager_.HandleGameSceneCollisions(*player, *rasen_->GetEnemyManager(), *rasen_->GetHouse(), activeBoss, &hitEnemyPos, &didPlayerAttackHitEnemy);
+		Enemy* normalAttackHitEnemy = nullptr;
+		const bool didNormalAttackHitEnemy =
+		    collisionManager_.HandleGameSceneCollisions(*player, *rasen_->GetEnemyManager(), *rasen_->GetHouse(), activeBoss, &hitEnemyPos, &didPlayerAttackHitEnemy, &normalAttackHitEnemy);
 		if (didPlayerAttackHitEnemy) {
 			hitVinettTimer_ = kHitVinettDuration_;
 		}
-		if (didNormalAttackHitEnemy) {
-			Enemy* cameraTargetEnemy = TryFindNearestEnemyInPlayerFront(*player, *rasen_->GetEnemyManager());
-			if (!cameraTargetEnemy) {
-				cameraTargetEnemy = TryFindNearestAliveEnemy(*player, *rasen_->GetEnemyManager());
-			}
-			if (cameraTargetEnemy) {
-				const Vector3 cameraTargetPos = cameraTargetEnemy->GetPosition();
-				const int normalAttackComboStep = player->GetSword()->GetComboStep();
-				if (normalAttackComboStep <= 1) {
-					cameraController->SetLockOnTarget(cameraTargetPos, kLockOnMarkerDuration_);
-					lockOnMarkerEnemy_ = cameraTargetEnemy;
-					lockOnMarkerTimer_ = kLockOnMarkerDuration_;
-				} else {
-					cameraController->SetNormalAttackTarget(cameraTargetPos);
-					lockOnMarkerEnemy_ = nullptr;
-					lockOnMarkerTimer_ = 0.0f;
-				}
-			} else {
-				cameraController->ClearAttackCameraTarget();
-				lockOnMarkerEnemy_ = nullptr;
-				lockOnMarkerTimer_ = 0.0f;
-			}
+		Enemy* playerLockOnTarget = player->GetLockOnTarget();
+		if (playerLockOnTarget && !ContainsLockOnEnemy(*rasen_->GetEnemyManager(), playerLockOnTarget)) {
+			player->ClearLockOnTarget();
+			playerLockOnTarget = nullptr;
+		}
+		if (didNormalAttackHitEnemy && normalAttackHitEnemy && normalAttackHitEnemy == normalAttackTargetEnemy_) {
+			// プレイヤーとカメラは、命中した同一の敵をロックオン対象として共有する。
+			lockOnMarkerEnemy_ = normalAttackHitEnemy;
+			player->SetLockOnTarget(lockOnMarkerEnemy_);
+			cameraController->SetLockOnTarget(lockOnMarkerEnemy_->GetPosition(), kLockOnMarkerDuration_);
+			lockOnMarkerTimer_ = kLockOnMarkerDuration_;
 		}
 		if (player->ConsumeDamageTrigger()) {
 			team_->DamageActiveCharacter(player->ConsumePendingDamage());
@@ -622,9 +612,19 @@ void GameScene::Update() {
 		if (lockOnMarkerTimer_ > 0.0f) {
 			lockOnMarkerTimer_ = std::max(0.0f, lockOnMarkerTimer_ - deltaTime);
 		}
-		if (lockOnMarkerTimer_ <= 0.0f || !ContainsLockOnEnemy(enemyManager, lockOnMarkerEnemy_)) {
+		if (normalAttackTargetEnemy_ && !ContainsLockOnEnemy(enemyManager, normalAttackTargetEnemy_)) {
+			normalAttackTargetEnemy_ = nullptr;
+		}
+		if (lockOnMarkerEnemy_ && lockOnMarkerTimer_ > 0.0f && ContainsLockOnEnemy(enemyManager, lockOnMarkerEnemy_)) {
+			cameraController->UpdateLockOnTargetPosition(lockOnMarkerEnemy_->GetPosition());
+		}
+		if (lockOnMarkerEnemy_ && (lockOnMarkerTimer_ <= 0.0f || !ContainsLockOnEnemy(enemyManager, lockOnMarkerEnemy_))) {
+			if (player->GetLockOnTarget() == lockOnMarkerEnemy_) {
+				player->ClearLockOnTarget();
+			}
 			lockOnMarkerEnemy_ = nullptr;
 			lockOnMarkerTimer_ = 0.0f;
+			cameraController->ClearAttackCameraTarget();
 		}
 		ApplyLockOnMarker(enemyManager, lockOnMarkerEnemy_);
 	}
@@ -634,11 +634,17 @@ void GameScene::Update() {
 	uimanager->SetPlayerDashGauge(player->GetDashGauge(), player->GetDashGaugeMax());
 	uimanager->Update();
 
-	cameraController->SetPlayerPos(player->GetPosition());
+	Transform cameraPlayerTransform = {player->GetScale(), player->GetRotate(), player->GetPosition()};
+	cameraController->SetPlayerTransform(cameraPlayerTransform);
+	cameraController->SetSizukuSpecialCameraActive(player->GetIsSpecialAttack());
 	if (playAreaMode_ == PlayAreaMode::kSpiral && rasen_ && rasen_->GetHouse() && Input::GetInstance()->TriggerLeftTrigger()) {
 		cameraController->LookAtFromPlayerPosition(rasen_->GetHouse()->GetPosition());
 	}
 	cameraController->Update();
+
+	if (remoteCamera_) {
+		remoteCamera_->Update();
+	}
 
 	if (isTransitionIn || isTransitionOut) {
 		sceneTransition->Update();
@@ -650,6 +656,28 @@ void GameScene::Update() {
 		}
 	}
 }
+
+void GameScene::DrawRemoteCameraScene(Camera* camera) {
+	if (!camera) {
+		return;
+	}
+	skyDome->SetCamera(camera);
+	skyDome->Update();
+	field->SetCamera(camera);
+	field->Update();
+
+	skyDome->Draw();
+	field->Draw();
+
+	player->SetCamera(camera);
+	player->Draw(false);
+	if (playAreaMode_ == PlayAreaMode::kSpiral) {
+		remoteCamera_->RestoreRenderTarget();
+		rasen_->SetCamera(camera);
+		rasen_->DrawRemoteCameraScene();
+	}
+}
+
 void GameScene::Draw() {
 	if (isCharacterDisplayMode_) {
 		characterDisplay_->Draw();
@@ -672,6 +700,18 @@ void GameScene::Draw() {
 		}
 		return;
 	}
+	if (remoteCamera_ && remoteCamera_->BeginRender()) {
+		DrawRemoteCameraScene(remoteCamera_->GetCamera());
+		remoteCamera_->EndRender();
+		player->SetCamera(cameraController->GetCamera());
+		if (playAreaMode_ == PlayAreaMode::kSpiral) {
+			rasen_->SetCamera(cameraController->GetCamera());
+		}
+		skyDome->SetCamera(cameraController->GetCamera());
+		skyDome->Update();
+		field->SetCamera(cameraController->GetCamera());
+		field->Update();
+	}
 	Object3dCommon::GetInstance()->DrawCommon();
 	skyDome->Draw();
 	Object3dCommon::GetInstance()->DrawCommon();
@@ -686,6 +726,9 @@ void GameScene::Draw() {
 		}
 	} else {
 		openWorld_->Draw();
+	}
+	if (remoteCamera_) {
+		remoteCamera_->Draw();
 	}
 
 	SpriteCommon::GetInstance()->DrawCommon();
