@@ -339,6 +339,7 @@ std::string Hierarchy::GetSceneScopedEditorFilePath(const std::string& defaultFi
 }
 
 void Hierarchy::ResetForSceneChange() {
+	isPaused_ = false;
 	const std::string currentSceneName = GetCurrentSceneName();
 	editorAudio_.ResetForSceneChange();
 	hasUnsavedChanges_ = false;
