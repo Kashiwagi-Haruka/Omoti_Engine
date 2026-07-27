@@ -1,5 +1,6 @@
 #include "SizukuSpecialCamera.h"
 #include "Function.h"
+#include "GameBase.h"
 #include <cmath>
 
 void SizukuSpecialCamera::Initialize() {
@@ -11,21 +12,71 @@ void SizukuSpecialCamera::Initialize() {
     };
 	camera_->SetTransform(transform_);
 	camera_->Update();
+	cameraCut_ = CameraCut::TURN;
 }
 
 void SizukuSpecialCamera::Update() {
-	// プレイヤーの向いている方向へカメラを置き、胸元を注視する。
-	const float playerYaw = playerTransform_.rotate.y;
-	const Vector3 playerForward = {std::sin(playerYaw), 0.0f, std::cos(playerYaw)};
-	transform_.translate = playerTransform_.translate + playerForward * distance_;
-	transform_.translate.y += cameraHeight_;
+	if (isEnd_) {
+		switch (cameraCut_) {
+		case SizukuSpecialCamera::CameraCut::TURN:
+			animationTime_ += GameBase::GetInstance()->GetDeltaTime() / TurnAnimationTime_;
+			if (animationTime_ >= 1.0f) {
+				animationTime_ = 0.0f;
+				cameraCut_ = CameraCut::FINGERSNAP;
+			}
+			const float playerYaw = playerTransform_.rotate.y;
+			const Vector3 playerForward = {std::sin(playerYaw), 0.0f, std::cos(playerYaw)};
+			transform_.translate = playerTransform_.translate + playerForward * distance_;
+			transform_.translate.y += cameraHeight_;
 
-	const Vector3 lookAt = playerTransform_.translate + Vector3{0.0f, lookAtHeight_, 0.0f};
-	Vector3 direction = Function::Normalize(lookAt - transform_.translate);
-	transform_.rotate.x = std::asin(-direction.y);
-	transform_.rotate.y = std::atan2(direction.x, direction.z);
-	transform_.rotate.z = 0.0f;
+			const Vector3 lookAt = playerTransform_.translate + Vector3{0.0f, lookAtHeight_, 0.0f};
+			Vector3 direction = Function::Normalize(lookAt - transform_.translate);
+			transform_.rotate.x = std::asin(-direction.y);
+			transform_.rotate.y = std::atan2(direction.x, direction.z);
+			transform_.rotate.z = 0.0f;
+			break;
+		case SizukuSpecialCamera::CameraCut::FINGERSNAP:
 
+			animationTime_ += GameBase::GetInstance()->GetDeltaTime() / FingerSnapAnimationTime_;
+			if (animationTime_ >= 1.0f) {
+				animationTime_ = 0.0f;
+				cameraCut_ = CameraCut::ATTACK;
+			}
+
+			const float playerYaw = playerTransform_.rotate.y;
+			const Vector3 playerForward = {std::sin(playerYaw), 0.0f, std::cos(playerYaw)};
+			transform_.translate = playerTransform_.translate + playerForward * distance_;
+			transform_.translate.y += cameraHeight_;
+
+			const Vector3 lookAt = playerTransform_.translate + Vector3{0.0f, lookAtHeight_, 0.0f};
+			Vector3 direction = Function::Normalize(lookAt - transform_.translate);
+			transform_.rotate.x = std::asin(-direction.y);
+			transform_.rotate.y = std::atan2(direction.x, direction.z);
+			transform_.rotate.z = 0.0f;
+			break;
+		case SizukuSpecialCamera::CameraCut::ATTACK:
+			animationTime_ += GameBase::GetInstance()->GetDeltaTime() / FingerSnapAnimationTime_;
+			if (animationTime_ >= 1.0f) {
+				animationTime_ = 0.0f;
+				cameraCut_ = CameraCut::TURN;
+				isEnd_ = true;
+			}
+
+			const float playerYaw = playerTransform_.rotate.y;
+			const Vector3 playerForward = {std::sin(playerYaw), 0.0f, std::cos(playerYaw)};
+			transform_.translate = playerTransform_.translate + playerForward * distance_;
+			transform_.translate.y += cameraHeight_;
+
+			const Vector3 lookAt = playerTransform_.translate + Vector3{0.0f, lookAtHeight_, 0.0f};
+			Vector3 direction = Function::Normalize(transform_.translate - lookAt);
+			transform_.rotate.x = std::asin(-direction.y);
+			transform_.rotate.y = std::atan2(direction.x, direction.z);
+			transform_.rotate.z = 0.0f;
+			break;
+		default:
+			break;
+		}
+	}
 	camera_->SetTransform(transform_);
 	camera_->Update();
 }

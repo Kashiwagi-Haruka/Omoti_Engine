@@ -17,7 +17,7 @@ void SizukuSpecial::Initialize() {
 	skydomeObj_->SetEnableLighting(false);
 	skydomeObj_->SetModel("sizukuSpecialDome");
 	skydomeTransform_ = {
-	    {10.0, 10.0f, 10.0f},
+	    {20.0f, 20.0f, 20.0f},
         {0.0f, 0.0f,  0.0f },
         {0.0f, 0.0f,  0.0f }
     };
