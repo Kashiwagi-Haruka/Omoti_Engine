@@ -634,7 +634,9 @@ void GameScene::Update() {
 	uimanager->SetPlayerDashGauge(player->GetDashGauge(), player->GetDashGaugeMax());
 	uimanager->Update();
 
-	cameraController->SetPlayerPos(player->GetPosition());
+	Transform cameraPlayerTransform = {player->GetScale(), player->GetRotate(), player->GetPosition()};
+	cameraController->SetPlayerTransform(cameraPlayerTransform);
+	cameraController->SetSizukuSpecialCameraActive(player->GetIsSpecialAttack());
 	if (playAreaMode_ == PlayAreaMode::kSpiral && rasen_ && rasen_->GetHouse() && Input::GetInstance()->TriggerLeftTrigger()) {
 		cameraController->LookAtFromPlayerPosition(rasen_->GetHouse()->GetPosition());
 	}

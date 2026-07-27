@@ -113,6 +113,7 @@ public:
 	bool GetIsAlive() { return isAlive; }
 	bool IsDashing() const { return isDash; }
 	bool GetIsSkillAttack() { return attack_->isSkillAttacking(); }
+	bool GetIsSpecialAttack() const { return attack_->isSpecialAttacking(); }
 	Vector3 GetSkillPosition() { return attack_->GetSkillDamagePosition(); }
 	Parameters GetParameters() { return parameters_; }
 	void SetParameters(const Parameters& p) { parameters_ = p; }

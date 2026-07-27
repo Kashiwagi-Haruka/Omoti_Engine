@@ -39,6 +39,9 @@ void CameraController::Initialize() {
 	normalAttackCamera_ = std::make_unique<NormalAttackCamera>();
 	normalAttackCamera_->Initialize();
 
+	sizukuSpecialCamera_ = std::make_unique<SizukuSpecialCamera>();
+	sizukuSpecialCamera_->Initialize();
+
 	blendCamera_ = std::make_unique<Camera>();
 	switchStartTransform_ = playerCamera_->GetTransform();
 	blendCamera_->SetTransform(switchStartTransform_);
@@ -78,7 +81,7 @@ void CameraController::Update() {
 	const Vector2 mouseMove = Input::GetInstance()->GetMouseMove();
 	const Vector2 rightStick = Input::GetInstance()->GetJoyStickRXY();
 	const bool isCameraMoved = mouseMove.x != 0.0f || mouseMove.y != 0.0f || rightStick.x != 0.0f || rightStick.y != 0.0f;
-	const bool canCameraInputReturnToPlayerCamera = cameraMode_ != CameraMode::kPlayerCamera && cameraMode_ != CameraMode::kNormalAttackCamera;
+	const bool canCameraInputReturnToPlayerCamera = cameraMode_ == CameraMode::kLockOnCamera;
 	if (isCameraMoved && canCameraInputReturnToPlayerCamera) {
 		InheritPlayerCameraRotation(cameraMode_);
 		RequestCameraMode(CameraMode::kPlayerCamera);
@@ -99,12 +102,15 @@ void CameraController::Update() {
 	normalAttackCamera_->SetFollowPosition(playerCamera_->GetTransform().translate);
 	normalAttackCamera_->SetOrbitPitch(playerCamera_->GetTransform().rotate.x);
 	normalAttackCamera_->Update();
+	sizukuSpecialCamera_->Update();
 
 	Transform targetTransform = playerCamera_->GetTransform();
 	if (cameraMode_ == CameraMode::kLockOnCamera) {
 		targetTransform = lockOnCamera_->GetTransform();
 	} else if (cameraMode_ == CameraMode::kNormalAttackCamera) {
 		targetTransform = normalAttackCamera_->GetTransform();
+	} else if (cameraMode_ == CameraMode::kSizukuSpecialCamera) {
+		targetTransform = sizukuSpecialCamera_->GetTransform();
 	}
 
 	if (preCameraMode_ != cameraMode_) {
@@ -138,8 +144,8 @@ void CameraController::Update() {
 	blendCamera_->Update();
 	camera_ = blendCamera_.get();
 #ifdef USE_IMGUI
-	
-	if(ImGui::Begin("CameraMode")){
+
+	if (ImGui::Begin("CameraMode")) {
 		ImGui::Text("Now");
 		switch (cameraMode_) {
 		case CameraController::CameraMode::kPlayerCamera:
@@ -150,6 +156,9 @@ void CameraController::Update() {
 			break;
 		case CameraController::CameraMode::kNormalAttackCamera:
 			ImGui::Text("AttackCamera");
+			break;
+		case CameraController::CameraMode::kSizukuSpecialCamera:
+			ImGui::Text("SizukuSpecialCamera");
 			break;
 		default:
 			break;
@@ -165,10 +174,12 @@ void CameraController::Update() {
 		case CameraController::CameraMode::kNormalAttackCamera:
 			ImGui::Text("AttackCamera");
 			break;
+		case CameraController::CameraMode::kSizukuSpecialCamera:
+			ImGui::Text("SizukuSpecialCamera");
+			break;
 		default:
 			break;
 		}
-		
 	}
 	ImGui::End();
 
@@ -205,6 +216,21 @@ void CameraController::ReturnToPlayerCamera() {
 }
 
 Camera* CameraController::GetCamera() { return camera_; }
+void CameraController::SetPlayerTransform(const Transform& transform) {
+	playerPos = transform.translate;
+	sizukuSpecialCamera_->SetPlayerTransform(transform);
+}
+void CameraController::SetSizukuSpecialCameraActive(bool isActive) {
+	if (isActive) {
+		autoLockOnTimer_ = 0.0f;
+		lockOnCamera_->ClearTarget();
+		normalAttackCamera_->ClearTarget();
+		RequestCameraMode(CameraMode::kSizukuSpecialCamera);
+	} else if (cameraMode_ == CameraMode::kSizukuSpecialCamera || pendingCameraMode_ == CameraMode::kSizukuSpecialCamera) {
+		hasPendingCameraMode_ = false;
+		ReturnToPlayerCamera();
+	}
+}
 void CameraController::StartShake(float durationSeconds) { playerCamera_->StartShake(durationSeconds); }
 void CameraController::LookAtFromPlayerPosition(const Vector3& targetPos) {
 	ReturnToPlayerCamera();
