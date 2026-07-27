@@ -1082,7 +1082,19 @@ void Hierarchy::SetPlayMode(bool isPlaying) {
 		editorCamera_.DeactivatePreview();
 	}
 }
+void Hierarchy::StartPlayMode() {
 
+	for (CharacterParameterEditorData& data : characterParameterEditorDatas_) {
+		if (data.name.empty() || !data.hasUnsavedChanges) {
+			continue;
+		}
+		SaveCharacterTuningJson(data.name, data.lv1Base, data.lv1Parameter, data.levelUpBase, data.currentBase, data.currentParameter, data.reinforcementAmount);
+		data.hasUnsavedChanges = false;
+	}
+
+	SceneManager::GetInstance()->RequestReinitializeCurrentScene();
+	SetPlayMode(true);
+}
 void Hierarchy::DrawEditorGridLines() {
 #ifdef USE_IMGUI
 	DrawCameraBillboards();
@@ -1166,6 +1178,11 @@ void Hierarchy::DrawCharacterParameterInspector() {
 		return;
 	}
 	CharacterParameterEditorData& data = characterParameterEditorDatas_[selectedCharacterParameterIndex_];
+	const BaseParameter previousLv1Base = data.lv1Base;
+	const BaseParameter previousLevelUpBase = data.levelUpBase;
+	const json previousLv1Parameter = ToJson(data.lv1Parameter);
+	const int previousCurrentLevel = data.currentParameter.level;
+	const int previousReinforcementAmount = data.reinforcementAmount;
 	ImGui::Text("Character Parameter: %s", data.name.c_str());
 	ImGui::Text("LV1: Resources/JSON/Character/%s/lv1_parameters.json", data.name.c_str());
 	ImGui::Text("Current: Resources/JSON/Character/%s/current_parameters.json", data.name.c_str());
@@ -1188,9 +1205,16 @@ void Hierarchy::DrawCharacterParameterInspector() {
 	ImGui::DragInt("Reinforcement Amount", &data.reinforcementAmount, 1.0f, 0, 6);
 	data.currentBase = CalculateCurrentBaseParameter(data.lv1Base, data.levelUpBase, data.currentParameter.level);
 	data.currentParameter = CalculateCurrentParameter(data.lv1Parameter, data.levelUpBase, data.currentParameter.level);
+	if (!IsNearlyEqual(previousLv1Base.HP, data.lv1Base.HP) || !IsNearlyEqual(previousLv1Base.Attack, data.lv1Base.Attack) || !IsNearlyEqual(previousLv1Base.Deffence, data.lv1Base.Deffence) ||
+	    !IsNearlyEqual(previousLevelUpBase.HP, data.levelUpBase.HP) || !IsNearlyEqual(previousLevelUpBase.Attack, data.levelUpBase.Attack) ||
+	    !IsNearlyEqual(previousLevelUpBase.Deffence, data.levelUpBase.Deffence) || previousLv1Parameter != ToJson(data.lv1Parameter) || previousCurrentLevel != data.currentParameter.level ||
+	    previousReinforcementAmount != data.reinforcementAmount) {
+		data.hasUnsavedChanges = true;
+	}
 
 	if (ImGui::Button("Save Character Json")) {
 		SaveCharacterTuningJson(data.name, data.lv1Base, data.lv1Parameter, data.levelUpBase, data.currentBase, data.currentParameter, data.reinforcementAmount);
+		data.hasUnsavedChanges = false;
 		saveStatusMessage_ = "Saved character parameters: " + data.name;
 	}
 #endif
@@ -1450,8 +1474,7 @@ void Hierarchy::DrawObjectEditors() {
 			if (hasUnsavedChanges_) {
 				ImGui::OpenPopup("Unsaved Changes");
 			} else {
-				SceneManager::GetInstance()->RequestReinitializeCurrentScene();
-				SetPlayMode(true);
+				StartPlayMode();
 				saveStatusMessage_ = "Playing";
 			}
 		}
@@ -1461,8 +1484,7 @@ void Hierarchy::DrawObjectEditors() {
 			ImGui::Separator();
 
 			if (ImGui::Button("YES", ImVec2(100.0f, 0.0f))) {
-				SceneManager::GetInstance()->RequestReinitializeCurrentScene();
-				SetPlayMode(true);
+				StartPlayMode();
 				saveStatusMessage_ = "Playing (unsaved changes kept)";
 				ImGui::CloseCurrentPopup();
 			}
@@ -1477,8 +1499,7 @@ void Hierarchy::DrawObjectEditors() {
 				const bool saved = SaveObjectEditorsToJson(saveFilePath);
 				if (saved) {
 					hasUnsavedChanges_ = false;
-					SceneManager::GetInstance()->RequestReinitializeCurrentScene();
-					SetPlayMode(true);
+					StartPlayMode();
 					saveStatusMessage_ = "Saved and Playing: " + saveFilePath;
 					ImGui::CloseCurrentPopup();
 				} else {
