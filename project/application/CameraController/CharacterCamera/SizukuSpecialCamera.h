@@ -25,7 +25,7 @@ class SizukuSpecialCamera {
 
 	float TurnAnimationTime_ = 2.0f; /*秒*/ 
 	float FingerSnapAnimationTime_ = 1.0f; /*秒*/ 
-	float AttackAnimationTime = 2.0f;      /*秒*/ 
+	float AttackAnimationTime_ = 2.0f;      /*秒*/ 
 
 	bool isEnd_ = false;
 
@@ -33,7 +33,7 @@ public:
 	void Initialize();
 	void Update();
 	void Start();
-	bool GetIsEnd() { return isEnd_; };
+	bool GetIsEnd() const { return isEnd_; };
 
 	void SetPlayerTransform(const Transform& transform) { playerTransform_ = transform; }
 	Camera* GetCamera() const { return camera_.get(); }

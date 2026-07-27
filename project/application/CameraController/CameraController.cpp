@@ -103,7 +103,9 @@ void CameraController::Update() {
 	normalAttackCamera_->SetOrbitPitch(playerCamera_->GetTransform().rotate.x);
 	normalAttackCamera_->Update();
 	sizukuSpecialCamera_->Update();
-
+	if (cameraMode_ == CameraMode::kSizukuSpecialCamera && sizukuSpecialCamera_->GetIsEnd()) {
+		ReturnToPlayerCamera();
+	}
 	Transform targetTransform = playerCamera_->GetTransform();
 	if (cameraMode_ == CameraMode::kLockOnCamera) {
 		targetTransform = lockOnCamera_->GetTransform();
@@ -221,13 +223,18 @@ void CameraController::SetPlayerTransform(const Transform& transform) {
 	sizukuSpecialCamera_->SetPlayerTransform(transform);
 }
 void CameraController::SetSizukuSpecialCameraActive(bool isActive) {
-	if (isActive) {
+	if (isActive && !isSizukuSpecialCameraActive_) {
+		isSizukuSpecialCameraActive_ = true;
 		autoLockOnTimer_ = 0.0f;
 		lockOnCamera_->ClearTarget();
 		normalAttackCamera_->ClearTarget();
 		RequestCameraMode(CameraMode::kSizukuSpecialCamera);
 		sizukuSpecialCamera_->Start();
-	} else if (cameraMode_ == CameraMode::kSizukuSpecialCamera || pendingCameraMode_ == CameraMode::kSizukuSpecialCamera) {
+	} else if (!isActive) {
+		isSizukuSpecialCameraActive_ = false;
+		if (cameraMode_ != CameraMode::kSizukuSpecialCamera && pendingCameraMode_ != CameraMode::kSizukuSpecialCamera) {
+			return;
+		}
 		hasPendingCameraMode_ = false;
 		ReturnToPlayerCamera();
 	}

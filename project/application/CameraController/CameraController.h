@@ -38,6 +38,7 @@ class CameraController {
 	float cameraSwitchTimer_ = 0.0f;                           // カメラ切り替えのタイマー
 	float cameraSwitchDuration_ = 0.2f;                        // 現在のカメラ切り替えの時間
 	bool hasPendingCameraMode_ = false;                        // 補間完了後に切り替えるカメラモードがあるか
+	bool isSizukuSpecialCameraActive_ = false;                 // シズク必殺技カメラの開始要求が有効か
 	CameraMode pendingCameraMode_ = CameraMode::kPlayerCamera; // 補間完了後に切り替えるカメラモード
 	static constexpr float kDefaultCameraSwitchDuration_ = 0.2f;
 	static constexpr float kPlayerCameraSwitchDuration_ = 0.35f;
