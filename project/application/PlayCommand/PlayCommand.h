@@ -40,6 +40,12 @@ class PlayCommand {
 	static bool GetDASH();
 
 	/// <summary>
+	/// ダッシュトリガー
+	/// </summary>
+	/// <returns></returns>
+	static bool GetDASH_TRIGGER();
+
+	/// <summary>
 	/// 通常攻撃長押し
 	/// </summary>
 	/// <returns></returns>
