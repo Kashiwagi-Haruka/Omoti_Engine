@@ -11,7 +11,7 @@ class SizukuSpecial{
 	bool isEnd_ = false;
 	float duration_ = 0;     // 継続時間
 	float durationMax_ = 15; // 最大継続時間(秒)
-	float sizukuHeight_ = 0; // 雫の高さ
+	float sizukuHeight_ = 2.0f; // 雫の高さ
 	float rainInterval_ = 0.5f; // 雨の降る間隔(秒)
 	float rainTimer_ = 0;       // 雨のタイマー
 	float fieldSize_ = 50.0f;    // フィールドのサイズ
