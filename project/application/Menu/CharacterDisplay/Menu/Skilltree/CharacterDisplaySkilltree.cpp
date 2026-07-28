@@ -133,22 +133,29 @@ void CharacterDisplaySkilltree::Update() {
 		normalAttackSprite_->SetPosition({SCREEN_SIZE::HALF_WIDTH, SCREEN_SIZE::HALF_HEIGHT - 260.0f});
 
 		skillAttackSprite_->SetPosition(
-		    {normalAttackSprite_->GetPosition().x + sinf(std::numbers::pi_v<float> / 12.0f) * 40.0f, 
-			normalAttackSprite_->GetPosition().y +cosf(std::numbers::pi_v<float> / 12.0f) * 40.0f});
+		    {normalAttackSprite_->GetPosition().x + sinf(std::numbers::pi_v<float>*1.0f / 6.0f) * 250.0f, 
+			normalAttackSprite_->GetPosition().y +250.0f-cosf(std::numbers::pi_v<float>*1.0f / 6.0f) * 250.0f});
 
 		specialAttackSprite_->SetPosition(
-		    {normalAttackSprite_->GetPosition().x + sinf(std::numbers::pi_v<float> * 2 / 12.0f) * 40.0f, 
-			normalAttackSprite_->GetPosition().y+  cosf(std::numbers::pi_v<float> * 2 / 12.0f) * 40.0f});
+		    {normalAttackSprite_->GetPosition().x + sinf(std::numbers::pi_v<float> * 2.0f / 6.0f) * 250.0f, 
+			normalAttackSprite_->GetPosition().y +250.0f- cosf(std::numbers::pi_v<float> * 2.0f / 6.0f) * 250.0f});
 
 		AddAbilityRightSprite_->SetPosition(
-		    {normalAttackSprite_->GetPosition().x + sinf(std::numbers::pi_v<float> * 3 / 12.0f) * 40.0f,
-		     normalAttackSprite_->GetPosition().y + cosf(std::numbers::pi_v<float> * 3 / 12.0f) * 40.0f});
+		    {normalAttackSprite_->GetPosition().x + sinf(std::numbers::pi_v<float> * 3.0f / 6.0f) * 250.0f,
+		     normalAttackSprite_->GetPosition().y + 250.0f - cosf(std::numbers::pi_v<float> * 3.0f / 6.0f) * 250.0f});
 
 		for (int i = 0; i < kMaxskillTreeCount_; i++) {
 			rightSkilltreeSprites_[i]->SetPosition(
-			    {normalAttackSprite_->GetPosition().x + sinf(std::numbers::pi_v<float> * (4+i) / 12.0f) * 40.0f,
-			     normalAttackSprite_->GetPosition().y + cosf(std::numbers::pi_v<float> * (4 + i) / 12.0f) * 40.0f});
+			    {normalAttackSprite_->GetPosition().x + sinf(std::numbers::pi_v<float> * (4.0f+i) / 6.0f) * 250.0f,
+			     normalAttackSprite_->GetPosition().y + 250.0f - cosf(std::numbers::pi_v<float> * (4.0f + i) / 6.0f) * 250.0f});
+			leftSkilltreeSprites_[i]->SetPosition(
+			    {normalAttackSprite_->GetPosition().x - 125.0f + sinf(std::numbers::pi_v<float> * (2.0f + i) / 6.0f) * 150.0f,
+			     normalAttackSprite_->GetPosition().y + 175.0f - cosf(std::numbers::pi_v<float> * (2.0f+i) / 6.0f) * 150.0f});
 		}
+
+		AddAbilityLeftSprite_->SetPosition(
+		    {normalAttackSprite_->GetPosition().x - 125.0f+sinf(std::numbers::pi_v<float> * 1.0f / 6.0f) * 150.0f,
+		     normalAttackSprite_->GetPosition().y + 175.0f - cosf(std::numbers::pi_v<float> * 1.0f / 6.0f) * 150.0f});
 
 
 		break;
