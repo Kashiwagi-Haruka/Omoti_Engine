@@ -70,7 +70,10 @@ public:
 	bool isSkillAttacking() const { return isSkillAttack; }      // スキル攻撃中かどうかを返す関数
 	bool isSpecialAttacking() const { return isSpecialAttack; }  // 必殺技攻撃中かどうかを返す関数
 	bool IsAnyAttackActive() const { return isAttacking_ || isFallingAttack_ || isSkillAttack || isSpecialAttack; }
-	bool IsCanMove() const { return !isAttacking_ && !isFallingAttack_ && !isSkillAttack && !isSpecialAttack; }
+	bool IsCanMove() const {
+		const bool isSpecialCameraPlaying = isSpecialAttack && !special_->IsAnimationFinished();
+		return !isAttacking_ && !isFallingAttack_ && !isSkillAttack && !isSpecialCameraPlaying;
+	}
 	// プレイヤーが移動できるかどうかを返す関数
 
 	void SetIsFallingAttack(bool isFalling) { isFallingAttack_ = isFalling; }

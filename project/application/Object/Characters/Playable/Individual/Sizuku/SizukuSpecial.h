@@ -17,7 +17,7 @@ class SizukuSpecial{
 	float fieldSize_ = 5.0f;    // フィールドのサイズ
 
 	float animationTime_ = 0 ; //アニメーション時間
-	float animationTimeMax_ = 3; //最大アニメーション時間
+	float animationTimeMax_ = 5; //最大アニメーション時間
 
 	std::unique_ptr<Primitive> fieldPlane_;
 	std::unique_ptr<Object3d> skydomeObj_;
