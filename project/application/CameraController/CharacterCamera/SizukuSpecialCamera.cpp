@@ -35,7 +35,7 @@ void SizukuSpecialCamera::Update() {
 				animationTime_ = 0.0f;
 				cameraCut_ = CameraCut::FINGERSNAP;
 			}
-			distance_ = 2.0f;
+			distance_ = 3.0f;
 			transform_.translate = playerTransform_.translate + playerForward * distance_;
 			transform_.translate.y += cameraHeight_;
 

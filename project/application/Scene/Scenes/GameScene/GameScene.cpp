@@ -351,6 +351,7 @@ void GameScene::Update() {
 	}
 
 	if ((playAreaMode_ != PlayAreaMode::kSpiral || !rasen_->IsLevelSelecting()) && !isTransitionIn && !isTransitionOut) {
+
 		if (PlayCommand::GetCharacterDisplay()) {
 			isCharacterDisplayMode_ = !isCharacterDisplayMode_;
 			if (isCharacterDisplayMode_) {
@@ -365,7 +366,15 @@ void GameScene::Update() {
 				Object3dCommon::GetInstance()->SetDirectionalLight(directionalLight_);
 			}
 		}
-
+		if (isCharacterDisplayMode_) {
+			if (PlayCommand::GetESCAPE()) {
+				isPause = false;
+				if (isPartyMode_) {
+					isPartyMode_ = false;
+					UnloadTeamDisplay();
+				}
+			}
+		}		
 		if (!isCharacterDisplayMode_) {
 			if (PlayCommand::GetTeamSelectDisplay()&&!isPause) {
 				isPartyMode_ = !isPartyMode_;
