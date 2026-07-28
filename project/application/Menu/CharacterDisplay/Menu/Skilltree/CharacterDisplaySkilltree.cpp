@@ -93,21 +93,23 @@ void CharacterDisplaySkilltree::Update() {
 		break;
 	case Arcana::Hermit:
 
-		normalAttackSprite_->SetPosition({SCREEN_SIZE::HALF_WIDTH, SCREEN_SIZE::HALF_HEIGHT - 200.0f});
+		normalAttackSprite_->SetPosition({SCREEN_SIZE::HALF_WIDTH-60.0f, SCREEN_SIZE::HALF_HEIGHT - 260.0f});
 		skillAttackSprite_->SetPosition(
-		    {normalAttackSprite_->GetPosition().x - sinf(std::numbers::pi_v<float> / 8.0f) * 60.0f, normalAttackSprite_->GetPosition().y + sinf(std::numbers::pi_v<float> / 8.0f) * 60.0f});
+		    {normalAttackSprite_->GetPosition().x - sinf(std::numbers::pi_v<float> / 8.0f) * 240.0f, normalAttackSprite_->GetPosition().y + sinf(std::numbers::pi_v<float> / 8.0f) * 60.0f});
 		specialAttackSprite_->SetPosition(
-		    {normalAttackSprite_->GetPosition().x + sinf(std::numbers::pi_v<float> / 8.0f) * 60.0f, normalAttackSprite_->GetPosition().y + sinf(std::numbers::pi_v<float> / 8.0f) * 60.0f});
+		    {normalAttackSprite_->GetPosition().x + sinf(std::numbers::pi_v<float> / 8.0f) * 240.0f, normalAttackSprite_->GetPosition().y + sinf(std::numbers::pi_v<float> / 8.0f) * 60.0f});
 		AddAbilityLeftSprite_->SetPosition(
-		    {normalAttackSprite_->GetPosition().x - sinf(std::numbers::pi_v<float> * 2.0f / 8.0f) * 60.0f, normalAttackSprite_->GetPosition().y + sinf(std::numbers::pi_v<float>*2.0f / 8.0f) * 60.0f});
-		AddAbilityLeftSprite_->SetPosition(
-		    {normalAttackSprite_->GetPosition().x + sinf(std::numbers::pi_v<float> * 2.0f / 8.0f) * 60.0f, normalAttackSprite_->GetPosition().y + sinf(std::numbers::pi_v<float>*2.0f / 8.0f) * 60.0f});
+		    {normalAttackSprite_->GetPosition().x - sinf(std::numbers::pi_v<float> * 2.0f / 8.0f) * 240.0f, normalAttackSprite_->GetPosition().y + sinf(std::numbers::pi_v<float>*2.0f / 8.0f) * 60.0f});
+		AddAbilityRightSprite_->SetPosition(
+		    {normalAttackSprite_->GetPosition().x + sinf(std::numbers::pi_v<float> * 2.0f / 8.0f) * 240.0f, normalAttackSprite_->GetPosition().y + sinf(std::numbers::pi_v<float>*2.0f / 8.0f) * 60.0f});
 
 		for (int i = 0; i < kMaxskillTreeCount_-1; i++) {
 			leftSkilltreeSprites_[i]->SetPosition(
-			    {AddAbilityLeftSprite_->GetPosition().x + (20.0f*i), AddAbilityLeftSprite_->GetPosition().y + (60.0f * (i + 1))});
-			rightSkilltreeSprites_[i]->SetPosition({AddAbilityLeftSprite_->GetPosition().x - (20.0f * i), AddAbilityLeftSprite_->GetPosition().y + (60.0f * (i + 1))});
+			    {AddAbilityLeftSprite_->GetPosition().x + (12.0f*i), AddAbilityLeftSprite_->GetPosition().y + (80.0f * (i + 1))});
+			rightSkilltreeSprites_[i]->SetPosition({AddAbilityRightSprite_->GetPosition().x - (12.0f * i), AddAbilityRightSprite_->GetPosition().y + (80.0f * (i + 1))});
 		}
+		leftSkilltreeSprites_[kMaxskillTreeCount_ - 1]->SetPosition({skillAttackSprite_->GetPosition().x+40.0f, leftSkilltreeSprites_[kMaxskillTreeCount_ - 2]->GetPosition().y + 40.0f});
+		rightSkilltreeSprites_[kMaxskillTreeCount_ - 1]->SetPosition({specialAttackSprite_->GetPosition().x-40.0f, leftSkilltreeSprites_[kMaxskillTreeCount_ - 2]->GetPosition().y + 40.0f});
 
 		break;
 	case Arcana::Fortune:
@@ -127,6 +129,28 @@ void CharacterDisplaySkilltree::Update() {
 	case Arcana::Star:
 		break;
 	case Arcana::Moon:
+
+		normalAttackSprite_->SetPosition({SCREEN_SIZE::HALF_WIDTH, SCREEN_SIZE::HALF_HEIGHT - 260.0f});
+
+		skillAttackSprite_->SetPosition(
+		    {normalAttackSprite_->GetPosition().x + sinf(std::numbers::pi_v<float> / 12.0f) * 40.0f, 
+			normalAttackSprite_->GetPosition().y +sinf(std::numbers::pi_v<float> / 12.0f) * 40.0f});
+
+		specialAttackSprite_->SetPosition(
+		    {normalAttackSprite_->GetPosition().x + sinf(std::numbers::pi_v<float> * 2 / 12.0f) * 40.0f, 
+			normalAttackSprite_->GetPosition().y+  sinf(std::numbers::pi_v<float> * 2 / 12.0f) * 40.0f});
+
+		AddAbilityRightSprite_->SetPosition(
+		    {normalAttackSprite_->GetPosition().x + sinf(std::numbers::pi_v<float> * 3 / 12.0f) * 40.0f,
+		     normalAttackSprite_->GetPosition().y + sinf(std::numbers::pi_v<float> * 3 / 12.0f) * 40.0f});
+
+		for (int i = 0; i < kMaxskillTreeCount_; i++) {
+			rightSkilltreeSprites_[i]->SetPosition(
+			    {normalAttackSprite_->GetPosition().x + sinf(std::numbers::pi_v<float> * (4+i) / 12.0f) * 40.0f,
+			     normalAttackSprite_->GetPosition().y + sinf(std::numbers::pi_v<float> * (4 + i) / 12.0f) * 40.0f});
+		}
+
+
 		break;
 	case Arcana::Sun:
 		break;
