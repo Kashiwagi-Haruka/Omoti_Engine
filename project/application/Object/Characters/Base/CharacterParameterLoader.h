@@ -4,6 +4,6 @@
 
 namespace CharacterParameterLoader {
 
-bool LoadCurrentParameters(const std::string& characterName, BaseParameter& outBaseParameter, Parameter& outParameter, int* outReinforcementAmount = nullptr);
+bool LoadCurrentParameters(const std::string& characterName, BaseParameter& outBaseParameter, Parameter& outParameter, int& outReinforcementAmount);
 
 } // namespace CharacterParameterLoader

@@ -14,7 +14,7 @@ void CharacterDisplayEquip::Initialize() {
 		viewEquipment_[i]->SetEnableLighting(false);
 		viewEquipmentTransform_[i].scale = {10.0f, 10.0f, 10.0f};
 		viewEquipmentTransform_[i].rotate = {std::numbers::pi_v<float>/2.0f, 0.0f, 0.0f};
-		viewEquipmentTransform_[i].translate = {std::cosf(std::numbers::pi_v<float> * (1.0f*i / 5.0f)) * distance_, 0.0f, std::cosf(std::numbers::pi_v<float> * (1.0f*i / 5.0f)) * distance_};
+		viewEquipmentTransform_[i].translate = {std::cosf(std::numbers::pi_v<float> * (1.0f*i / 5.0f)) * distance_, 0.0f, std::sinf(std::numbers::pi_v<float> * (1.0f*i / 5.0f)) * distance_};
 	}
 
 

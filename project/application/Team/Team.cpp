@@ -42,7 +42,7 @@ void Team::Initialize() {
 		BaseParameter baseParameter{};
 		Parameter parameter{};
 		int reinforcementAmount = 0;
-		if (CharacterParameterLoader::LoadCurrentParameters(character->GetRomanizationName(), baseParameter, parameter, &reinforcementAmount)) {
+		if (CharacterParameterLoader::LoadCurrentParameters(character->GetRomanizationName(), baseParameter, parameter, reinforcementAmount)) {
 			character->SetBaseParameter(baseParameter);
 			character->SetParameter(parameter);
 			character->SetReinforcementAmount(reinforcementAmount);
