@@ -10,7 +10,7 @@ constexpr Vector2 kSelectIconSize = {45.0f, 45.0f};
 
 constexpr Vector2 kKeyIconSize = {60.0f, 32.0f};
 constexpr float kKeyMarginY = 20.0f;
-constexpr Vector2 kKeyAncor = {1.0f, 0.0f};
+constexpr Vector2 kKeyAncor = {0.5f, 0.0f};
 }
 
 Menu::Menu() { 
@@ -50,11 +50,11 @@ void Menu::Initialize() {
 
 	pauseSprite_->SetScale(kIconSize);
 	pauseSprite_->SetPosition({helpSprite_->GetPosition().x - (kIconSize.x + kIconMargin.x), kIconMargin.y});
-	pauseSprite_->SetAnchorPoint({0.0f, 0.0f});
+	pauseSprite_->SetAnchorPoint({1.0f, 0.0f});
 
 	pauseKeyboardSprite_->SetScale(kKeyIconSize);
 	pauseKeyboardSprite_->SetPosition({pauseSprite_->GetPosition().x, pauseSprite_->GetPosition().y + kKeyMarginY + (kIconSize.y / 2.0f)});
-	pauseKeyboardSprite_->SetAnchorPoint({0.0f,0.0f});
+	pauseKeyboardSprite_->SetAnchorPoint(kKeyAncor);
 	
 	characterDisplayKeyboardSprite_->SetScale(kKeyIconSize);
 	characterDisplayKeyboardSprite_->SetPosition({characterDisplaySprite_->GetPosition().x, characterDisplaySprite_->GetPosition().y + kKeyMarginY + (kIconSize.y / 2.0f)});

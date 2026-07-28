@@ -19,7 +19,7 @@ class NormalAttackCamera {
 	Vector3 targetPos_ = {0.0f, 0.0f, 0.0f};      // ロックオン対象の座標
 	bool hasFollowPosition_ = false;              // プレイヤーの座標を追従するかどうかのフラグ
 	Vector3 followPosition_ = {0.0f, 0.0f, 0.0f}; // プレイヤーの座標
-	float distance_ = 10.0f;                       // カメラとプレイヤーの距離
+	float distance_ = 12.0f;                       // カメラとプレイヤーの距離
 
 public:
 	/// <summary>
