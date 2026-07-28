@@ -561,7 +561,8 @@ void GameScene::Update() {
 			player->ClearLockOnTarget();
 			playerLockOnTarget = nullptr;
 		}
-		if (didNormalAttackHitEnemy && normalAttackHitEnemy && normalAttackHitEnemy == normalAttackTargetEnemy_) {
+		const bool canStartLockOn = didNormalAttackHitEnemy && normalAttackHitEnemy && normalAttackHitEnemy == normalAttackTargetEnemy_ && !cameraController->IsLockOnCameraActive();
+		if (canStartLockOn) {
 			// プレイヤーとカメラは、命中した同一の敵をロックオン対象として共有する。
 			lockOnMarkerEnemy_ = normalAttackHitEnemy;
 			player->SetLockOnTarget(lockOnMarkerEnemy_);

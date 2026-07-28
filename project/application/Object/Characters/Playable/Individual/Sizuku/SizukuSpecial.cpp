@@ -8,7 +8,7 @@
 SizukuSpecial::SizukuSpecial() {
 	fieldPlane_ = std::make_unique<Primitive>();
 	skydomeObj_ = std::make_unique<Object3d>();
-	ModelManager::GetInstance()->LoadModel("Resources/3d/iceFlower", "iceFlower");
+	ModelManager::GetInstance()->LoadModel("Resources/3d/Character/Sizuku/Special/Rain", "sizukuSpecialRain");
 	ModelManager::GetInstance()->LoadModel("Resources/3d/Character/Sizuku/Special/skydome", "sizukuSpecialDome");
 }
 void SizukuSpecial::Initialize() {
