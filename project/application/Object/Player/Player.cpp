@@ -304,7 +304,7 @@ void Player::FaceLockOnTarget() {
 	transform_.rotate.y = Function::Lerp(transform_.rotate.y, transform_.rotate.y + angleDiff, rotateTimer);
 }
 void Player::Jump() {
-	if (PlayCommand::GetJUMP() && !isJump && !isfalling && !attack_->IsFallingAttacking()) {
+	if (PlayCommand::GetJUMP() && attack_->IsCanMove() && !isJump && !isfalling) {
 		isJump = true;
 		jumpTimer = 0.0f;
 	}

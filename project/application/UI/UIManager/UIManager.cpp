@@ -99,4 +99,5 @@ void UIManager::SetTeam(Team* team) { team_ = team; }
 void UIManager::SetPlayerDashGauge(float dashGauge, float dashGaugeMax , bool isDashView) {
 	const float gaugeRate = dashGaugeMax > 0.0f ? dashGauge / dashGaugeMax : 0.0f;
 	dashGaugeUI_->SetGaugeRate(gaugeRate);
+	isDashView_ = isDashView;
 }
