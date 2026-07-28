@@ -10,8 +10,8 @@
     "HP": 0.0
   },
   "parameter": {
-    "Attack": 20.0,
-    "AttributeAffinity": 1.0,
+    "Attack": 25.700000762939453,
+    "AttributeAffinity": 6.199999809265137,
     "AttributeDamageRate": [
       0.0,
       0.0,
