@@ -134,20 +134,20 @@ void CharacterDisplaySkilltree::Update() {
 
 		skillAttackSprite_->SetPosition(
 		    {normalAttackSprite_->GetPosition().x + sinf(std::numbers::pi_v<float> / 12.0f) * 40.0f, 
-			normalAttackSprite_->GetPosition().y +sinf(std::numbers::pi_v<float> / 12.0f) * 40.0f});
+			normalAttackSprite_->GetPosition().y +cosf(std::numbers::pi_v<float> / 12.0f) * 40.0f});
 
 		specialAttackSprite_->SetPosition(
 		    {normalAttackSprite_->GetPosition().x + sinf(std::numbers::pi_v<float> * 2 / 12.0f) * 40.0f, 
-			normalAttackSprite_->GetPosition().y+  sinf(std::numbers::pi_v<float> * 2 / 12.0f) * 40.0f});
+			normalAttackSprite_->GetPosition().y+  cosf(std::numbers::pi_v<float> * 2 / 12.0f) * 40.0f});
 
 		AddAbilityRightSprite_->SetPosition(
 		    {normalAttackSprite_->GetPosition().x + sinf(std::numbers::pi_v<float> * 3 / 12.0f) * 40.0f,
-		     normalAttackSprite_->GetPosition().y + sinf(std::numbers::pi_v<float> * 3 / 12.0f) * 40.0f});
+		     normalAttackSprite_->GetPosition().y + cosf(std::numbers::pi_v<float> * 3 / 12.0f) * 40.0f});
 
 		for (int i = 0; i < kMaxskillTreeCount_; i++) {
 			rightSkilltreeSprites_[i]->SetPosition(
 			    {normalAttackSprite_->GetPosition().x + sinf(std::numbers::pi_v<float> * (4+i) / 12.0f) * 40.0f,
-			     normalAttackSprite_->GetPosition().y + sinf(std::numbers::pi_v<float> * (4 + i) / 12.0f) * 40.0f});
+			     normalAttackSprite_->GetPosition().y + cosf(std::numbers::pi_v<float> * (4 + i) / 12.0f) * 40.0f});
 		}
 
 
