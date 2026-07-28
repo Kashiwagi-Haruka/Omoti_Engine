@@ -14,7 +14,7 @@ class LockOnCamera {
 	float mouseSensitivity_ = 0.002f; // マウス感度
 	Vector3 playerPos = {0.0f, 0.0f, 0.0f}; // プレイヤーの座標
 	float orbitYaw_ = 0.0f;                 // カメラの回転角度（ヨー軸）
-	float orbitPitch_ = 0.15f;              // カメラの回転角度（ピッチ軸）
+	float orbitPitch_ = 0.55f;              // カメラの回転角度（ピッチ軸）
 	float shakeTimer_ = 0.0f;               // カメラの揺れのタイマー
 	float shakeDuration_ = 0.0f;            // カメラの揺れの継続時間
 	float shakeAmplitude_ = 0.6f;           // カメラの揺れの振幅

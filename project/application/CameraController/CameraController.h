@@ -126,7 +126,7 @@ public:
 	/// ロックオンカメラが使用中かどうかを取得する
 	/// </summary>
 	/// <returns>ロックオンカメラの使用中はtrue</returns>
-	bool IsLockOnCameraActive() const { return cameraMode_ == CameraMode::kLockOnCamera; }
+	bool IsLockOnCameraActive() const { return cameraMode_ == CameraMode::kLockOnCamera || (hasPendingCameraMode_ && pendingCameraMode_ == CameraMode::kLockOnCamera) || autoLockOnTimer_ > 0.0f; }
 	/// <summary>
 	/// ロックオンターゲットの設定
 	/// </summary>
