@@ -114,12 +114,16 @@ public:
 	bool IsDashing() const { return isDash; }
 	bool GetIsSkillAttack() { return attack_->isSkillAttacking(); }
 	bool GetIsSpecialAttack() const { return attack_->isSpecialAttacking(); }
+	bool GetIsDashUIView() const { return isDashGaugeRecovery_||isDash; }
 	Vector3 GetSkillPosition() { return attack_->GetSkillDamagePosition(); }
 	Parameters GetParameters() { return parameters_; }
 	void SetParameters(const Parameters& p) { parameters_ = p; }
 	Vector3 GetRotate() { return transform_.rotate; }
 	Vector3 GetScale() { return transform_.scale; }
 	void Damage(int amount) {
+		if (attack_ && attack_->isSpecialAttacking()) {
+			return;
+		}
 		if (!isInvincible_) {
 			pendingDamage_ = amount;
 			isInvincible_ = true;

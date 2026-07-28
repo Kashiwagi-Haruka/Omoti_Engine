@@ -74,7 +74,9 @@ void UIManager::Draw() {
 	hpBarUI_->Draw();
 	SpriteCommon::GetInstance()->DrawCommon();
 	attackOperationUI_->Draw();
-	dashGaugeUI_->Draw();
+	if (isDashView_) {
+		dashGaugeUI_->Draw();
+	}
 	towerUI_->Draw();
 	SpriteCommon::GetInstance()->DrawCommon();
 	menuUI_->Draw();
@@ -94,7 +96,7 @@ void UIManager::SetPlayerHP(int HP) { hpBarUI_->SetPlayerHP(HP); }
 void UIManager::SetPlayerHPMax(int HPMax) { hpBarUI_->SetPlayerHPMax(HPMax); }
 void UIManager::SetPlayerParameters(Parameters parameters) { parameters_ = parameters; }
 void UIManager::SetTeam(Team* team) { team_ = team; }
-void UIManager::SetPlayerDashGauge(float dashGauge, float dashGaugeMax) {
+void UIManager::SetPlayerDashGauge(float dashGauge, float dashGaugeMax , bool isDashView) {
 	const float gaugeRate = dashGaugeMax > 0.0f ? dashGauge / dashGaugeMax : 0.0f;
 	dashGaugeUI_->SetGaugeRate(gaugeRate);
 }

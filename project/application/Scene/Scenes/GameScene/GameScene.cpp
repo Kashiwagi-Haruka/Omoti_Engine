@@ -148,7 +148,7 @@ void GameScene::Initialize() {
 	uimanager->Initialize();
 	uimanager->SetPlayerHPMax(team_->GetActiveCharacterHPMax());
 	uimanager->SetPlayerHP(team_->GetActiveCharacterHP());
-	uimanager->SetPlayerDashGauge(player->GetDashGauge(), player->GetDashGaugeMax());
+	uimanager->SetPlayerDashGauge(player->GetDashGauge(), player->GetDashGaugeMax(),player->GetIsDashUIView());
 	rasen_->Initialize(cameraController->GetCamera());
 	openWorld_->Initialize(cameraController->GetCamera());
 	playAreaMode_ = PlayAreaMode::kSpiral;
@@ -632,7 +632,7 @@ void GameScene::Update() {
 	uimanager->SetPlayerParameters(player->GetParameters());
 	uimanager->SetPlayerHPMax(team_->GetActiveCharacterHPMax());
 	uimanager->SetPlayerHP(team_->GetActiveCharacterHP());
-	uimanager->SetPlayerDashGauge(player->GetDashGauge(), player->GetDashGaugeMax());
+	uimanager->SetPlayerDashGauge(player->GetDashGauge(), player->GetDashGaugeMax(),player->GetIsDashUIView());
 	uimanager->Update();
 
 	Transform cameraPlayerTransform = {player->GetScale(), player->GetRotate(), player->GetPosition()};
