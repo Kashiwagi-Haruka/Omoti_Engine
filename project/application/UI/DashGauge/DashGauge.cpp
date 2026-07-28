@@ -1,3 +1,4 @@
+#define NOMINMAX
 #include "DashGauge.h"
 #include "Sprite.h"
 #include "TextureManager.h"
@@ -40,6 +41,12 @@ void DashGauge::Initialize() {
 
 void DashGauge::Update() {
 	gaugeRate_ = std::clamp(gaugeRate_, 0.0f, 1.0f);
+	if (dashUIView_) {
+		alpha_ = 1.0f;
+	} else {
+		alpha_ -= 0.05f;
+		alpha_ = std::max(alpha_, 0.0f);
+	}
 	const float fillSegmentCount = gaugeRate_ * static_cast<float>(kSegmentCount);
 
 	for (int i = 0; i < kSegmentCount; ++i) {
@@ -55,6 +62,7 @@ void DashGauge::Update() {
 			frameSprites_[i]->SetPosition(segmentPosition);
 			frameSprites_[i]->SetRotation(tangentRotation);
 			frameSprites_[i]->SetScale({segmentSize_.x + kFramePadding, segmentSize_.y + kFramePadding});
+			frameSprites_[i]->SetColor({kFrameColor.x, kFrameColor.y, kFrameColor.z, kFrameColor.w * alpha_});
 			frameSprites_[i]->Update();
 		}
 
@@ -63,7 +71,7 @@ void DashGauge::Update() {
 			fillSprites_[i]->SetPosition(segmentPosition);
 			fillSprites_[i]->SetRotation(tangentRotation);
 			fillSprites_[i]->SetScale({segmentSize_.x * segmentFill, segmentSize_.y});
-			fillSprites_[i]->SetColor({kFillColor.x, kFillColor.y, kFillColor.z, kFillColor.w * segmentFill});
+			fillSprites_[i]->SetColor({kFillColor.x, kFillColor.y, kFillColor.z, kFillColor.w * segmentFill * alpha_});
 			fillSprites_[i]->Update();
 		}
 	}
@@ -83,3 +91,5 @@ void DashGauge::Draw() {
 }
 
 void DashGauge::SetGaugeRate(float gaugeRate) { gaugeRate_ = gaugeRate; }
+
+void DashGauge::SetDamageUIView(bool dashUIView) { dashUIView_ = dashUIView; }

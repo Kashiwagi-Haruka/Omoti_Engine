@@ -26,7 +26,6 @@ class UIManager {
 	std::unique_ptr<TeamUI> teamUI_;
 	std::unique_ptr<PadMenu> padMenuUI_;
 	Team* team_ = nullptr;
-	bool isDashView_ = false;
 
 public:
 	// 生成時にUIリソースを読み込む。
