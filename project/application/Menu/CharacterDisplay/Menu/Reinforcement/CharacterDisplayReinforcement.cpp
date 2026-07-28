@@ -44,10 +44,20 @@ void CharacterDisplayReinforcement::Initialize(){
 	spritTextureNameHandle = TextureManager::GetInstance()->GetTextureIndexByfilePath(spritTextureNamesix);
 	spritSprites_[5]->Initialize(spritTextureNameHandle);
 	
-}
-void CharacterDisplayReinforcement::Update() {
 	backgroundSprite_->SetPosition(spriteCenterPos);
 	backgroundSprite_->SetScale({spriteRatio.x * spriteMagnification, spriteRatio.y * spriteMagnification});
+	fullSprite_->SetPosition(spriteCenterPos);
+	fullSprite_->SetScale({spriteRatio.x * spriteMagnification, spriteRatio.y * spriteMagnification});
+	fullSprite_->SetAnchorPoint({0.5f, 0.5f});
+	for (int i = 0; i < 5; i++) {
+		spritSprites_[i]->SetPosition(spriteCenterPos);
+		spritSprites_[i]->SetScale({spriteRatio.x * spriteMagnification, spriteRatio.y * spriteMagnification});
+		spritSprites_[i]->SetAnchorPoint({0.5f, 0.5f});
+	};
+
+}
+void CharacterDisplayReinforcement::Update() {
+
 	backgroundSprite_->Update();
 	if (haveCount_ == 0) {
 		return;
