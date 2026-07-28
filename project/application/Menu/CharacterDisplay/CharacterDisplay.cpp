@@ -194,6 +194,7 @@ void CharacterDisplay::Update() {
 		if (PlayCommand::GetDownUI()) {
 			selectMenuType_ = CharacterDisplayMenuType ::PROFILE;
 		}
+		reinforcement_->SetReinforcementCount(currentPlayable_->GetReinforcement());
 		reinforcement_->Update();
 		break;
 	case CharacterDisplayMenuType::PROFILE:

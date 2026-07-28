@@ -49,9 +49,9 @@ void CharacterDisplayReinforcement::Update() {
 	backgroundSprite_->SetPosition(spriteCenterPos);
 	backgroundSprite_->SetScale({spriteRatio.x * spriteMagnification, spriteRatio.y * spriteMagnification});
 	backgroundSprite_->Update();
-	if (haveCount_ = 0) {
+	if (haveCount_ == 0) {
 		return;
-	} else if (haveCount_ = kMaxSprit_) {
+	} else if (haveCount_ == kMaxSprit_) {
 		fullSprite_->Update();
 	} else {
 		for (int i = 0; i <= haveCount_; i++) {
@@ -62,13 +62,13 @@ void CharacterDisplayReinforcement::Update() {
 }
 void CharacterDisplayReinforcement::Draw() {
 	backgroundSprite_->Draw();
-	if (haveCount_ = 0) {
+	if (haveCount_ == 0) {
 		return;
-	}else if (haveCount_ = kMaxSprit_) {
+	}else if (haveCount_ == kMaxSprit_) {
 		fullSprite_->Draw();
 	} else {
 		for (int i = 0; i <haveCount_; i++) {
-			spritSprites_[i];
+			spritSprites_[i]->Draw();
 		}
 	}
 	
