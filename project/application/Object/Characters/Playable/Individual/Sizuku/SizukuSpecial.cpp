@@ -17,7 +17,7 @@ void SizukuSpecial::Initialize() {
 	skydomeObj_->SetEnableLighting(false);
 	skydomeObj_->SetModel("sizukuSpecialDome");
 	skydomeTransform_ = {
-	    {20.0f, 20.0f, 20.0f},
+	    {50.0f, 50.0f, 50.0f},
         {0.0f, 0.0f,  0.0f },
         {0.0f, 0.0f,  0.0f }
     };
@@ -73,7 +73,9 @@ void SizukuSpecial::Draw() {
 	}
 	Object3dCommon::GetInstance()->SetBlendMode(BlendMode::kBlendModeAlpha);
 	Object3dCommon::GetInstance()->DrawCommon();
-	skydomeObj_->Draw();
+	if (animationTime_ < animationTimeMax_) {
+		skydomeObj_->Draw();
+	}
 	// for (const auto& iceRain : iceRains_) {
 	//	if (iceRain) {
 	//		iceRain->Draw();
