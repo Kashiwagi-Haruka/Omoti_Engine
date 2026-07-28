@@ -36,10 +36,6 @@ void Menu::Initialize() {
 	teamSelectKeyboardSprite_->Initialize(TextureManager::GetInstance()->GetTextureIndexByfilePath("Resources/2d/Menu/Keyboard/TeamKey.png"));
 	helpKeyboardSprite_->Initialize(TextureManager::GetInstance()->GetTextureIndexByfilePath("Resources/2d/Menu/Keyboard/HelpKey.png"));
 
-	pauseSprite_->SetScale(kIconSize);
-	pauseSprite_->SetPosition({kIconMargin.x, kIconMargin.y});
-	pauseSprite_->SetAnchorPoint({0.0f, 0.0f});
-
 	characterDisplaySprite_->SetScale(kIconSize);
 	characterDisplaySprite_->SetPosition({WinApp::kClientWidth - (kIconMargin.x), kIconMargin.y});
 	characterDisplaySprite_->SetAnchorPoint({1.0f, 0.0f});
@@ -51,6 +47,10 @@ void Menu::Initialize() {
 	helpSprite_->SetScale(kIconSize);
 	helpSprite_->SetPosition({teamSelectSprite_->GetPosition().x - (kIconSize.x + kIconMargin.x), kIconMargin.y});
 	helpSprite_->SetAnchorPoint({1.0f, 0.0f});
+
+	pauseSprite_->SetScale(kIconSize);
+	pauseSprite_->SetPosition({helpSprite_->GetPosition().x - (kIconSize.x + kIconMargin.x), kIconMargin.y});
+	pauseSprite_->SetAnchorPoint({0.0f, 0.0f});
 
 	pauseKeyboardSprite_->SetScale(kKeyIconSize);
 	pauseKeyboardSprite_->SetPosition({pauseSprite_->GetPosition().x, pauseSprite_->GetPosition().y + kKeyMarginY + (kIconSize.y / 2.0f)});
