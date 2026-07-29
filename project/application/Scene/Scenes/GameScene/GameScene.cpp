@@ -344,16 +344,7 @@ void GameScene::Update() {
 
 		if (PlayCommand::GetCharacterDisplay()) {
 			isCharacterDisplayMode_ = !isCharacterDisplayMode_;
-			if (isCharacterDisplayMode_) {
-				isPause = false;
-				if (isPartyMode_) {
-					isPartyMode_ = false;
-					UnloadTeamDisplay();
-				}
-			}
-			if (isCharacterDisplayMode_) {
 
-			}
 		}
 		if (isCharacterDisplayMode_) {
 			if (PlayCommand::GetESCAPE()) {
