@@ -803,7 +803,7 @@ void DirectXCommon::SetSelectiveBloomIntensity(float intensity) {
 	}
 }
 void DirectXCommon::SetSelectiveBloomRadius(float radius) {
-	selectiveBloomRadius_ = std::clamp(radius, 0.0f, 32.0f);
+	selectiveBloomRadius_ = std::clamp(radius, 0.0f, 48.0f);
 	if (postEffectParameterMappedData_) {
 		postEffectParameterMappedData_->selectiveBloomRadius = selectiveBloomRadius_;
 	}

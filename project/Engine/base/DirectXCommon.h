@@ -119,8 +119,8 @@ class DirectXCommon {
 	bool fullscreenGrayscaleEnabled_ = false;
 	bool fullscreenSepiaEnabled_ = false;
 	bool selectiveBloomEnabled_ = true;
-	float selectiveBloomIntensity_ = 1.25f;
-	float selectiveBloomRadius_ = 6.0f;
+	float selectiveBloomIntensity_ = 1.5f;
+	float selectiveBloomRadius_ = 18.0f;
 	bool editorLayoutEnabled_ = false;
 	bool sceneCopiedToBackBufferThisFrame_ = false;
 	bool inOutlineRenderTarget_ = false;

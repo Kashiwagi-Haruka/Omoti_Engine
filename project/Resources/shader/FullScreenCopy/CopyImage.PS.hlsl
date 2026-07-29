@@ -74,16 +74,18 @@ float3 BlurEmission(float2 texcoord, float2 texelSize, float radius)
 {
     float3 blurredColor = float3(0.0f, 0.0f, 0.0f);
     float totalWeight = 0.0f;
+    const int kernelRadius = 3;
 
     [unroll]
-    for (int y = -2; y <= 2; ++y)
+    for (int y = -kernelRadius; y <= kernelRadius; ++y)
     {
         [unroll]
-        for (int x = -2; x <= 2; ++x)
+        for (int x = -kernelRadius; x <= kernelRadius; ++x)
         {
             float2 kernelPosition = float2(x, y);
-            float weight = exp(-dot(kernelPosition, kernelPosition) * 0.5f);
-            float2 sampleOffset = kernelPosition * texelSize * radius * 0.5f;
+            float2 normalizedPosition = kernelPosition * rcp((float) kernelRadius);
+            float weight = exp(-dot(normalizedPosition, normalizedPosition) * 1.5f);
+            float2 sampleOffset = normalizedPosition * texelSize * radius;
             blurredColor += gEmissionTexture.Sample(gSampler, saturate(texcoord + sampleOffset)).rgb * weight;
             totalWeight += weight;
         }
@@ -207,9 +209,10 @@ PixelShaderOutput main(VertexShaderOutput input)
         float2 texelSize = rcp(max(float2(emissionWidth, emissionHeight), 1.0f));
         float radius = max(selectiveBloomRadius, 0.0f);
 
-        float3 tightBloom = BlurEmission(input.texcoord, texelSize, radius * 0.35f);
-        float3 wideBloom = BlurEmission(input.texcoord, texelSize, radius);
-        float3 bloom = tightBloom * 0.65f + wideBloom * 0.35f;
+        float3 innerBloom = BlurEmission(input.texcoord, texelSize, radius * 0.3f);
+        float3 middleBloom = BlurEmission(input.texcoord, texelSize, radius * 0.65f);
+        float3 outerBloom = BlurEmission(input.texcoord, texelSize, radius);
+        float3 bloom = innerBloom * 0.25f + middleBloom * 0.35f + outerBloom * 0.4f;
         output.color.rgb += bloom * selectiveBloomIntensity;
     }
     float4 outlineColor = gOutlineTexture.Sample(gSampler, input.texcoord);
