@@ -7,12 +7,28 @@ namespace {
 const Vector4 kExpCubeColor = {0.6f, 1.0f, 0.3f, 1.0f};
 const float kRotateSpeed = 0.03f;
 const float kReturnSpeed = 0.2f;
+const float kAutoCollectRange = 5.0f;
 const Vector3 kRotateOffset[3] = {
     {0.0f,                             std::numbers::pi_v<float> / 2.0f, 0.0f},
     {std::numbers::pi_v<float> / 2.0f, 1.0f,                             0.0f},
     {0.0f,                             1.0f,                             std::numbers::pi_v<float> / 2.0f}
 };
 } // namespace
+
+bool SpecialGaugeBall::TryAutoCollect(const Vector3& playerPosition) {
+	if (isCollected_) {
+		return false;
+	}
+
+	const float dx = playerPosition.x - baseTransform_.translate.x;
+	const float dz = playerPosition.z - baseTransform_.translate.z;
+	if (dx * dx + dz * dz > kAutoCollectRange * kAutoCollectRange) {
+		return false;
+	}
+
+	isCollected_ = true;
+	return true;
+}
 
 void SpecialGaugeBall::Initialize(Camera* camera, const Vector3& position) {
 	camera_ = camera;

@@ -521,16 +521,8 @@ void GameScene::Update() {
 	player->Update();
 	if (playAreaMode_ == PlayAreaMode::kSpiral && player->GetIsAlive()) {
 		for (auto& ball : specialGaugeBallManager_->SpecialGaugeBalls()) {
-			if (!ball || ball->IsCollected()) {
-				continue;
-			}
-			Vector3 toBall = player->GetPosition() - ball->GetPosition();
-			toBall.y = 0.0f;
-			const float playerRadius = std::max(player->GetScale().x, player->GetScale().z);
-			const float ballRadius = std::max(ball->GetScale().x, ball->GetScale().z);
-			const float pickupRadius = playerRadius + ballRadius;
-			if (Function::LengthSquared(toBall) <= pickupRadius * pickupRadius) {
-				ball->Collect();
+			if (ball) {
+				ball->TryAutoCollect(player->GetPosition());
 			}
 		}
 	}

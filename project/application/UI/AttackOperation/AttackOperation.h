@@ -31,6 +31,10 @@ class AttackOperation {
 	SpriteData skillIconSPData_;
 	// スペシャル攻撃のスプライトデータ。
 	SpriteData specialAttackSPData_;
+
+	// スペシャルゲージ
+	SpriteData specialGaugeSPData_;
+
 	// キーボードスプライト
 	SpriteData keyboardDashSPData_;
 	SpriteData keyboardJumpSPData_;

@@ -109,18 +109,7 @@ void TutorialScene::Update() {
 		player_->Update();
 		if (player_->GetIsAlive()) {
 			for (auto& cube : expCubeManager_->SpecialGaugeBalls()) {
-				if (!cube || cube->IsCollected()) {
-					continue;
-				}
-				Vector3 toCube = player_->GetPosition() - cube->GetPosition();
-				toCube.y = 0.0f;
-				const Vector3 playerScale = player_->GetScale();
-				const Vector3 cubeScale = cube->GetScale();
-				const float playerRadius = std::max(playerScale.x, playerScale.z);
-				const float cubeRadius = std::max(cubeScale.x, cubeScale.z);
-				const float pickupRadius = playerRadius + cubeRadius;
-				if (Function::LengthSquared(toCube) <= pickupRadius * pickupRadius) {
-					cube->Collect();
+				if (cube && cube->TryAutoCollect(player_->GetPosition())) {
 					if (currentStepIndex_ == 5) {
 						expCubeCollectedCount_++;
 					}
