@@ -26,13 +26,21 @@ void SpecialGaugeBallManager::Update(Camera* camera, const Vector3& movementLimi
 }
 
 void SpecialGaugeBallManager::Draw() {
-	Object3dCommon::GetInstance()->DrawCommon(Object3dCommon::DrawCommonType::NoCull);
+	Object3dCommon* object3dCommon = Object3dCommon::GetInstance();
+	object3dCommon->DrawCommon(Object3dCommon::DrawCommonType::NoCull);
 	for (auto& cube : SpecialGaugeBalls_) {
 		cube->Draw();
 	}
-	Object3dCommon::GetInstance()->DrawCommon();
-}
 
+	object3dCommon->BeginEmissionDraw();
+	object3dCommon->DrawCommon(Object3dCommon::DrawCommonType::NoCull);
+	for (auto& cube : SpecialGaugeBalls_) {
+		cube->Draw();
+	}
+	object3dCommon->EndEmissionDraw();
+
+	object3dCommon->DrawCommon();
+}
 void SpecialGaugeBallManager::SpawnDrops(const Vector3& position, int count) {
 	for (int i = 0; i < count; ++i) {
 		float offsetX = ((static_cast<float>(rand()) / RAND_MAX) * 2.0f - 1.0f) * kDropSpread;
