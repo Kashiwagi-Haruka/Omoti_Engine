@@ -43,6 +43,8 @@ private:
 	std::unique_ptr<CreatePSO> psoToon_;
 	// エミッシブ描画用PSO
 	std::unique_ptr<CreatePSO> psoEmissive_;
+	// スペシャルゲージ発光描画用PSO
+	std::unique_ptr<CreatePSO> psoSpecialGaugeEmissive_;
 	// カリングなし描画用PSO
 	std::unique_ptr<CreatePSO> psoNoCull_;
 	// 深度なし描画用PSO
@@ -201,6 +203,7 @@ public:
 		Default,
 		Toon,
 		Emissive,
+		SpecialGaugeEmissive,
 		NoCull,
 		NoDepth,
 		NoCullDepth,

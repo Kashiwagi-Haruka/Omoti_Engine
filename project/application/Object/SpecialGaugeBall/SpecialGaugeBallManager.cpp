@@ -33,7 +33,7 @@ void SpecialGaugeBallManager::Draw() {
 	}
 
 	object3dCommon->BeginEmissionDraw();
-	object3dCommon->DrawCommon(Object3dCommon::DrawCommonType::NoCull);
+	object3dCommon->DrawCommon(Object3dCommon::DrawCommonType::SpecialGaugeEmissive);
 	for (auto& cube : SpecialGaugeBalls_) {
 		cube->Draw();
 	}

@@ -85,6 +85,7 @@
     <FxCompile Include="Resources\shader\Skybox\Skybox.PS.hlsl">
       <Filter>Resources</Filter>
     </FxCompile>
+    <FxCompile Include="Resources\shader\Object3d\PS_Shader\SpecialGaugeEmissive.PS.hlsl" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Engine\Camera\Camera.cpp">

@@ -107,6 +107,9 @@ void Object3dCommon::Initialize(DirectXCommon* dxCommon) {
 	psoEmissive_ = std::make_unique<CreatePSO>(dxCommon_);
 	psoEmissive_->Create(D3D12_CULL_MODE_NONE, true, D3D12_FILL_MODE_SOLID, D3D12_PRIMITIVE_TOPOLOGY_TYPE_TRIANGLE, L"Resources/shader/Object3d/PS_Shader/Object3dEmissive.PS.hlsl");
 
+		psoSpecialGaugeEmissive_ = std::make_unique<CreatePSO>(dxCommon_);
+	psoSpecialGaugeEmissive_->Create(D3D12_CULL_MODE_NONE, true, D3D12_FILL_MODE_SOLID, D3D12_PRIMITIVE_TOPOLOGY_TYPE_TRIANGLE, L"Resources/shader/Object3d/PS_Shader/SpecialGaugeEmissive.PS.hlsl");
+
 	psoNoCull_ = std::make_unique<CreatePSO>(dxCommon_);
 	psoNoCull_->Create(D3D12_CULL_MODE_NONE);
 
@@ -315,6 +318,10 @@ void Object3dCommon::DrawCommon(DrawCommonType type) {
 	case DrawCommonType::Emissive:
 		rootSignature = psoEmissive_->GetRootSignature().Get();
 		pipelineState = psoEmissive_->GetGraphicsPipelineState(blendMode_);
+		break;
+	case DrawCommonType::SpecialGaugeEmissive:
+		rootSignature = psoSpecialGaugeEmissive_->GetRootSignature().Get();
+		pipelineState = psoSpecialGaugeEmissive_->GetGraphicsPipelineState(blendMode_);
 		break;
 	case DrawCommonType::NoCull:
 		rootSignature = psoNoCull_->GetRootSignature().Get();
