@@ -208,11 +208,11 @@ PixelShaderOutput main(VertexShaderOutput input)
         gEmissionTexture.GetDimensions(emissionWidth, emissionHeight);
         float2 texelSize = rcp(max(float2(emissionWidth, emissionHeight), 1.0f));
         float radius = max(selectiveBloomRadius, 0.0f);
-        float3 emission = gEmissionTexture.Sample(gSampler, input.texcoord).rgb;
         float3 innerBloom = BlurEmission(input.texcoord, texelSize, radius * 0.35f, 2.4f);
         float3 middleBloom = BlurEmission(input.texcoord, texelSize, radius * 0.85f, 1.35f);
         float3 outerBloom = BlurEmission(input.texcoord, texelSize, radius * 1.65f, 0.75f);
-        float3 bloom = emission * 0.18f + innerBloom * 0.42f + middleBloom * 0.62f + outerBloom * 0.78f;
+       
+        float3 bloom = innerBloom * 0.36f + middleBloom * 0.58f + outerBloom * 0.78f;
         output.color.rgb += bloom * selectiveBloomIntensity;
     }
     float4 outlineColor = gOutlineTexture.Sample(gSampler, input.texcoord);

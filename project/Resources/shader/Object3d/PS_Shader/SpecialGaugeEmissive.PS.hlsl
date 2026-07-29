@@ -69,15 +69,14 @@ PixelShaderOutput main(Object3dVertexShaderOutput input)
     float luminance = dot(baseColor, float3(0.2126f, 0.7152f, 0.0722f));
     float glowStrength = 1.0f + saturate(gMaterial.environmentCoefficient) * 2.0f;
 
-    // UV中心を白熱させ、外周へ滑らかに減衰させる。発光RTに均一な板を
-    // 書くのではなく明確な輝度勾配を作ることで、ブルームが中心から広がる。
+
     float2 centeredUv = transformedUV.xy - float2(0.5f, 0.5f);
     float distanceFromCenter = length(centeredUv) * 2.0f;
-    float core = 1.0f - smoothstep(0.0f, 0.42f, distanceFromCenter);
+    float core = 1.0f - smoothstep(0.0f, 0.62f, distanceFromCenter);
     float body = 1.0f - smoothstep(0.18f, 1.0f, distanceFromCenter);
     float edgeFade = 1.0f - smoothstep(0.72f, 1.0f, distanceFromCenter);
-    float brightness = 0.45f + body * 2.2f + core * 4.5f;
-    float3 hotCoreColor = lerp(baseColor, float3(1.0f, 1.0f, 0.82f), core * 0.72f);
+    float brightness = 0.45f + body * 1.65f + core * 1.6f;
+    float3 hotCoreColor = lerp(baseColor, float3(1.0f, 1.0f, 0.82f), core * 0.28f);
 
     output.color.rgb = hotCoreColor * brightness * glowStrength * (0.65f + luminance * 0.7f);
     output.color.a = textureColor.a * gMaterial.color.a * edgeFade;
