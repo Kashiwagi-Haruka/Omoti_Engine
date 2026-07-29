@@ -974,6 +974,7 @@ void DirectXCommon::DrawSceneTextureToBackBuffer() {
 		barriers[3 + i].Transition.StateAfter = D3D12_RESOURCE_STATE_RENDER_TARGET;
 	}
 	commandList_->ResourceBarrier(3, &barriers[3]);
+	TextureManager::GetInstance()->GetSrvManager()->PreDraw();
 	sceneCopiedToBackBufferThisFrame_ = true;
 }
 void DirectXCommon::EnsureSceneTextureCopiedToBackBuffer() { DrawSceneTextureToBackBuffer(); }

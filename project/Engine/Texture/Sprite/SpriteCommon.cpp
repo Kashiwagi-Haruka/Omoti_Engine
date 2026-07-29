@@ -27,9 +27,6 @@ void SpriteCommon::Initialize(DirectXCommon* dxCommon) {
 }
 void SpriteCommon::Finalize() { instance_.reset(); }
 void SpriteCommon::DrawCommon() {
-	if (!dxCommon_->IsEditorLayoutEnabled()) {
-		dxCommon_->EnsureSceneTextureCopiedToBackBuffer();
-	}
 	activePipeline_ = ActivePipeline::Sprite;
 	dxCommon_->GetCommandList()->SetGraphicsRootSignature(pso_->GetRootSignature().Get());
 	ApplyBlendMode();
@@ -37,9 +34,6 @@ void SpriteCommon::DrawCommon() {
 	dxCommon_->GetCommandList()->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 }
 void SpriteCommon::DrawCommonFont() {
-	if (!dxCommon_->IsEditorLayoutEnabled()) {
-		dxCommon_->EnsureSceneTextureCopiedToBackBuffer();
-	}
 	activePipeline_ = ActivePipeline::Font;
 	dxCommon_->GetCommandList()->SetGraphicsRootSignature(psoFont_->GetRootSignature().Get());
 	ApplyBlendMode();
