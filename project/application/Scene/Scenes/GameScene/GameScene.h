@@ -6,7 +6,6 @@
 #include "Light/CommonLight/DirectionalCommonLight.h"
 #include "Light/CommonLight/PointCommonLight.h"
 #include "Light/CommonLight/SpotCommonLight.h"
-#include "Menu/TeamDisplay/TeamDisplay.h"
 #include "Object/Characters/Model/CharacterModel.h"
 #include "Object/Field/Field.h"
 #include "Object/RemoteCamera/RemoteCamera.h"
@@ -54,13 +53,9 @@ private:
 	bool isTransitionIn = true;
 	bool isTransitionOut = false;
 	std::string nextSceneName;
-	bool isPause = false;
-	bool isCharacterDisplayMode_ = false;
-	bool isPartyMode_ = false;
 
 	CharacterModel characterModel;
 	std::unique_ptr<Team> team_;
-	std::unique_ptr<TeamDisplay> teamDisplay_;
 
 	enum class PlayAreaMode { kSpiral, kOpenWorld };
 
@@ -127,6 +122,4 @@ public:
 	void Finalize() override;
 
 	void DebugImGui();
-	void LoadTeamDisplay();
-	void UnloadTeamDisplay();
 };

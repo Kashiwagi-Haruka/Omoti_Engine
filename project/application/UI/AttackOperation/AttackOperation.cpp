@@ -22,6 +22,7 @@ AttackOperation::AttackOperation() {
 	skillIconSPData_.sprite = std::make_unique<Sprite>();
 	normalAttackSPData_.sprite = std::make_unique<Sprite>();
 	specialAttackSPData_.sprite = std::make_unique<Sprite>();
+	specialGaugeSPData_.sprite = std::make_unique<Sprite>();
 
 	keyboardDashSPData_.sprite = std::make_unique<Sprite>();
 	keyboardSkillIconSPData_.sprite = std::make_unique<Sprite>();
@@ -57,6 +58,10 @@ void AttackOperation::Initialize() {
 	specialAttackSPData_.sprite->Initialize(specialAttackHandle);
 	specialAttackSPData_.sprite->SetAnchorPoint({1.0f, 1.0f});
 	SetOperationSpriteBaseSize(specialAttackSPData_, kOperationIconBaseSize);
+	uint32_t specialGaugeAttackHandle = TextureManager::GetInstance()->GetTextureIndexByfilePath("Resources/2d/AttackOperation/specialGauge.png");
+	specialGaugeSPData_.sprite->Initialize(specialGaugeAttackHandle);
+	specialGaugeSPData_.sprite->SetAnchorPoint({1.0f, 1.0f});
+	SetOperationSpriteBaseSize(specialGaugeSPData_, kOperationIconBaseSize);
 
 	uint32_t normalKeyHandle = TextureManager::GetInstance()->GetTextureIndexByfilePath("Resources/2d/AttackOperation/Keyboard/normalAttackMouse.png");
 	uint32_t dashKeyHandle = TextureManager::GetInstance()->GetTextureIndexByfilePath("Resources/2d/AttackOperation/Keyboard/dashMouse.png");

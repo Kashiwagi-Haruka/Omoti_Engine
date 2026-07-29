@@ -10,7 +10,6 @@ class Field;
 class Player;
 class Sky;
 class Sprite;
-class Pause;
 class TutorialUI;
 class SpecialGaugeBallManager;
 class TutorialScene : public BaseScene {
@@ -40,7 +39,7 @@ private:
 	std::unique_ptr<SpecialGaugeBallManager> expCubeManager_;
 	std::unique_ptr<Sprite> controlSprite_;
 	std::unique_ptr<TutorialUI> tutorialUI_;
-	std::unique_ptr<Pause> pause_;
+
 	uint32_t controlSpriteHandle_ = 0;
 
 	std::array<bool, kStepCount> stepCompleted_{};

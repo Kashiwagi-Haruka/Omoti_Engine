@@ -9,7 +9,6 @@
 #include "Object/Field/Field.h"
 #include "Object/Player/Player.h"
 #include "Object3d/Object3dCommon.h"
-#include "Pause/Pause.h"
 #include "SceneManager.h"
 #include "Sprite.h"
 #include "Sprite/SpriteCommon.h"
@@ -30,7 +29,6 @@ void TutorialScene::Initialize() {
 	skyDome_ = std::make_unique<Sky>();
 	player_ = std::make_unique<Player>();
 	field_ = std::make_unique<Field>();
-	pause_ = std::make_unique<Pause>();
 	tutorialUI_ = std::make_unique<TutorialUI>();
 	expCubeManager_ = std::make_unique<SpecialGaugeBallManager>();
 
@@ -41,9 +39,6 @@ void TutorialScene::Initialize() {
 	player_->Initialize(cameraController_->GetCamera());
 	field_->Initialize(cameraController_->GetCamera());
 	expCubeManager_->Initialize(cameraController_->GetCamera());
-	pause_->Initialize();
-	pause_->SetCurrentCharacterObj(player_->GetCharacterObject3d());
-	pause_->SetCurrentAttribute(player_->GetCurrentAttribute());
 	tutorialUI_->Initialize();
 
 	controlSpriteHandle_ = TextureManager::GetInstance()->GetTextureIndexByfilePath("Resources/2d/option.png");
@@ -212,14 +207,6 @@ void TutorialScene::Update() {
 			return;
 		}
 	}
-	pause_->Update(isPaused_);
-	Pause::Action pauseAction = pause_->ConsumeAction();
-	if (pauseAction == Pause::Action::kResume) {
-		isPaused_ = false;
-	} else if (pauseAction == Pause::Action::kTitle) {
-		SceneManager::GetInstance()->ChangeScene("Title");
-		return;
-	}
 
 	const float tutorialProgress = isTutorialComplete_ ? 1.0f : (static_cast<float>(currentStepIndex_) + currentStepProgress_) / static_cast<float>(kStepCount);
 	const float skipProgress = (skipHoldTimer_ >= kSkipHoldDuration) ? 1.0f : (skipHoldTimer_ / kSkipHoldDuration);
@@ -257,10 +244,6 @@ void TutorialScene::Update() {
 }
 
 void TutorialScene::Draw() {
-	if (isPaused_) {
-		pause_->Draw();
-		return;
-	}
 	Object3dCommon::GetInstance()->DrawCommon();
 	skyDome_->Draw();
 	field_->Draw();
@@ -276,7 +259,6 @@ void TutorialScene::Draw() {
 	if (tutorialUI_) {
 		tutorialUI_->Draw();
 	}
-	pause_->Draw();
 }
 
 void TutorialScene::Finalize() {}
