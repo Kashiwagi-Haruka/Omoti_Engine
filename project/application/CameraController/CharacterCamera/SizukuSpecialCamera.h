@@ -18,8 +18,8 @@ class SizukuSpecialCamera {
 	Transform playerTransform_{};
 
 	float distance_ = 2.0f;
-	float cameraHeight_ = 2.2f;
-	float lookAtHeight_ = 1.8f;
+	float cameraHeight_ = 1.2f;
+	float lookAtHeight_ = 1.2f;
 
 	float animationTime_ = 0.0f;
 
