@@ -27,4 +27,8 @@ cbuffer PostEffectParameters : register(b0)
     float chromaticAberrationEnabled;
     float chromaticAberrationIntensity;
     float2 chromaticAberrationPadding;
+    float selectiveBloomEnabled;
+    float selectiveBloomIntensity;
+    float selectiveBloomRadius;
+    float selectiveBloomPadding;
 };

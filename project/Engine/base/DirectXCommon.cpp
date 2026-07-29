@@ -299,8 +299,8 @@ void DirectXCommon::DescriptorHeapCreate() {
 
 	// ディスクリプタヒープの生成
 
-	rtvDescriptorHeap_ = CreateDescriptorHeap(D3D12_DESCRIPTOR_HEAP_TYPE_RTV, 4, false);
-	sceneSrvDescriptorHeap_ = CreateDescriptorHeap(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV, 3, true);
+	rtvDescriptorHeap_ = CreateDescriptorHeap(D3D12_DESCRIPTOR_HEAP_TYPE_RTV, 5, false);
+	sceneSrvDescriptorHeap_ = CreateDescriptorHeap(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV, 4, true);
 
 	dsvDescriptorHeap_ = CreateDescriptorHeap(D3D12_DESCRIPTOR_HEAP_TYPE_DSV, 1, false);
 }
@@ -377,12 +377,15 @@ void DirectXCommon::SceneColorResourceCreate() {
 	clearValue.Color[3] = 0.0f;
 	hr_ = device_->CreateCommittedResource(&heapProps, D3D12_HEAP_FLAG_NONE, &textureDesc, D3D12_RESOURCE_STATE_RENDER_TARGET, &clearValue, IID_PPV_ARGS(&sceneOutlineResource_));
 	assert(SUCCEEDED(hr_));
+	hr_ = device_->CreateCommittedResource(&heapProps, D3D12_HEAP_FLAG_NONE, &textureDesc, D3D12_RESOURCE_STATE_RENDER_TARGET, &clearValue, IID_PPV_ARGS(&sceneEmissionResource_));
+	assert(SUCCEEDED(hr_));
 }
 void DirectXCommon::SceneColorViewCreate() {
 	// RTV
 	D3D12_CPU_DESCRIPTOR_HANDLE rtvStart = rtvDescriptorHeap_->GetCPUDescriptorHandleForHeapStart();
 	sceneRtvHandle_.ptr = rtvStart.ptr + descriptorSizeRTV_ * 2;
 	sceneOutlineRtvHandle_.ptr = rtvStart.ptr + descriptorSizeRTV_ * 3;
+	sceneEmissionRtvHandle_.ptr = rtvStart.ptr + descriptorSizeRTV_ * 4;
 	D3D12_RENDER_TARGET_VIEW_DESC sceneRtvDesc{};
 	sceneRtvDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM_SRGB;
 	sceneRtvDesc.ViewDimension = D3D12_RTV_DIMENSION_TEXTURE2D;
@@ -391,6 +394,7 @@ void DirectXCommon::SceneColorViewCreate() {
 	outlineRtvDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM_SRGB;
 	outlineRtvDesc.ViewDimension = D3D12_RTV_DIMENSION_TEXTURE2D;
 	device_->CreateRenderTargetView(sceneOutlineResource_.Get(), &outlineRtvDesc, sceneOutlineRtvHandle_);
+	device_->CreateRenderTargetView(sceneEmissionResource_.Get(), &outlineRtvDesc, sceneEmissionRtvHandle_);
 
 	// SRV
 	sceneSrvHandleCPU_ = sceneSrvDescriptorHeap_->GetCPUDescriptorHandleForHeapStart();
@@ -410,6 +414,9 @@ void DirectXCommon::SceneColorViewCreate() {
 	outlineSrvDesc.ViewDimension = D3D12_SRV_DIMENSION_TEXTURE2D;
 	outlineSrvDesc.Texture2D.MipLevels = 1;
 	device_->CreateShaderResourceView(sceneOutlineResource_.Get(), &outlineSrvDesc, outlineSrvHandleCPU);
+	D3D12_CPU_DESCRIPTOR_HANDLE emissionSrvHandleCPU = sceneSrvHandleCPU_;
+	emissionSrvHandleCPU.ptr += descriptorSizeSRV_ * 3;
+	device_->CreateShaderResourceView(sceneEmissionResource_.Get(), &outlineSrvDesc, emissionSrvHandleCPU);
 	DissolveMaskTextureCreate();
 }
 void DirectXCommon::DissolveMaskTextureCreate() {
@@ -496,7 +503,7 @@ void DirectXCommon::DissolveMaskTextureCreate() {
 void DirectXCommon::SceneCopyPipelineCreate() {
 	D3D12_DESCRIPTOR_RANGE range{};
 	range.RangeType = D3D12_DESCRIPTOR_RANGE_TYPE_SRV;
-	range.NumDescriptors = 3;
+	range.NumDescriptors = 4;
 	range.BaseShaderRegister = 0;
 	range.OffsetInDescriptorsFromTableStart = D3D12_DESCRIPTOR_RANGE_OFFSET_APPEND;
 
@@ -611,6 +618,10 @@ void DirectXCommon::SceneCopyPipelineCreate() {
 	postEffectParameterMappedData_->chromaticAberrationIntensity = chromaticAberrationIntensity_;
 	postEffectParameterMappedData_->chromaticAberrationPadding[0] = 0.0f;
 	postEffectParameterMappedData_->chromaticAberrationPadding[1] = 0.0f;
+	postEffectParameterMappedData_->selectiveBloomEnabled = selectiveBloomEnabled_ ? 1.0f : 0.0f;
+	postEffectParameterMappedData_->selectiveBloomIntensity = selectiveBloomIntensity_;
+	postEffectParameterMappedData_->selectiveBloomRadius = selectiveBloomRadius_;
+	postEffectParameterMappedData_->selectiveBloomPadding = 0.0f;
 }
 void DirectXCommon::DepthStencilViewInitialize() {
 
@@ -779,6 +790,24 @@ void DirectXCommon::SetDissolveEdgeWidth(float width) {
 		postEffectParameterMappedData_->dissolveEdgeWidth = dissolveEdgeWidth_;
 	}
 }
+void DirectXCommon::SetSelectiveBloomEnabled(bool enabled) {
+	selectiveBloomEnabled_ = enabled;
+	if (postEffectParameterMappedData_) {
+		postEffectParameterMappedData_->selectiveBloomEnabled = enabled ? 1.0f : 0.0f;
+	}
+}
+void DirectXCommon::SetSelectiveBloomIntensity(float intensity) {
+	selectiveBloomIntensity_ = std::clamp(intensity, 0.0f, 8.0f);
+	if (postEffectParameterMappedData_) {
+		postEffectParameterMappedData_->selectiveBloomIntensity = selectiveBloomIntensity_;
+	}
+}
+void DirectXCommon::SetSelectiveBloomRadius(float radius) {
+	selectiveBloomRadius_ = std::clamp(radius, 0.0f, 32.0f);
+	if (postEffectParameterMappedData_) {
+		postEffectParameterMappedData_->selectiveBloomRadius = selectiveBloomRadius_;
+	}
+}
 void DirectXCommon::PreDraw() {
 	sceneCopiedToBackBufferThisFrame_ = false;
 	randomNoiseTime_ += deltaTime_;
@@ -859,7 +888,7 @@ void DirectXCommon::DrawSceneTextureToBackBuffer() {
 	if (sceneCopiedToBackBufferThisFrame_) {
 		return;
 	}
-	D3D12_RESOURCE_BARRIER barriers[4]{};
+	D3D12_RESOURCE_BARRIER barriers[6]{};
 	barriers[0].Type = D3D12_RESOURCE_BARRIER_TYPE_TRANSITION;
 	barriers[0].Flags = D3D12_RESOURCE_BARRIER_FLAG_NONE;
 	barriers[0].Transition.pResource = sceneColorResource_.Get();
@@ -872,7 +901,9 @@ void DirectXCommon::DrawSceneTextureToBackBuffer() {
 	barriers[1].Transition.StateBefore = D3D12_RESOURCE_STATE_RENDER_TARGET;
 	barriers[1].Transition.StateAfter = D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE;
 	barriers[1].Transition.Subresource = D3D12_RESOURCE_BARRIER_ALL_SUBRESOURCES;
-	commandList_->ResourceBarrier(2, barriers);
+	barriers[2] = barriers[1];
+	barriers[2].Transition.pResource = sceneEmissionResource_.Get();
+	commandList_->ResourceBarrier(3, barriers);
 
 	D3D12_CPU_DESCRIPTOR_HANDLE dsvHandle = dsvDescriptorHeap_->GetCPUDescriptorHandleForHeapStart();
 	commandList_->OMSetRenderTargets(1, &rtvHandles_[backBufferIndex_], false, &dsvHandle);
@@ -937,19 +968,12 @@ void DirectXCommon::DrawSceneTextureToBackBuffer() {
 	commandList_->RSSetViewports(1, &viewport_);
 	commandList_->RSSetScissorRects(1, &scissorRect_);
 
-	barriers[2].Type = D3D12_RESOURCE_BARRIER_TYPE_TRANSITION;
-	barriers[2].Flags = D3D12_RESOURCE_BARRIER_FLAG_NONE;
-	barriers[2].Transition.pResource = sceneColorResource_.Get();
-	barriers[2].Transition.StateBefore = D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE;
-	barriers[2].Transition.StateAfter = D3D12_RESOURCE_STATE_RENDER_TARGET;
-	barriers[2].Transition.Subresource = D3D12_RESOURCE_BARRIER_ALL_SUBRESOURCES;
-	barriers[3].Type = D3D12_RESOURCE_BARRIER_TYPE_TRANSITION;
-	barriers[3].Flags = D3D12_RESOURCE_BARRIER_FLAG_NONE;
-	barriers[3].Transition.pResource = sceneOutlineResource_.Get();
-	barriers[3].Transition.StateBefore = D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE;
-	barriers[3].Transition.StateAfter = D3D12_RESOURCE_STATE_RENDER_TARGET;
-	barriers[3].Transition.Subresource = D3D12_RESOURCE_BARRIER_ALL_SUBRESOURCES;
-	commandList_->ResourceBarrier(2, &barriers[2]);
+	for (int i = 0; i < 3; ++i) {
+		barriers[3 + i] = barriers[i];
+		barriers[3 + i].Transition.StateBefore = D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE;
+		barriers[3 + i].Transition.StateAfter = D3D12_RESOURCE_STATE_RENDER_TARGET;
+	}
+	commandList_->ResourceBarrier(3, &barriers[3]);
 	sceneCopiedToBackBufferThisFrame_ = true;
 }
 void DirectXCommon::EnsureSceneTextureCopiedToBackBuffer() { DrawSceneTextureToBackBuffer(); }
@@ -988,6 +1012,7 @@ void DirectXCommon::DrawCommandList() {
 void DirectXCommon::SetMainRenderTarget() {
 	sceneCopiedToBackBufferThisFrame_ = false;
 	inOutlineRenderTarget_ = false;
+	inEmissionRenderTarget_ = false;
 	D3D12_CPU_DESCRIPTOR_HANDLE dsvHandle = dsvDescriptorHeap_->GetCPUDescriptorHandleForHeapStart();
 	commandList_->OMSetRenderTargets(1, &sceneRtvHandle_, false, &dsvHandle);
 	commandList_->RSSetViewports(1, &viewport_);
@@ -998,16 +1023,38 @@ void DirectXCommon::SetMainRenderTarget() {
 		float outlineClearColor[] = {0.0f, 0.0f, 0.0f, 0.0f};
 		commandList_->ClearRenderTargetView(sceneOutlineRtvHandle_, outlineClearColor, 0, nullptr);
 	}
+	if (sceneEmissionResource_ != nullptr && sceneEmissionRtvHandle_.ptr != 0) {
+		float emissionClearColor[] = {0.0f, 0.0f, 0.0f, 0.0f};
+		commandList_->ClearRenderTargetView(sceneEmissionRtvHandle_, emissionClearColor, 0, nullptr);
+	}
 	commandList_->ClearDepthStencilView(dsvHandle, D3D12_CLEAR_FLAG_DEPTH, 1.0f, 0, 0, nullptr);
 	TextureManager::GetInstance()->GetSrvManager()->PreDraw();
 }
 
 void DirectXCommon::RestoreMainRenderTarget() {
 	inOutlineRenderTarget_ = false;
+	inEmissionRenderTarget_ = false;
 	D3D12_CPU_DESCRIPTOR_HANDLE dsvHandle = dsvDescriptorHeap_->GetCPUDescriptorHandleForHeapStart();
 	commandList_->OMSetRenderTargets(1, &sceneRtvHandle_, false, &dsvHandle);
 	commandList_->RSSetViewports(1, &viewport_);
 	commandList_->RSSetScissorRects(1, &scissorRect_);
+}
+void DirectXCommon::BeginEmissionRenderTarget() {
+	if (sceneEmissionResource_ == nullptr || sceneEmissionRtvHandle_.ptr == 0) {
+		inEmissionRenderTarget_ = false;
+		return;
+	}
+	D3D12_CPU_DESCRIPTOR_HANDLE dsvHandle = dsvDescriptorHeap_->GetCPUDescriptorHandleForHeapStart();
+	commandList_->OMSetRenderTargets(1, &sceneEmissionRtvHandle_, false, &dsvHandle);
+	commandList_->RSSetViewports(1, &viewport_);
+	commandList_->RSSetScissorRects(1, &scissorRect_);
+	inEmissionRenderTarget_ = true;
+}
+void DirectXCommon::EndEmissionRenderTarget() {
+	if (!inEmissionRenderTarget_) {
+		return;
+	}
+	RestoreMainRenderTarget();
 }
 void DirectXCommon::BeginOutlineRenderTarget() {
 	if (sceneOutlineResource_ == nullptr || sceneOutlineRtvHandle_.ptr == 0) {
@@ -1159,6 +1206,7 @@ void DirectXCommon::Finalize() {
 	// --- Scene color / copy pipeline ---
 	sceneColorResource_.Reset();
 	sceneOutlineResource_.Reset();
+	sceneEmissionResource_.Reset();
 	dissolveMaskResource_.Reset();
 	dissolveMaskUploadResource_.Reset();
 	sceneSrvDescriptorHeap_.Reset();

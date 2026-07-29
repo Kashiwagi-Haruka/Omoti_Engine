@@ -3,6 +3,7 @@
 Texture2D<float4> gTexture : register(t0);
 Texture2D<float4> gOutlineTexture : register(t1);
 Texture2D<float4> gMaskTexture : register(t2);
+Texture2D<float4> gEmissionTexture : register(t3);
 SamplerState gSampler : register(s0);
 
 struct PixelShaderOutput
@@ -177,6 +178,31 @@ PixelShaderOutput main(VertexShaderOutput input)
     }
     output.color.rgb = ApplyGrayscale(output.color.rgb);
     output.color.rgb = ApplySepia(output.color.rgb);
+    
+    if (selectiveBloomEnabled > 0.5f && selectiveBloomIntensity > 0.0f)
+    {
+        uint emissionWidth = 0;
+        uint emissionHeight = 0;
+        gEmissionTexture.GetDimensions(emissionWidth, emissionHeight);
+        float2 texelSize = rcp(float2(emissionWidth, emissionHeight));
+        float radius = max(selectiveBloomRadius, 0.0f);
+        float3 bloom = float3(0.0f, 0.0f, 0.0f);
+        float bloomWeight = 0.0f;
+
+        [unroll]
+        for (int y = -4; y <= 4; ++y)
+        {
+            [unroll]
+            for (int x = -4; x <= 4; ++x)
+            {
+                float2 sampleOffset = float2(x, y) * texelSize * radius * 0.25f;
+                float weight = exp(-dot(float2(x, y), float2(x, y)) / 8.0f);
+                bloom += gEmissionTexture.Sample(gSampler, saturate(input.texcoord + sampleOffset)).rgb * weight;
+                bloomWeight += weight;
+            }
+        }
+        output.color.rgb += bloom * rcp(max(bloomWeight, 0.0001f)) * selectiveBloomIntensity;
+    }
     
     float4 outlineColor = gOutlineTexture.Sample(gSampler, input.texcoord);
     output.color.rgb = lerp(output.color.rgb, outlineColor.rgb, saturate(outlineColor.a));
