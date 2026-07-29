@@ -548,6 +548,7 @@
     <ClCompile Include="application\Object\Characters\Enemy\HostileIndicator\EnemyHostileIndicator.cpp" />
     <ClCompile Include="application\Object\Characters\Enemy\LockOn\LockOnEnemy.cpp" />
     <ClCompile Include="application\Object\RemoteCamera\RemoteCamera.cpp" />
+    <ClCompile Include="application\Menu\MenuManager.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Engine\Camera\Camera.h">
@@ -1088,6 +1089,7 @@
     <ClInclude Include="application\Object\Characters\Playable\Base\UPParametersType.h" />
     <ClInclude Include="application\BagItem\reinforcementAmount\BaserinforcementAmountItem.h" />
     <ClInclude Include="application\Object\RemoteCamera\RemoteCamera.h" />
+    <ClInclude Include="application\Menu\MenuManager.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include=".editorconfig" />

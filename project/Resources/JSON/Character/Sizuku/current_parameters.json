@@ -11,7 +11,7 @@
   },
   "parameter": {
     "Attack": 20.0,
-    "AttributeAffinity": 20.0,
+    "AttributeAffinity": 1.0,
     "AttributeDamageRate": [
       0.0,
       0.0,
@@ -33,7 +33,7 @@
     "CriticalDamage": 1.5,
     "CriticalRate": 0.05000000074505806,
     "Deffence": 10.0,
-    "HP": 100.0,
+    "HP": 50.0,
     "Level": 1,
     "Speed": 1.0
   },
