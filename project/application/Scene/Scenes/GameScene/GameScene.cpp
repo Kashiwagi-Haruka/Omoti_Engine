@@ -110,11 +110,10 @@ GameScene::GameScene() {
 	sceneTransition = std::make_unique<SceneTransition>();
 	uimanager = std::make_unique<UIManager>();
 
-	pause = std::make_unique<Pause>();
 	GameTimer::GetInstance()->Reset();
 	Input::GetInstance()->SetIsCursorStability(true);
 	Input::GetInstance()->SetIsCursorVisible(false);
-	characterDisplay_ = std::make_unique<CharacterDisplay>();
+	menuManager_ = std::make_unique<MenuManager>();
 	team_ = std::make_unique<Team>();
 }
 
@@ -195,11 +194,8 @@ void GameScene::Initialize() {
 	spotLights_[0].decay = 2.0f;
 	spotLights_[0].cosAngle = std::cos(std::numbers::pi_v<float> / 3.0f);
 	spotLights_[0].cosFalloffStart = std::cos(std::numbers::pi_v<float> / 4.0f);
-	pause->Initialize();
-	pause->SetCurrentCharacterObj(player->GetCharacterObject3d());
-	pause->SetCurrentAttribute(player->GetCurrentAttribute());
-	characterDisplay_->Initialize(*team_);
-	characterDisplay_->SetActive(false);
+	menuManager_->Initialize(*team_);
+	menuManager_->SetCharacter(player->GetCharacterObject3d(), player->GetCurrentAttribute());
 	UnloadTeamDisplay();
 	
 	vinettColor_ = {255, 255, 255};
@@ -313,21 +309,7 @@ void GameScene::DebugImGui() {
 
 #endif // USE_IMGUI
 }
-void GameScene::LoadTeamDisplay() {
-	if (teamDisplay_) {
-		return;
-	}
-	teamDisplay_ = std::make_unique<TeamDisplay>();
-	teamDisplay_->Initialize(*team_);
-}
 
-void GameScene::UnloadTeamDisplay() {
-	if (!teamDisplay_) {
-		return;
-	}
-	teamDisplay_->Unload();
-	teamDisplay_.reset();
-}
 void GameScene::Update() {
 	GameTimer::GetInstance()->Update();
 	const float deltaTime = GameBase::GetInstance()->GetDeltaTime();
@@ -369,9 +351,8 @@ void GameScene::Update() {
 					UnloadTeamDisplay();
 				}
 			}
-			characterDisplay_->SetActive(isCharacterDisplayMode_);
 			if (isCharacterDisplayMode_) {
-				Object3dCommon::GetInstance()->SetDirectionalLight(directionalLight_);
+
 			}
 		}
 		if (isCharacterDisplayMode_) {
@@ -412,15 +393,11 @@ void GameScene::Update() {
 	if (!isCharacterDeathDissolving_) {
 		team_->Update();
 	}
-	if (isPartyMode_ && teamDisplay_) {
-		teamDisplay_->Update(*team_);
-	}
 	if (team_->ConsumeCharacterSwitchTriggered()) {
 		player->SetCharacterType(team_->GetActiveCharacterName());
 		pause->SetCurrentCharacterObj(player->GetCharacterObject3d());
 		pause->SetCurrentAttribute(player->GetCurrentAttribute());
 	}
-	pause->Update(isPause);
 	Pause::Action pauseAction = pause->ConsumeAction();
 	if (pauseAction == Pause::Action::kResume) {
 		isPause = false;
@@ -433,21 +410,10 @@ void GameScene::Update() {
 		}
 		return;
 	}
-
-	if (isPause && !isTransitionOut) {
+	if (!isTransitionOut) {
 		fullscreenFilterType_ = kDefaultFullscreenFilterType;
 		Object3dCommon::GetInstance()->SetFullscreenFilterType(fullscreenFilterType_);
-		return;
-	}
-	if (isPartyMode_ && !isTransitionOut) {
-		fullscreenFilterType_ = kDefaultFullscreenFilterType;
-		Object3dCommon::GetInstance()->SetFullscreenFilterType(fullscreenFilterType_);
-		return;
-	}
-	if (isCharacterDisplayMode_ && !isTransitionOut) {
-		fullscreenFilterType_ = kDefaultFullscreenFilterType;
-		Object3dCommon::GetInstance()->SetFullscreenFilterType(fullscreenFilterType_);
-		characterDisplay_->Update();
+		menuManager_->Update();
 		return;
 	}
 	if (isCharacterDeathDissolving_) {
@@ -711,16 +677,8 @@ void GameScene::DrawRemoteCameraScene(Camera* camera) {
 }
 
 void GameScene::Draw() {
-	if (isCharacterDisplayMode_) {
-		characterDisplay_->Draw();
-		return;
-	}
-	if (isPause) {
-		pause->Draw();
-		if (isTransitionIn || isTransitionOut) {
-			sceneTransition->Draw();
-		}
-		return;
+	if (menuManager_) {
+		menuManager_->Draw();
 	}
 	if (isPartyMode_) {
 		SpriteCommon::GetInstance()->DrawCommon();
@@ -769,7 +727,6 @@ void GameScene::Draw() {
 		hitVinettSprite_->Draw();
 	}
 	uimanager->Draw();
-	pause->Draw();
 	if (isTransitionIn || isTransitionOut) {
 		sceneTransition->Draw();
 	}

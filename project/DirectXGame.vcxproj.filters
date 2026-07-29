@@ -225,7 +225,7 @@
     <ClCompile Include="application\Scene\Scenes\TitleScene\TitleScene.cpp">
       <Filter>Application\Scene\TitleScene</Filter>
     </ClCompile>
-    <ClCompile Include="application\Pause\Pause.cpp">
+    <ClCompile Include="application\Menu\Pause\Pause.cpp">
       <Filter>Application\Menu\Pause</Filter>
     </ClCompile>
     <ClCompile Include="application\SceneTransition\SceneTransition.cpp">
@@ -710,7 +710,7 @@
     <ClInclude Include="application\Scene\Scenes\TitleScene\TitleScene.h">
       <Filter>Application\Scene\TitleScene</Filter>
     </ClInclude>
-    <ClInclude Include="application\Pause\Pause.h">
+    <ClInclude Include="application\Menu\Pause\Pause.h">
       <Filter>Application\Menu\Pause</Filter>
     </ClInclude>
     <ClInclude Include="application\SceneTransition\SceneTransition.h">

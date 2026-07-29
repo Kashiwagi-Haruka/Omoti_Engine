@@ -6,20 +6,19 @@
 #include "Light/CommonLight/DirectionalCommonLight.h"
 #include "Light/CommonLight/PointCommonLight.h"
 #include "Light/CommonLight/SpotCommonLight.h"
-#include "Menu/CharacterDisplay/CharacterDisplay.h"
 #include "Menu/TeamDisplay/TeamDisplay.h"
 #include "Object/Characters/Model/CharacterModel.h"
 #include "Object/Field/Field.h"
 #include "Object/RemoteCamera/RemoteCamera.h"
 #include "Object3d/Object3d.h"
 #include "OpenWorld/OpenWorld.h"
-#include "Pause/Pause.h"
 #include "Rasen/Rasen.h"
 #include "SceneTransition/SceneTransition.h"
 #include "Sprite.h"
 #include "Team/Team.h"
 #include "UI/UIManager/UIManager.h"
 #include "Vector2.h"
+#include "Menu/MenuManager.h"
 #include <array>
 #include <cstdint>
 #include <imgui.h>
@@ -47,8 +46,8 @@ private:
 	std::unique_ptr<Sky> skyDome;
 	std::unique_ptr<CameraController> cameraController;
 	std::unique_ptr<Field> field;
-	std::unique_ptr<Pause> pause;
 	std::unique_ptr<RemoteCamera> remoteCamera_;
+	std::unique_ptr<MenuManager> menuManager_;
 
 	CollisionManager collisionManager_;
 
@@ -60,7 +59,6 @@ private:
 	bool isPartyMode_ = false;
 
 	CharacterModel characterModel;
-	std::unique_ptr<CharacterDisplay> characterDisplay_;
 	std::unique_ptr<Team> team_;
 	std::unique_ptr<TeamDisplay> teamDisplay_;
 

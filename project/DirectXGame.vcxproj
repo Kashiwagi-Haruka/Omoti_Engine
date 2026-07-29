@@ -300,7 +300,7 @@ copy "$(WindowsSdkDir)\bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)\
     <ClCompile Include="application\Scene\SceneFactory\SceneFactory.cpp" />
     <ClCompile Include="application\Scene\SampleScene\SampleScene.cpp" />
     <ClCompile Include="application\GameTimer\GameTimer.cpp" />
-    <ClCompile Include="application\Pause\Pause.cpp" />
+    <ClCompile Include="application\Menu\Pause\Pause.cpp" />
     <ClCompile Include="Engine\Texture\Mesh\Primitive\Primitive.cpp" />
     <ClCompile Include="Engine\Texture\Mesh\Animation\Skeleton.cpp" />
     <ClCompile Include="Engine\Texture\Mesh\Animation\SkinCluster.cpp" />
@@ -513,7 +513,7 @@ copy "$(WindowsSdkDir)\bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)\
     <ClInclude Include="application\Scene\SceneFactory\SceneFactory.h" />
     <ClInclude Include="application\Scene\SampleScene\SampleScene.h" />
     <ClInclude Include="application\GameTimer\GameTimer.h" />
-    <ClInclude Include="application\Pause\Pause.h" />
+    <ClInclude Include="application\Menu\Pause\Pause.h" />
     <ClInclude Include="Engine\Texture\Mesh\Primitive\Primitive.h" />
     <ClInclude Include="Engine\Texture\Mesh\Animation\Skeleton.h" />
     <ClInclude Include="Engine\Texture\Mesh\Animation\SkinCluster.h" />
