@@ -88,6 +88,9 @@ class DirectXCommon {
 		float radialBlurCenter[2];
 		float radialBlurWidth;
 		float radialBlurSampleCount;
+		float chromaticAberrationEnabled;
+		float chromaticAberrationIntensity;
+		float chromaticAberrationPadding[2];
 	};
 	PostEffectParameters* postEffectParameterMappedData_ = nullptr;
 	float vignetteStrength_ = 0.0f;
@@ -105,6 +108,8 @@ class DirectXCommon {
 	Vector2 radialBlurCenter_ = {0.5f, 0.5f};
 	float radialBlurWidth_ = 0.01f;
 	int radialBlurSampleCount_ = 10;
+	bool chromaticAberrationEnabled_ = false;
+	float chromaticAberrationIntensity_ = 0.0f;
 	bool fullscreenGrayscaleEnabled_ = false;
 	bool fullscreenSepiaEnabled_ = false;
 	bool editorLayoutEnabled_ = false;
@@ -175,6 +180,10 @@ public:
 	float GetRadialBlurWidth() const { return radialBlurWidth_; }
 	void SetRadialBlurSampleCount(int sampleCount);
 	int GetRadialBlurSampleCount() const { return radialBlurSampleCount_; }
+	void SetChromaticAberrationEnabled(bool enabled);
+	bool GetChromaticAberrationEnabled() const { return chromaticAberrationEnabled_; }
+	void SetChromaticAberrationIntensity(float intensity);
+	float GetChromaticAberrationIntensity() const { return chromaticAberrationIntensity_; }
 	void SetDissolveEnabled(bool enabled);
 	bool GetDissolveEnabled() const { return dissolveEnabled_; }
 	void SetDissolveThreshold(float threshold);

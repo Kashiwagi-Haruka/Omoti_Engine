@@ -662,6 +662,9 @@ float Object3dCommon::GetRadialBlurWidth() const { return dxCommon_->GetRadialBl
 void Object3dCommon::SetRadialBlurSampleCount(int sampleCount) { dxCommon_->SetRadialBlurSampleCount(sampleCount); }
 
 int Object3dCommon::GetRadialBlurSampleCount() const { return dxCommon_->GetRadialBlurSampleCount(); }
+void Object3dCommon::SetChromaticAberrationEnabled(bool enabled) { dxCommon_->SetChromaticAberrationEnabled(enabled); }
+
+void Object3dCommon::SetChromaticAberrationIntensity(float intensity) { dxCommon_->SetChromaticAberrationIntensity(intensity); }
 void Object3dCommon::SetDissolveEnabled(bool enabled) { dxCommon_->SetDissolveEnabled(enabled); }
 
 void Object3dCommon::SetDissolveThreshold(float threshold) { dxCommon_->SetDissolveThreshold(threshold); }

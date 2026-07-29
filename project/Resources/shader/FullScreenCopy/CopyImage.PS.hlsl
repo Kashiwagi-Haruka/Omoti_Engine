@@ -122,6 +122,13 @@ PixelShaderOutput main(VertexShaderOutput input)
         output.color.rgb = filteredColor / max(weight, 0.0001f);
     }
 
+    if (chromaticAberrationEnabled > 0.5f && chromaticAberrationIntensity > 0.0f)
+    {
+        float2 direction = input.texcoord - float2(0.5f, 0.5f);
+        float2 offset = direction * chromaticAberrationIntensity;
+        output.color.r = gTexture.Sample(gSampler, saturate(input.texcoord + offset)).r;
+        output.color.b = gTexture.Sample(gSampler, saturate(input.texcoord - offset)).b;
+    }
     if (dissolveEnabled > 0.5f)
     {
         float mask = gMaskTexture.Sample(gSampler, input.texcoord).r;

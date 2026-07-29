@@ -365,6 +365,8 @@ public:
 	void SetRadialBlurSampleCount(int sampleCount);
 	int GetRadialBlurSampleCount() const;
 	void SetDissolveEnabled(bool enabled);
+	void SetChromaticAberrationEnabled(bool enabled);
+	void SetChromaticAberrationIntensity(float intensity);
 	void SetDissolveThreshold(float threshold);
 	void SetDissolveEdgeWidth(float width);
 

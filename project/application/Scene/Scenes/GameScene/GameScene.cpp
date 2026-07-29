@@ -121,6 +121,7 @@ GameScene::GameScene() {
 GameScene::~GameScene() {}
 
 void GameScene::Finalize() {
+	Object3dCommon::GetInstance()->SetChromaticAberrationEnabled(false);
 	UnloadTeamDisplay();
 	rasen_->Finalize();
 	openWorld_->Finalize();
@@ -145,6 +146,8 @@ void GameScene::Initialize() {
 	sceneTransition->Initialize(false);
 	isTransitionIn = true;
 	isTransitionOut = false;
+	isGameOverPending_ = false;
+	gameOverDelayTimer_ = 0.0f;
 	nextSceneName.clear();
 	team_->Initialize();
 	uimanager->SetTeam(team_.get());
@@ -223,6 +226,8 @@ void GameScene::Initialize() {
 	dissolveEnabled_ = false;
 	dissolveThreshold_ = 0.0f;
 	Object3dCommon::GetInstance()->SetDissolveEnabled(dissolveEnabled_);
+	Object3dCommon::GetInstance()->SetChromaticAberrationEnabled(chromaticAberrationEnabled_);
+	Object3dCommon::GetInstance()->SetChromaticAberrationIntensity(chromaticAberrationIntensity_);
 	Object3dCommon::GetInstance()->SetDissolveThreshold(dissolveThreshold_);
 	Object3dCommon::GetInstance()->SetDissolveEdgeWidth(dissolveEdgeWidth_);
 	normalAttackTargetEnemy_ = nullptr;
@@ -566,8 +571,14 @@ void GameScene::Update() {
 #endif // _DEBUG
 
 	if (playAreaMode_ == PlayAreaMode::kSpiral) {
-		if (team_->GetAreAllMembersDead() || rasen_->GetHouse()->GetHP() == 0) {
-			if (!isTransitionOut) {
+		const bool isGameOver = team_->GetAreAllMembersDead() || rasen_->GetHouse()->GetHP() == 0;
+		if (isGameOver && !isTransitionOut) {
+			if (!isGameOverPending_) {
+				isGameOverPending_ = true;
+				gameOverDelayTimer_ = 0.0f;
+			}
+			gameOverDelayTimer_ += deltaTime;
+			if (gameOverDelayTimer_ >= kGameOverDelaySeconds_) {
 				nextSceneName = "GameOver";
 				sceneTransition->Initialize(true);
 				isTransitionOut = true;

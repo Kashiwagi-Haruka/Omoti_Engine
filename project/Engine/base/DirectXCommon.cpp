@@ -607,6 +607,10 @@ void DirectXCommon::SceneCopyPipelineCreate() {
 	postEffectParameterMappedData_->radialBlurCenter[1] = radialBlurCenter_.y;
 	postEffectParameterMappedData_->radialBlurWidth = radialBlurWidth_;
 	postEffectParameterMappedData_->radialBlurSampleCount = static_cast<float>(radialBlurSampleCount_);
+	postEffectParameterMappedData_->chromaticAberrationEnabled = chromaticAberrationEnabled_ ? 1.0f : 0.0f;
+	postEffectParameterMappedData_->chromaticAberrationIntensity = chromaticAberrationIntensity_;
+	postEffectParameterMappedData_->chromaticAberrationPadding[0] = 0.0f;
+	postEffectParameterMappedData_->chromaticAberrationPadding[1] = 0.0f;
 }
 void DirectXCommon::DepthStencilViewInitialize() {
 
@@ -743,6 +747,18 @@ void DirectXCommon::SetRadialBlurSampleCount(int sampleCount) {
 	radialBlurSampleCount_ = std::clamp(sampleCount, 1, 32);
 	if (postEffectParameterMappedData_) {
 		postEffectParameterMappedData_->radialBlurSampleCount = static_cast<float>(radialBlurSampleCount_);
+	}
+}
+void DirectXCommon::SetChromaticAberrationEnabled(bool enabled) {
+	chromaticAberrationEnabled_ = enabled;
+	if (postEffectParameterMappedData_) {
+		postEffectParameterMappedData_->chromaticAberrationEnabled = chromaticAberrationEnabled_ ? 1.0f : 0.0f;
+	}
+}
+void DirectXCommon::SetChromaticAberrationIntensity(float intensity) {
+	chromaticAberrationIntensity_ = std::clamp(intensity, 0.0f, 0.1f);
+	if (postEffectParameterMappedData_) {
+		postEffectParameterMappedData_->chromaticAberrationIntensity = chromaticAberrationIntensity_;
 	}
 }
 void DirectXCommon::SetDissolveEnabled(bool enabled) {

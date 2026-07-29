@@ -99,6 +99,8 @@ private:
 	Vector2 radialBlurCenter_ = {0.5f, 0.5f};
 	float radialBlurWidth_ = 0.01f;
 	int radialBlurSampleCount_ = 10;
+	bool chromaticAberrationEnabled_ = false;
+	float chromaticAberrationIntensity_ = 0.02f;
 	bool dissolveEnabled_ = false;
 	float dissolveThreshold_ = 0.0f;
 	float dissolveEdgeWidth_ = 0.02f;
@@ -111,6 +113,9 @@ private:
 	Enemy* normalAttackTargetEnemy_ = nullptr;
 	float lockOnMarkerTimer_ = 0.0f;
 	static constexpr float kLockOnMarkerDuration_ = 0.5f;
+	bool isGameOverPending_ = false;
+	float gameOverDelayTimer_ = 0.0f;
+	static constexpr float kGameOverDelaySeconds_ = 1.0f;
 
 	void DrawRemoteCameraScene(Camera* camera);
 
