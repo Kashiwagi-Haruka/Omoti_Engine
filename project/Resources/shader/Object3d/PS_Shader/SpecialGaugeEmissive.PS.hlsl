@@ -65,32 +65,23 @@ PixelShaderOutput main(Object3dVertexShaderOutput input)
     float4 transformedUV = mul(float4(input.texcoord, 0.0f, 1.0f), gMaterial.uvTransform);
     float4 textureColor = gTexture.Sample(gSampler, transformedUV.xy);
 
-    float3 baseColor = textureColor.rgb * gMaterial.color.rgb;
-    float luminance = dot(baseColor, float3(0.2126f, 0.7152f, 0.0722f));
-    float glowStrength = 1.0f + saturate(gMaterial.environmentCoefficient) * 2.0f;
-
-
     float2 centeredUv = transformedUV.xy - float2(0.5f, 0.5f);
     float distanceFromCenter = length(centeredUv) * 2.0f;
-    float coreHaze = exp(-distanceFromCenter * distanceFromCenter * 1.8f);
-    float body = 1.0f - smoothstep(0.18f, 1.0f, distanceFromCenter);
-    float edgeFade = 1.0f - smoothstep(0.72f, 1.0f, distanceFromCenter);
-    float brightness = 0.45f + body * 1.65f + coreHaze * 0.22f;
-    float3 glowColor = lerp(baseColor, float3(1.0f, 1.0f, 0.82f), coreHaze * 0.055f);
+    float wideHaze = exp(-distanceFromCenter * distanceFromCenter * 0.72f);
+    float outerMist = exp(-distanceFromCenter * distanceFromCenter * 0.24f);
 
-    output.color.rgb = glowColor * brightness * glowStrength * (0.65f + luminance * 0.7f);
-    output.color.a = textureColor.a * gMaterial.color.a * edgeFade;
+
+    float haze = wideHaze * 0.62f + outerMist * 0.38f;
+
+    float centerSuppression = lerp(0.24f, 1.0f, smoothstep(0.0f, 0.62f, distanceFromCenter));
+    float3 glowColor = pow(saturate(gMaterial.color.rgb), 3.0f);
+    float emission = haze * centerSuppression * 0.105f;
+
+    output.color.rgb = glowColor * emission;
+    output.color.a = textureColor.a * gMaterial.color.a * haze * 0.58f;
     output.color.rgb = ApplyGrayscale(output.color.rgb);
     output.color.rgb = ApplySepia(output.color.rgb);
-    if (textureColor.a < 0.5f)
-    {
-        discard;
-    }
-    if (textureColor.a == 0.0f)
-    {
-        discard;
-    }
-    if (output.color.a == 0.0f)
+    if (output.color.a < 0.002f)
     {
         discard;
     }

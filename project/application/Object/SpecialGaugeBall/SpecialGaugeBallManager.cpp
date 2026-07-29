@@ -27,10 +27,6 @@ void SpecialGaugeBallManager::Update(Camera* camera, const Vector3& movementLimi
 
 void SpecialGaugeBallManager::Draw() {
 	Object3dCommon* object3dCommon = Object3dCommon::GetInstance();
-	object3dCommon->DrawCommon(Object3dCommon::DrawCommonType::NoCull);
-	for (auto& cube : SpecialGaugeBalls_) {
-		cube->Draw();
-	}
 
 	object3dCommon->BeginEmissionDraw();
 	object3dCommon->DrawCommon(Object3dCommon::DrawCommonType::SpecialGaugeEmissive);
