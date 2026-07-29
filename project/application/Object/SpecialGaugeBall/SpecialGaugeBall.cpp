@@ -8,9 +8,11 @@ const Vector4 kExpCubeColor = {0.6f, 1.0f, 0.3f, 1.0f};
 const float kRotateSpeed = 0.03f;
 const float kReturnSpeed = 0.2f;
 const float kAutoCollectRange = 5.0f;
+const float kAutoCollectLerpRate = 0.15f;
+const float kCollectDistance = 0.15f;
 const Vector3 kRotateOffset[3] = {
-    {0.0f,                             std::numbers::pi_v<float> / 2.0f, 0.0f},
-    {std::numbers::pi_v<float> / 2.0f, 1.0f,                             0.0f},
+    {0.0f,                             std::numbers::pi_v<float> / 2.0f, 0.0f                            },
+    {std::numbers::pi_v<float> / 2.0f, 1.0f,                             0.0f                            },
     {0.0f,                             1.0f,                             std::numbers::pi_v<float> / 2.0f}
 };
 } // namespace
@@ -21,11 +23,22 @@ bool SpecialGaugeBall::TryAutoCollect(const Vector3& playerPosition) {
 	}
 
 	const float dx = playerPosition.x - baseTransform_.translate.x;
+	const float dy = playerPosition.y - baseTransform_.translate.y;
 	const float dz = playerPosition.z - baseTransform_.translate.z;
-	if (dx * dx + dz * dz > kAutoCollectRange * kAutoCollectRange) {
+	if (!isAutoCollecting_ && dx * dx + dz * dz > kAutoCollectRange * kAutoCollectRange) {
 		return false;
 	}
 
+	isAutoCollecting_ = true;
+	baseTransform_.translate.x += dx * kAutoCollectLerpRate;
+	baseTransform_.translate.y += dy * kAutoCollectLerpRate;
+	baseTransform_.translate.z += dz * kAutoCollectLerpRate;
+
+	if (dx * dx + dy * dy + dz * dz > kCollectDistance * kCollectDistance) {
+		return false;
+	}
+
+	baseTransform_.translate = playerPosition;
 	isCollected_ = true;
 	return true;
 }
@@ -33,6 +46,7 @@ bool SpecialGaugeBall::TryAutoCollect(const Vector3& playerPosition) {
 void SpecialGaugeBall::Initialize(Camera* camera, const Vector3& position) {
 	camera_ = camera;
 	isCollected_ = false;
+	isAutoCollecting_ = false;
 	baseTransform_ = {
 	    {0.35f,      0.35f,      0.35f     },
 	    {0.0f,       0.0f,       0.0f      },
@@ -45,7 +59,6 @@ void SpecialGaugeBall::Initialize(Camera* camera, const Vector3& position) {
 		primitive_[i]->SetColor(kExpCubeColor);
 		primitive_[i]->SetTransform(baseTransform_);
 	}
-
 }
 
 void SpecialGaugeBall::Update(const Vector3& movementLimitCenter, float movementLimitRadius) {
@@ -56,7 +69,7 @@ void SpecialGaugeBall::Update(const Vector3& movementLimitCenter, float movement
 	const float dx = baseTransform_.translate.x - movementLimitCenter.x;
 	const float dz = baseTransform_.translate.z - movementLimitCenter.z;
 	const float distSquared = dx * dx + dz * dz;
-	if (distSquared > movementLimitRadius * movementLimitRadius) {
+	if (!isAutoCollecting_ && distSquared > movementLimitRadius * movementLimitRadius) {
 		const float dist = std::sqrt(distSquared);
 		const float scale = movementLimitRadius / dist;
 		const Vector3 target = {

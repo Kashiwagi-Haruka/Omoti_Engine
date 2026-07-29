@@ -29,4 +29,5 @@ private:
 	};
 	Camera* camera_ = nullptr;
 	bool isCollected_ = false;
+	bool isAutoCollecting_ = false;
 };
