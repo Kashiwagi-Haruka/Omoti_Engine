@@ -72,13 +72,13 @@ PixelShaderOutput main(Object3dVertexShaderOutput input)
 
     float2 centeredUv = transformedUV.xy - float2(0.5f, 0.5f);
     float distanceFromCenter = length(centeredUv) * 2.0f;
-    float core = 1.0f - smoothstep(0.0f, 0.62f, distanceFromCenter);
+    float coreHaze = exp(-distanceFromCenter * distanceFromCenter * 1.8f);
     float body = 1.0f - smoothstep(0.18f, 1.0f, distanceFromCenter);
     float edgeFade = 1.0f - smoothstep(0.72f, 1.0f, distanceFromCenter);
-    float brightness = 0.45f + body * 1.65f + core * 1.6f;
-    float3 hotCoreColor = lerp(baseColor, float3(1.0f, 1.0f, 0.82f), core * 0.28f);
+    float brightness = 0.45f + body * 1.65f + coreHaze * 0.22f;
+    float3 glowColor = lerp(baseColor, float3(1.0f, 1.0f, 0.82f), coreHaze * 0.055f);
 
-    output.color.rgb = hotCoreColor * brightness * glowStrength * (0.65f + luminance * 0.7f);
+    output.color.rgb = glowColor * brightness * glowStrength * (0.65f + luminance * 0.7f);
     output.color.a = textureColor.a * gMaterial.color.a * edgeFade;
     output.color.rgb = ApplyGrayscale(output.color.rgb);
     output.color.rgb = ApplySepia(output.color.rgb);
