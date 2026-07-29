@@ -118,7 +118,9 @@ void Rasen::DebugImGui(Boss* boss, Camera* camera) {
 void Rasen::Update(Camera* camera, Player* player, Boss* boss) {
 	
 
-	enemyManager->Update(camera, house->GetPosition(), house->GetScale(), player->GetPosition(), player->GetIsAlive());
+		const bool isEnemyMovementPaused = player->GetIsSpecialAttack();
+
+	enemyManager->Update(camera, house->GetPosition(), house->GetScale(), player->GetPosition(), player->GetIsAlive(), isEnemyMovementPaused);
 
 	int currentWave = enemyManager->GetCurrentWave();
 	if (currentWave != lastWave_) {
@@ -191,7 +193,9 @@ void Rasen::Update(Camera* camera, Player* player, Boss* boss) {
 
 	if (isBossActive_ && boss->GetIsAlive()) {
 		boss->SetCamera(camera);
-		boss->Update(house->GetPosition(), player->GetPosition(), player->GetIsAlive());
+		if (!isEnemyMovementPaused) {
+			boss->Update(house->GetPosition(), player->GetPosition(), player->GetIsAlive());
+		}
 	}
 	if (isBossActive_ && !boss->GetIsAlive()) {
 		goalActive = true;
