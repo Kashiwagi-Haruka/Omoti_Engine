@@ -48,13 +48,13 @@ void SpecialGaugeBall::Initialize(Camera* camera, const Vector3& position) {
 	isCollected_ = false;
 	isAutoCollecting_ = false;
 	baseTransform_ = {
-	    {0.35f,      0.35f,      0.35f     },
+	    {0.75f,      0.75f,      0.765f     },
 	    {0.0f,       0.0f,       0.0f      },
 	    {position.x, position.y, position.z},
 	};
 	for (int i = 0; i < 3; i++) {
 		primitive_[i] = std::make_unique<Primitive>();
-		primitive_[i]->Initialize(Primitive::Box, "Resources/2d/defaultParticle.png");
+		primitive_[i]->Initialize(Primitive::Plane, "Resources/2d/white2x2.png");
 		primitive_[i]->SetEnableLighting(false);
 		primitive_[i]->SetColor(kExpCubeColor);
 		primitive_[i]->SetTransform(baseTransform_);

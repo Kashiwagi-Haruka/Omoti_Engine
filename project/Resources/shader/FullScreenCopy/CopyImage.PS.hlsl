@@ -70,7 +70,27 @@ float3 ApplyRadialBlur(float2 texcoord)
 
     return blurredColor * rcp((float) sampleCount);
 }
+float3 BlurEmission(float2 texcoord, float2 texelSize, float radius)
+{
+    float3 blurredColor = float3(0.0f, 0.0f, 0.0f);
+    float totalWeight = 0.0f;
 
+    [unroll]
+    for (int y = -2; y <= 2; ++y)
+    {
+        [unroll]
+        for (int x = -2; x <= 2; ++x)
+        {
+            float2 kernelPosition = float2(x, y);
+            float weight = exp(-dot(kernelPosition, kernelPosition) * 0.5f);
+            float2 sampleOffset = kernelPosition * texelSize * radius * 0.5f;
+            blurredColor += gEmissionTexture.Sample(gSampler, saturate(texcoord + sampleOffset)).rgb * weight;
+            totalWeight += weight;
+        }
+    }
+
+    return blurredColor * rcp(max(totalWeight, 0.0001f));
+}
 PixelShaderOutput main(VertexShaderOutput input)
 {
     PixelShaderOutput output;
@@ -184,26 +204,14 @@ PixelShaderOutput main(VertexShaderOutput input)
         uint emissionWidth = 0;
         uint emissionHeight = 0;
         gEmissionTexture.GetDimensions(emissionWidth, emissionHeight);
-        float2 texelSize = rcp(float2(emissionWidth, emissionHeight));
+        float2 texelSize = rcp(max(float2(emissionWidth, emissionHeight), 1.0f));
         float radius = max(selectiveBloomRadius, 0.0f);
-        float3 bloom = float3(0.0f, 0.0f, 0.0f);
-        float bloomWeight = 0.0f;
 
-        [unroll]
-        for (int y = -4; y <= 4; ++y)
-        {
-            [unroll]
-            for (int x = -4; x <= 4; ++x)
-            {
-                float2 sampleOffset = float2(x, y) * texelSize * radius * 0.25f;
-                float weight = exp(-dot(float2(x, y), float2(x, y)) / 8.0f);
-                bloom += gEmissionTexture.Sample(gSampler, saturate(input.texcoord + sampleOffset)).rgb * weight;
-                bloomWeight += weight;
-            }
-        }
-        output.color.rgb += bloom * rcp(max(bloomWeight, 0.0001f)) * selectiveBloomIntensity;
+        float3 tightBloom = BlurEmission(input.texcoord, texelSize, radius * 0.35f);
+        float3 wideBloom = BlurEmission(input.texcoord, texelSize, radius);
+        float3 bloom = tightBloom * 0.65f + wideBloom * 0.35f;
+        output.color.rgb += bloom * selectiveBloomIntensity;
     }
-    
     float4 outlineColor = gOutlineTexture.Sample(gSampler, input.texcoord);
     output.color.rgb = lerp(output.color.rgb, outlineColor.rgb, saturate(outlineColor.a));
 
