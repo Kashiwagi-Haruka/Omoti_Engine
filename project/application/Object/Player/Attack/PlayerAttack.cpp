@@ -135,18 +135,21 @@ void PlayerAttack::Update() {
 				attackState_ = AttackState::kWeakAttack1;
 				sword_->StartAttack(1); // 1段階目
 				SEManager::GetInstance()->Play(SEManager::SEType::NormalAttack);
+				SEManager::GetInstance()->Play(SEManager::SEType::NormalAttack2);
 				models_->SetStateM(PlayerModels::StateM::attack1);
 				break;
 			case 2:
 				attackState_ = AttackState::kWeakAttack2;
 				sword_->StartAttack(2); // 2段階目
 				SEManager::GetInstance()->Play(SEManager::SEType::NormalAttack);
+				SEManager::GetInstance()->Play(SEManager::SEType::NormalAttack2);
 				models_->SetStateM(PlayerModels::StateM::attack2);
 				break;
 			case 3:
 				attackState_ = AttackState::kWeakAttack3;
 				sword_->StartAttack(3); // 3段階目
 				SEManager::GetInstance()->Play(SEManager::SEType::NormalAttack);
+				SEManager::GetInstance()->Play(SEManager::SEType::NormalAttack2);
 				models_->SetStateM(PlayerModels::StateM::attack3);
 				break;
 			case 4:
