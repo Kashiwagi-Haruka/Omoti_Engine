@@ -121,7 +121,6 @@ void TutorialScene::Update() {
 				const float pickupRadius = playerRadius + cubeRadius;
 				if (Function::LengthSquared(toCube) <= pickupRadius * pickupRadius) {
 					cube->Collect();
-					player_->EXPMath();
 					if (currentStepIndex_ == 5) {
 						expCubeCollectedCount_++;
 					}

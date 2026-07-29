@@ -417,8 +417,6 @@ void Player::Update() {
 	}
 }
 
-void Player::EXPMath() { parameters_.EXP += 15; }
-
 void Player::Draw(bool drawOutline) {
 
 	models_->Draw(drawOutline);

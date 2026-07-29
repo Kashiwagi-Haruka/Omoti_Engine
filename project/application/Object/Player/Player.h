@@ -150,7 +150,7 @@ public:
 	float GetMovementLimitRadius() const { return movementLimitRadius_; }
 	void IsLevelUp(bool lv) { isLevelUP = lv; }
 	bool GetLv() { return isLevelUP; }
-	void EXPMath();
+	
 	PlayerSword* GetSword() { return attack_->GetSword(); }
 	int GetComboStep() const { return attack_->GetComboStep(); }           // コンボ段階取得用
 	bool IsFallingAttack() const { return attack_->IsFallingAttacking(); } // 落下攻撃中か

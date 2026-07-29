@@ -526,7 +526,6 @@ void GameScene::Update() {
 			const float pickupRadius = playerRadius + ballRadius;
 			if (Function::LengthSquared(toBall) <= pickupRadius * pickupRadius) {
 				ball->Collect();
-				player->EXPMath();
 			}
 		}
 	}
