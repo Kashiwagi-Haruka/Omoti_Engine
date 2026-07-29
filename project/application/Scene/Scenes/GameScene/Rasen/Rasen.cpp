@@ -116,49 +116,7 @@ void Rasen::DebugImGui(Boss* boss, Camera* camera) {
 }
 
 void Rasen::Update(Camera* camera, Player* player, Boss* boss) {
-	if (isLevelSelecting) {
-		if (Input::GetInstance()->TriggerKey(DIK_A)) {
-			cursorIndex = 0;
-		}
-		if (Input::GetInstance()->TriggerKey(DIK_D)) {
-			cursorIndex = 1;
-		}
-		if (Input::GetInstance()->TriggerKey(DIK_SPACE)) {
-			int choice = selectChoices[cursorIndex];
-			auto params = player->GetParameters();
-			switch (choice) {
-			case 0:
-				params.AttuckUp++;
-				break;
-			case 1:
-				params.SpeedUp++;
-				break;
-			case 2:
-				params.HPUp++;
-				break;
-			case 3:
-				params.AllowUp++;
-				break;
-			}
-			player->SetParameters(params);
-			player->IsLevelUp(false);
-			isLevelSelecting = false;
-		}
-		return;
-	}
-
-	house->Update(camera);
-	if (player->GetLv() && !isLevelSelecting) {
-		isLevelSelecting = true;
-		int a = rand() % 4;
-		int b = rand() % 4;
-		while (b == a) {
-			b = rand() % 4;
-		}
-		selectChoices[0] = a;
-		selectChoices[1] = b;
-		cursorIndex = 0;
-	}
+	
 
 	enemyManager->Update(camera, house->GetPosition(), house->GetScale(), player->GetPosition(), player->GetIsAlive());
 
