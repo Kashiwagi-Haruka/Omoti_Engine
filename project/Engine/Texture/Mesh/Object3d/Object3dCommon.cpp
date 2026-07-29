@@ -400,6 +400,9 @@ void Object3dCommon::DrawCommon(DrawCommonType type, Camera* camera) {
 	DrawCommon(type);
 	defaultCamera = previousCamera;
 }
+void Object3dCommon::BeginEmissionDraw() { dxCommon_->BeginEmissionRenderTarget(); }
+void Object3dCommon::EndEmissionDraw() { dxCommon_->EndEmissionRenderTarget(); }
+
 void Object3dCommon::EndOutlineDraw() { dxCommon_->EndOutlineRenderTarget(); }
 
 void Object3dCommon::BeginShadowMapPass() {
