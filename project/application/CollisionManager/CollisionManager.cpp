@@ -36,7 +36,8 @@ void ApplyAttributeDamage(Enemy& enemy, EnemyManager& enemyManager, Attribute at
 
 
 bool CollisionManager::HandleGameSceneCollisions(
-    Player& player, EnemyManager& enemyManager, House& house, Boss* boss, Vector3* outHitEnemyPos, bool* outDidPlayerAttackHitEnemy, Enemy** outNormalAttackHitEnemy) {
+    Player& player, EnemyManager& enemyManager, House& house, Boss* boss, SpecialGaugeBallManager* specialGaugeBallManager, Vector3* outHitEnemyPos, bool* outDidPlayerAttackHitEnemy,
+    Enemy** outNormalAttackHitEnemy) {
 	bool didNormalAttackHitEnemy = false;
 	Enemy* normalAttackHitEnemy = nullptr;
 	bool didPlayerAttackHitEnemy = false;
@@ -115,6 +116,9 @@ bool CollisionManager::HandleGameSceneCollisions(
 				enemy->SetHPSubtract(damage);
 				enemyManager.OnEnemyDamaged(enemy.get(), damage, playerAttackAttribute, isCritical);
 				ApplyAttributeDamage(*enemy, enemyManager, playerAttackAttribute, player.GetCurrentCombatParameter());
+				if (specialGaugeBallManager) {
+					specialGaugeBallManager->SpawnDrops(enemy->GetPosition(), 1);
+				}
 				if (swordComboStep == 4) {
 					enemy->ApplyFinalComboBackStep();
 				}
@@ -135,6 +139,9 @@ bool CollisionManager::HandleGameSceneCollisions(
 				enemy->SetHPSubtract(damage);
 				enemyManager.OnEnemyDamaged(enemy.get(), damage, playerAttackAttribute, isCritical);
 				ApplyAttributeDamage(*enemy, enemyManager, playerAttackAttribute, player.GetCurrentCombatParameter());
+				if (specialGaugeBallManager) {
+					specialGaugeBallManager->SpawnDrops(enemy->GetPosition(), 1);
+				}
 				enemy->SetLastSkillDamageId(skillDamageId);
 				tryEnemyFlinch(enemy.get());
 			}
@@ -159,6 +166,9 @@ bool CollisionManager::HandleGameSceneCollisions(
 					enemy->SetHPSubtract(damage);
 					enemyManager.OnEnemyDamaged(enemy.get(), damage, playerAttackAttribute, isCritical);
 					ApplyAttributeDamage(*enemy, enemyManager, playerAttackAttribute, player.GetCurrentCombatParameter());
+					if (specialGaugeBallManager) {
+						specialGaugeBallManager->SpawnDrops(enemy->GetPosition(), 1);
+					}
 					enemy->TriggerDamageInvincibility();
 					tryEnemyFlinch(enemy.get());
 				}
@@ -189,6 +199,9 @@ bool CollisionManager::HandleGameSceneCollisions(
 			if (hitSword && boss->CanTakeDamage()) {
 				didPlayerAttackHitEnemy = true;
 				boss->SetHPSubtract(1);
+				if (specialGaugeBallManager) {
+					specialGaugeBallManager->SpawnDrops(boss->GetPosition(), 1);
+				}
 				boss->TriggerDamageInvincibility();
 			}
 		}
@@ -200,6 +213,9 @@ bool CollisionManager::HandleGameSceneCollisions(
 			if (hitSkill && boss->GetLastSkillDamageId() != skillDamageId) {
 				didPlayerAttackHitEnemy = true;
 				boss->SetHPSubtract(1);
+				if (specialGaugeBallManager) {
+					specialGaugeBallManager->SpawnDrops(boss->GetPosition(), 1);
+				}
 				boss->SetLastSkillDamageId(skillDamageId);
 			}
 		}
@@ -217,6 +233,9 @@ bool CollisionManager::HandleGameSceneCollisions(
 			if (hitSpecial && boss->CanTakeDamage()) {
 				didPlayerAttackHitEnemy = true;
 				boss->SetHPSubtract(1);
+				if (specialGaugeBallManager) {
+					specialGaugeBallManager->SpawnDrops(boss->GetPosition(), 1);
+				}
 				boss->TriggerDamageInvincibility();
 			}
 		}

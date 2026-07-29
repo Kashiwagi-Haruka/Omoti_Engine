@@ -8,6 +8,7 @@ class EnemyManager;
 class House;
 class Player;
 class Boss;
+class SpecialGaugeBallManager;
 
 /// <summary>
 /// 衝突判定の管理クラス
@@ -43,10 +44,12 @@ public:
 	/// <param name="enemyManager"> 敵マネージャー </param>
 	/// <param name="house"> 家 </param>
 	/// <param name="boss"> ボス </param>
+	/// <param name="specialGaugeBallManager"> 攻撃命中時にスペシャルゲージを生成するマネージャー </param>
 	/// <param name="outHitEnemyPos"> 衝突した敵の位置 </param>
 	/// <param name="outDidPlayerAttackHitEnemy"> プレイヤーの攻撃が敵に当たったかどうか </param>
 	/// <param name="outNormalAttackHitEnemy"> 通常攻撃が命中した敵 </param>
 	/// <returns></returns>
 	bool HandleGameSceneCollisions(
-	    Player& player, EnemyManager& enemyManager, House& house, Boss* boss, Vector3* outHitEnemyPos = nullptr, bool* outDidPlayerAttackHitEnemy = nullptr, Enemy** outNormalAttackHitEnemy = nullptr);
+	    Player& player, EnemyManager& enemyManager, House& house, Boss* boss, SpecialGaugeBallManager* specialGaugeBallManager = nullptr, Vector3* outHitEnemyPos = nullptr,
+	    bool* outDidPlayerAttackHitEnemy = nullptr, Enemy** outNormalAttackHitEnemy = nullptr);
 };

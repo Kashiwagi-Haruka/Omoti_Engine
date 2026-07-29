@@ -30,6 +30,7 @@ class Sky;
 class Boss;
 class Enemy;
 class Camera;
+class SpecialGaugeBallManager;
 
 class GameScene : public BaseScene {
 
@@ -68,6 +69,7 @@ private:
 	std::unique_ptr<Boss> boss_;
 	std::unique_ptr<Rasen> rasen_;
 	std::unique_ptr<OpenWorld> openWorld_;
+	std::unique_ptr<SpecialGaugeBallManager> specialGaugeBallManager_;
 	PlayAreaMode playAreaMode_ = PlayAreaMode::kSpiral;
 
 	DirectionalCommonLight directionalLight_{};

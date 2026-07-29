@@ -8,6 +8,7 @@
 #include "Object/Boss/Boss.h"
 #include "Object/Characters/Enemy/EnemyManager.h"
 #include "Object/Player/Player.h"
+#include "Object/SpecialGaugeBall/SpecialGaugeBallManager.h"
 #include "Object3d/Object3dCommon.h"
 #include "OpenWorld/OpenWorld.h"
 #include "ParticleManager.h"
@@ -103,6 +104,7 @@ GameScene::GameScene() {
 	boss_ = std::make_unique<Boss>();
 	rasen_ = std::make_unique<Rasen>();
 	openWorld_ = std::make_unique<OpenWorld>();
+	specialGaugeBallManager_ = std::make_unique<SpecialGaugeBallManager>();
 
 	field = std::make_unique<Field>();
 	sceneTransition = std::make_unique<SceneTransition>();
@@ -137,6 +139,7 @@ void GameScene::Initialize() {
 
 	skyDome->Initialize(cameraController->GetCamera());
 	player->Initialize(cameraController->GetCamera());
+	specialGaugeBallManager_->Initialize(cameraController->GetCamera());
 
 	field->Initialize(cameraController->GetCamera());
 	sceneTransition->Initialize(false);
@@ -511,6 +514,23 @@ void GameScene::Update() {
 		}
 	}
 	player->Update();
+	if (playAreaMode_ == PlayAreaMode::kSpiral && player->GetIsAlive()) {
+		for (auto& ball : specialGaugeBallManager_->SpecialGaugeBalls()) {
+			if (!ball || ball->IsCollected()) {
+				continue;
+			}
+			Vector3 toBall = player->GetPosition() - ball->GetPosition();
+			toBall.y = 0.0f;
+			const float playerRadius = std::max(player->GetScale().x, player->GetScale().z);
+			const float ballRadius = std::max(ball->GetScale().x, ball->GetScale().z);
+			const float pickupRadius = playerRadius + ballRadius;
+			if (Function::LengthSquared(toBall) <= pickupRadius * pickupRadius) {
+				ball->Collect();
+				player->EXPMath();
+			}
+		}
+	}
+	specialGaugeBallManager_->Update(cameraController->GetCamera(), player->GetMovementLimitCenter(), player->GetMovementLimitRadius());
 	const bool isDashing = player->IsDashing();
 	fullscreenFilterType_ = isDashing ? kRadialBlurFullscreenFilterType : kDefaultFullscreenFilterType;
 	Object3dCommon::GetInstance()->SetFullscreenFilterType(fullscreenFilterType_);
@@ -560,8 +580,8 @@ void GameScene::Update() {
 		Vector3 hitEnemyPos{};
 		bool didPlayerAttackHitEnemy = false;
 		Enemy* normalAttackHitEnemy = nullptr;
-		const bool didNormalAttackHitEnemy =
-		    collisionManager_.HandleGameSceneCollisions(*player, *rasen_->GetEnemyManager(), *rasen_->GetHouse(), activeBoss, &hitEnemyPos, &didPlayerAttackHitEnemy, &normalAttackHitEnemy);
+		const bool didNormalAttackHitEnemy = collisionManager_.HandleGameSceneCollisions(
+		    *player, *rasen_->GetEnemyManager(), *rasen_->GetHouse(), activeBoss, specialGaugeBallManager_.get(), &hitEnemyPos, &didPlayerAttackHitEnemy, &normalAttackHitEnemy);
 		if (didPlayerAttackHitEnemy) {
 			hitVinettTimer_ = kHitVinettDuration_;
 		}
@@ -731,6 +751,7 @@ void GameScene::Draw() {
 	EditorManager::GetInstance()->DrawEditorGridLines();
 	if (playAreaMode_ == PlayAreaMode::kSpiral) {
 		rasen_->Draw(boss_.get());
+		specialGaugeBallManager_->Draw();
 		if (rasen_->IsBossActive()) {
 			Object3dCommon::GetInstance()->DrawCommon();
 		}
