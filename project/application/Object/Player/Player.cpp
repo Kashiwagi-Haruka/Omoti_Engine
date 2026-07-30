@@ -400,7 +400,8 @@ void Player::Update() {
 	models_->SetCamera(camera_);
 	models_->SetPlayerTransform(transform_);
 	models_->Update();
-
+	attack_->SetTransform(transform_);
+	attack_->UpdateAttachments();
 	parameters_.hpMax_ = parameters_.hpMax_ * (1 + parameters_.HPUp);
 
 	// 死

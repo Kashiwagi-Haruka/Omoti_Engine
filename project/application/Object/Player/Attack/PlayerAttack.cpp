@@ -236,12 +236,9 @@ void PlayerAttack::Update() {
 			comboTimer_ = 0.0f;
 		}
 	}
-	key_->SetCamera(camera_);
-	key_->SetPlayerTransform(playerTransform_);
 	if (isSkillAttack) {
 		key_->StartAnimation();
 	}
-	key_->Update();
 
 	if (isSkillAttack) {
 		skill_->SetCamera(camera_);
@@ -258,6 +255,12 @@ void PlayerAttack::Update() {
 			isSpecialAttack = false;
 		}
 	}
+}
+
+void PlayerAttack::UpdateAttachments() {
+	key_->SetCamera(camera_);
+	key_->SetPlayerTransform(playerTransform_);
+	key_->Update();
 	const auto swordJointMatrix = models_->GetJointWorldMatrix("剣");
 	sword_->SetCamera(camera_);
 	sword_->SetPlayerYaw(playerTransform_.rotate.y);

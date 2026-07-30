@@ -61,6 +61,7 @@ public:
 	void Initialize();
 	void SetAttackName(std::string AttackName);
 	void Update();
+	void UpdateAttachments();
 	void Draw();
 	void EndAttack();
 	void ResetNormalAttackState();
