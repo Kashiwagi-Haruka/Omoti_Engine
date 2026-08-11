@@ -106,7 +106,6 @@ void AttackOperation::Update() {
 	dashSPData_.translate = {skillIconSPData_.translate.x, skillIconSPData_.translate.y+skillIconSPData_.size.y/2.0f+80.0f};
 	UpdateOperationSprite(dashSPData_, PlayCommand::GetDASH());
 
-
 	specialAttackSPData_.translate = {dashSPData_.translate.x-80.0f, dashSPData_.translate.y + dashSPData_.size.y};
 	UpdateOperationSprite(specialAttackSPData_, PlayCommand::GetSPECIAL_ATTACK());
 
@@ -114,7 +113,8 @@ void AttackOperation::Update() {
 	UpdateOperationSprite(normalAttackSPData_, PlayCommand::GetNORMAL_ATTACK_PUSH());
 	jumpSPData_.translate = {specialAttackSPData_.translate.x, normalAttackSPData_.translate.y + normalAttackSPData_.size.y/2.0f + 20.0f};
 	UpdateOperationSprite(jumpSPData_, PlayCommand::GetJUMP());
-
+	specialGaugeSPData_.translate = specialAttackSPData_.translate;
+	UpdateOperationSprite(specialGaugeSPData_, PlayCommand::GetSPECIAL_ATTACK());
 
 
 	UpdateControlGuideSprite(keyboardSkillIconSPData_, skillIconSPData_, kKeyboardDisplaySize);
@@ -141,6 +141,9 @@ void AttackOperation::Draw() {
 	}
 	if (jumpSPData_.sprite) {
 		jumpSPData_.sprite->Draw();
+	}
+	if (specialGaugeSPData_.sprite) {
+		specialGaugeSPData_.sprite->Draw();
 	}
 	if (specialAttackSPData_.sprite) {
 		specialAttackSPData_.sprite->Draw();
