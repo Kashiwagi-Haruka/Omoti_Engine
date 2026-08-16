@@ -147,17 +147,10 @@ bool CollisionManager::HandleGameSceneCollisions(
 			}
 		}
 
-		if (player.GetIsAlive() && player.GetSkill() && player.GetSkill()->IsSpecialDamaging()) {
-			bool hitSpecial = false;
-			for (const auto& specialTransform : player.GetSkill()->GetSpecialIceFlowerTransforms()) {
-				AABB specialAabb = MakeAabb(specialTransform.translate, specialTransform.scale);
-				if (RigidBody::isCollision(specialAabb, enemyAabb)) {
-					hitSpecial = true;
-					break;
-				}
-			}
-
-			if (hitSpecial) {
+		if (player.GetIsAlive() && player.GetSpecial() && player.GetSpecial()->IsDamaging()) {
+			const AABB specialAabb = MakeAabb(player.GetSpecial()->GetDamagePosition(), player.GetSpecial()->GetDamageScale());
+			const int specialDamageId = player.GetSpecial()->GetDamageId();
+			if (RigidBody::isCollision(specialAabb, enemyAabb) && enemy->GetLastSkillDamageId() != specialDamageId) {
 				if (enemy->CanTakeDamage()) {
 					didPlayerAttackHitEnemy = true;
 					bool isCritical = false;
@@ -169,6 +162,7 @@ bool CollisionManager::HandleGameSceneCollisions(
 					if (specialGaugeBallManager) {
 						specialGaugeBallManager->SpawnDrops(enemy->GetPosition(), 1);
 					}
+					enemy->SetLastSkillDamageId(specialDamageId);
 					enemy->TriggerDamageInvincibility();
 					tryEnemyFlinch(enemy.get());
 				}
@@ -220,22 +214,16 @@ bool CollisionManager::HandleGameSceneCollisions(
 			}
 		}
 
-		if (player.GetIsAlive() && player.GetSkill() && player.GetSkill()->IsSpecialDamaging()) {
-			bool hitSpecial = false;
-			for (const auto& specialTransform : player.GetSkill()->GetSpecialIceFlowerTransforms()) {
-				AABB specialAabb = MakeAabb(specialTransform.translate, specialTransform.scale);
-				if (RigidBody::isCollision(specialAabb, bossAabb)) {
-					hitSpecial = true;
-					break;
-				}
-			}
-
-			if (hitSpecial && boss->CanTakeDamage()) {
+		if (player.GetIsAlive() && player.GetSpecial() && player.GetSpecial()->IsDamaging()) {
+			const AABB specialAabb = MakeAabb(player.GetSpecial()->GetDamagePosition(), player.GetSpecial()->GetDamageScale());
+			const int specialDamageId = player.GetSpecial()->GetDamageId();
+			if (RigidBody::isCollision(specialAabb, bossAabb) && boss->GetLastSkillDamageId() != specialDamageId && boss->CanTakeDamage()) {
 				didPlayerAttackHitEnemy = true;
 				boss->SetHPSubtract(1);
 				if (specialGaugeBallManager) {
 					specialGaugeBallManager->SpawnDrops(boss->GetPosition(), 1);
 				}
+				boss->SetLastSkillDamageId(specialDamageId);
 				boss->TriggerDamageInvincibility();
 			}
 		}

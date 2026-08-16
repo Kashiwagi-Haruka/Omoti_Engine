@@ -88,5 +88,6 @@ public:
 	int GetComboStep() const { return comboStep_; }
 	PlayerSword* GetSword() { return sword_.get(); }
 	PlayerSkill* GetSkill() { return skill_.get(); }
+	PlayerSpecialAttack* GetSpecial() { return special_.get(); }
 	Vector3 GetSkillDamagePosition() const { return skill_->GetDamagePosition(); }
 };

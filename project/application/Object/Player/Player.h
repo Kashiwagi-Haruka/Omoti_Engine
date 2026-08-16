@@ -105,6 +105,7 @@ public:
 	void Jump();
 	void Falling();
 	PlayerSkill* GetSkill() { return attack_->GetSkill(); }
+	PlayerSpecialAttack* GetSpecial() { return attack_->GetSpecial(); }
 
 	void SetCamera(Camera* camera);
 	void SetMap(Field* map) { map_ = map; }

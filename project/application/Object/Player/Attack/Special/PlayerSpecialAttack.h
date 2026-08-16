@@ -21,4 +21,8 @@ public:
 	void SetPlayerTransform(const Transform& playerTransform);
 	bool IsEnd() { return sizuku_->isEnd(); };
 	bool IsAnimationFinished() const { return sizuku_->IsAnimationFinished(); }
+	bool IsDamaging() const { return sizuku_->IsFlowerDamaging(); }
+	Vector3 GetDamagePosition() const { return sizuku_->GetDamagePosition(); }
+	Vector3 GetDamageScale() const { return sizuku_->GetDamageScale(); }
+	int GetDamageId() const { return sizuku_->GetDamageId(); }
 };
