@@ -3,9 +3,8 @@
 #include "BaseScene.h"
 #include "CollisionManager/CollisionManager.h"
 #include "GameBase.h"
-#include "Light/CommonLight/DirectionalCommonLight.h"
-#include "Light/CommonLight/PointCommonLight.h"
-#include "Light/CommonLight/SpotCommonLight.h"
+#include "LightManager/LightManager.h"
+#include "Menu/MenuManager.h"
 #include "Object/Characters/Model/CharacterModel.h"
 #include "Object/Field/Field.h"
 #include "Object/RemoteCamera/RemoteCamera.h"
@@ -17,8 +16,6 @@
 #include "Team/Team.h"
 #include "UI/UIManager/UIManager.h"
 #include "Vector2.h"
-#include "Menu/MenuManager.h"
-#include <array>
 #include <cstdint>
 #include <imgui.h>
 #include <string>
@@ -65,11 +62,7 @@ private:
 	std::unique_ptr<SpecialGaugeBallManager> specialGaugeBallManager_;
 	PlayAreaMode playAreaMode_ = PlayAreaMode::kSpiral;
 
-	DirectionalCommonLight directionalLight_{};
-	std::array<PointCommonLight, kMaxPointLights> pointLights_{};
-	uint32_t activePointLightCount_ = 0;
-	std::array<SpotCommonLight, kMaxSpotLights> spotLights_{};
-	uint32_t activeSpotLightCount_ = 0;
+	LightManager lightManager_;
 
 	bool sceneEndClear = false;
 	bool sceneEndOver = false;

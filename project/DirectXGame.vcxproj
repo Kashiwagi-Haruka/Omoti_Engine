@@ -338,7 +338,7 @@ copy "$(WindowsSdkDir)\bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)\
     <ClCompile Include="application\Object\Characters\Enemy\LockOn\LockOnEnemy.cpp" />
     <ClCompile Include="application\Object\RemoteCamera\RemoteCamera.cpp" />
     <ClCompile Include="application\Menu\MenuManager.cpp" />
-    <ClCompile Include="LightManager.cpp" />
+    <ClCompile Include="application\LightManager\LightManager.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include=".editorconfig" />
@@ -552,7 +552,7 @@ copy "$(WindowsSdkDir)\bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)\
     <ClInclude Include="application\Object\Characters\Enemy\LockOn\LockOnEnemy.h" />
     <ClInclude Include="application\Object\RemoteCamera\RemoteCamera.h" />
     <ClInclude Include="application\Menu\MenuManager.h" />
-    <ClInclude Include="LightManager.h" />
+    <ClInclude Include="application\LightManager\LightManager.h" />
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="Resources\shader\FullScreenCopy\CopyImage.PS.hlsl">
