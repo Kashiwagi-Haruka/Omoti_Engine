@@ -3,9 +3,14 @@
 #include "Input.h"
 #include "PlayCommand/PlayCommand.h"
 #include "Sprite/Sprite.h"
+#include "Sprite/SpriteCommon.h"
 #include "TextureManager.h"
 #include "WinApp.h"
+#include "Text/FreetypeManager/FreeTypeManager.h"
 #include <algorithm>
+#include <cmath>
+#include <string>
+
 
 namespace {
 constexpr Vector2 kOperationIconBaseSize{60.0f, 60.0f};
@@ -95,6 +100,13 @@ void AttackOperation::Initialize() {
 	padJumpSPData_.sprite->SetAnchorPoint({1.0f, 1.0f});
 	padNormalAttackSPData_.sprite->SetAnchorPoint({1.0f, 1.0f});
 	padSpecialAttackSPData_.sprite->SetAnchorPoint({1.0f, 1.0f});
+
+	const uint32_t cooldownFontHandle = FreeTypeManager::CreateFace("Resources/Font/irohakakuC-Bold.ttf", 0);
+	FreeTypeManager::SetPixelSizes(cooldownFontHandle, 26, 26);
+	specialCooldownText_.Initialize(cooldownFontHandle);
+	specialCooldownText_.SetSize({220.0f, 40.0f});
+	specialCooldownText_.SetAlign(TextAlign::Center);
+	specialCooldownText_.SetColor({1.0f, 1.0f, 1.0f, 1.0f});
 }
 
 void AttackOperation::Update() {
@@ -103,19 +115,36 @@ void AttackOperation::Update() {
 	skillIconSPData_.translate = {1200.0f, 400.0f};
 	UpdateOperationSprite(skillIconSPData_, PlayCommand::GetSKILL_ATTACK());
 
-	dashSPData_.translate = {skillIconSPData_.translate.x, skillIconSPData_.translate.y+skillIconSPData_.size.y/2.0f+80.0f};
+	dashSPData_.translate = {skillIconSPData_.translate.x, skillIconSPData_.translate.y + skillIconSPData_.size.y / 2.0f + 80.0f};
 	UpdateOperationSprite(dashSPData_, PlayCommand::GetDASH());
 
-	specialAttackSPData_.translate = {dashSPData_.translate.x-80.0f, dashSPData_.translate.y + dashSPData_.size.y};
+	specialAttackSPData_.translate = {dashSPData_.translate.x - 80.0f, dashSPData_.translate.y + dashSPData_.size.y};
 	UpdateOperationSprite(specialAttackSPData_, PlayCommand::GetSPECIAL_ATTACK());
 
-	normalAttackSPData_.translate = {specialAttackSPData_.translate.x - specialAttackSPData_.size.x - 20.0f, specialAttackSPData_.translate.y + specialAttackSPData_.size.y/2.0f+20.0f};
+	normalAttackSPData_.translate = {specialAttackSPData_.translate.x - specialAttackSPData_.size.x - 20.0f, specialAttackSPData_.translate.y + specialAttackSPData_.size.y / 2.0f + 20.0f};
 	UpdateOperationSprite(normalAttackSPData_, PlayCommand::GetNORMAL_ATTACK_PUSH());
-	jumpSPData_.translate = {specialAttackSPData_.translate.x, normalAttackSPData_.translate.y + normalAttackSPData_.size.y/2.0f + 20.0f};
+	jumpSPData_.translate = {specialAttackSPData_.translate.x, normalAttackSPData_.translate.y + normalAttackSPData_.size.y / 2.0f + 20.0f};
 	UpdateOperationSprite(jumpSPData_, PlayCommand::GetJUMP());
 	specialGaugeSPData_.translate = specialAttackSPData_.translate;
 	UpdateOperationSprite(specialGaugeSPData_, PlayCommand::GetSPECIAL_ATTACK());
 
+	if (specialCooldownRemaining_ > 0.0f) {
+		const int remainingSeconds = static_cast<int>(std::ceil(specialCooldownRemaining_));
+		if (remainingSeconds != displayedCooldownSeconds_) {
+			displayedCooldownSeconds_ = remainingSeconds;
+			std::u32string cooldownString = U"クールタイム: ";
+			for (const char digit : std::to_string(remainingSeconds)) {
+				cooldownString.push_back(static_cast<char32_t>(digit));
+			}
+			cooldownString += U"秒";
+			specialCooldownText_.SetString(cooldownString);
+			specialCooldownText_.UpdateLayout(false);
+		}
+		specialCooldownText_.SetPosition({specialAttackSPData_.translate.x - 110.0f, specialAttackSPData_.translate.y - specialAttackSPData_.size.y - 10.0f});
+		specialCooldownText_.Update(false);
+	} else {
+		displayedCooldownSeconds_ = 0;
+	}
 
 	UpdateControlGuideSprite(keyboardSkillIconSPData_, skillIconSPData_, kKeyboardDisplaySize);
 	UpdateControlGuideSprite(keyboardJumpSPData_, jumpSPData_, kKeyboardDisplaySize);
@@ -159,6 +188,10 @@ void AttackOperation::Draw() {
 		if (spriteData->sprite) {
 			spriteData->sprite->Draw();
 		}
+	}
+	if (specialCooldownRemaining_ > 0.0f) {
+		SpriteCommon::GetInstance()->DrawCommonFont();
+		specialCooldownText_.Draw();
 	}
 }
 void AttackOperation::SetOperationSpriteBaseSize(SpriteData& spriteData, const Vector2& size) {

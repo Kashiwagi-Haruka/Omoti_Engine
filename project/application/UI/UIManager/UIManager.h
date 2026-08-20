@@ -48,4 +48,5 @@ public:
 	void SetPlayerParameters(Parameters parameters);
 	// 現在のダッシュゲージを設定する。
 	void SetPlayerDashGauge(float dashGauge, float dashGaugeMax, bool isDashUIView);
+	void SetSpecialAttackCooldown(float remainingSeconds);
 };

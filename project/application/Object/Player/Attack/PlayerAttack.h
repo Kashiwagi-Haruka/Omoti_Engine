@@ -42,6 +42,8 @@ class PlayerAttack {
 	// スキル攻撃用
 	bool isSkillAttack = false;
 	bool isSpecialAttack = false;
+	static constexpr float kSpecialAttackCooldownDuration_ = 10.0f;
+	float specialAttackCooldownRemaining_ = 0.0f;
 
 	// プレイヤーが移動できるか
 	bool canMove_ = true;
@@ -71,6 +73,8 @@ public:
 	bool isSkillAttacking() const { return isSkillAttack; }      // スキル攻撃中かどうかを返す関数
 	bool isSpecialAttacking() const { return isSpecialAttack; }  // 必殺技攻撃中かどうかを返す関数
 	bool IsSpecialAnimationPlaying() const { return isSpecialAttack && !special_->IsAnimationFinished(); }
+	bool IsSpecialAttackReady() const { return specialAttackCooldownRemaining_ <= 0.0f; }
+	float GetSpecialAttackCooldownRemaining() const { return specialAttackCooldownRemaining_; }
 	bool IsAnyAttackActive() const { return isAttacking_ || isFallingAttack_ || isSkillAttack || IsSpecialAnimationPlaying(); }
 	bool IsCanMove() const { return !isAttacking_ && !isFallingAttack_ && !isSkillAttack && !IsSpecialAnimationPlaying(); }
 	// プレイヤーが移動できるかどうかを返す関数

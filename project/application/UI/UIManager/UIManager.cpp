@@ -101,3 +101,4 @@ void UIManager::SetPlayerDashGauge(float dashGauge, float dashGaugeMax , bool is
 	dashGaugeUI_->SetGaugeRate(gaugeRate);
 	dashGaugeUI_->SetDamageUIView(isDashView);
 }
+void UIManager::SetSpecialAttackCooldown(float remainingSeconds) { attackOperationUI_->SetSpecialCooldownRemaining(remainingSeconds); }

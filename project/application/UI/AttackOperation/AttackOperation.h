@@ -1,4 +1,5 @@
 #pragma once
+#include "Text/Text.h"
 #include "Vector2.h"
 #include <cstdint>
 #include <memory>
@@ -48,12 +49,16 @@ class AttackOperation {
 	SpriteData padSpecialAttackSPData_;
 
 	InputDisplayMode inputDisplayMode_ = InputDisplayMode::Keyboard;
+	Text specialCooldownText_;
+	float specialCooldownRemaining_ = 0.0f;
+	int displayedCooldownSeconds_ = 0;
 
 public:
 	AttackOperation();
 	void Initialize();
 	void Update();
 	void Draw();
+	void SetSpecialCooldownRemaining(float remainingSeconds) { specialCooldownRemaining_ = remainingSeconds; }
 
 private:
 	void UpdateInputDisplayMode();
