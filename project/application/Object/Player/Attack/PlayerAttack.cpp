@@ -45,6 +45,7 @@ void PlayerAttack::Initialize() {
 
 	isSkillAttack = false;
 	isSpecialAttack = false;
+	specialAttackCooldownRemaining_ = 0.0f;
 
 	sword_->Initialize();
 	sword_->SetCamera(camera_);
@@ -62,7 +63,13 @@ void PlayerAttack::SetAttackName(std::string AttackName) {
 
 void PlayerAttack::Update() {
 	// 攻撃の更新処理をここに記述
-	// ★ 落下攻撃中は他の攻撃不可
+	if (specialAttackCooldownRemaining_ > 0.0f) {
+		specialAttackCooldownRemaining_ -= 1.0f / 60.0f;
+		if (specialAttackCooldownRemaining_ < 0.0f) {
+			specialAttackCooldownRemaining_ = 0.0f;
+		}
+	}
+	//  落下攻撃中は他の攻撃不可
 	if (isFallingAttack_) {
 		return;
 	}
@@ -221,9 +228,10 @@ void PlayerAttack::Update() {
 	}
 	if (PlayCommand::GetSPECIAL_ATTACK()) {
 		// 必殺技
-		if (!isSpecialAttack) {
+		if (!isSpecialAttack && IsSpecialAttackReady()) {
 			ResetNormalAttackState();
 			isSpecialAttack = true;
+			specialAttackCooldownRemaining_ = kSpecialAttackCooldownDuration_;
 			attackState_ = AttackState::kSpecialAttack;
 			special_->SetPlayerTransform(playerTransform_);
 			special_->Start();

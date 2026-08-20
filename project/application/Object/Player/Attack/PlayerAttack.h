@@ -42,7 +42,7 @@ class PlayerAttack {
 	// スキル攻撃用
 	bool isSkillAttack = false;
 	bool isSpecialAttack = false;
-	static constexpr float kSpecialAttackCooldownDuration_ = 10.0f;
+	static constexpr float kSpecialAttackCooldownDuration_ = 15.0f;
 	float specialAttackCooldownRemaining_ = 0.0f;
 
 	// プレイヤーが移動できるか
