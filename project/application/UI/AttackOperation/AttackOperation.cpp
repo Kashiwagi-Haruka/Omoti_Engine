@@ -129,21 +129,22 @@ void AttackOperation::Update() {
 	UpdateOperationSprite(specialGaugeSPData_, PlayCommand::GetSPECIAL_ATTACK());
 
 	if (specialCooldownRemaining_ > 0.0f) {
-		const int remainingSeconds = static_cast<int>(std::ceil(specialCooldownRemaining_));
-		if (remainingSeconds != displayedCooldownSeconds_) {
-			displayedCooldownSeconds_ = remainingSeconds;
-			std::u32string cooldownString = U"クールタイム: ";
-			for (const char digit : std::to_string(remainingSeconds)) {
+		const int remainingTenths = static_cast<int>(std::ceil(specialCooldownRemaining_ * 10.0f));
+		if (remainingTenths != displayedCooldownTenths_) {
+			displayedCooldownTenths_ = remainingTenths;
+			std::u32string cooldownString;
+			for (const char digit : std::to_string(remainingTenths / 10)) {
 				cooldownString.push_back(static_cast<char32_t>(digit));
 			}
-			cooldownString += U"秒";
+			cooldownString.push_back(U'.');
+			cooldownString.push_back(static_cast<char32_t>(U'0' + remainingTenths % 10));
 			specialCooldownText_.SetString(cooldownString);
 			specialCooldownText_.UpdateLayout(false);
 		}
 		specialCooldownText_.SetPosition({specialAttackSPData_.translate.x - 110.0f, specialAttackSPData_.translate.y - specialAttackSPData_.size.y - 10.0f});
 		specialCooldownText_.Update(false);
 	} else {
-		displayedCooldownSeconds_ = 0;
+		displayedCooldownTenths_ = 0;
 	}
 
 	UpdateControlGuideSprite(keyboardSkillIconSPData_, skillIconSPData_, kKeyboardDisplaySize);

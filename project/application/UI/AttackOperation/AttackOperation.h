@@ -51,7 +51,7 @@ class AttackOperation {
 	InputDisplayMode inputDisplayMode_ = InputDisplayMode::Keyboard;
 	Text specialCooldownText_;
 	float specialCooldownRemaining_ = 0.0f;
-	int displayedCooldownSeconds_ = 0;
+	int displayedCooldownTenths_ = 0;
 
 public:
 	AttackOperation();
