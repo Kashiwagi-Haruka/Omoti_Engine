@@ -129,6 +129,12 @@ void AttackOperation::Update() {
 	UpdateOperationSprite(specialGaugeSPData_, PlayCommand::GetSPECIAL_ATTACK());
 
 	if (specialCooldownRemaining_ > 0.0f) {
+		const Vector2 specialGaugeScale = specialGaugeSPData_.sprite ? specialGaugeSPData_.sprite->GetScale() : specialGaugeSPData_.size;
+		specialCooldownText_.SetPosition({
+		    specialGaugeSPData_.translate.x - specialGaugeScale.x / 2.0f,
+		    specialGaugeSPData_.translate.y - specialGaugeScale.y / 2.0f,
+		});
+
 		const int remainingTenths = static_cast<int>(std::ceil(specialCooldownRemaining_ * 10.0f));
 		if (remainingTenths != displayedCooldownTenths_) {
 			displayedCooldownTenths_ = remainingTenths;
@@ -141,7 +147,6 @@ void AttackOperation::Update() {
 			specialCooldownText_.SetString(cooldownString);
 			specialCooldownText_.UpdateLayout(false);
 		}
-		specialCooldownText_.SetPosition({specialAttackSPData_.translate.x - 110.0f, specialAttackSPData_.translate.y - specialAttackSPData_.size.y - 10.0f});
 		specialCooldownText_.Update(false);
 	} else {
 		displayedCooldownTenths_ = 0;
