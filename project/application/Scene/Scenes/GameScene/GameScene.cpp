@@ -277,7 +277,7 @@ void GameScene::Update() {
 		menuManager_->Update();
 	}
 	DebugImGui();
-	if (!isCharacterDeathDissolving_) {
+	if (!isCharacterDeathDissolving_ && !player->IsSpecialAttacking()) {
 		team_->Update();
 	}
 	if (team_->ConsumeCharacterSwitchTriggered()) {

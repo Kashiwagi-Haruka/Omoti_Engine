@@ -7,6 +7,7 @@
 #include "Skill/PlayerSkill.h"
 #include "Special/PlayerSpecialAttack.h"
 #include <string>
+#include <unordered_map>
 
 class PlayerAttack {
 
@@ -43,7 +44,8 @@ class PlayerAttack {
 	bool isSkillAttack = false;
 	bool isSpecialAttack = false;
 	static constexpr float kSpecialAttackCooldownDuration_ = 15.0f;
-	float specialAttackCooldownRemaining_ = 0.0f;
+	std::string characterName_ = "Sizuku";
+	std::unordered_map<std::string, float> specialAttackCooldowns_;
 
 	// プレイヤーが移動できるか
 	bool canMove_ = true;
@@ -73,8 +75,11 @@ public:
 	bool isSkillAttacking() const { return isSkillAttack; }      // スキル攻撃中かどうかを返す関数
 	bool isSpecialAttacking() const { return isSpecialAttack; }  // 必殺技攻撃中かどうかを返す関数
 	bool IsSpecialAnimationPlaying() const { return isSpecialAttack && !special_->IsAnimationFinished(); }
-	bool IsSpecialAttackReady() const { return specialAttackCooldownRemaining_ <= 0.0f; }
-	float GetSpecialAttackCooldownRemaining() const { return specialAttackCooldownRemaining_; }
+	bool IsSpecialAttackReady() const { return GetSpecialAttackCooldownRemaining() <= 0.0f; }
+	float GetSpecialAttackCooldownRemaining() const {
+		const auto it = specialAttackCooldowns_.find(characterName_);
+		return it == specialAttackCooldowns_.end() ? 0.0f : it->second;
+	}
 	bool IsAnyAttackActive() const { return isAttacking_ || isFallingAttack_ || isSkillAttack || IsSpecialAnimationPlaying(); }
 	bool IsCanMove() const { return !isAttacking_ && !isFallingAttack_ && !isSkillAttack && !IsSpecialAnimationPlaying(); }
 	// プレイヤーが移動できるかどうかを返す関数
@@ -88,6 +93,10 @@ public:
 	void SetCamera(Camera* camera);
 	void SetTransform(const Transform& transform) { playerTransform_ = transform; }
 	void SetModels(PlayerModels* models) { models_ = models; }
+	void SetCharacterName(const std::string& name) {
+		characterName_ = name;
+		special_->SetCharacterName(name);
+	}
 
 	int GetComboStep() const { return comboStep_; }
 	PlayerSword* GetSword() { return sword_.get(); }

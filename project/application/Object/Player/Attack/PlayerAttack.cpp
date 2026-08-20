@@ -1,3 +1,4 @@
+#define NOMINMAX
 #include "PlayerAttack.h"
 #include "PlayCommand/PlayCommand.h"
 #include "AudioManager/SEManager/SEManager.h"
@@ -45,7 +46,7 @@ void PlayerAttack::Initialize() {
 
 	isSkillAttack = false;
 	isSpecialAttack = false;
-	specialAttackCooldownRemaining_ = 0.0f;
+	specialAttackCooldowns_.clear();
 
 	sword_->Initialize();
 	sword_->SetCamera(camera_);
@@ -63,11 +64,9 @@ void PlayerAttack::SetAttackName(std::string AttackName) {
 
 void PlayerAttack::Update() {
 	// 攻撃の更新処理をここに記述
-	if (specialAttackCooldownRemaining_ > 0.0f) {
-		specialAttackCooldownRemaining_ -= 1.0f / 60.0f;
-		if (specialAttackCooldownRemaining_ < 0.0f) {
-			specialAttackCooldownRemaining_ = 0.0f;
-		}
+	for (auto& [name, cooldown] : specialAttackCooldowns_) {
+		(void)name;
+		cooldown = std::max(0.0f, cooldown - 1.0f / 60.0f);
 	}
 	//  落下攻撃中は他の攻撃不可
 	if (isFallingAttack_) {
@@ -231,7 +230,7 @@ void PlayerAttack::Update() {
 		if (!isSpecialAttack && IsSpecialAttackReady()) {
 			ResetNormalAttackState();
 			isSpecialAttack = true;
-			specialAttackCooldownRemaining_ = kSpecialAttackCooldownDuration_;
+			specialAttackCooldowns_[characterName_] = kSpecialAttackCooldownDuration_;
 			attackState_ = AttackState::kSpecialAttack;
 			special_->SetPlayerTransform(playerTransform_);
 			special_->Start();

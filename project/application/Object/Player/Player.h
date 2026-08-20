@@ -157,7 +157,9 @@ public:
 	PlayerSword* GetSword() { return attack_->GetSword(); }
 	int GetComboStep() const { return attack_->GetComboStep(); }           // コンボ段階取得用
 	bool IsFallingAttack() const { return attack_->IsFallingAttacking(); } // 落下攻撃中か
+	bool IsSpecialAttacking() const { return attack_ && attack_->isSpecialAttacking(); }
 	Object3d* GetCharacterObject3d() { return models_ ? models_->GetCharacterObject3d() : nullptr; }
+
 	void SetCharacterType(const std::string& characterName);
 	Attribute GetCurrentAttribute() const;
 	const BaseParameter& GetCurrentBaseParameter() const;

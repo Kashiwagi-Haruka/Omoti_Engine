@@ -84,6 +84,9 @@ void Player::SetCharacterType(const std::string& characterName) {
 	if (models_) {
 		models_->SetCharacterType(characterName);
 	}
+	if (attack_) {
+		attack_->SetCharacterName(characterName);
+	}
 }
 Attribute Player::GetCurrentAttribute() const { return /*models_ ? */models_->GetCurrentAttribute()/* : Attribute::None*/; }
 const BaseParameter& Player::GetCurrentBaseParameter() const { return models_->GetCurrentBaseParameter(); }
