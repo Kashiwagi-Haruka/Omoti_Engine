@@ -543,7 +543,11 @@ std::vector<GlyphRun> FreeTypeManager::LayoutString(uint32_t handle, const std::
             prevGlyph = 0;
         }
 
-        runs.push_back({ glyphIndex, { penX, penY } });
+        if (face->glyph->metrics.width > 0 && face->glyph->metrics.height > 0) {
+			runs.push_back({
+			    glyphIndex, {penX, penY}
+            });
+		}
         penX += advance;
 
         prevGlyph = glyphIndex;

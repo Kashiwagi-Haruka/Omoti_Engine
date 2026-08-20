@@ -3,6 +3,7 @@
 #include "SrvManager/SrvManager.h"
 #include "StringUtility.h"
 #include <chrono>
+#include <stdexcept>
 std::unique_ptr<TextureManager> TextureManager::instance = nullptr;
 uint32_t TextureManager::kSRVIndexTop = 1;
 
@@ -45,14 +46,18 @@ DirectX::ScratchImage TextureManager::LoadTextureImage(const std::string& filePa
 	} else {
 		hr_ = DirectX::LoadFromWICFile(filePathW.c_str(), DirectX::WIC_FLAGS_FORCE_SRGB, nullptr, image);
 	}
-	assert(SUCCEEDED(hr_));
+	if (FAILED(hr_)) {
+		throw std::runtime_error("Failed to load texture image: " + filePath);
+	}
 
 	DirectX::ScratchImage mipImages{};
 	if (DirectX::IsCompressed(image.GetMetadata().format)) {
 		mipImages = std::move(image);
 	} else {
 		hr_ = DirectX::GenerateMipMaps(image.GetImages(), image.GetImageCount(), image.GetMetadata(), DirectX::TEX_FILTER_SRGB, 0, mipImages);
-		assert(SUCCEEDED(hr_));
+		if (FAILED(hr_)) {
+			throw std::runtime_error("Failed to generate texture mipmaps: " + filePath);
+		}
 	}
 	return mipImages;
 }
@@ -103,7 +108,17 @@ void TextureManager::CompleteFinishedLoads() {
 		if (textureData.loadFuture.wait_for(std::chrono::seconds(0)) != std::future_status::ready) {
 			continue;
 		}
-		DirectX::ScratchImage mipImages = textureData.loadFuture.get();
+		DirectX::ScratchImage mipImages;
+		try {
+			mipImages = textureData.loadFuture.get();
+		} catch (const std::exception& exception) {
+			// Keep the white placeholder SRV valid when background decoding fails.
+			// In particular, never pass an empty resource to the D3D12 upload helpers.
+			textureData.isLoading = false;
+			std::string log = "[TextureManager] Async load failed: " + filePath + " (" + exception.what() + ")\n";
+			OutputDebugStringA(log.c_str());
+			continue;
+		}
 		std::wstring filePathW = StringUtility::ConvertString_(filePath);
 		const bool isDDS = filePathW.size() >= 4 && _wcsicmp(filePathW.c_str() + (filePathW.size() - 4), L".dds") == 0;
 		ApplyTextureImage(textureData, std::move(mipImages), isDDS);
@@ -141,7 +156,24 @@ void TextureManager::LoadTextureName(const std::string& filePath) {
 	textureData.resource = whiteIt->second.resource;
 	dxCommon_->GetDevice()->CreateShaderResourceView(textureData.resource.Get(), nullptr, textureData.srvHandleCPU);
 	textureData.isLoading = true;
-	textureData.loadFuture = std::async(std::launch::async, [filePath]() { return LoadTextureImage(filePath); });
+	textureData.loadFuture = std::async(std::launch::async, [filePath]() {
+		// WIC is COM-based. std::async worker threads do not inherit the main
+		// thread's COM initialization, so initialize it for the decode job.
+		const HRESULT comResult = CoInitializeEx(nullptr, COINIT_MULTITHREADED);
+		const bool shouldUninitialize = SUCCEEDED(comResult);
+		try {
+			DirectX::ScratchImage image = LoadTextureImage(filePath);
+			if (shouldUninitialize) {
+				CoUninitialize();
+			}
+			return image;
+		} catch (...) {
+			if (shouldUninitialize) {
+				CoUninitialize();
+			}
+			throw;
+		}
+	});
 }
 
 // メモリ上の画像データを読み込み、SRV を作成する
