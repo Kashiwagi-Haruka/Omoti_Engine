@@ -339,6 +339,8 @@ copy "$(WindowsSdkDir)\bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)\
     <ClCompile Include="application\Object\RemoteCamera\RemoteCamera.cpp" />
     <ClCompile Include="application\Menu\MenuManager.cpp" />
     <ClCompile Include="application\LightManager\LightManager.cpp" />
+    <ClCompile Include="application\Object\Characters\Playable\Individual\Mei\MeiSkill.cpp" />
+    <ClCompile Include="application\Object\Characters\Playable\Individual\Mei\MeiSpecial.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include=".editorconfig" />
@@ -553,6 +555,8 @@ copy "$(WindowsSdkDir)\bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)\
     <ClInclude Include="application\Object\RemoteCamera\RemoteCamera.h" />
     <ClInclude Include="application\Menu\MenuManager.h" />
     <ClInclude Include="application\LightManager\LightManager.h" />
+    <ClInclude Include="application\Object\Characters\Playable\Individual\Mei\MeiSkill.h" />
+    <ClInclude Include="application\Object\Characters\Playable\Individual\Mei\MeiSpecial.h" />
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="Resources\shader\FullScreenCopy\CopyImage.PS.hlsl">

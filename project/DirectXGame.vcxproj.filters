@@ -551,6 +551,8 @@
     <ClCompile Include="application\Object\RemoteCamera\RemoteCamera.cpp" />
     <ClCompile Include="application\Menu\MenuManager.cpp" />
     <ClCompile Include="application\LightManager\LightManager.cpp" />
+    <ClCompile Include="application\Object\Characters\Playable\Individual\Mei\MeiSpecial.cpp" />
+    <ClCompile Include="application\Object\Characters\Playable\Individual\Mei\MeiSkill.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Engine\Camera\Camera.h">
@@ -1093,6 +1095,8 @@
     <ClInclude Include="application\Object\RemoteCamera\RemoteCamera.h" />
     <ClInclude Include="application\Menu\MenuManager.h" />
     <ClInclude Include="application\LightManager\LightManager.h" />
+    <ClInclude Include="application\Object\Characters\Playable\Individual\Mei\MeiSpecial.h" />
+    <ClInclude Include="application\Object\Characters\Playable\Individual\Mei\MeiSkill.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include=".editorconfig" />
