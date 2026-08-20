@@ -116,9 +116,7 @@ void Rasen::DebugImGui(Boss* boss, Camera* camera) {
 }
 
 void Rasen::Update(Camera* camera, Player* player, Boss* boss) {
-	
-
-		const bool isEnemyMovementPaused = player->GetIsSpecialAttack();
+	const bool isEnemyMovementPaused = player->GetIsSpecialAnimationPlaying();
 
 	enemyManager->Update(camera, house->GetPosition(), house->GetScale(), player->GetPosition(), player->GetIsAlive(), isEnemyMovementPaused);
 

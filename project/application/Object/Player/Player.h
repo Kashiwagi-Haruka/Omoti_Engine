@@ -116,6 +116,7 @@ public:
 	bool GetIsSkillAttack() { return attack_->isSkillAttacking(); }
 	bool GetIsSpecialAttack() const { return attack_->isSpecialAttacking(); }
 	bool GetIsDashUIView() const { return isDashGaugeRecovery_||isDash||(dashGauge_<dashGaugeMax_); }
+	bool GetIsSpecialAnimationPlaying() const { return attack_->IsSpecialAnimationPlaying(); }
 	Vector3 GetSkillPosition() { return attack_->GetSkillDamagePosition(); }
 	Parameters GetParameters() { return parameters_; }
 	void SetParameters(const Parameters& p) { parameters_ = p; }
