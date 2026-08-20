@@ -49,8 +49,9 @@ void SizukuSpecial::Start() {
 	isEnd_ = false;
 	elapsedTime_ = 0.0f;
 	animationTime_ = 0.0f;
-	// Skill damage IDs are non-negative. Negative IDs keep this one-shot hit independent.
-	--damageId_;
+	
+	damageId_ -= 2;
+	rainDamageId_ = damageId_ + 1;
 	fieldPlaneTransform_.scale = {};
 	fieldPlaneTransform_.translate = sizukuTransform_.translate;
 	fieldPlaneTransform_.translate.y -= sizukuHeight_;

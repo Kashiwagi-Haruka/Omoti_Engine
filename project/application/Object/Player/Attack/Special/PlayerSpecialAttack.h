@@ -25,4 +25,8 @@ public:
 	Vector3 GetDamagePosition() const { return sizuku_->GetDamagePosition(); }
 	Vector3 GetDamageScale() const { return sizuku_->GetDamageScale(); }
 	int GetDamageId() const { return sizuku_->GetDamageId(); }
+	bool IsRainDamaging() const { return sizuku_->IsRainDamaging(); }
+	const std::vector<Transform>& GetRainDamageTransforms() const { return sizuku_->GetRainDamageTransforms(); }
+	Vector3 GetRainDamageScale() const { return sizuku_->GetRainDamageScale(); }
+	int GetRainDamageId() const { return sizuku_->GetRainDamageId(); }
 };

@@ -23,6 +23,7 @@ class SizukuSpecial {
 	float rainRadius_ = 18.0f;
 	float rainFallSpeed_ = 18.0f;
 	int damageId_ = 0;
+	int rainDamageId_ = 0;
 
 	std::unique_ptr<Primitive> fieldPlane_;
 	std::unique_ptr<Object3d> skydomeObj_;
@@ -52,7 +53,11 @@ public:
 	bool isEnd() const { return isEnd_; }
 	bool IsAnimationFinished() const { return animationTime_ >= animationTimeMax_; }
 	bool IsFlowerDamaging() const { return isStarted_ && elapsedTime_ >= attackStartTime_ && elapsedTime_ < animationTimeMax_; }
+	bool IsRainDamaging() const { return isStarted_ && elapsedTime_ >= animationTimeMax_; }
 	Vector3 GetDamagePosition() const { return iceFlowerTransform_.translate; }
 	Vector3 GetDamageScale() const { return {flowerRadius_, 3.0f, flowerRadius_}; }
 	int GetDamageId() const { return damageId_; }
+	const std::vector<Transform>& GetRainDamageTransforms() const { return iceRainTransforms_; }
+	Vector3 GetRainDamageScale() const { return {0.75f, 1.25f, 0.75f}; }
+	int GetRainDamageId() const { return rainDamageId_; }
 };
