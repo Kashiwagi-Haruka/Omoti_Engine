@@ -126,6 +126,9 @@ void AttackOperation::Update() {
 	jumpSPData_.translate = {specialAttackSPData_.translate.x, normalAttackSPData_.translate.y + normalAttackSPData_.size.y / 2.0f + 20.0f};
 	UpdateOperationSprite(jumpSPData_, PlayCommand::GetJUMP());
 	specialGaugeSPData_.translate = specialAttackSPData_.translate;
+	if (specialGaugeSPData_.sprite) {
+		specialGaugeSPData_.sprite->SetColor(specialCooldownRemaining_ > 0.0f ? Vector4{0.5f, 0.5f, 0.5f, 1.0f} : Vector4{1.0f, 1.0f, 1.0f, 1.0f});
+	}
 	UpdateOperationSprite(specialGaugeSPData_, PlayCommand::GetSPECIAL_ATTACK());
 
 	if (specialCooldownRemaining_ > 0.0f) {
