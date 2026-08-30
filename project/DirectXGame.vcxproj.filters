@@ -553,6 +553,7 @@
     <ClCompile Include="application\LightManager\LightManager.cpp" />
     <ClCompile Include="application\Object\Characters\Playable\Individual\Mei\MeiSpecial.cpp" />
     <ClCompile Include="application\Object\Characters\Playable\Individual\Mei\MeiSkill.cpp" />
+    <ClCompile Include="application\Object\Characters\Playable\Individual\Sizuku\ChangeAttribute\ChangeAttribute.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Engine\Camera\Camera.h">
@@ -1097,6 +1098,7 @@
     <ClInclude Include="application\LightManager\LightManager.h" />
     <ClInclude Include="application\Object\Characters\Playable\Individual\Mei\MeiSpecial.h" />
     <ClInclude Include="application\Object\Characters\Playable\Individual\Mei\MeiSkill.h" />
+    <ClInclude Include="application\Object\Characters\Playable\Individual\Sizuku\ChangeAttribute\ChangeAttribute.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include=".editorconfig" />
