@@ -43,7 +43,7 @@ uint32_t Adhesion::ResolveTextureIndex(Attribute attribute) const {
 		texturePath = "Resources/2d/Attribute/Wind.png";
 		break;
 	case Attribute::Thunder:
-		texturePath = "Resources/2d/Attribute/Tunder.png";
+		texturePath = "Resources/2d/Attribute/Thunder.png";
 		break;
 	case Attribute::Imaginary:
 		texturePath = "Resources/2d/Attribute/Imaginary.png";

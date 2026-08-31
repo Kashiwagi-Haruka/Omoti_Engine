@@ -15,7 +15,7 @@ constexpr float kAttributeIconDistance = 150.0f;
 constexpr float kAttributeIconSize = 64.0f;
 constexpr float kAttributeStickDeadZone = 0.45f;
 constexpr std::array<const char*, 6> kAttributeTexturePaths = {"Resources/2d/Attribute/Fire.png",   "Resources/2d/Attribute/Ice.png",       "Resources/2d/Attribute/Wind.png",
-                                                               "Resources/2d/Attribute/Tunder.png", "Resources/2d/Attribute/Imaginary.png", "Resources/2d/Attribute/Quantum.png"};
+                                                               "Resources/2d/Attribute/Thunder.png", "Resources/2d/Attribute/Imaginary.png", "Resources/2d/Attribute/Quantum.png"};
 constexpr std::array<Attribute, 6> kAttributes = {Attribute::Fire, Attribute::Ice, Attribute::Wind, Attribute::Thunder, Attribute::Imaginary, Attribute::Quantum};
 } // namespace
 
