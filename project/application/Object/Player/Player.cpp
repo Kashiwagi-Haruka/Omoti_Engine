@@ -83,12 +83,19 @@ void Player::SetCamera(Camera* camera) {
 void Player::SetCharacterType(const std::string& characterName) {
 	if (models_) {
 		models_->SetCharacterType(characterName);
+		currentCharacterName_ = characterName;
 	}
 	if (attack_) {
 		attack_->SetCharacterName(characterName);
 	}
 }
-Attribute Player::GetCurrentAttribute() const { return /*models_ ? */models_->GetCurrentAttribute()/* : Attribute::None*/; }
+Attribute Player::GetCurrentAttribute() const { return /*models_ ? */ models_->GetCurrentAttribute() /* : Attribute::None*/; }
+
+void Player::SetCurrentAttribute(Attribute attribute) {
+	if (models_ && IsSizuku()) {
+		models_->SetCurrentAttribute(attribute);
+	}
+}
 const BaseParameter& Player::GetCurrentBaseParameter() const { return models_->GetCurrentBaseParameter(); }
 const Parameter& Player::GetCurrentCombatParameter() const { return models_->GetCurrentParameter(); }
 void Player::Move() {

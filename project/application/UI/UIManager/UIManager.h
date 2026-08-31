@@ -1,15 +1,18 @@
 #pragma once
+#include "Object/Characters/Base/Attribute.h"
 #include "Object/Player/PlayerParameters.h"
 #include "Sprite.h"
 #include "UI/AttackOperation/AttackOperation.h"
 #include "UI/DashGauge/DashGauge.h"
 #include "UI/HPBar/HPBarUI.h"
 #include "UI/Menu/Menu.h"
+#include "UI/PadMenu/PadMenu.h"
 #include "UI/Team/TeamUI.h"
 #include "UI/Tower/TowerUI.h"
-#include "UI/PadMenu/PadMenu.h"
+#include <array>
 
 class GameBase;
+class Player;
 class UIManager {
 
 	// プレイヤーパラメータの保持領域。
@@ -26,6 +29,10 @@ class UIManager {
 	std::unique_ptr<TeamUI> teamUI_;
 	std::unique_ptr<PadMenu> padMenuUI_;
 	Team* team_ = nullptr;
+	Player* player_ = nullptr;
+	std::array<std::unique_ptr<Sprite>, 6> attributeSprites_{};
+	int selectedAttributeIndex_ = 1;
+	bool isAttributeMenuOpen_ = false;
 
 public:
 	// 生成時にUIリソースを読み込む。
@@ -39,6 +46,7 @@ public:
 	// UIを描画する。
 	void Draw();
 	void SetTeam(Team* team);
+	void SetPlayer(Player* player) { player_ = player; }
 
 	// 現在のプレイヤーHPを設定する。
 	void SetPlayerHP(int HP);

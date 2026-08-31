@@ -145,6 +145,7 @@ void GameScene::Initialize() {
 	nextSceneName.clear();
 	team_->Initialize();
 	uimanager->SetTeam(team_.get());
+	uimanager->SetPlayer(player.get());
 	uimanager->Initialize();
 	uimanager->SetPlayerHPMax(team_->GetActiveCharacterHPMax());
 	uimanager->SetPlayerHP(team_->GetActiveCharacterHP());

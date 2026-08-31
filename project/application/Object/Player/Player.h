@@ -162,6 +162,11 @@ public:
 
 	void SetCharacterType(const std::string& characterName);
 	Attribute GetCurrentAttribute() const;
+	void SetCurrentAttribute(Attribute attribute);
+	bool IsSizuku() const { return currentCharacterName_ == "Sizuku"; }
 	const BaseParameter& GetCurrentBaseParameter() const;
 	const Parameter& GetCurrentCombatParameter() const;
+
+private:
+	std::string currentCharacterName_ = "Sizuku";
 };
