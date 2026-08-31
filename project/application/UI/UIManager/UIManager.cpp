@@ -149,7 +149,7 @@ void UIManager::Draw() {
 		}
 	}
 	controllerSprite_->Draw();
-	if (PlayCommand::GetCURSOR_DISPLAY()) {
+	if (PlayCommand::GetCURSOR_DISPLAY() || isAttributeMenuOpen_) {
 		if (cursolSprite_) {
 			cursolSprite_->Draw();
 		}

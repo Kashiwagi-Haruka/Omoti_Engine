@@ -8,6 +8,8 @@
 namespace {
 const float kAppearanceDuration = 0.5f;      // 出現アニメーションの継続時間
 const float kReactionDisplayDuration = 3.0f; // 属性リアクション表示の継続時間
+constexpr float kAttributePlaneScale = 1.0f;
+constexpr float kComparisonPlaneScale = 0.75f;
 const float kReactionCutSize = 200.0f;       // リアクション画像を切り取るサイズ
 } // namespace
 Adhesion::Adhesion() {
@@ -160,18 +162,18 @@ void Adhesion::RefreshComparisonTransform() {
 	Transform leftTransform = baseTransform_;
 	leftTransform.translate.x -= 0.7f;
 	leftTransform.translate.y += 1.75f;
-	leftTransform.scale = {0.6f, 0.6f, 0.6f};
+	leftTransform.scale = {kComparisonPlaneScale, kComparisonPlaneScale, kComparisonPlaneScale};
 	ApplyBillboardTransform(preAttributePlane_.get(), leftTransform);
 
 	Transform reactionTransform = baseTransform_;
 	reactionTransform.translate.y += 1.75f;
-	reactionTransform.scale = {0.6f, 0.6f, 0.6f};
+	reactionTransform.scale = {kComparisonPlaneScale, kComparisonPlaneScale, kComparisonPlaneScale};
 	ApplyBillboardTransform(AttributeReactionPlane_.get(), reactionTransform);
 
 	Transform rightTransform = baseTransform_;
 	rightTransform.translate.x += 0.7f;
 	rightTransform.translate.y += 1.75f;
-	rightTransform.scale = {0.6f, 0.6f, 0.6f};
+	rightTransform.scale = {kComparisonPlaneScale, kComparisonPlaneScale, kComparisonPlaneScale};
 	ApplyBillboardTransform(AttributePlane_.get(), rightTransform);
 }
 
@@ -184,7 +186,7 @@ void Adhesion::SetTransform(const Transform& transform) {
 
 	Transform uiTransform = transform;
 	uiTransform.translate.y += 1.75f;
-	uiTransform.scale = {0.8f, 0.8f, 0.8f};
+	uiTransform.scale = {kAttributePlaneScale, kAttributePlaneScale, kAttributePlaneScale};
 	ApplyBillboardTransform(AttributePlane_.get(), uiTransform);
 }
 
