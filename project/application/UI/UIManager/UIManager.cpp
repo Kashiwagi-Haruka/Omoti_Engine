@@ -88,6 +88,7 @@ void UIManager::Update() {
 	padMenuUI_->Update();
 	isAttributeMenuOpen_ = player_ && player_->IsSizuku() && (Input::GetInstance()->PushLeftTrigger() || Input::GetInstance()->PushKey(DIK_Y));
 	if (isAttributeMenuOpen_) {
+		Input::GetInstance()->SetIsCursorStability(false);
 		bool hasSelectionInput = false;
 		const Vector2 stick = Input::GetInstance()->GetJoyStickLXY();
 		if (stick.x * stick.x + stick.y * stick.y >= kAttributeStickDeadZone * kAttributeStickDeadZone) {
