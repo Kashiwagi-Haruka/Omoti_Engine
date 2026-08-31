@@ -86,8 +86,9 @@ void UIManager::Update() {
 	menuUI_->Update();
 
 	padMenuUI_->Update();
-	isAttributeMenuOpen_ = player_ && player_->IsSizuku() && (Input::GetInstance()->PushLeftTrigger()||Input::GetInstance()->PushKey(DIK_Y));
+	isAttributeMenuOpen_ = player_ && player_->IsSizuku() && (Input::GetInstance()->PushLeftTrigger() || Input::GetInstance()->PushKey(DIK_Y));
 	if (isAttributeMenuOpen_) {
+		bool hasSelectionInput = false;
 		const Vector2 stick = Input::GetInstance()->GetJoyStickLXY();
 		if (stick.x * stick.x + stick.y * stick.y >= kAttributeStickDeadZone * kAttributeStickDeadZone) {
 			float angle = std::atan2(stick.x, stick.y);
@@ -96,6 +97,21 @@ void UIManager::Update() {
 			}
 			const float sector = 2.0f * std::numbers::pi_v<float> / static_cast<float>(attributeSprites_.size());
 			selectedAttributeIndex_ = static_cast<int>((angle + sector * 0.5f) / sector) % static_cast<int>(attributeSprites_.size());
+			hasSelectionInput = true;
+		}
+
+		const Vector2 mousePosition = {Input::GetInstance()->GetMouseX(), Input::GetInstance()->GetMouseY()};
+		for (size_t i = 0; i < attributeSprites_.size(); ++i) {
+			const Vector2 iconPosition = attributeSprites_[i]->GetPosition();
+			const float halfIconSize = kAttributeIconSize * 0.5f;
+			if (std::abs(mousePosition.x - iconPosition.x) <= halfIconSize && std::abs(mousePosition.y - iconPosition.y) <= halfIconSize) {
+				selectedAttributeIndex_ = static_cast<int>(i);
+				hasSelectionInput = true;
+				break;
+			}
+		}
+
+		if (hasSelectionInput) {
 			player_->SetCurrentAttribute(kAttributes[selectedAttributeIndex_]);
 		}
 	}
@@ -109,6 +125,7 @@ void UIManager::Update() {
 		teamUI_->Update(*team_);
 	}
 }
+
 
 void UIManager::Draw() {
 

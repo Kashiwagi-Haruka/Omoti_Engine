@@ -6,7 +6,7 @@
 
 class Camera;
 
-// Mei's special: an expanding fire field placed directly beneath her.
+
 class MeiSpecial {
 	std::unique_ptr<Primitive> fieldPlane_;
 	Camera* camera_ = nullptr;

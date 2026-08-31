@@ -139,6 +139,7 @@ void SizukuSpecial::Draw() {
 	Object3dCommon::GetInstance()->SetBlendMode(BlendMode::kBlendModeAlpha);
 	Object3dCommon::GetInstance()->DrawCommon();
 	skydomeObj_->Draw();
+	Object3dCommon::GetInstance()->SetBlendMode(BlendMode::kBlendModeAdd);
 	if (elapsedTime_ >= attackStartTime_) {
 		iceFlower_->Draw();
 	}
@@ -147,4 +148,5 @@ void SizukuSpecial::Draw() {
 			rain->Draw();
 		}
 	}
+	Object3dCommon::GetInstance()->SetBlendMode(BlendMode::kBlendModeAlpha);
 }
