@@ -28,6 +28,7 @@ AttackOperation::AttackOperation() {
 	normalAttackSPData_.sprite = std::make_unique<Sprite>();
 	specialAttackSPData_.sprite = std::make_unique<Sprite>();
 	specialGaugeSPData_.sprite = std::make_unique<Sprite>();
+	attributeChangeSPData_.sprite = std::make_unique<Sprite>();
 
 	keyboardDashSPData_.sprite = std::make_unique<Sprite>();
 	keyboardSkillIconSPData_.sprite = std::make_unique<Sprite>();
@@ -67,7 +68,10 @@ void AttackOperation::Initialize() {
 	specialGaugeSPData_.sprite->Initialize(specialGaugeAttackHandle);
 	specialGaugeSPData_.sprite->SetAnchorPoint({1.0f, 1.0f});
 	SetOperationSpriteBaseSize(specialGaugeSPData_, kOperationIconBaseSize);
-
+	uint32_t attributeChangeHandle = TextureManager::GetInstance()->GetTextureIndexByfilePath("Resources/2d/AttackOperation/AttributeChange.png");
+	attributeChangeSPData_.sprite->Initialize(attributeChangeHandle);
+	attributeChangeSPData_.sprite->SetAnchorPoint({1.0f, 1.0f});
+	SetOperationSpriteBaseSize(attributeChangeSPData_, kOperationIconBaseSize);
 	uint32_t normalKeyHandle = TextureManager::GetInstance()->GetTextureIndexByfilePath("Resources/2d/AttackOperation/Keyboard/normalAttackMouse.png");
 	uint32_t dashKeyHandle = TextureManager::GetInstance()->GetTextureIndexByfilePath("Resources/2d/AttackOperation/Keyboard/dashMouse.png");
 	uint32_t jumpKeyHandle = TextureManager::GetInstance()->GetTextureIndexByfilePath("Resources/2d/AttackOperation/Keyboard/jumpKey.png");
@@ -130,7 +134,11 @@ void AttackOperation::Update() {
 		specialGaugeSPData_.sprite->SetColor(specialCooldownRemaining_ > 0.0f ? Vector4{0.5f, 0.5f, 0.5f, 1.0f} : Vector4{1.0f, 1.0f, 1.0f, 1.0f});
 	}
 	UpdateOperationSprite(specialGaugeSPData_, PlayCommand::GetSPECIAL_ATTACK());
-
+	attributeChangeSPData_.translate = {
+	    normalAttackSPData_.translate.x - normalAttackSPData_.size.x - 20.0f,
+	    jumpSPData_.translate.y,
+	};
+	UpdateOperationSprite(attributeChangeSPData_, Input::GetInstance()->PushLeftTrigger() || Input::GetInstance()->PushKey(DIK_Y));
 	if (specialCooldownRemaining_ > 0.0f) {
 		const Vector2 specialGaugeScale = specialGaugeSPData_.sprite ? specialGaugeSPData_.sprite->GetScale() : specialGaugeSPData_.size;
 		specialCooldownText_.SetPosition({
@@ -185,6 +193,9 @@ void AttackOperation::Draw() {
 	}
 	if (specialAttackSPData_.sprite) {
 		specialAttackSPData_.sprite->Draw();
+	}
+	if (attributeChangeSPData_.sprite) {
+		attributeChangeSPData_.sprite->Draw();
 	}
 	SpriteData* controlGuideSprites[] = {
 	    inputDisplayMode_ == InputDisplayMode::Pad ? &padDashSPData_ : &keyboardDashSPData_,

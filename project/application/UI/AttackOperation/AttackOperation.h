@@ -34,6 +34,8 @@ class AttackOperation {
 	SpriteData specialAttackSPData_;
 	// スペシャルゲージ
 	SpriteData specialGaugeSPData_;
+	// 属性切り替えガイド
+	SpriteData attributeChangeSPData_;
 
 	// キーボードスプライト
 	SpriteData keyboardDashSPData_;
