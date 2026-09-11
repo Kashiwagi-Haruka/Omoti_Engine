@@ -214,6 +214,7 @@ copy "$(WindowsSdkDir)\bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)\
     <ClCompile Include="application\Menu\CharacterDisplay\Menu\Weapon\CharacterDisplayWeapon.cpp" />
     <ClCompile Include="application\Menu\CharacterDisplay\Icon\CharacterDisplayIcon.cpp" />
     <ClCompile Include="application\Object\Characters\Enemy\HostileIndicator\EnemyHostileIndicator.cpp" />
+    <ClCompile Include="application\Object\Characters\Playable\Individual\Sizuku\ChangeAttribute\ChangeAttribute.cpp" />
     <ClCompile Include="Engine\Editor\EditorTool\Command\EditorCommand.cpp" />
     <ClCompile Include="Engine\Audio\AudioMixer.cpp" />
     <ClCompile Include="Engine\Editor\EditorData\Audio\EditorAudio.cpp" />
@@ -300,7 +301,7 @@ copy "$(WindowsSdkDir)\bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)\
     <ClCompile Include="application\Scene\SceneFactory\SceneFactory.cpp" />
     <ClCompile Include="application\Scene\SampleScene\SampleScene.cpp" />
     <ClCompile Include="application\GameTimer\GameTimer.cpp" />
-    <ClCompile Include="application\Pause\Pause.cpp" />
+    <ClCompile Include="application\Menu\Pause\Pause.cpp" />
     <ClCompile Include="Engine\Texture\Mesh\Primitive\Primitive.cpp" />
     <ClCompile Include="Engine\Texture\Mesh\Animation\Skeleton.cpp" />
     <ClCompile Include="Engine\Texture\Mesh\Animation\SkinCluster.cpp" />
@@ -337,6 +338,10 @@ copy "$(WindowsSdkDir)\bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)\
     <ClCompile Include="application\CameraController\CharacterCamera\SizukuSpecialCamera.cpp" />
     <ClCompile Include="application\Object\Characters\Enemy\LockOn\LockOnEnemy.cpp" />
     <ClCompile Include="application\Object\RemoteCamera\RemoteCamera.cpp" />
+    <ClCompile Include="application\Menu\MenuManager.cpp" />
+    <ClCompile Include="application\LightManager\LightManager.cpp" />
+    <ClCompile Include="application\Object\Characters\Playable\Individual\Mei\MeiSkill.cpp" />
+    <ClCompile Include="application\Object\Characters\Playable\Individual\Mei\MeiSpecial.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include=".editorconfig" />
@@ -422,6 +427,7 @@ copy "$(WindowsSdkDir)\bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)\
     <ClInclude Include="application\Menu\CharacterDisplay\Menu\Weapon\CharacterDisplayWeapon.h" />
     <ClInclude Include="application\Menu\CharacterDisplay\Icon\CharacterDisplayIcon.h" />
     <ClInclude Include="application\Object\Characters\Enemy\HostileIndicator\EnemyHostileIndicator.h" />
+    <ClInclude Include="application\Object\Characters\Playable\Individual\Sizuku\ChangeAttribute\ChangeAttribute.h" />
     <ClInclude Include="Engine\Editor\EditorTool\Command\EditorCommand.h" />
     <ClInclude Include="Engine\Audio\AudioMixer.h" />
     <ClInclude Include="Engine\base\ScreenSize.h" />
@@ -512,7 +518,7 @@ copy "$(WindowsSdkDir)\bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)\
     <ClInclude Include="application\Scene\SceneFactory\SceneFactory.h" />
     <ClInclude Include="application\Scene\SampleScene\SampleScene.h" />
     <ClInclude Include="application\GameTimer\GameTimer.h" />
-    <ClInclude Include="application\Pause\Pause.h" />
+    <ClInclude Include="application\Menu\Pause\Pause.h" />
     <ClInclude Include="Engine\Texture\Mesh\Primitive\Primitive.h" />
     <ClInclude Include="Engine\Texture\Mesh\Animation\Skeleton.h" />
     <ClInclude Include="Engine\Texture\Mesh\Animation\SkinCluster.h" />
@@ -549,6 +555,10 @@ copy "$(WindowsSdkDir)\bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)\
     <ClInclude Include="application\CameraController\CharacterCamera\SizukuSpecialCamera.h" />
     <ClInclude Include="application\Object\Characters\Enemy\LockOn\LockOnEnemy.h" />
     <ClInclude Include="application\Object\RemoteCamera\RemoteCamera.h" />
+    <ClInclude Include="application\Menu\MenuManager.h" />
+    <ClInclude Include="application\LightManager\LightManager.h" />
+    <ClInclude Include="application\Object\Characters\Playable\Individual\Mei\MeiSkill.h" />
+    <ClInclude Include="application\Object\Characters\Playable\Individual\Mei\MeiSpecial.h" />
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="Resources\shader\FullScreenCopy\CopyImage.PS.hlsl">
@@ -586,6 +596,14 @@ copy "$(WindowsSdkDir)\bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)\
     <FxCompile Include="Resources\shader\Object3d\PS_Shader\SkinningObject3dToonOutline.PS.hlsl">
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Pixel</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Development|x64'">Pixel</ShaderType>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Development|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </FxCompile>
+    <FxCompile Include="Resources\shader\Object3d\PS_Shader\SpecialGaugeEmissive.PS.hlsl">
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Pixel</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Development|x64'">Pixel</ShaderType>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Development|x64'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>

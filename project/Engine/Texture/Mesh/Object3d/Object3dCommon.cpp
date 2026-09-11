@@ -107,6 +107,9 @@ void Object3dCommon::Initialize(DirectXCommon* dxCommon) {
 	psoEmissive_ = std::make_unique<CreatePSO>(dxCommon_);
 	psoEmissive_->Create(D3D12_CULL_MODE_NONE, true, D3D12_FILL_MODE_SOLID, D3D12_PRIMITIVE_TOPOLOGY_TYPE_TRIANGLE, L"Resources/shader/Object3d/PS_Shader/Object3dEmissive.PS.hlsl");
 
+		psoSpecialGaugeEmissive_ = std::make_unique<CreatePSO>(dxCommon_);
+	psoSpecialGaugeEmissive_->Create(D3D12_CULL_MODE_NONE, true, D3D12_FILL_MODE_SOLID, D3D12_PRIMITIVE_TOPOLOGY_TYPE_TRIANGLE, L"Resources/shader/Object3d/PS_Shader/SpecialGaugeEmissive.PS.hlsl");
+
 	psoNoCull_ = std::make_unique<CreatePSO>(dxCommon_);
 	psoNoCull_->Create(D3D12_CULL_MODE_NONE);
 
@@ -316,6 +319,10 @@ void Object3dCommon::DrawCommon(DrawCommonType type) {
 		rootSignature = psoEmissive_->GetRootSignature().Get();
 		pipelineState = psoEmissive_->GetGraphicsPipelineState(blendMode_);
 		break;
+	case DrawCommonType::SpecialGaugeEmissive:
+		rootSignature = psoSpecialGaugeEmissive_->GetRootSignature().Get();
+		pipelineState = psoSpecialGaugeEmissive_->GetGraphicsPipelineState(blendMode_);
+		break;
 	case DrawCommonType::NoCull:
 		rootSignature = psoNoCull_->GetRootSignature().Get();
 		pipelineState = psoNoCull_->GetGraphicsPipelineState(blendMode_);
@@ -400,6 +407,9 @@ void Object3dCommon::DrawCommon(DrawCommonType type, Camera* camera) {
 	DrawCommon(type);
 	defaultCamera = previousCamera;
 }
+void Object3dCommon::BeginEmissionDraw() { dxCommon_->BeginEmissionRenderTarget(); }
+void Object3dCommon::EndEmissionDraw() { dxCommon_->EndEmissionRenderTarget(); }
+
 void Object3dCommon::EndOutlineDraw() { dxCommon_->EndOutlineRenderTarget(); }
 
 void Object3dCommon::BeginShadowMapPass() {
@@ -662,6 +672,9 @@ float Object3dCommon::GetRadialBlurWidth() const { return dxCommon_->GetRadialBl
 void Object3dCommon::SetRadialBlurSampleCount(int sampleCount) { dxCommon_->SetRadialBlurSampleCount(sampleCount); }
 
 int Object3dCommon::GetRadialBlurSampleCount() const { return dxCommon_->GetRadialBlurSampleCount(); }
+void Object3dCommon::SetChromaticAberrationEnabled(bool enabled) { dxCommon_->SetChromaticAberrationEnabled(enabled); }
+
+void Object3dCommon::SetChromaticAberrationIntensity(float intensity) { dxCommon_->SetChromaticAberrationIntensity(intensity); }
 void Object3dCommon::SetDissolveEnabled(bool enabled) { dxCommon_->SetDissolveEnabled(enabled); }
 
 void Object3dCommon::SetDissolveThreshold(float threshold) { dxCommon_->SetDissolveThreshold(threshold); }

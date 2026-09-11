@@ -3,9 +3,13 @@
 #include "Input.h"
 #include "PlayCommand/PlayCommand.h"
 #include "Sprite/Sprite.h"
+#include "Sprite/SpriteCommon.h"
 #include "TextureManager.h"
 #include "WinApp.h"
+#include "Text/FreetypeManager/FreeTypeManager.h"
 #include <algorithm>
+#include <cmath>
+#include <string>
 
 namespace {
 constexpr Vector2 kOperationIconBaseSize{60.0f, 60.0f};
@@ -22,6 +26,8 @@ AttackOperation::AttackOperation() {
 	skillIconSPData_.sprite = std::make_unique<Sprite>();
 	normalAttackSPData_.sprite = std::make_unique<Sprite>();
 	specialAttackSPData_.sprite = std::make_unique<Sprite>();
+	specialGaugeSPData_.sprite = std::make_unique<Sprite>();
+	attributeChangeSPData_.sprite = std::make_unique<Sprite>();
 
 	keyboardDashSPData_.sprite = std::make_unique<Sprite>();
 	keyboardSkillIconSPData_.sprite = std::make_unique<Sprite>();
@@ -57,7 +63,14 @@ void AttackOperation::Initialize() {
 	specialAttackSPData_.sprite->Initialize(specialAttackHandle);
 	specialAttackSPData_.sprite->SetAnchorPoint({1.0f, 1.0f});
 	SetOperationSpriteBaseSize(specialAttackSPData_, kOperationIconBaseSize);
-
+	uint32_t specialGaugeAttackHandle = TextureManager::GetInstance()->GetTextureIndexByfilePath("Resources/2d/AttackOperation/specialGauge.png");
+	specialGaugeSPData_.sprite->Initialize(specialGaugeAttackHandle);
+	specialGaugeSPData_.sprite->SetAnchorPoint({1.0f, 1.0f});
+	SetOperationSpriteBaseSize(specialGaugeSPData_, kOperationIconBaseSize);
+	uint32_t attributeChangeHandle = TextureManager::GetInstance()->GetTextureIndexByfilePath("Resources/2d/AttackOperation/AttributeChange.png");
+	attributeChangeSPData_.sprite->Initialize(attributeChangeHandle);
+	attributeChangeSPData_.sprite->SetAnchorPoint({1.0f, 1.0f});
+	SetOperationSpriteBaseSize(attributeChangeSPData_, kOperationIconBaseSize);
 	uint32_t normalKeyHandle = TextureManager::GetInstance()->GetTextureIndexByfilePath("Resources/2d/AttackOperation/Keyboard/normalAttackMouse.png");
 	uint32_t dashKeyHandle = TextureManager::GetInstance()->GetTextureIndexByfilePath("Resources/2d/AttackOperation/Keyboard/dashMouse.png");
 	uint32_t jumpKeyHandle = TextureManager::GetInstance()->GetTextureIndexByfilePath("Resources/2d/AttackOperation/Keyboard/jumpKey.png");
@@ -90,6 +103,13 @@ void AttackOperation::Initialize() {
 	padJumpSPData_.sprite->SetAnchorPoint({1.0f, 1.0f});
 	padNormalAttackSPData_.sprite->SetAnchorPoint({1.0f, 1.0f});
 	padSpecialAttackSPData_.sprite->SetAnchorPoint({1.0f, 1.0f});
+
+	const uint32_t cooldownFontHandle = FreeTypeManager::CreateFace("Resources/Font/irohakakuC-Bold.ttf", 0);
+	FreeTypeManager::SetPixelSizes(cooldownFontHandle, 26, 26);
+	specialCooldownText_.Initialize(cooldownFontHandle);
+	specialCooldownText_.SetSize({220.0f, 40.0f});
+	specialCooldownText_.SetAlign(TextAlign::Center);
+	specialCooldownText_.SetColor({1.0f, 1.0f, 1.0f, 1.0f});
 }
 
 void AttackOperation::Update() {
@@ -98,19 +118,49 @@ void AttackOperation::Update() {
 	skillIconSPData_.translate = {1200.0f, 400.0f};
 	UpdateOperationSprite(skillIconSPData_, PlayCommand::GetSKILL_ATTACK());
 
-	dashSPData_.translate = {skillIconSPData_.translate.x, skillIconSPData_.translate.y+skillIconSPData_.size.y/2.0f+80.0f};
+	dashSPData_.translate = {skillIconSPData_.translate.x, skillIconSPData_.translate.y + skillIconSPData_.size.y / 2.0f + 80.0f};
 	UpdateOperationSprite(dashSPData_, PlayCommand::GetDASH());
 
-
-	specialAttackSPData_.translate = {dashSPData_.translate.x-80.0f, dashSPData_.translate.y + dashSPData_.size.y};
+	specialAttackSPData_.translate = {dashSPData_.translate.x - 80.0f, dashSPData_.translate.y + dashSPData_.size.y};
 	UpdateOperationSprite(specialAttackSPData_, PlayCommand::GetSPECIAL_ATTACK());
 
-	normalAttackSPData_.translate = {specialAttackSPData_.translate.x - specialAttackSPData_.size.x - 20.0f, specialAttackSPData_.translate.y + specialAttackSPData_.size.y/2.0f+20.0f};
+	normalAttackSPData_.translate = {specialAttackSPData_.translate.x - specialAttackSPData_.size.x - 20.0f, specialAttackSPData_.translate.y + specialAttackSPData_.size.y / 2.0f + 20.0f};
 	UpdateOperationSprite(normalAttackSPData_, PlayCommand::GetNORMAL_ATTACK_PUSH());
-	jumpSPData_.translate = {specialAttackSPData_.translate.x, normalAttackSPData_.translate.y + normalAttackSPData_.size.y/2.0f + 20.0f};
+	jumpSPData_.translate = {specialAttackSPData_.translate.x, normalAttackSPData_.translate.y + normalAttackSPData_.size.y / 2.0f + 20.0f};
 	UpdateOperationSprite(jumpSPData_, PlayCommand::GetJUMP());
+	specialGaugeSPData_.translate = specialAttackSPData_.translate;
+	if (specialGaugeSPData_.sprite) {
+		specialGaugeSPData_.sprite->SetColor(specialCooldownRemaining_ > 0.0f ? Vector4{0.5f, 0.5f, 0.5f, 1.0f} : Vector4{1.0f, 1.0f, 1.0f, 1.0f});
+	}
+	UpdateOperationSprite(specialGaugeSPData_, PlayCommand::GetSPECIAL_ATTACK());
+	attributeChangeSPData_.translate = {
+	    normalAttackSPData_.translate.x - normalAttackSPData_.size.x - 20.0f,
+	    jumpSPData_.translate.y,
+	};
+	UpdateOperationSprite(attributeChangeSPData_, Input::GetInstance()->PushLeftTrigger() || Input::GetInstance()->PushKey(DIK_Y));
+	if (specialCooldownRemaining_ > 0.0f) {
+		const Vector2 specialGaugeScale = specialGaugeSPData_.sprite ? specialGaugeSPData_.sprite->GetScale() : specialGaugeSPData_.size;
+		specialCooldownText_.SetPosition({
+		    specialGaugeSPData_.translate.x - specialGaugeScale.x / 2.0f,
+		    specialGaugeSPData_.translate.y - specialGaugeScale.y / 2.0f,
+		});
 
-
+		const int remainingTenths = static_cast<int>(std::ceil(specialCooldownRemaining_ * 10.0f));
+		if (remainingTenths != displayedCooldownTenths_) {
+			displayedCooldownTenths_ = remainingTenths;
+			std::u32string cooldownString;
+			for (const char digit : std::to_string(remainingTenths / 10)) {
+				cooldownString.push_back(static_cast<char32_t>(digit));
+			}
+			cooldownString.push_back(U'.');
+			cooldownString.push_back(static_cast<char32_t>(U'0' + remainingTenths % 10));
+			specialCooldownText_.SetString(cooldownString);
+			specialCooldownText_.UpdateLayout(false);
+		}
+		specialCooldownText_.Update(false);
+	} else {
+		displayedCooldownTenths_ = 0;
+	}
 
 	UpdateControlGuideSprite(keyboardSkillIconSPData_, skillIconSPData_, kKeyboardDisplaySize);
 	UpdateControlGuideSprite(keyboardJumpSPData_, jumpSPData_, kKeyboardDisplaySize);
@@ -137,8 +187,14 @@ void AttackOperation::Draw() {
 	if (jumpSPData_.sprite) {
 		jumpSPData_.sprite->Draw();
 	}
+	if (specialGaugeSPData_.sprite) {
+		specialGaugeSPData_.sprite->Draw();
+	}
 	if (specialAttackSPData_.sprite) {
 		specialAttackSPData_.sprite->Draw();
+	}
+	if (attributeChangeSPData_.sprite) {
+		attributeChangeSPData_.sprite->Draw();
 	}
 	SpriteData* controlGuideSprites[] = {
 	    inputDisplayMode_ == InputDisplayMode::Pad ? &padDashSPData_ : &keyboardDashSPData_,
@@ -151,6 +207,10 @@ void AttackOperation::Draw() {
 		if (spriteData->sprite) {
 			spriteData->sprite->Draw();
 		}
+	}
+	if (specialCooldownRemaining_ > 0.0f) {
+		SpriteCommon::GetInstance()->DrawCommonFont();
+		specialCooldownText_.Draw();
 	}
 }
 void AttackOperation::SetOperationSpriteBaseSize(SpriteData& spriteData, const Vector2& size) {

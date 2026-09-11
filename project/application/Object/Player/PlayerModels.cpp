@@ -107,6 +107,12 @@ bool PlayerModels::IsAttackAnimationFinished() const { return currentCharacter_ 
 Object3d* PlayerModels::GetCharacterObject3d() { return currentCharacter_ ? currentCharacter_->GetObject3d() : nullptr; }
 
 Attribute PlayerModels::GetCurrentAttribute() const { return currentCharacter_ ? currentCharacter_->GetAttribute() : Attribute::None; }
+
+void PlayerModels::SetCurrentAttribute(Attribute attribute) {
+	if (currentCharacter_) {
+		currentCharacter_->SetAttribute(attribute);
+	}
+}
 const BaseParameter& PlayerModels::GetCurrentBaseParameter() const {
 	static const BaseParameter emptyBase{};
 	return currentCharacter_ ? currentCharacter_->GetBaseParameter() : emptyBase;

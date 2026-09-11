@@ -44,6 +44,7 @@ public:
 	bool IsAttackAnimationFinished() const;
 	Object3d* GetCharacterObject3d();
 	Attribute GetCurrentAttribute() const;
+	void SetCurrentAttribute(Attribute attribute);
 	const BaseParameter& GetCurrentBaseParameter() const;
 	const Parameter& GetCurrentParameter() const;
 };

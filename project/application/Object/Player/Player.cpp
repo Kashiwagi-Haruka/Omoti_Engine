@@ -83,9 +83,19 @@ void Player::SetCamera(Camera* camera) {
 void Player::SetCharacterType(const std::string& characterName) {
 	if (models_) {
 		models_->SetCharacterType(characterName);
+		currentCharacterName_ = characterName;
+	}
+	if (attack_) {
+		attack_->SetCharacterName(characterName);
 	}
 }
-Attribute Player::GetCurrentAttribute() const { return /*models_ ? */models_->GetCurrentAttribute()/* : Attribute::None*/; }
+Attribute Player::GetCurrentAttribute() const { return /*models_ ? */ models_->GetCurrentAttribute() /* : Attribute::None*/; }
+
+void Player::SetCurrentAttribute(Attribute attribute) {
+	if (models_ && IsSizuku()) {
+		models_->SetCurrentAttribute(attribute);
+	}
+}
 const BaseParameter& Player::GetCurrentBaseParameter() const { return models_->GetCurrentBaseParameter(); }
 const Parameter& Player::GetCurrentCombatParameter() const { return models_->GetCurrentParameter(); }
 void Player::Move() {
@@ -304,7 +314,7 @@ void Player::FaceLockOnTarget() {
 	transform_.rotate.y = Function::Lerp(transform_.rotate.y, transform_.rotate.y + angleDiff, rotateTimer);
 }
 void Player::Jump() {
-	if (PlayCommand::GetJUMP() && !isJump && !isfalling && !attack_->IsFallingAttacking()) {
+	if (PlayCommand::GetJUMP() && attack_->IsCanMove() && !isJump && !isfalling) {
 		isJump = true;
 		jumpTimer = 0.0f;
 	}
@@ -400,7 +410,8 @@ void Player::Update() {
 	models_->SetCamera(camera_);
 	models_->SetPlayerTransform(transform_);
 	models_->Update();
-
+	attack_->SetTransform(transform_);
+	attack_->UpdateAttachments();
 	parameters_.hpMax_ = parameters_.hpMax_ * (1 + parameters_.HPUp);
 
 	// 死
@@ -416,8 +427,6 @@ void Player::Update() {
 		}
 	}
 }
-
-void Player::EXPMath() { parameters_.EXP += 15; }
 
 void Player::Draw(bool drawOutline) {
 

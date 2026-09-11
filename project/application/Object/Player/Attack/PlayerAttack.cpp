@@ -1,3 +1,4 @@
+#define NOMINMAX
 #include "PlayerAttack.h"
 #include "PlayCommand/PlayCommand.h"
 #include "AudioManager/SEManager/SEManager.h"
@@ -45,6 +46,7 @@ void PlayerAttack::Initialize() {
 
 	isSkillAttack = false;
 	isSpecialAttack = false;
+	specialAttackCooldowns_.clear();
 
 	sword_->Initialize();
 	sword_->SetCamera(camera_);
@@ -62,18 +64,22 @@ void PlayerAttack::SetAttackName(std::string AttackName) {
 
 void PlayerAttack::Update() {
 	// 攻撃の更新処理をここに記述
-	// ★ 落下攻撃中は他の攻撃不可
+	for (auto& [name, cooldown] : specialAttackCooldowns_) {
+		(void)name;
+		cooldown = std::max(0.0f, cooldown - 1.0f / 60.0f);
+	}
+	//  落下攻撃中は他の攻撃不可
 	if (isFallingAttack_) {
 		return;
 	}
 	if (isSkillAttack) {
 		models_->SetStateM(PlayerModels::StateM::skillAttack);
 	}
-	if (isSpecialAttack) {
+	if (IsSpecialAnimationPlaying()) {
 		models_->SetStateM(PlayerModels::StateM::idle);
 	}
 
-	if (!isSkillAttack) {
+	if (!isSkillAttack && !IsSpecialAnimationPlaying()) {
 	// コンボタイマーの更新
 	if (comboTimer_ > 0.0f) {
 		comboTimer_ -= 1.0f / 60.0f;
@@ -135,18 +141,21 @@ void PlayerAttack::Update() {
 				attackState_ = AttackState::kWeakAttack1;
 				sword_->StartAttack(1); // 1段階目
 				SEManager::GetInstance()->Play(SEManager::SEType::NormalAttack);
+				SEManager::GetInstance()->Play(SEManager::SEType::NormalAttack2);
 				models_->SetStateM(PlayerModels::StateM::attack1);
 				break;
 			case 2:
 				attackState_ = AttackState::kWeakAttack2;
 				sword_->StartAttack(2); // 2段階目
 				SEManager::GetInstance()->Play(SEManager::SEType::NormalAttack);
+				SEManager::GetInstance()->Play(SEManager::SEType::NormalAttack2);
 				models_->SetStateM(PlayerModels::StateM::attack2);
 				break;
 			case 3:
 				attackState_ = AttackState::kWeakAttack3;
 				sword_->StartAttack(3); // 3段階目
 				SEManager::GetInstance()->Play(SEManager::SEType::NormalAttack);
+				SEManager::GetInstance()->Play(SEManager::SEType::NormalAttack2);
 				models_->SetStateM(PlayerModels::StateM::attack3);
 				break;
 			case 4:
@@ -218,9 +227,10 @@ void PlayerAttack::Update() {
 	}
 	if (PlayCommand::GetSPECIAL_ATTACK()) {
 		// 必殺技
-		if (!isSpecialAttack) {
+		if (!isSpecialAttack && IsSpecialAttackReady()) {
 			ResetNormalAttackState();
 			isSpecialAttack = true;
+			specialAttackCooldowns_[characterName_] = kSpecialAttackCooldownDuration_;
 			attackState_ = AttackState::kSpecialAttack;
 			special_->SetPlayerTransform(playerTransform_);
 			special_->Start();
@@ -233,12 +243,9 @@ void PlayerAttack::Update() {
 			comboTimer_ = 0.0f;
 		}
 	}
-	key_->SetCamera(camera_);
-	key_->SetPlayerTransform(playerTransform_);
 	if (isSkillAttack) {
 		key_->StartAnimation();
 	}
-	key_->Update();
 
 	if (isSkillAttack) {
 		skill_->SetCamera(camera_);
@@ -255,6 +262,12 @@ void PlayerAttack::Update() {
 			isSpecialAttack = false;
 		}
 	}
+}
+
+void PlayerAttack::UpdateAttachments() {
+	key_->SetCamera(camera_);
+	key_->SetPlayerTransform(playerTransform_);
+	key_->Update();
 	const auto swordJointMatrix = models_->GetJointWorldMatrix("剣");
 	sword_->SetCamera(camera_);
 	sword_->SetPlayerYaw(playerTransform_.rotate.y);

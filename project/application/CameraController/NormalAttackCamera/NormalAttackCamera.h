@@ -11,7 +11,7 @@ class NormalAttackCamera {
 	float mouseSensitivity_ = 0.002f;             // マウス感度
 	Vector3 playerPos = {0.0f, 0.0f, 0.0f};       // プレイヤーの座標
 	float orbitYaw_ = 0.0f;                       // カメラの回転角度（ヨー軸）
-	float orbitPitch_ = 0.15f;                    // カメラの回転角度（ピッチ軸）
+	float orbitPitch_ = 0.55f;                    // カメラの回転角度（ピッチ軸）
 	float shakeTimer_ = 0.0f;                     // カメラの揺れのタイマー
 	float shakeDuration_ = 0.0f;                  // カメラの揺れの継続時間
 	float shakeAmplitude_ = 0.6f;                 // カメラの揺れの振幅
@@ -19,7 +19,7 @@ class NormalAttackCamera {
 	Vector3 targetPos_ = {0.0f, 0.0f, 0.0f};      // ロックオン対象の座標
 	bool hasFollowPosition_ = false;              // プレイヤーの座標を追従するかどうかのフラグ
 	Vector3 followPosition_ = {0.0f, 0.0f, 0.0f}; // プレイヤーの座標
-	float distance_ = 10.0f;                       // カメラとプレイヤーの距離
+	float distance_ = 15.0f;                       // カメラとプレイヤーの距離
 
 public:
 	/// <summary>

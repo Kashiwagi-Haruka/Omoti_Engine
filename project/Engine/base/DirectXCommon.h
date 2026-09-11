@@ -58,9 +58,11 @@ class DirectXCommon {
 	std::array<Microsoft::WRL::ComPtr<ID3D12Resource>, 2> swapChainResources_;
 	Microsoft::WRL::ComPtr<ID3D12Resource> sceneColorResource_ = nullptr;
 	Microsoft::WRL::ComPtr<ID3D12Resource> sceneOutlineResource_ = nullptr;
+	Microsoft::WRL::ComPtr<ID3D12Resource> sceneEmissionResource_ = nullptr;
 	Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> sceneSrvDescriptorHeap_ = nullptr;
 	D3D12_CPU_DESCRIPTOR_HANDLE sceneRtvHandle_{};
 	D3D12_CPU_DESCRIPTOR_HANDLE sceneOutlineRtvHandle_{};
+	D3D12_CPU_DESCRIPTOR_HANDLE sceneEmissionRtvHandle_{};
 	D3D12_CPU_DESCRIPTOR_HANDLE sceneSrvHandleCPU_{};
 	D3D12_GPU_DESCRIPTOR_HANDLE sceneSrvHandleGPU_{};
 	Microsoft::WRL::ComPtr<ID3D12Resource> dissolveMaskResource_ = nullptr;
@@ -88,6 +90,13 @@ class DirectXCommon {
 		float radialBlurCenter[2];
 		float radialBlurWidth;
 		float radialBlurSampleCount;
+		float chromaticAberrationEnabled;
+		float chromaticAberrationIntensity;
+		float chromaticAberrationPadding[2];
+		float selectiveBloomEnabled;
+		float selectiveBloomIntensity;
+		float selectiveBloomRadius;
+		float selectiveBloomPadding;
 	};
 	PostEffectParameters* postEffectParameterMappedData_ = nullptr;
 	float vignetteStrength_ = 0.0f;
@@ -105,11 +114,17 @@ class DirectXCommon {
 	Vector2 radialBlurCenter_ = {0.5f, 0.5f};
 	float radialBlurWidth_ = 0.01f;
 	int radialBlurSampleCount_ = 10;
+	bool chromaticAberrationEnabled_ = false;
+	float chromaticAberrationIntensity_ = 0.0f;
 	bool fullscreenGrayscaleEnabled_ = false;
 	bool fullscreenSepiaEnabled_ = false;
+	bool selectiveBloomEnabled_ = true;
+	float selectiveBloomIntensity_ = 1.5f;
+	float selectiveBloomRadius_ = 18.0f;
 	bool editorLayoutEnabled_ = false;
 	bool sceneCopiedToBackBufferThisFrame_ = false;
 	bool inOutlineRenderTarget_ = false;
+	bool inEmissionRenderTarget_ = false;
 	// RTVの設定
 	D3D12_RENDER_TARGET_VIEW_DESC rtvDesc_{};
 	// RTVを2つ作るのでディスクリプタを2つ用意
@@ -175,6 +190,10 @@ public:
 	float GetRadialBlurWidth() const { return radialBlurWidth_; }
 	void SetRadialBlurSampleCount(int sampleCount);
 	int GetRadialBlurSampleCount() const { return radialBlurSampleCount_; }
+	void SetChromaticAberrationEnabled(bool enabled);
+	bool GetChromaticAberrationEnabled() const { return chromaticAberrationEnabled_; }
+	void SetChromaticAberrationIntensity(float intensity);
+	float GetChromaticAberrationIntensity() const { return chromaticAberrationIntensity_; }
 	void SetDissolveEnabled(bool enabled);
 	bool GetDissolveEnabled() const { return dissolveEnabled_; }
 	void SetDissolveThreshold(float threshold);
@@ -188,6 +207,14 @@ public:
 
 	void SetEditorLayoutEnabled(bool enabled) { editorLayoutEnabled_ = enabled; }
 	bool IsEditorLayoutEnabled() const { return editorLayoutEnabled_; }
+	void SetSelectiveBloomEnabled(bool enabled);
+	bool IsSelectiveBloomEnabled() const { return selectiveBloomEnabled_; }
+	void SetSelectiveBloomIntensity(float intensity);
+	float GetSelectiveBloomIntensity() const { return selectiveBloomIntensity_; }
+	void SetSelectiveBloomRadius(float radius);
+	float GetSelectiveBloomRadius() const { return selectiveBloomRadius_; }
+	void BeginEmissionRenderTarget();
+	void EndEmissionRenderTarget();
 	void BeginOutlineRenderTarget();
 	void EndOutlineRenderTarget();
 	ID3D12Device* GetDevice() { return device_.Get(); };

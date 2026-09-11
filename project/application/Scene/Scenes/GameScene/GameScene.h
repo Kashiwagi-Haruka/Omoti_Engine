@@ -3,24 +3,19 @@
 #include "BaseScene.h"
 #include "CollisionManager/CollisionManager.h"
 #include "GameBase.h"
-#include "Light/CommonLight/DirectionalCommonLight.h"
-#include "Light/CommonLight/PointCommonLight.h"
-#include "Light/CommonLight/SpotCommonLight.h"
-#include "Menu/CharacterDisplay/CharacterDisplay.h"
-#include "Menu/TeamDisplay/TeamDisplay.h"
+#include "LightManager/LightManager.h"
+#include "Menu/MenuManager.h"
 #include "Object/Characters/Model/CharacterModel.h"
 #include "Object/Field/Field.h"
 #include "Object/RemoteCamera/RemoteCamera.h"
 #include "Object3d/Object3d.h"
 #include "OpenWorld/OpenWorld.h"
-#include "Pause/Pause.h"
 #include "Rasen/Rasen.h"
 #include "SceneTransition/SceneTransition.h"
 #include "Sprite.h"
 #include "Team/Team.h"
 #include "UI/UIManager/UIManager.h"
 #include "Vector2.h"
-#include <array>
 #include <cstdint>
 #include <imgui.h>
 #include <string>
@@ -30,6 +25,7 @@ class Sky;
 class Boss;
 class Enemy;
 class Camera;
+class SpecialGaugeBallManager;
 
 class GameScene : public BaseScene {
 
@@ -46,35 +42,27 @@ private:
 	std::unique_ptr<Sky> skyDome;
 	std::unique_ptr<CameraController> cameraController;
 	std::unique_ptr<Field> field;
-	std::unique_ptr<Pause> pause;
 	std::unique_ptr<RemoteCamera> remoteCamera_;
+	std::unique_ptr<MenuManager> menuManager_;
 
 	CollisionManager collisionManager_;
 
 	bool isTransitionIn = true;
 	bool isTransitionOut = false;
 	std::string nextSceneName;
-	bool isPause = false;
-	bool isCharacterDisplayMode_ = false;
-	bool isPartyMode_ = false;
 
 	CharacterModel characterModel;
-	std::unique_ptr<CharacterDisplay> characterDisplay_;
 	std::unique_ptr<Team> team_;
-	std::unique_ptr<TeamDisplay> teamDisplay_;
 
 	enum class PlayAreaMode { kSpiral, kOpenWorld };
 
 	std::unique_ptr<Boss> boss_;
 	std::unique_ptr<Rasen> rasen_;
 	std::unique_ptr<OpenWorld> openWorld_;
+	std::unique_ptr<SpecialGaugeBallManager> specialGaugeBallManager_;
 	PlayAreaMode playAreaMode_ = PlayAreaMode::kSpiral;
 
-	DirectionalCommonLight directionalLight_{};
-	std::array<PointCommonLight, kMaxPointLights> pointLights_{};
-	uint32_t activePointLightCount_ = 0;
-	std::array<SpotCommonLight, kMaxSpotLights> spotLights_{};
-	uint32_t activeSpotLightCount_ = 0;
+	LightManager lightManager_;
 
 	bool sceneEndClear = false;
 	bool sceneEndOver = false;
@@ -97,6 +85,8 @@ private:
 	Vector2 radialBlurCenter_ = {0.5f, 0.5f};
 	float radialBlurWidth_ = 0.01f;
 	int radialBlurSampleCount_ = 10;
+	bool chromaticAberrationEnabled_ = false;
+	float chromaticAberrationIntensity_ = 0.02f;
 	bool dissolveEnabled_ = false;
 	float dissolveThreshold_ = 0.0f;
 	float dissolveEdgeWidth_ = 0.02f;
@@ -109,6 +99,9 @@ private:
 	Enemy* normalAttackTargetEnemy_ = nullptr;
 	float lockOnMarkerTimer_ = 0.0f;
 	static constexpr float kLockOnMarkerDuration_ = 0.5f;
+	bool isGameOverPending_ = false;
+	float gameOverDelayTimer_ = 0.0f;
+	static constexpr float kGameOverDelaySeconds_ = 1.0f;
 
 	void DrawRemoteCameraScene(Camera* camera);
 
@@ -122,6 +115,4 @@ public:
 	void Finalize() override;
 
 	void DebugImGui();
-	void LoadTeamDisplay();
-	void UnloadTeamDisplay();
 };

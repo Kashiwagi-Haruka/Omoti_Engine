@@ -104,7 +104,7 @@ void CharacterDisplay::ChangeDisplayedCharacter(size_t characterIndex) {
 }
 
 void CharacterDisplay::Update() {
-	if (!isActive_ || !currentPlayable_ || !camera_) {
+	if (!currentPlayable_ || !camera_) {
 		Input::GetInstance()->SetIsCursorStability(true);
 		Input::GetInstance()->SetIsCursorVisible(false);
 		return;
@@ -194,6 +194,7 @@ void CharacterDisplay::Update() {
 		if (PlayCommand::GetDownUI()) {
 			selectMenuType_ = CharacterDisplayMenuType ::PROFILE;
 		}
+		reinforcement_->SetReinforcementCount(currentPlayable_->GetReinforcement());
 		reinforcement_->Update();
 		break;
 	case CharacterDisplayMenuType::PROFILE:
@@ -212,7 +213,7 @@ void CharacterDisplay::Update() {
 }
 
 void CharacterDisplay::Draw() {
-	if (!isActive_ || !currentPlayable_) {
+	if (!currentPlayable_) {
 		return;
 	}
 

@@ -13,10 +13,13 @@ class DashGauge {
 	std::array<std::unique_ptr<Sprite>, kSegmentCount> frameSprites_{};
 	std::array<std::unique_ptr<Sprite>, kSegmentCount> fillSprites_{};
 	float gaugeRate_ = 1.0f;
+	bool dashUIView_ = false;
+	float alpha_ = 0.0f;
 
 public:
 	void Initialize();
 	void Update();
 	void Draw();
 	void SetGaugeRate(float gaugeRate);
+	void SetDamageUIView(bool damageUIView);
 };

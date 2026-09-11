@@ -18,6 +18,7 @@ public:
 	Vector3 GetScale() const { return baseTransform_.scale; }
 	bool IsCollected() const { return isCollected_; }
 	void Collect() { isCollected_ = true; }
+	bool TryAutoCollect(const Vector3& playerPosition);
 
 private:
 	std::array<std::unique_ptr<Primitive>, 3> primitive_;
@@ -28,4 +29,5 @@ private:
 	};
 	Camera* camera_ = nullptr;
 	bool isCollected_ = false;
+	bool isAutoCollecting_ = false;
 };

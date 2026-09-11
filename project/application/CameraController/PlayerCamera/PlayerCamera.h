@@ -13,7 +13,7 @@ class PlayerCamera {
 	float stickSensitivity_ = 0.04f;  // スティック感度
 	Vector3 playerPos = {0.0f, 0.0f, 0.0f}; // プレイヤーの位置
 	float orbitYaw_ = 0.0f;                 // カメラのヨー角
-	float orbitPitch_ = 0.15f;              // カメラのピッチ角
+	float orbitPitch_ = 0.55f;              // カメラのピッチ角
 	float shakeTimer_ = 0.0f;               // カメラの揺れのタイマー
 	float shakeDuration_ = 0.0f;            // カメラの揺れの継続時間
 	float shakeAmplitude_ = 0.6f;           //	カメラの揺れの振幅

@@ -8,6 +8,7 @@
 #include "Object/Boss/Boss.h"
 #include "Object/Characters/Enemy/EnemyManager.h"
 #include "Object/Player/Player.h"
+#include "Object/SpecialGaugeBall/SpecialGaugeBallManager.h"
 #include "Object3d/Object3dCommon.h"
 #include "OpenWorld/OpenWorld.h"
 #include "ParticleManager.h"
@@ -19,7 +20,6 @@
 #include "WinApp.h"
 #include <algorithm>
 #include <cmath>
-#include <numbers>
 
 namespace {
 constexpr int kDefaultFullscreenFilterType = 1;
@@ -95,7 +95,6 @@ bool ContainsLockOnEnemy(EnemyManager& enemyManager, Enemy* lockOnEnemy) {
 } // namespace
 
 GameScene::GameScene() {
-	Object3dCommon::GetInstance()->SetEnvironmentMapTexture("Resources/SkyBox/sky.dds");
 	characterModel.LoadModel();
 	cameraController = std::make_unique<CameraController>();
 	skyDome = std::make_unique<Sky>();
@@ -103,52 +102,55 @@ GameScene::GameScene() {
 	boss_ = std::make_unique<Boss>();
 	rasen_ = std::make_unique<Rasen>();
 	openWorld_ = std::make_unique<OpenWorld>();
+	specialGaugeBallManager_ = std::make_unique<SpecialGaugeBallManager>();
 
 	field = std::make_unique<Field>();
 	sceneTransition = std::make_unique<SceneTransition>();
 	uimanager = std::make_unique<UIManager>();
 
-	pause = std::make_unique<Pause>();
 	GameTimer::GetInstance()->Reset();
 	Input::GetInstance()->SetIsCursorStability(true);
 	Input::GetInstance()->SetIsCursorVisible(false);
-	characterDisplay_ = std::make_unique<CharacterDisplay>();
+	menuManager_ = std::make_unique<MenuManager>();
 	team_ = std::make_unique<Team>();
 }
 
 GameScene::~GameScene() {}
 
 void GameScene::Finalize() {
-	UnloadTeamDisplay();
+	Object3dCommon::GetInstance()->SetChromaticAberrationEnabled(false);
+	menuManager_->Close();
 	rasen_->Finalize();
 	openWorld_->Finalize();
 	ParticleManager::GetInstance()->Clear();
 }
 
 void GameScene::Initialize() {
-	isPause = false;
 	sceneEndClear = false;
 	sceneEndOver = false;
-	isCharacterDisplayMode_ = false;
-	isPartyMode_ = false;
 	cameraController->Initialize();
 
 	Object3dCommon::GetInstance()->SetDefaultCamera(cameraController->GetCamera());
 
 	skyDome->Initialize(cameraController->GetCamera());
 	player->Initialize(cameraController->GetCamera());
+	specialGaugeBallManager_->Initialize(cameraController->GetCamera());
 
 	field->Initialize(cameraController->GetCamera());
 	sceneTransition->Initialize(false);
 	isTransitionIn = true;
 	isTransitionOut = false;
+	isGameOverPending_ = false;
+	gameOverDelayTimer_ = 0.0f;
 	nextSceneName.clear();
 	team_->Initialize();
 	uimanager->SetTeam(team_.get());
+	uimanager->SetPlayer(player.get());
 	uimanager->Initialize();
 	uimanager->SetPlayerHPMax(team_->GetActiveCharacterHPMax());
 	uimanager->SetPlayerHP(team_->GetActiveCharacterHP());
-	uimanager->SetPlayerDashGauge(player->GetDashGauge(), player->GetDashGaugeMax());
+	uimanager->SetPlayerDashGauge(player->GetDashGauge(), player->GetDashGaugeMax(),player->GetIsDashUIView());
+	uimanager->SetSpecialAttackCooldown(player->GetSpecialAttackCooldownRemaining());
 	rasen_->Initialize(cameraController->GetCamera());
 	openWorld_->Initialize(cameraController->GetCamera());
 	playAreaMode_ = PlayAreaMode::kSpiral;
@@ -158,43 +160,11 @@ void GameScene::Initialize() {
 	remoteCamera_->SetCameraTransform(kRemoteCameraTransform);
 	remoteCamera_->SetScreenTransform(kRemoteCameraScreenTransform);
 
-	activePointLightCount_ = 3;
-	pointLights_[0].color = {1.0f, 1.0f, 1.0f, 1.0f};
-	pointLights_[0].position = {-75.0f, 10.0f, -75.0f};
-	pointLights_[0].intensity = 1.0f;
-	pointLights_[0].radius = 10.0f;
-	pointLights_[0].decay = 0.7f;
-	pointLights_[1].color = {1.0f, 0.9f, 0.9f, 1.0f};
-	pointLights_[1].position = {75.0f, 5.0f, 75.0f};
-	pointLights_[1].intensity = 0.0f;
-	pointLights_[1].radius = 10.0f;
-	pointLights_[1].decay = 0.7f;
-	pointLights_[2].color = {0.4f, 0.4f, 1.0f, 1.0f};
-	pointLights_[2].position = {-75.0f, 5.0f, 75.0f};
-	pointLights_[2].intensity = 1.0f;
-	pointLights_[2].radius = 5.0f;
-	pointLights_[2].decay = 0.7f;
+	lightManager_.Initialize();
 
-
-	directionalLight_.color = {76.0f/255.0f, 96.0f/255.0f, 178/255.0f, 1.0f};
-	directionalLight_.direction = {0.0f, -1.0f, 0.5f};
-	directionalLight_.intensity = 1.0f;
-
-	activeSpotLightCount_ = 1;
-	spotLights_[0].color = {1.0f, 1.0f, 1.0f, 1.0f};
-	spotLights_[0].position = {-50.0f, 5.0f, -50.0f};
-	spotLights_[0].direction = {0.0f, 1.0f, 0.0f};
-	spotLights_[0].intensity = 0.0f;
-	spotLights_[0].distance = 7.0f;
-	spotLights_[0].decay = 2.0f;
-	spotLights_[0].cosAngle = std::cos(std::numbers::pi_v<float> / 3.0f);
-	spotLights_[0].cosFalloffStart = std::cos(std::numbers::pi_v<float> / 4.0f);
-	pause->Initialize();
-	pause->SetCurrentCharacterObj(player->GetCharacterObject3d());
-	pause->SetCurrentAttribute(player->GetCurrentAttribute());
-	characterDisplay_->Initialize(*team_);
-	characterDisplay_->SetActive(false);
-	UnloadTeamDisplay();
+	menuManager_->Initialize(*team_);
+	menuManager_->SetCharacter(player->GetCharacterObject3d(), player->GetCurrentAttribute());
+	menuManager_->Close();
 	
 	vinettColor_ = {255, 255, 255};
 	vinettStrength_ = 10.0f;
@@ -220,6 +190,8 @@ void GameScene::Initialize() {
 	dissolveEnabled_ = false;
 	dissolveThreshold_ = 0.0f;
 	Object3dCommon::GetInstance()->SetDissolveEnabled(dissolveEnabled_);
+	Object3dCommon::GetInstance()->SetChromaticAberrationEnabled(chromaticAberrationEnabled_);
+	Object3dCommon::GetInstance()->SetChromaticAberrationIntensity(chromaticAberrationIntensity_);
 	Object3dCommon::GetInstance()->SetDissolveThreshold(dissolveThreshold_);
 	Object3dCommon::GetInstance()->SetDissolveEdgeWidth(dissolveEdgeWidth_);
 	normalAttackTargetEnemy_ = nullptr;
@@ -262,41 +234,7 @@ void GameScene::DebugImGui() {
 		Object3dCommon::GetInstance()->SetVignetteStrength(vinettStrength_);
 	}
 	ImGui::End();
-	if (ImGui::Begin("SampleLight")) {
-		if (ImGui::TreeNode("DirectionalLight")) {
-			ImGui::ColorEdit4("LightColor", &directionalLight_.color.x);
-			ImGui::DragFloat3("LightDirection", &directionalLight_.direction.x, 0.1f, -1.0f, 1.0f);
-			ImGui::DragFloat("LightIntensity", &directionalLight_.intensity, 0.1f, 0.0f, 10.0f);
-			ImGui::TreePop();
-		}
-		if (ImGui::TreeNode("PointLight")) {
-
-			for (uint32_t index = 0; index < activePointLightCount_; ++index) {
-				ImGui::PushID(static_cast<int>(index));
-				if (ImGui::TreeNode("PointLight")) {
-					ImGui::ColorEdit4("PointLightColor", &pointLights_[index].color.x);
-					ImGui::DragFloat("PointLightIntensity", &pointLights_[index].intensity, 0.1f);
-					ImGui::DragFloat3("PointLightPosition", &pointLights_[index].position.x, 0.1f);
-					ImGui::DragFloat("PointLightRadius", &pointLights_[index].radius, 0.1f);
-					ImGui::DragFloat("PointLightDecay", &pointLights_[index].decay, 0.1f);
-					ImGui::TreePop();
-				}
-				ImGui::PopID();
-			}
-			ImGui::TreePop();
-		}
-		if (ImGui::TreeNode("SpotLight")) {
-			ImGui::ColorEdit4("SpotLightColor", &spotLights_[0].color.x);
-			ImGui::DragFloat("SpotLightIntensity", &spotLights_[0].intensity, 0.1f);
-			ImGui::DragFloat3("SpotLightPosition", &spotLights_[0].position.x, 0.1f);
-			ImGui::DragFloat3("SpotLightDirection", &spotLights_[0].direction.x, 0.1f);
-			ImGui::DragFloat("SpotLightDistance", &spotLights_[0].distance, 0.1f);
-			ImGui::DragFloat("SpotLightDecay", &spotLights_[0].decay, 0.1f);
-			ImGui::DragFloat("SpotLightCosAngle", &spotLights_[0].cosAngle, 0.1f, 0.0f, 1.0f);
-			ImGui::DragFloat("SpotLightCosFalloffStart", &spotLights_[0].cosFalloffStart, 0.1f, 0.0f, 1.0f);
-			ImGui::TreePop();
-		}
-	}
+	lightManager_.DebugImGui();
 
 	ImGui::Text("Play Area: %s", playAreaMode_ == PlayAreaMode::kSpiral ? "Spiral" : "OpenWorld");
 	ImGui::Text("Press TAB to switch area mode");
@@ -305,21 +243,7 @@ void GameScene::DebugImGui() {
 
 #endif // USE_IMGUI
 }
-void GameScene::LoadTeamDisplay() {
-	if (teamDisplay_) {
-		return;
-	}
-	teamDisplay_ = std::make_unique<TeamDisplay>();
-	teamDisplay_->Initialize(*team_);
-}
 
-void GameScene::UnloadTeamDisplay() {
-	if (!teamDisplay_) {
-		return;
-	}
-	teamDisplay_->Unload();
-	teamDisplay_.reset();
-}
 void GameScene::Update() {
 	GameTimer::GetInstance()->Update();
 	const float deltaTime = GameBase::GetInstance()->GetDeltaTime();
@@ -347,90 +271,33 @@ void GameScene::Update() {
 	BGMManager::GetInstance()->Play(BGMManager::BGMType::Game);
 	if (!isTransitionIn && !isTransitionOut && Input::GetInstance()->TriggerKey(DIK_TAB)) {
 		playAreaMode_ = (playAreaMode_ == PlayAreaMode::kSpiral) ? PlayAreaMode::kOpenWorld : PlayAreaMode::kSpiral;
-		isPause = false;
+		menuManager_->Close();
 	}
 
 	if ((playAreaMode_ != PlayAreaMode::kSpiral || !rasen_->IsLevelSelecting()) && !isTransitionIn && !isTransitionOut) {
-		if (PlayCommand::GetCharacterDisplay()) {
-			isCharacterDisplayMode_ = !isCharacterDisplayMode_;
-			if (isCharacterDisplayMode_) {
-				isPause = false;
-				if (isPartyMode_) {
-					isPartyMode_ = false;
-					UnloadTeamDisplay();
-				}
-			}
-			characterDisplay_->SetActive(isCharacterDisplayMode_);
-			if (isCharacterDisplayMode_) {
-				Object3dCommon::GetInstance()->SetDirectionalLight(directionalLight_);
-			}
-		}
-
-		if (!isCharacterDisplayMode_) {
-			if (PlayCommand::GetTeamSelectDisplay()&&!isPause) {
-				isPartyMode_ = !isPartyMode_;
-				if (isPartyMode_) {
-					LoadTeamDisplay();
-					Input::GetInstance()->SetIsCursorStability(false);
-					Input::GetInstance()->SetIsCursorVisible(true);
-				} else {
-					UnloadTeamDisplay();
-				}
-			}
-			if (!isPartyMode_) {
-				bool togglePause = Input::GetInstance()->TriggerKey(DIK_ESCAPE) || Input::GetInstance()->TriggerButton(Input::PadButton::kButtonStart);
-				if (togglePause) {
-					isPause = !isPause;
-				}
-			}
-			if (isPartyMode_ && !PlayCommand::GetTeamSelectDisplay()) {
-				if (Input::GetInstance()->TriggerKey(DIK_ESCAPE)||Input::GetInstance()->TriggerButton(Input::PadButton::kButtonB)) {
-					isPartyMode_ = false;
-					UnloadTeamDisplay();
-				}
-			}
-		}
+		menuManager_->Update();
 	}
 	DebugImGui();
-	if (!isCharacterDeathDissolving_) {
+	if (!isCharacterDeathDissolving_ && !player->IsSpecialAttacking()) {
 		team_->Update();
-	}
-	if (isPartyMode_ && teamDisplay_) {
-		teamDisplay_->Update(*team_);
 	}
 	if (team_->ConsumeCharacterSwitchTriggered()) {
 		player->SetCharacterType(team_->GetActiveCharacterName());
-		pause->SetCurrentCharacterObj(player->GetCharacterObject3d());
-		pause->SetCurrentAttribute(player->GetCurrentAttribute());
+		menuManager_->SetCharacter(player->GetCharacterObject3d(), player->GetCurrentAttribute());
 	}
-	pause->Update(isPause);
-	Pause::Action pauseAction = pause->ConsumeAction();
-	if (pauseAction == Pause::Action::kResume) {
-		isPause = false;
-	} else if (pauseAction == Pause::Action::kTitle) {
+	const Pause::Action pauseAction = menuManager_->ConsumeAction();
+	if (pauseAction == Pause::Action::kTitle) {
 		if (!isTransitionOut) {
 			nextSceneName = "Title";
 			sceneTransition->Initialize(true);
 			isTransitionOut = true;
-			isPause = false;
+			menuManager_->Close();
 		}
 		return;
 	}
-
-	if (isPause && !isTransitionOut) {
+	if (menuManager_->IsActive()) {
 		fullscreenFilterType_ = kDefaultFullscreenFilterType;
 		Object3dCommon::GetInstance()->SetFullscreenFilterType(fullscreenFilterType_);
-		return;
-	}
-	if (isPartyMode_ && !isTransitionOut) {
-		fullscreenFilterType_ = kDefaultFullscreenFilterType;
-		Object3dCommon::GetInstance()->SetFullscreenFilterType(fullscreenFilterType_);
-		return;
-	}
-	if (isCharacterDisplayMode_ && !isTransitionOut) {
-		fullscreenFilterType_ = kDefaultFullscreenFilterType;
-		Object3dCommon::GetInstance()->SetFullscreenFilterType(fullscreenFilterType_);
-		characterDisplay_->Update();
 		return;
 	}
 	if (isCharacterDeathDissolving_) {
@@ -465,24 +332,11 @@ void GameScene::Update() {
 					characterObject->SetDissolveEnabled(false);
 					characterObject->SetDissolveThreshold(0.0f);
 				}
-				pause->SetCurrentCharacterObj(player->GetCharacterObject3d());
-				pause->SetCurrentAttribute(player->GetCurrentAttribute());
+				menuManager_->SetCharacter(player->GetCharacterObject3d(), player->GetCurrentAttribute());
 			}
 		}
 	}
-	if (player->GetIsSkillAttack()) {
-		pointLights_[1].intensity = 1.0f;
-		pointLights_[1].position = {player->GetSkillPosition().x, player->GetSkillPosition().y + 4, player->GetSkillPosition().z};
-
-	} else {
-		pointLights_[1].intensity = 0.0f;
-		pointLights_[1].position = {player->GetPosition().x, player->GetPosition().y + 4, player->GetPosition().z};
-	}
-	pointLights_[2].position = {player->GetPosition().x, player->GetPosition().y + 2, player->GetPosition().z};
-
-	Object3dCommon::GetInstance()->SetDirectionalLight(directionalLight_);
-	Object3dCommon::GetInstance()->SetPointLights(pointLights_.data(), activePointLightCount_);
-	Object3dCommon::GetInstance()->SetSpotLights(spotLights_.data(), activeSpotLightCount_);
+	lightManager_.Update(*player);
 
 	skyDome->SetCamera(cameraController->GetCamera());
 	player->SetCamera(cameraController->GetCamera());
@@ -502,6 +356,14 @@ void GameScene::Update() {
 		}
 	}
 	player->Update();
+	if (playAreaMode_ == PlayAreaMode::kSpiral && player->GetIsAlive()) {
+		for (auto& ball : specialGaugeBallManager_->SpecialGaugeBalls()) {
+			if (ball) {
+				ball->TryAutoCollect(player->GetPosition());
+			}
+		}
+	}
+	specialGaugeBallManager_->Update(cameraController->GetCamera(), player->GetMovementLimitCenter(), player->GetMovementLimitRadius());
 	const bool isDashing = player->IsDashing();
 	fullscreenFilterType_ = isDashing ? kRadialBlurFullscreenFilterType : kDefaultFullscreenFilterType;
 	Object3dCommon::GetInstance()->SetFullscreenFilterType(fullscreenFilterType_);
@@ -538,8 +400,14 @@ void GameScene::Update() {
 #endif // _DEBUG
 
 	if (playAreaMode_ == PlayAreaMode::kSpiral) {
-		if (team_->GetAreAllMembersDead() || rasen_->GetHouse()->GetHP() == 0) {
-			if (!isTransitionOut) {
+		const bool isGameOver = team_->GetAreAllMembersDead() || rasen_->GetHouse()->GetHP() == 0;
+		if (isGameOver && !isTransitionOut) {
+			if (!isGameOverPending_) {
+				isGameOverPending_ = true;
+				gameOverDelayTimer_ = 0.0f;
+			}
+			gameOverDelayTimer_ += deltaTime;
+			if (gameOverDelayTimer_ >= kGameOverDelaySeconds_) {
 				nextSceneName = "GameOver";
 				sceneTransition->Initialize(true);
 				isTransitionOut = true;
@@ -551,8 +419,8 @@ void GameScene::Update() {
 		Vector3 hitEnemyPos{};
 		bool didPlayerAttackHitEnemy = false;
 		Enemy* normalAttackHitEnemy = nullptr;
-		const bool didNormalAttackHitEnemy =
-		    collisionManager_.HandleGameSceneCollisions(*player, *rasen_->GetEnemyManager(), *rasen_->GetHouse(), activeBoss, &hitEnemyPos, &didPlayerAttackHitEnemy, &normalAttackHitEnemy);
+		const bool didNormalAttackHitEnemy = collisionManager_.HandleGameSceneCollisions(
+		    *player, *rasen_->GetEnemyManager(), *rasen_->GetHouse(), activeBoss, specialGaugeBallManager_.get(), &hitEnemyPos, &didPlayerAttackHitEnemy, &normalAttackHitEnemy);
 		if (didPlayerAttackHitEnemy) {
 			hitVinettTimer_ = kHitVinettDuration_;
 		}
@@ -561,7 +429,8 @@ void GameScene::Update() {
 			player->ClearLockOnTarget();
 			playerLockOnTarget = nullptr;
 		}
-		if (didNormalAttackHitEnemy && normalAttackHitEnemy && normalAttackHitEnemy == normalAttackTargetEnemy_) {
+		const bool canStartLockOn = didNormalAttackHitEnemy && normalAttackHitEnemy && normalAttackHitEnemy == normalAttackTargetEnemy_ && !cameraController->IsLockOnCameraActive();
+		if (canStartLockOn) {
 			// プレイヤーとカメラは、命中した同一の敵をロックオン対象として共有する。
 			lockOnMarkerEnemy_ = normalAttackHitEnemy;
 			player->SetLockOnTarget(lockOnMarkerEnemy_);
@@ -631,7 +500,8 @@ void GameScene::Update() {
 	uimanager->SetPlayerParameters(player->GetParameters());
 	uimanager->SetPlayerHPMax(team_->GetActiveCharacterHPMax());
 	uimanager->SetPlayerHP(team_->GetActiveCharacterHP());
-	uimanager->SetPlayerDashGauge(player->GetDashGauge(), player->GetDashGaugeMax());
+	uimanager->SetPlayerDashGauge(player->GetDashGauge(), player->GetDashGaugeMax(),player->GetIsDashUIView());
+	uimanager->SetSpecialAttackCooldown(player->GetSpecialAttackCooldownRemaining());
 	uimanager->Update();
 
 	Transform cameraPlayerTransform = {player->GetScale(), player->GetRotate(), player->GetPosition()};
@@ -679,22 +549,8 @@ void GameScene::DrawRemoteCameraScene(Camera* camera) {
 }
 
 void GameScene::Draw() {
-	if (isCharacterDisplayMode_) {
-		characterDisplay_->Draw();
-		return;
-	}
-	if (isPause) {
-		pause->Draw();
-		if (isTransitionIn || isTransitionOut) {
-			sceneTransition->Draw();
-		}
-		return;
-	}
-	if (isPartyMode_) {
-		SpriteCommon::GetInstance()->DrawCommon();
-		if (teamDisplay_) {
-			teamDisplay_->Draw(*team_);
-		}
+	if (menuManager_ && menuManager_->IsActive()) {
+		menuManager_->Draw();
 		if (isTransitionIn || isTransitionOut) {
 			sceneTransition->Draw();
 		}
@@ -721,6 +577,7 @@ void GameScene::Draw() {
 	EditorManager::GetInstance()->DrawEditorGridLines();
 	if (playAreaMode_ == PlayAreaMode::kSpiral) {
 		rasen_->Draw(boss_.get());
+		specialGaugeBallManager_->Draw();
 		if (rasen_->IsBossActive()) {
 			Object3dCommon::GetInstance()->DrawCommon();
 		}
@@ -736,7 +593,6 @@ void GameScene::Draw() {
 		hitVinettSprite_->Draw();
 	}
 	uimanager->Draw();
-	pause->Draw();
 	if (isTransitionIn || isTransitionOut) {
 		sceneTransition->Draw();
 	}

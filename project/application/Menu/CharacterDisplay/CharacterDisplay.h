@@ -45,7 +45,7 @@ class CharacterDisplay {
 	    .translate{0.0f, 2.0f, -5.0f},
 	};
 	float rotateSpeed_ = 0.01f;
-	bool isActive_ = true;
+
 	DirectionalCommonLight directionalLight{
 	    .color{
 	           1, 1,
@@ -89,18 +89,6 @@ public:
 	/// 描画
 	/// </summary>
 	void Draw();
-
-	/// <summary>
-	/// アクティブ状態を設定する。
-	/// </summary>
-	/// <param name="isActive"></param>
-	void SetActive(bool isActive) { isActive_ = isActive; }
-
-	/// <summary>
-	/// アクティブ状態を取得する。
-	/// </summary>
-	/// <returns></returns>
-	bool IsActive() const { return isActive_; }
 
 	/// <summary>
 	/// キャラクターのトランスフォームを設定する。

@@ -13,15 +13,29 @@
 class PlayableBase {
 
 protected:
+	//トランスフォーム
 	Transform transform_;
+	// 名前
 	std::string name_;
+	// ローマ字名前
 	std::string romanizationName_;
+	// 属性
 	Attribute attribute_ = Attribute::None;
+	// 武器タイプ
 	WeaponTypes weaponTypes_ = WeaponTypes::NONE;
+	// アルカナ
 	Arcana arcana_ = Arcana::FOOL;
+	// 基礎パラメータ
 	BaseParameter baseParameter_;
+	// パラメータ
 	Parameter parameter_;
+	// スキルツリー
 	SkilltreeType skilltree_{};
+	// 今の必殺技ゲージ
+	int specialGauge_;
+	// 最大必殺技ゲージ
+	int specialGaugeMax_;
+
 	// 強化量
 	int reinforcementAmount_ = 0;
 	bool isHaveCharacter_;

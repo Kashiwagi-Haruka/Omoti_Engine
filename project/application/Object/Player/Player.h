@@ -105,6 +105,7 @@ public:
 	void Jump();
 	void Falling();
 	PlayerSkill* GetSkill() { return attack_->GetSkill(); }
+	PlayerSpecialAttack* GetSpecial() { return attack_->GetSpecial(); }
 
 	void SetCamera(Camera* camera);
 	void SetMap(Field* map) { map_ = map; }
@@ -114,12 +115,18 @@ public:
 	bool IsDashing() const { return isDash; }
 	bool GetIsSkillAttack() { return attack_->isSkillAttacking(); }
 	bool GetIsSpecialAttack() const { return attack_->isSpecialAttacking(); }
+	float GetSpecialAttackCooldownRemaining() const { return attack_->GetSpecialAttackCooldownRemaining(); }
+	bool GetIsDashUIView() const { return isDashGaugeRecovery_||isDash||(dashGauge_<dashGaugeMax_); }
+	bool GetIsSpecialAnimationPlaying() const { return attack_->IsSpecialAnimationPlaying(); }
 	Vector3 GetSkillPosition() { return attack_->GetSkillDamagePosition(); }
 	Parameters GetParameters() { return parameters_; }
 	void SetParameters(const Parameters& p) { parameters_ = p; }
 	Vector3 GetRotate() { return transform_.rotate; }
 	Vector3 GetScale() { return transform_.scale; }
 	void Damage(int amount) {
+		if (attack_ && attack_->isSpecialAttacking()) {
+			return;
+		}
 		if (!isInvincible_) {
 			pendingDamage_ = amount;
 			isInvincible_ = true;
@@ -146,13 +153,20 @@ public:
 	float GetMovementLimitRadius() const { return movementLimitRadius_; }
 	void IsLevelUp(bool lv) { isLevelUP = lv; }
 	bool GetLv() { return isLevelUP; }
-	void EXPMath();
+	
 	PlayerSword* GetSword() { return attack_->GetSword(); }
 	int GetComboStep() const { return attack_->GetComboStep(); }           // コンボ段階取得用
 	bool IsFallingAttack() const { return attack_->IsFallingAttacking(); } // 落下攻撃中か
+	bool IsSpecialAttacking() const { return attack_ && attack_->isSpecialAttacking(); }
 	Object3d* GetCharacterObject3d() { return models_ ? models_->GetCharacterObject3d() : nullptr; }
+
 	void SetCharacterType(const std::string& characterName);
 	Attribute GetCurrentAttribute() const;
+	void SetCurrentAttribute(Attribute attribute);
+	bool IsSizuku() const { return currentCharacterName_ == "Sizuku"; }
 	const BaseParameter& GetCurrentBaseParameter() const;
 	const Parameter& GetCurrentCombatParameter() const;
+
+private:
+	std::string currentCharacterName_ = "Sizuku";
 };

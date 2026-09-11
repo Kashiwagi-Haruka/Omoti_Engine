@@ -85,6 +85,7 @@
     <FxCompile Include="Resources\shader\Skybox\Skybox.PS.hlsl">
       <Filter>Resources</Filter>
     </FxCompile>
+    <FxCompile Include="Resources\shader\Object3d\PS_Shader\SpecialGaugeEmissive.PS.hlsl" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Engine\Camera\Camera.cpp">
@@ -225,7 +226,7 @@
     <ClCompile Include="application\Scene\Scenes\TitleScene\TitleScene.cpp">
       <Filter>Application\Scene\TitleScene</Filter>
     </ClCompile>
-    <ClCompile Include="application\Pause\Pause.cpp">
+    <ClCompile Include="application\Menu\Pause\Pause.cpp">
       <Filter>Application\Menu\Pause</Filter>
     </ClCompile>
     <ClCompile Include="application\SceneTransition\SceneTransition.cpp">
@@ -548,6 +549,11 @@
     <ClCompile Include="application\Object\Characters\Enemy\HostileIndicator\EnemyHostileIndicator.cpp" />
     <ClCompile Include="application\Object\Characters\Enemy\LockOn\LockOnEnemy.cpp" />
     <ClCompile Include="application\Object\RemoteCamera\RemoteCamera.cpp" />
+    <ClCompile Include="application\Menu\MenuManager.cpp" />
+    <ClCompile Include="application\LightManager\LightManager.cpp" />
+    <ClCompile Include="application\Object\Characters\Playable\Individual\Mei\MeiSpecial.cpp" />
+    <ClCompile Include="application\Object\Characters\Playable\Individual\Mei\MeiSkill.cpp" />
+    <ClCompile Include="application\Object\Characters\Playable\Individual\Sizuku\ChangeAttribute\ChangeAttribute.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Engine\Camera\Camera.h">
@@ -709,7 +715,7 @@
     <ClInclude Include="application\Scene\Scenes\TitleScene\TitleScene.h">
       <Filter>Application\Scene\TitleScene</Filter>
     </ClInclude>
-    <ClInclude Include="application\Pause\Pause.h">
+    <ClInclude Include="application\Menu\Pause\Pause.h">
       <Filter>Application\Menu\Pause</Filter>
     </ClInclude>
     <ClInclude Include="application\SceneTransition\SceneTransition.h">
@@ -1088,6 +1094,11 @@
     <ClInclude Include="application\Object\Characters\Playable\Base\UPParametersType.h" />
     <ClInclude Include="application\BagItem\reinforcementAmount\BaserinforcementAmountItem.h" />
     <ClInclude Include="application\Object\RemoteCamera\RemoteCamera.h" />
+    <ClInclude Include="application\Menu\MenuManager.h" />
+    <ClInclude Include="application\LightManager\LightManager.h" />
+    <ClInclude Include="application\Object\Characters\Playable\Individual\Mei\MeiSpecial.h" />
+    <ClInclude Include="application\Object\Characters\Playable\Individual\Mei\MeiSkill.h" />
+    <ClInclude Include="application\Object\Characters\Playable\Individual\Sizuku\ChangeAttribute\ChangeAttribute.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include=".editorconfig" />

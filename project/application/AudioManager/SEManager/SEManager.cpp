@@ -5,6 +5,7 @@
 const std::array<SEManager::SEInfo, SEManager::kSECount> SEManager::kSEInfos = {
     {
      {"Resources/audio/SE/Attack/normalAttack.mp3", 1.0f},
+     {"Resources/audio/SE/Attack/normalAttack2.mp3", 0.4f},
      {"Resources/audio/SE/Attack/endAttack.mp3", 1.0f},
      {"Resources/audio/SE/magic.mp3", 1.0f},
      }

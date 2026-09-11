@@ -13,6 +13,7 @@ public:
 	/// </summary>
 	enum class SEType {
 		NormalAttack,
+		NormalAttack2,
 		EndAttack,
 		Magic,
 		Count,

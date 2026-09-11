@@ -43,6 +43,8 @@ private:
 	std::unique_ptr<CreatePSO> psoToon_;
 	// エミッシブ描画用PSO
 	std::unique_ptr<CreatePSO> psoEmissive_;
+	// スペシャルゲージ発光描画用PSO
+	std::unique_ptr<CreatePSO> psoSpecialGaugeEmissive_;
 	// カリングなし描画用PSO
 	std::unique_ptr<CreatePSO> psoNoCull_;
 	// 深度なし描画用PSO
@@ -201,6 +203,7 @@ public:
 		Default,
 		Toon,
 		Emissive,
+		SpecialGaugeEmissive,
 		NoCull,
 		NoDepth,
 		NoCullDepth,
@@ -241,6 +244,10 @@ public:
 	void DrawCommon(DrawCommonType type = DrawCommonType::Default);
 	// 指定カメラで描画設定
 	void DrawCommon(DrawCommonType type, Camera* camera);
+	// 以降の描画を選択的ブルームの発光ソースへ出力する
+	void BeginEmissionDraw();
+	// 発光ソース描画を終了し、通常シーンへ戻す
+	void EndEmissionDraw();
 	// アウトライン描画ターゲットを通常シーンへ戻す
 	void EndOutlineDraw();
 #pragma endregion
@@ -365,6 +372,8 @@ public:
 	void SetRadialBlurSampleCount(int sampleCount);
 	int GetRadialBlurSampleCount() const;
 	void SetDissolveEnabled(bool enabled);
+	void SetChromaticAberrationEnabled(bool enabled);
+	void SetChromaticAberrationIntensity(float intensity);
 	void SetDissolveThreshold(float threshold);
 	void SetDissolveEdgeWidth(float width);
 

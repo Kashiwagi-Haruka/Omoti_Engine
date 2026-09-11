@@ -239,7 +239,7 @@ void EnemyManager::AddEnemy(Camera* camera, const Vector3& pos) {
 	hitEffect->Initialize();
 	hitEffects.push_back({enemyPtr, std::move(hitEffect)});
 }
-void EnemyManager::Update(Camera* camera, const Vector3& housePos, const Vector3& houseScale, const Vector3& playerPos, bool isPlayerAlive) {
+void EnemyManager::Update(Camera* camera, const Vector3& housePos, const Vector3& houseScale, const Vector3& playerPos, bool isPlayerAlive, bool isMovementPaused) {
 
 	// ウェーブの状態管理
 	switch (waveState_) {
@@ -274,13 +274,15 @@ void EnemyManager::Update(Camera* camera, const Vector3& housePos, const Vector3
 	}
 
 		// 敵の更新
-	for (auto& e : enemies) {
-		if (e->GetIsAlive() || e->IsDying()) {
-			e->SetCamera(camera);
-			e->Update(housePos, houseScale, playerPos, isPlayerAlive);
+	if (!isMovementPaused) {
+		for (auto& e : enemies) {
+			if (e->GetIsAlive() || e->IsDying()) {
+				e->SetCamera(camera);
+				e->Update(housePos, houseScale, playerPos, isPlayerAlive);
+			}
 		}
+		ResolveOverlaps(playerPos, isPlayerAlive);
 	}
-	ResolveOverlaps(playerPos, isPlayerAlive);
 
 	for (auto& entry : hitEffects) {
 		if (entry.enemy && entry.enemy->GetIsAlive()) {

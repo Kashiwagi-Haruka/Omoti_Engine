@@ -1,4 +1,5 @@
 #pragma once
+#include "Text/Text.h"
 #include "Vector2.h"
 #include <cstdint>
 #include <memory>
@@ -31,6 +32,11 @@ class AttackOperation {
 	SpriteData skillIconSPData_;
 	// スペシャル攻撃のスプライトデータ。
 	SpriteData specialAttackSPData_;
+	// スペシャルゲージ
+	SpriteData specialGaugeSPData_;
+	// 属性切り替えガイド
+	SpriteData attributeChangeSPData_;
+
 	// キーボードスプライト
 	SpriteData keyboardDashSPData_;
 	SpriteData keyboardJumpSPData_;
@@ -45,12 +51,16 @@ class AttackOperation {
 	SpriteData padSpecialAttackSPData_;
 
 	InputDisplayMode inputDisplayMode_ = InputDisplayMode::Keyboard;
+	Text specialCooldownText_;
+	float specialCooldownRemaining_ = 0.0f;
+	int displayedCooldownTenths_ = 0;
 
 public:
 	AttackOperation();
 	void Initialize();
 	void Update();
 	void Draw();
+	void SetSpecialCooldownRemaining(float remainingSeconds) { specialCooldownRemaining_ = remainingSeconds; }
 
 private:
 	void UpdateInputDisplayMode();

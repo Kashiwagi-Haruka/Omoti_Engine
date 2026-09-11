@@ -37,6 +37,14 @@ bool PlayCommand::GetDASH() {
 	}
 	return false;
 }
+bool PlayCommand::GetDASH_TRIGGER(){ 
+	if (Input::GetInstance()->TriggerMouseButton(Input::MouseButton::kRight) || Input::GetInstance()->TriggerRightTrigger()) {
+		return true;
+	}
+
+	return false;
+}
+
 bool PlayCommand::GetNORMAL_ATTACK_PUSH() {
 	if (Input::GetInstance()->PushMouseButton(Input::MouseButton::kLeft) ||Input::GetInstance()->PushButton(Input::PadButton::kButtonX)) {
 		return true;
