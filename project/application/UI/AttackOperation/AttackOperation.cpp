@@ -11,7 +11,6 @@
 #include <cmath>
 #include <string>
 
-
 namespace {
 constexpr Vector2 kOperationIconBaseSize{60.0f, 60.0f};
 constexpr float kPressedScaleRate = 1.15f;
