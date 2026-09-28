@@ -23,7 +23,7 @@ void SizukuSpecial::StartThunderSpecial() {
 	const float yaw = sizukuTransform_.rotate.y;
 	const Vector3 forward = {std::sin(yaw), 0.0f, std::cos(yaw)};
 	thunderFieldPlaneTransform_.scale = {};
-	thunderFieldPlaneTransform_.rotate = {std::numbers::pi_v<float> / 2.0f, yaw, 0.0f};
+	thunderFieldPlaneTransform_.rotate = {0.0f, yaw, 0.0f};
 	thunderFieldPlaneTransform_.translate = sizukuTransform_.translate + forward * kFieldForwardOffset;
 	thunderFieldPlaneTransform_.translate.y -= sizukuHeight_;
 	damagePosition_ = thunderProjectileTransform_.translate;
@@ -37,7 +37,7 @@ void SizukuSpecial::UpdateThunderSpecial(float deltaTime) {
 	const Vector3 forward = {std::sin(yaw), 0.0f, std::cos(yaw)};
 	const float chargeProgress = std::clamp(elapsedTime_ / kChargeDuration, 0.0f, 1.0f);
 	thunderFieldPlaneTransform_.scale = {kFieldMaxScale * chargeProgress, kFieldMaxScale * chargeProgress, 1.0f};
-	thunderFieldPlaneTransform_.rotate.y = yaw + std::numbers::pi_v<float> * 2.0f * chargeProgress;
+	thunderFieldPlaneTransform_.rotate.y = yaw;
 	thunderFieldPlaneTransform_.translate = sizukuTransform_.translate + forward * kFieldForwardOffset;
 	thunderFieldPlaneTransform_.translate.y -= sizukuHeight_;
 	thunderFieldPlane_->SetCamera(camera_);

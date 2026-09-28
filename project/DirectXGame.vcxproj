@@ -348,6 +348,7 @@ copy "$(WindowsSdkDir)\bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)\
     <ClCompile Include="application\Object\Characters\Playable\Individual\Sizuku\SizukuSpecialQuantum.cpp" />
     <ClCompile Include="application\Object\Characters\Playable\Individual\Sizuku\SizukuSpecialThunder.cpp" />
     <ClCompile Include="application\Object\Characters\Playable\Individual\Sizuku\SizukuSpecialWind.cpp" />
+    <ClCompile Include="application\Object\Load\GameLoad.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include=".editorconfig" />
@@ -572,6 +573,7 @@ copy "$(WindowsSdkDir)\bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)\
     <ClInclude Include="application\Object\Characters\Playable\Individual\Sizuku\SizukuSpecialQuantum.h" />
     <ClInclude Include="application\Object\Characters\Playable\Individual\Sizuku\SizukuSpecialThunder.h" />
     <ClInclude Include="application\Object\Characters\Playable\Individual\Sizuku\SizukuSpecialWind.h" />
+    <ClInclude Include="application\Object\Load\GameLoad.h" />
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="Resources\shader\FullScreenCopy\CopyImage.PS.hlsl">

@@ -560,6 +560,7 @@
     <ClCompile Include="application\Object\Characters\Playable\Individual\Sizuku\SizukuSpecialImaginary.cpp" />
     <ClCompile Include="application\Object\Characters\Playable\Individual\Sizuku\SizukuSpecialIce.cpp" />
     <ClCompile Include="application\Object\Characters\Playable\Individual\Sizuku\SizukuSpecialFire.cpp" />
+    <ClCompile Include="application\Object\Load\GameLoad.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Engine\Camera\Camera.h">
@@ -1112,6 +1113,7 @@
     <ClInclude Include="application\Object\Characters\Playable\Individual\Sizuku\SizukuSpecialIce.h" />
     <ClInclude Include="application\Object\Characters\Playable\Individual\Sizuku\SizukuSpecialFire.h" />
     <ClInclude Include="application\Object\Characters\Playable\Individual\Sizuku\SizukuSpecialAttributeBase.h" />
+    <ClInclude Include="application\Object\Load\GameLoad.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include=".editorconfig" />
