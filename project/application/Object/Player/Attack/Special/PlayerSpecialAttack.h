@@ -1,4 +1,5 @@
 #pragma once
+#include "Object/Characters/Base/Attribute.h"
 #include "Object/Characters/Playable/Individual/Mei/MeiSpecial.h"
 #include "Object/Characters/Playable/Individual/Sizuku/SizukuSpecial.h"
 #include "Object3d/Object3d.h"
@@ -24,6 +25,7 @@ public:
 	void SetCamera(Camera* camera) { camera_ = camera; }
 	void SetPlayerTransform(const Transform& playerTransform);
 	void SetCharacterName(const std::string& name) { useMei_ = name == "Mei"; }
+	void SetAttribute(Attribute attribute) { sizuku_->SetAttribute(attribute); }
 	bool IsEnd() const { return useMei_ ? mei_->IsEnd() : sizuku_->isEnd(); }
 	bool IsAnimationFinished() const { return useMei_ ? mei_->IsAnimationFinished() : sizuku_->IsAnimationFinished(); }
 	bool IsDamaging() const { return useMei_ ? mei_->IsDamaging() : sizuku_->IsFlowerDamaging(); }

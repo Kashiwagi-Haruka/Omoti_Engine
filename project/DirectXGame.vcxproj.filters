@@ -554,6 +554,12 @@
     <ClCompile Include="application\Object\Characters\Playable\Individual\Mei\MeiSpecial.cpp" />
     <ClCompile Include="application\Object\Characters\Playable\Individual\Mei\MeiSkill.cpp" />
     <ClCompile Include="application\Object\Characters\Playable\Individual\Sizuku\ChangeAttribute\ChangeAttribute.cpp" />
+    <ClCompile Include="application\Object\Characters\Playable\Individual\Sizuku\SizukuSpecialWind.cpp" />
+    <ClCompile Include="application\Object\Characters\Playable\Individual\Sizuku\SizukuSpecialThunder.cpp" />
+    <ClCompile Include="application\Object\Characters\Playable\Individual\Sizuku\SizukuSpecialQuantum.cpp" />
+    <ClCompile Include="application\Object\Characters\Playable\Individual\Sizuku\SizukuSpecialImaginary.cpp" />
+    <ClCompile Include="application\Object\Characters\Playable\Individual\Sizuku\SizukuSpecialIce.cpp" />
+    <ClCompile Include="application\Object\Characters\Playable\Individual\Sizuku\SizukuSpecialFire.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Engine\Camera\Camera.h">
@@ -1099,6 +1105,13 @@
     <ClInclude Include="application\Object\Characters\Playable\Individual\Mei\MeiSpecial.h" />
     <ClInclude Include="application\Object\Characters\Playable\Individual\Mei\MeiSkill.h" />
     <ClInclude Include="application\Object\Characters\Playable\Individual\Sizuku\ChangeAttribute\ChangeAttribute.h" />
+    <ClInclude Include="application\Object\Characters\Playable\Individual\Sizuku\SizukuSpecialWind.h" />
+    <ClInclude Include="application\Object\Characters\Playable\Individual\Sizuku\SizukuSpecialThunder.h" />
+    <ClInclude Include="application\Object\Characters\Playable\Individual\Sizuku\SizukuSpecialQuantum.h" />
+    <ClInclude Include="application\Object\Characters\Playable\Individual\Sizuku\SizukuSpecialImaginary.h" />
+    <ClInclude Include="application\Object\Characters\Playable\Individual\Sizuku\SizukuSpecialIce.h" />
+    <ClInclude Include="application\Object\Characters\Playable\Individual\Sizuku\SizukuSpecialFire.h" />
+    <ClInclude Include="application\Object\Characters\Playable\Individual\Sizuku\SizukuSpecialAttributeBase.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include=".editorconfig" />

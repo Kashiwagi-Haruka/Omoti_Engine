@@ -53,6 +53,8 @@ public:
 	static ParticleManager* GetInstance();
 	void Initialize(DirectXCommon* dxCommon);
 	void CreateParticleGroup(const std::string& name, const std::string& textureFilePath);
+	// 同じシーンを再初期化しても重複登録にならないよう、未登録時だけ生成する。
+	void CreateParticleGroupIfMissing(const std::string& name, const std::string& textureFilePath);
 	void Emit(
 	    const std::string& name, const Transform& transform, uint32_t count, const Vector3& accel, const AABB& area, float life, const Vector4& beforeColor, const Vector4& afterColor,
 	    float emissionAngle, float emissionSpeed = 1.0f);

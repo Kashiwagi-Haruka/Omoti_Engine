@@ -222,13 +222,14 @@ void CameraController::SetPlayerTransform(const Transform& transform) {
 	playerPos = transform.translate;
 	sizukuSpecialCamera_->SetPlayerTransform(transform);
 }
-void CameraController::SetSizukuSpecialCameraActive(bool isActive) {
+void CameraController::SetSizukuSpecialCameraActive(bool isActive, Attribute attribute) {
 	if (isActive && !isSizukuSpecialCameraActive_) {
 		isSizukuSpecialCameraActive_ = true;
 		autoLockOnTimer_ = 0.0f;
 		lockOnCamera_->ClearTarget();
 		normalAttackCamera_->ClearTarget();
 		RequestCameraMode(CameraMode::kSizukuSpecialCamera);
+		sizukuSpecialCamera_->SetAttribute(attribute);
 		sizukuSpecialCamera_->Start();
 	} else if (!isActive) {
 		isSizukuSpecialCameraActive_ = false;
