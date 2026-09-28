@@ -25,6 +25,7 @@ SizukuSpecial::SizukuSpecial() {
 	imaginarySpecial_ = std::make_unique<SizukuSpecialImaginary>();
 	quantumSpecial_ = std::make_unique<SizukuSpecialQuantum>();
 	fieldPlane_ = std::make_unique<Primitive>();
+	thunderFieldPlane_ = std::make_unique<Primitive>();
 	imaginaryFieldPlane_ = std::make_unique<Primitive>();
 	skydomeObj_ = std::make_unique<Object3d>();
 	iceFlower_ = std::make_unique<Object3d>();
@@ -38,6 +39,9 @@ void SizukuSpecial::Initialize() {
 	fieldPlane_->Initialize(Primitive::Plane, "Resources/2d/Effect/sizukuField.png");
 	fieldPlane_->SetEnableLighting(false);
 	fieldPlaneTransform_.rotate.x = std::numbers::pi_v<float> / 2.0f;
+	thunderFieldPlane_->Initialize(Primitive::Plane, "Resources/3d/Character/Sizuku/Special/sizukuSpecialThunder.png");
+	thunderFieldPlane_->SetEnableLighting(false);
+	thunderFieldPlaneTransform_.rotate.x = std::numbers::pi_v<float> / 2.0f;
 	imaginaryFieldPlane_->Initialize(Primitive::Plane, "Resources/3d/Character/Sizuku/Special/sizukuImaginaryField.png");
 	imaginaryFieldPlane_->SetEnableLighting(false);
 	imaginaryFieldPlaneTransform_.rotate.x = std::numbers::pi_v<float> / 2.0f;
@@ -143,6 +147,7 @@ void SizukuSpecial::End() {
 	isStarted_ = false;
 	isEnd_ = true;
 	fieldPlaneTransform_.scale = {};
+	thunderFieldPlaneTransform_.scale = {};
 	imaginaryFieldPlaneTransform_.scale = {};
 	iceFlowerTransform_.scale = {};
 }
@@ -156,7 +161,7 @@ bool SizukuSpecial::IsFlowerDamaging() const {
 	case Attribute::Wind:
 		return elapsedTime_ >= 0.6f && elapsedTime_ < 4.0f;
 	case Attribute::Thunder:
-		return elapsedTime_ >= 0.45f && elapsedTime_ < 2.1f;
+		return elapsedTime_ >= 0.5f && elapsedTime_ < 2.1f;
 	case Attribute::Imaginary:
 		return elapsedTime_ >= 1.5f && elapsedTime_ < 1.9f;
 	case Attribute::Quantum:
@@ -184,8 +189,8 @@ void SizukuSpecial::Draw() {
 		DrawIceSpecial();
 		return;
 	}
-	if (attribute_ == Attribute::Thunder && elapsedTime_ >= 0.45f)
-		thunderProjectile_->Draw();
+	if (attribute_ == Attribute::Thunder)
+		DrawThunderSpecial();
 	if (attribute_ == Attribute::Imaginary)
 		DrawImaginarySpecial();
 	DrawParticleSpecial();
