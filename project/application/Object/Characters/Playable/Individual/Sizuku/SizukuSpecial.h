@@ -37,6 +37,7 @@ class SizukuSpecial {
 	Attribute attribute_ = Attribute::Ice;
 
 	std::unique_ptr<Primitive> fieldPlane_;
+	std::unique_ptr<Primitive> imaginaryFieldPlane_;
 	std::unique_ptr<Object3d> skydomeObj_;
 	std::unique_ptr<Object3d> iceFlower_;
 	std::unique_ptr<Object3d> thunderProjectile_;
@@ -53,6 +54,7 @@ class SizukuSpecial {
 	SizukuSpecialAttributeBase* activeSpecial_ = nullptr;
 	Transform sizukuTransform_{};
 	Transform fieldPlaneTransform_{};
+	Transform imaginaryFieldPlaneTransform_{};
 	Transform skydomeTransform_{};
 	Transform iceFlowerTransform_{};
 	Transform thunderProjectileTransform_{};
@@ -76,6 +78,7 @@ class SizukuSpecial {
 	void UpdateImaginarySpecial(float deltaTime);
 	void UpdateQuantumSpecial(float deltaTime);
 	void DrawIceSpecial();
+	void DrawImaginarySpecial();
 	void DrawParticleSpecial();
 	void ResetIceRain(size_t index, bool randomizeHeight);
 	void ConfigureEmitter(ParticleEmitter& emitter, const Vector4& color, uint32_t count, float speed, float life);

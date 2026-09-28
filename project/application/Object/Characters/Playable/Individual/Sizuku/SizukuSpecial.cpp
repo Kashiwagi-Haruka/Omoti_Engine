@@ -25,6 +25,7 @@ SizukuSpecial::SizukuSpecial() {
 	imaginarySpecial_ = std::make_unique<SizukuSpecialImaginary>();
 	quantumSpecial_ = std::make_unique<SizukuSpecialQuantum>();
 	fieldPlane_ = std::make_unique<Primitive>();
+	imaginaryFieldPlane_ = std::make_unique<Primitive>();
 	skydomeObj_ = std::make_unique<Object3d>();
 	iceFlower_ = std::make_unique<Object3d>();
 	thunderProjectile_ = std::make_unique<Object3d>();
@@ -37,6 +38,9 @@ void SizukuSpecial::Initialize() {
 	fieldPlane_->Initialize(Primitive::Plane, "Resources/2d/Effect/sizukuField.png");
 	fieldPlane_->SetEnableLighting(false);
 	fieldPlaneTransform_.rotate.x = std::numbers::pi_v<float> / 2.0f;
+	imaginaryFieldPlane_->Initialize(Primitive::Plane, "Resources/3d/Character/Sizuku/Special/sizukuImaginaryField.png");
+	imaginaryFieldPlane_->SetEnableLighting(false);
+	imaginaryFieldPlaneTransform_.rotate.x = std::numbers::pi_v<float> / 2.0f;
 
 	skydomeObj_->Initialize();
 	skydomeObj_->SetEnableLighting(false);
@@ -139,6 +143,7 @@ void SizukuSpecial::End() {
 	isStarted_ = false;
 	isEnd_ = true;
 	fieldPlaneTransform_.scale = {};
+	imaginaryFieldPlaneTransform_.scale = {};
 	iceFlowerTransform_.scale = {};
 }
 
@@ -181,5 +186,7 @@ void SizukuSpecial::Draw() {
 	}
 	if (attribute_ == Attribute::Thunder && elapsedTime_ >= 0.45f)
 		thunderProjectile_->Draw();
+	if (attribute_ == Attribute::Imaginary)
+		DrawImaginarySpecial();
 	DrawParticleSpecial();
 }
