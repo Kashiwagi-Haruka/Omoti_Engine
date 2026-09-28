@@ -25,20 +25,20 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
     <ConfigurationType>StaticLibrary</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
-    <PlatformToolset>v143</PlatformToolset>
+    <PlatformToolset>v145</PlatformToolset>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
     <ConfigurationType>StaticLibrary</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
-    <PlatformToolset>v143</PlatformToolset>
+    <PlatformToolset>v145</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Development|x64'" Label="Configuration">
     <ConfigurationType>StaticLibrary</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
-    <PlatformToolset>v143</PlatformToolset>
+    <PlatformToolset>v145</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
@@ -133,74 +133,27 @@
     <ClCompile Include="src\base\ftglyph.c" />
     <ClCompile Include="src\base\ftinit.c" />
     <ClCompile Include="src\base\ftpatent.c" />
-    <ClCompile Include="src\base\ftpsprop.c" />
     <ClCompile Include="src\base\ftstroke.c" />
     <ClCompile Include="src\base\ftsynth.c" />
     <ClCompile Include="src\base\ftsystem.c" />
     <ClCompile Include="src\base\fttype1.c" />
-    <ClCompile Include="src\base\ftutil.c" />
     <ClCompile Include="src\bdf\bdf.c" />
     <ClCompile Include="src\cache\ftcache.c" />
     <ClCompile Include="src\cff\cff.c" />
-    <ClCompile Include="src\cid\cidgload.c" />
-    <ClCompile Include="src\cid\cidload.c" />
-    <ClCompile Include="src\cid\cidobjs.c" />
-    <ClCompile Include="src\cid\cidparse.c" />
-    <ClCompile Include="src\cid\cidriver.c" />
     <ClCompile Include="src\cid\type1cid.c" />
-    <ClCompile Include="src\gzip\adler32.c" />
     <ClCompile Include="src\gzip\ftgzip.c" />
-    <ClCompile Include="src\gzip\infutil.c" />
     <ClCompile Include="src\lzw\ftlzw.c" />
     <ClCompile Include="src\pcf\pcf.c" />
     <ClCompile Include="src\pfr\pfr.c" />
-    <ClCompile Include="src\psaux\afmparse.c" />
-    <ClCompile Include="src\psaux\cffdecode.c" />
-    <ClCompile Include="src\psaux\psarrst.c" />
     <ClCompile Include="src\psaux\psaux.c" />
-    <ClCompile Include="src\psaux\psauxmod.c" />
-    <ClCompile Include="src\psaux\psblues.c" />
-    <ClCompile Include="src\psaux\psconv.c" />
-    <ClCompile Include="src\psaux\pserror.c" />
-    <ClCompile Include="src\psaux\psfont.c" />
-    <ClCompile Include="src\psaux\psft.c" />
-    <ClCompile Include="src\psaux\pshints.c" />
-    <ClCompile Include="src\psaux\psintrp.c" />
-    <ClCompile Include="src\psaux\psobjs.c" />
-    <ClCompile Include="src\psaux\psread.c" />
-    <ClCompile Include="src\psaux\psstack.c" />
-    <ClCompile Include="src\psaux\t1cmap.c" />
-    <ClCompile Include="src\psaux\t1decode.c" />
-    <ClCompile Include="src\pshinter\pshalgo.c" />
-    <ClCompile Include="src\pshinter\pshglob.c" />
     <ClCompile Include="src\pshinter\pshinter.c" />
-    <ClCompile Include="src\pshinter\pshrec.c" />
     <ClCompile Include="src\psnames\psmodule.c" />
     <ClCompile Include="src\raster\raster.c" />
-    <ClCompile Include="src\sdf\ftbsdf.c" />
-    <ClCompile Include="src\sdf\ftsdf.c" />
-    <ClCompile Include="src\sdf\ftsdfcommon.c" />
-    <ClCompile Include="src\sdf\ftsdfrend.c" />
     <ClCompile Include="src\sdf\sdf.c" />
-    <ClCompile Include="src\sfnt\sfdriver.c" />
     <ClCompile Include="src\sfnt\sfnt.c" />
-    <ClCompile Include="src\sfnt\sfobjs.c" />
-    <ClCompile Include="src\sfnt\sfwoff.c" />
-    <ClCompile Include="src\sfnt\sfwoff2.c" />
     <ClCompile Include="src\smooth\smooth.c" />
     <ClCompile Include="src\truetype\truetype.c" />
-    <ClCompile Include="src\truetype\ttdriver.c" />
-    <ClCompile Include="src\truetype\ttgload.c" />
-    <ClCompile Include="src\truetype\ttgxvar.c" />
-    <ClCompile Include="src\truetype\ttinterp.c" />
-    <ClCompile Include="src\truetype\ttobjs.c" />
-    <ClCompile Include="src\truetype\ttpload.c" />
-    <ClCompile Include="src\type1\t1load.c" />
-    <ClCompile Include="src\type1\t1objs.c" />
-    <ClCompile Include="src\type1\t1parse.c" />
     <ClCompile Include="src\type1\type1.c" />
-    <ClCompile Include="src\type42\t42objs.c" />
-    <ClCompile Include="src\type42\t42parse.c" />
     <ClCompile Include="src\type42\type42.c" />
     <ClCompile Include="src\winfonts\winfnt.c" />
   </ItemGroup>
