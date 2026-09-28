@@ -40,6 +40,18 @@ float3 ApplySepia(float3 color)
     sepia.b = dot(color, float3(0.272f, 0.534f, 0.131f));
     return saturate(sepia);
 }
+float3 ApplyBinarization(float3 color)
+{
+    if (fullscreenBinarizationEnabled < 0.5f)
+    {
+        return color;
+    }
+
+    float luminance = dot(color, float3(0.2125f, 0.7154f, 0.0721f));
+    float binaryValue = step(binarizationThreshold, luminance);
+    return binaryValue.xxx;
+}
+
 float Gauss(float x, float y, float sigma)
 {
     static const float PI = 3.14159265f;
@@ -217,6 +229,9 @@ PixelShaderOutput main(VertexShaderOutput input)
     }
     float4 outlineColor = gOutlineTexture.Sample(gSampler, input.texcoord);
     output.color.rgb = lerp(output.color.rgb, outlineColor.rgb, saturate(outlineColor.a));
+    
+    
+    output.color.rgb = ApplyBinarization(output.color.rgb);
 
     return output;
 }

@@ -67,6 +67,8 @@ void DirectXCommon::initialize(WinApp* winApp) {
 	SetDissolveEnabled(dissolveEnabled_);
 	SetDissolveThreshold(dissolveThreshold_);
 	SetDissolveEdgeWidth(dissolveEdgeWidth_);
+	SetFullscreenBinarizationEnabled(fullscreenBinarizationEnabled_);
+	SetBinarizationThreshold(binarizationThreshold_);
 	// DSVの初期化
 	DepthStencilViewInitialize();
 	// ビューポートとシザー矩形の設定
@@ -622,6 +624,9 @@ void DirectXCommon::SceneCopyPipelineCreate() {
 	postEffectParameterMappedData_->selectiveBloomIntensity = selectiveBloomIntensity_;
 	postEffectParameterMappedData_->selectiveBloomRadius = selectiveBloomRadius_;
 	postEffectParameterMappedData_->selectiveBloomPadding = 0.0f;
+	postEffectParameterMappedData_->fullscreenBinarizationEnabled = fullscreenBinarizationEnabled_ ? 1.0f : 0.0f;
+	postEffectParameterMappedData_->binarizationThreshold = binarizationThreshold_;
+	postEffectParameterMappedData_->binarizationPadding = 0.0f;
 }
 void DirectXCommon::DepthStencilViewInitialize() {
 
@@ -790,6 +795,18 @@ void DirectXCommon::SetDissolveEdgeWidth(float width) {
 		postEffectParameterMappedData_->dissolveEdgeWidth = dissolveEdgeWidth_;
 	}
 }
+void DirectXCommon::SetFullscreenBinarizationEnabled(bool enabled) {
+	fullscreenBinarizationEnabled_ = enabled;
+	if (postEffectParameterMappedData_) {
+		postEffectParameterMappedData_->fullscreenBinarizationEnabled = enabled ? 1.0f : 0.0f;
+	}
+}
+void DirectXCommon::SetBinarizationThreshold(float threshold) {
+	binarizationThreshold_ = std::clamp(threshold, 0.0f, 1.0f);
+	if (postEffectParameterMappedData_) {
+		postEffectParameterMappedData_->binarizationThreshold = binarizationThreshold_;
+	}
+}
 void DirectXCommon::SetSelectiveBloomEnabled(bool enabled) {
 	selectiveBloomEnabled_ = enabled;
 	if (postEffectParameterMappedData_) {
@@ -818,6 +835,8 @@ void DirectXCommon::PreDraw() {
 		postEffectParameterMappedData_->dissolveEnabled = dissolveEnabled_ ? 1.0f : 0.0f;
 		postEffectParameterMappedData_->dissolveThreshold = dissolveThreshold_;
 		postEffectParameterMappedData_->dissolveEdgeWidth = dissolveEdgeWidth_;
+		postEffectParameterMappedData_->fullscreenBinarizationEnabled = fullscreenBinarizationEnabled_ ? 1.0f : 0.0f;
+		postEffectParameterMappedData_->binarizationThreshold = binarizationThreshold_;
 	}
 	// ① 現在のバックバッファをフレーム毎に更新
 	backBufferIndex_ = swapChain_->GetCurrentBackBufferIndex();
