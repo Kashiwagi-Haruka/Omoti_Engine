@@ -1,7 +1,7 @@
 #pragma once
 #include "Object/Characters/Base/Attribute.h"
 #include "Object/Characters/Playable/Individual/Mei/MeiSpecial.h"
-#include "Object/Characters/Playable/Individual/Sizuku/SizukuSpecial.h"
+#include "Object/Characters/Playable/Individual/Sizuku/Special/SizukuSpecial.h"
 #include "Object3d/Object3d.h"
 #include "Transform.h"
 #include <memory>

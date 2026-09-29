@@ -2,9 +2,22 @@
 #include "GameBase.h"
 #include "Model/ModelManager.h"
 #include "Object3d/Object3dCommon.h"
+#include "SizukuSkillFire.h"
+#include "SizukuSkillIce.h"
+#include "SizukuSkillImaginary.h"
+#include "SizukuSkillQuantum.h"
+#include "SizukuSkillThunder.h"
+#include "SizukuSkillWind.h"
 #include <cmath>
 #include <numbers>
 SizukuSkill::SizukuSkill() {
+	fireSkill_ = std::make_unique<SizukuSkillFire>();
+	iceSkill_ = std::make_unique<SizukuSkillIce>();
+	windSkill_ = std::make_unique<SizukuSkillWind>();
+	thunderSkill_ = std::make_unique<SizukuSkillThunder>();
+	imaginarySkill_ = std::make_unique<SizukuSkillImaginary>();
+	quantumSkill_ = std::make_unique<SizukuSkillQuantum>();
+	activeSkill_ = iceSkill_.get();
 	state = up;
 	isSkillEnd = true;
 	isSpecialEnd_ = true;
@@ -95,7 +108,9 @@ void SizukuSkill::Initialize() {
 	isSpecialEnd_ = true;
 	specialTime_ = 0;
 }
-void SizukuSkill::Update() {
+void SizukuSkill::Update() { activeSkill_->Update(*this); }
+
+void SizukuSkill::UpdateAttributeSkill() {
 
 	switch (state) {
 	case SizukuSkill::up:
@@ -230,10 +245,42 @@ void SizukuSkill::UpdateSpecialAttack(const Transform& playerTransform) {
 }
 
 void SizukuSkill::StartAttack(const Transform& playerTransform) {
+	switch (attribute_) {
+	case Attribute::Fire:
+		activeSkill_ = fireSkill_.get();
+		break;
+	case Attribute::Wind:
+		activeSkill_ = windSkill_.get();
+		break;
+	case Attribute::Thunder:
+		activeSkill_ = thunderSkill_.get();
+		break;
+	case Attribute::Imaginary:
+		activeSkill_ = imaginarySkill_.get();
+		break;
+	case Attribute::Quantum:
+		activeSkill_ = quantumSkill_.get();
+		break;
+	case Attribute::Ice:
+	case Attribute::None:
+	case Attribute::MAXATTRIBUTE:
+	default:
+		activeSkill_ = iceSkill_.get();
+		break;
+	}
+	activeSkill_->Start(*this, playerTransform);
+}
+
+void SizukuSkill::StartAttributeSkill(const Transform& playerTransform, const Vector4& primaryColor, const Vector4& secondaryColor) {
 	transform_ = playerTransform;
 	damageTransform1_ = playerTransform;
 	damageTransform2_ = playerTransform;
 	particle_.translate = {transform_.translate.x, transform_.translate.y - (transform_.scale.y * 0.5f), transform_.translate.z};
+
+	skillUpObject_->SetColor(primaryColor);
+	skillUnderObject_->SetColor(secondaryColor);
+	skillEmitter_->SetBeforeColor(primaryColor);
+	skillEmitter_->SetAfterColor({secondaryColor.x, secondaryColor.y, secondaryColor.z, 0.0f});
 
 	damageTransform2_.translate.y = -5.0f;
 	isSkillEnd = false;

@@ -213,6 +213,7 @@ void PlayerAttack::Update() {
 			ResetNormalAttackState();
 			isSkillAttack = true;
 			attackState_ = AttackState::kSkillAttack;
+			skill_->SetAttribute(models_->GetCurrentAttribute());
 			skill_->StartAttack(playerTransform_);
 			SEManager::GetInstance()->Play(SEManager::SEType::Magic);
 			// isSpecialAttack = true;
