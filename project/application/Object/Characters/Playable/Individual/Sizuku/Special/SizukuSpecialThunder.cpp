@@ -47,6 +47,8 @@ void SizukuSpecialThunder::Update(const SizukuSpecialContext& c, float dt) {
 	field_->SetCamera(c.camera);
 	field_->SetTransform(fieldTransform_);
 	field_->Update();
+	Object3dCommon::GetInstance()->SetFullScreenBinarizationEnabled(true);
+	Object3dCommon::GetInstance()->SetBinarizationThreshold(0.3f);
 	if (c.elapsedTime >= kCharge) {
 		projectileTransform_.translate = projectileTransform_.translate + f * (42 * dt);
 		damagePosition_ = projectileTransform_.translate;
@@ -54,7 +56,9 @@ void SizukuSpecialThunder::Update(const SizukuSpecialContext& c, float dt) {
 		projectile_->SetTransform(projectileTransform_);
 		projectile_->Update();
 		emitter_->Update(projectileTransform_);
+		Object3dCommon::GetInstance()->SetFullScreenBinarizationEnabled(false);
 	}
+
 }
 void SizukuSpecialThunder::Draw() {
 	auto* common = Object3dCommon::GetInstance();
