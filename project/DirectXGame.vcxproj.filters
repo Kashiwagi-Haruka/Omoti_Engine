@@ -567,6 +567,7 @@
     <ClCompile Include="application\Object\Characters\Playable\Individual\Sizuku\Skill\SizukuSkillThunder.cpp" />
     <ClCompile Include="application\Object\Characters\Playable\Individual\Sizuku\Skill\SizukuSkillImaginary.cpp" />
     <ClCompile Include="application\Object\Characters\Playable\Individual\Sizuku\Skill\SizukuSkillQuantum.cpp" />
+    <ClCompile Include="application\UI\DangerUI\DangerUI.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Engine\Camera\Camera.h">
@@ -1127,6 +1128,7 @@
     <ClInclude Include="application\Object\Characters\Playable\Individual\Sizuku\Skill\SizukuSkillImaginary.h" />
     <ClInclude Include="application\Object\Characters\Playable\Individual\Sizuku\Skill\SizukuSkillQuantum.h" />
     <ClInclude Include="application\Object\Characters\Playable\Individual\Sizuku\Skill\SizukuSkillAttributeBase.h" />
+    <ClInclude Include="application\UI\DangerUI\DangerUI.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include=".editorconfig" />
