@@ -1,5 +1,6 @@
 #pragma once
 #include "Text/Text.h"
+#include "Object/Characters/Base/Attribute.h"
 #include "Vector2.h"
 #include <cstdint>
 #include <memory>
@@ -53,6 +54,7 @@ class AttackOperation {
 	InputDisplayMode inputDisplayMode_ = InputDisplayMode::Keyboard;
 	Text specialCooldownText_;
 	float specialCooldownRemaining_ = 0.0f;
+	Attribute currentAttribute_ = Attribute::None;
 	int displayedCooldownTenths_ = 0;
 
 public:
@@ -61,6 +63,7 @@ public:
 	void Update();
 	void Draw();
 	void SetSpecialCooldownRemaining(float remainingSeconds) { specialCooldownRemaining_ = remainingSeconds; }
+	void SetCurrentAttribute(Attribute attribute) { currentAttribute_ = attribute; }
 
 private:
 	void UpdateInputDisplayMode();
