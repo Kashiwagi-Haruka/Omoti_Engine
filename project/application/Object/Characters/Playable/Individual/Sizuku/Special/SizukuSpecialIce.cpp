@@ -1,91 +1,97 @@
-#define NOMINMAX
 #include "SizukuSpecialIce.h"
+#include "Model/ModelManager.h"
 #include "Object3d/Object3dCommon.h"
-#include "SizukuSpecial.h"
 #include <algorithm>
-#include <random>
-
-void SizukuSpecial::StartIceSpecial() {
-	// 元のフィールド、氷花、氷雨の処理は氷属性だけで使用する。
-	animationTimeMax_ = 8.0f;
-	fieldPlaneTransform_.scale = {};
-	fieldPlaneTransform_.translate = sizukuTransform_.translate;
-	fieldPlaneTransform_.translate.y -= sizukuHeight_;
-	skydomeTransform_.translate = sizukuTransform_.translate;
-	iceFlowerTransform_.scale = {};
-	iceFlowerTransform_.translate = fieldPlaneTransform_.translate;
-	iceRainTransforms_.resize(iceRains_.size());
-	for (size_t i = 0; i < iceRains_.size(); ++i) {
-		ResetIceRain(i, true);
+#include <numbers>
+void SizukuSpecialIce::Initialize() {
+	auto* m = ModelManager::GetInstance();
+	m->LoadModel("Resources/3d/Character/Sizuku/Special/flower", "sizukuSpecial");
+	m->LoadModel("Resources/3d/Character/Sizuku/Special/Rain", "sizukuSpecialRain");
+	m->LoadModel("Resources/3d/Character/Sizuku/Special/skydome", "sizukuSpecialDome");
+	field_ = std::make_unique<Primitive>();
+	field_->Initialize(Primitive::Plane, "Resources/2d/Effect/sizukuField.png");
+	field_->SetEnableLighting(false);
+	fieldTransform_.rotate.x = std::numbers::pi_v<float> / 2;
+	dome_ = std::make_unique<Object3d>();
+	dome_->Initialize();
+	dome_->SetEnableLighting(false);
+	dome_->SetModel("sizukuSpecialDome");
+	domeTransform_.scale = {50, 50, 50};
+	flower_ = std::make_unique<Object3d>();
+	flower_->Initialize();
+	flower_->SetModel("sizukuSpecial");
+	for (int i = 0; i < 24; i++) {
+		auto rain = std::make_unique<Object3d>();
+		rain->Initialize();
+		rain->SetModel("sizukuSpecialRain");
+		rains_.push_back(std::move(rain));
 	}
-	damagePosition_ = iceFlowerTransform_.translate;
-	damageScale_ = {9.0f, 3.0f, 9.0f};
 }
-
-void SizukuSpecial::ResetIceRain(size_t index, bool randomizeHeight) {
-	std::uniform_real_distribution<float> offset(-18.0f, 18.0f);
-	std::uniform_real_distribution<float> height(0.0f, 14.0f);
-	auto& transform = iceRainTransforms_[index];
-	transform.scale = {0.45f, 0.8f, 0.45f};
-	transform.rotate = {};
-	transform.translate = {
-	    sizukuTransform_.translate.x + offset(randomEngine_), fieldPlaneTransform_.translate.y + 12.0f + (randomizeHeight ? height(randomEngine_) : 14.0f),
-	    sizukuTransform_.translate.z + offset(randomEngine_)};
+void SizukuSpecialIce::Start(const SizukuSpecialContext& c) {
+	player_ = c.transform;
+	fieldTransform_.scale = {};
+	fieldTransform_.translate = c.transform.translate;
+	fieldTransform_.translate.y -= c.height;
+	domeTransform_.translate = c.transform.translate;
+	flowerTransform_.scale = {};
+	flowerTransform_.translate = fieldTransform_.translate;
+	rainTransforms_.resize(rains_.size());
+	for (size_t i = 0; i < rains_.size(); i++)
+		ResetRain(i, true);
+	damagePosition_ = flowerTransform_.translate;
+	damageScale_ = {9, 3, 9};
 }
-
-void SizukuSpecial::UpdateIceSpecial(float deltaTime) {
-	fieldPlaneTransform_.translate = sizukuTransform_.translate;
-	fieldPlaneTransform_.translate.y -= sizukuHeight_;
-	fieldPlaneTransform_.scale.x = std::min(fieldPlaneTransform_.scale.x + 30.0f * deltaTime, 50.0f);
-	fieldPlaneTransform_.scale.y = fieldPlaneTransform_.scale.x;
-	skydomeTransform_.translate = sizukuTransform_.translate;
-
-	if (elapsedTime_ >= 3.0f) {
-		const float grow = std::clamp((elapsedTime_ - 3.0f) / 0.65f, 0.0f, 1.0f);
-		iceFlowerTransform_.scale = {grow * 3.0f, grow * 3.0f, grow * 3.0f};
-		iceFlowerTransform_.translate = fieldPlaneTransform_.translate;
-		iceFlowerTransform_.translate.y -= (1.0f - grow) * 4.0f;
-		damagePosition_ = iceFlowerTransform_.translate;
+void SizukuSpecialIce::ResetRain(size_t i, bool randomHeight) {
+	std::uniform_real_distribution<float> o(-18, 18), h(0, 14);
+	auto& t = rainTransforms_[i];
+	t.scale = {.45f, .8f, .45f};
+	t.rotate = {};
+	t.translate = {player_.translate.x + o(random_), fieldTransform_.translate.y + 12 + (randomHeight ? h(random_) : 14), player_.translate.z + o(random_)};
+}
+void SizukuSpecialIce::Update(const SizukuSpecialContext& c, float dt) {
+	player_ = c.transform;
+	fieldTransform_.translate = c.transform.translate;
+	fieldTransform_.translate.y -= c.height;
+	fieldTransform_.scale.x = std::min(fieldTransform_.scale.x + 30 * dt, 50.f);
+	fieldTransform_.scale.y = fieldTransform_.scale.x;
+	domeTransform_.translate = c.transform.translate;
+	if (c.elapsedTime >= 3) {
+		float g = std::clamp((c.elapsedTime - 3) / .65f, 0.f, 1.f);
+		flowerTransform_.scale = {g * 3, g * 3, g * 3};
+		flowerTransform_.translate = fieldTransform_.translate;
+		flowerTransform_.translate.y -= (1 - g) * 4;
+		damagePosition_ = flowerTransform_.translate;
 	}
-
-	fieldPlane_->SetCamera(camera_);
-	fieldPlane_->SetTransform(fieldPlaneTransform_);
-	fieldPlane_->Update();
-	skydomeObj_->SetCamera(camera_);
-	skydomeObj_->SetTransform(skydomeTransform_);
-	skydomeObj_->Update();
-	iceFlower_->SetCamera(camera_);
-	iceFlower_->SetTransform(iceFlowerTransform_);
-	iceFlower_->Update();
-
-	if (elapsedTime_ >= 5.0f) {
-		for (size_t i = 0; i < iceRains_.size(); ++i) {
-			iceRainTransforms_[i].translate.y -= 18.0f * deltaTime;
-			if (iceRainTransforms_[i].translate.y <= fieldPlaneTransform_.translate.y)
-				ResetIceRain(i, false);
-			iceRains_[i]->SetCamera(camera_);
-			iceRains_[i]->SetTransform(iceRainTransforms_[i]);
-			iceRains_[i]->Update();
+	field_->SetCamera(c.camera);
+	field_->SetTransform(fieldTransform_);
+	field_->Update();
+	dome_->SetCamera(c.camera);
+	dome_->SetTransform(domeTransform_);
+	dome_->Update();
+	flower_->SetCamera(c.camera);
+	flower_->SetTransform(flowerTransform_);
+	flower_->Update();
+	if (c.elapsedTime >= 5)
+		for (size_t i = 0; i < rains_.size(); i++) {
+			rainTransforms_[i].translate.y -= 18 * dt;
+			if (rainTransforms_[i].translate.y <= fieldTransform_.translate.y)
+				ResetRain(i, false);
+			rains_[i]->SetCamera(c.camera);
+			rains_[i]->SetTransform(rainTransforms_[i]);
+			rains_[i]->Update();
 		}
-	}
 }
-
-void SizukuSpecial::DrawIceSpecial() {
-	Object3dCommon::GetInstance()->DrawCommon(Object3dCommon::DrawCommonType::NoCullDepth);
-	Object3dCommon::GetInstance()->SetBlendMode(BlendMode::kBlendModeAdd);
-	fieldPlane_->Draw();
-	Object3dCommon::GetInstance()->SetBlendMode(BlendMode::kBlendModeAlpha);
-	Object3dCommon::GetInstance()->DrawCommon();
-	skydomeObj_->Draw();
-	Object3dCommon::GetInstance()->SetBlendMode(BlendMode::kBlendModeAdd);
-	if (elapsedTime_ >= 3.0f)
-		iceFlower_->Draw();
-	if (elapsedTime_ >= 5.0f)
-		for (const auto& rain : iceRains_)
-			rain->Draw();
-	Object3dCommon::GetInstance()->SetBlendMode(BlendMode::kBlendModeAlpha);
+void SizukuSpecialIce::Draw() {
+	auto* c = Object3dCommon::GetInstance();
+	c->DrawCommon(Object3dCommon::DrawCommonType::NoCullDepth);
+	c->SetBlendMode(BlendMode::kBlendModeAdd);
+	field_->Draw();
+	c->SetBlendMode(BlendMode::kBlendModeAlpha);
+	c->DrawCommon();
+	dome_->Draw();
+	c->SetBlendMode(BlendMode::kBlendModeAdd);
+	flower_->Draw();
+	for (auto& r : rains_)
+		r->Draw();
+	c->SetBlendMode(BlendMode::kBlendModeAlpha);
 }
-
-void SizukuSpecialIce::Start(SizukuSpecial& special) { special.StartIceSpecial(); }
-
-void SizukuSpecialIce::Update(SizukuSpecial& special, float deltaTime) { special.UpdateIceSpecial(deltaTime); }

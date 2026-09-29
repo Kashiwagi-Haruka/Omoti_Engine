@@ -1,70 +1,68 @@
-#define NOMINMAX
 #include "SizukuSpecialThunder.h"
-#include "Function.h"
+#include "Model/ModelManager.h"
 #include "Object3d/Object3dCommon.h"
-#include "SizukuSpecial.h"
+#include "Function.h"
+#include "SizukuSpecialParticle.h"
 #include <algorithm>
 #include <cmath>
 #include <numbers>
-
 namespace {
-constexpr float kChargeDuration = 0.5f;
-constexpr float kFieldMaxScale = 4.0f;
-constexpr float kFieldForwardOffset = 2.0f;
-} // namespace
-
-void SizukuSpecial::StartThunderSpecial() {
-	// 雷属性は正面へ高速で一発だけ発射する貫通弾。
-	animationTimeMax_ = 2.4f;
-	thunderProjectileTransform_.scale = {1.2f, 1.2f, 3.5f};
-	thunderProjectileTransform_.rotate = sizukuTransform_.rotate;
-	thunderProjectileTransform_.translate = sizukuTransform_.translate;
-	thunderProjectileTransform_.translate.y += 1.0f;
-	const float yaw = sizukuTransform_.rotate.y;
-	const Vector3 forward = {std::sin(yaw), 0.0f, std::cos(yaw)};
-	thunderFieldPlaneTransform_.scale = {};
-	thunderFieldPlaneTransform_.rotate = {0.0f, yaw, 0.0f};
-	thunderFieldPlaneTransform_.translate = sizukuTransform_.translate + forward * kFieldForwardOffset;
-	thunderFieldPlaneTransform_.translate.y -= sizukuHeight_;
-	damagePosition_ = thunderProjectileTransform_.translate;
-	damageScale_ = {2.0f, 2.0f, 4.0f};
-	ConfigureEmitter(*mainEmitter_, {0.75f, 0.55f, 1.0f, 1.0f}, 80, 15.0f, 0.7f);
-	mainEmitter_->SetFrequency(0.2f);
+constexpr float kCharge = .5f;
 }
-
-void SizukuSpecial::UpdateThunderSpecial(float deltaTime) {
-	const float yaw = sizukuTransform_.rotate.y;
-	const Vector3 forward = {std::sin(yaw), 0.0f, std::cos(yaw)};
-	const float chargeProgress = std::clamp(elapsedTime_ / kChargeDuration, 0.0f, 1.0f);
-	thunderFieldPlaneTransform_.scale = {kFieldMaxScale * chargeProgress, kFieldMaxScale * chargeProgress, 1.0f};
-	thunderFieldPlaneTransform_.rotate.y = yaw;
-	thunderFieldPlaneTransform_.translate = sizukuTransform_.translate + forward * kFieldForwardOffset;
-	thunderFieldPlaneTransform_.translate.y -= sizukuHeight_;
-	thunderFieldPlane_->SetCamera(camera_);
-	thunderFieldPlane_->SetTransform(thunderFieldPlaneTransform_);
-	thunderFieldPlane_->Update();
-
-	if (elapsedTime_ >= kChargeDuration) {
-		thunderProjectileTransform_.translate = thunderProjectileTransform_.translate + forward * (42.0f * deltaTime);
-		damagePosition_ = thunderProjectileTransform_.translate;
-		thunderProjectile_->SetCamera(camera_);
-		thunderProjectile_->SetTransform(thunderProjectileTransform_);
-		thunderProjectile_->Update();
-		particleTransform_ = thunderProjectileTransform_;
-		mainEmitter_->Update(particleTransform_);
+void SizukuSpecialThunder::Initialize() {
+	ModelManager::GetInstance()->LoadModel("Resources/3d/Character/Sizuku/Special/Rain", "sizukuSpecialRain");
+	field_ = std::make_unique<Primitive>();
+	field_->Initialize(Primitive::Plane, "Resources/3d/Character/Sizuku/Special/Thunder/sizukuSpecialThunder.png");
+	field_->SetEnableLighting(false);
+	fieldTransform_.rotate.x = std::numbers::pi_v<float> / 2;
+	projectile_ = std::make_unique<Object3d>();
+	projectile_->Initialize();
+	projectile_->SetEnableLighting(false);
+	projectile_->SetModel("sizukuSpecialRain");
+	projectile_->SetColor({.85f, .65f, 1, 1});
+	emitter_ = CreateSpecialEmitter("sizukuSpecialThunder");
+}
+void SizukuSpecialThunder::Start(const SizukuSpecialContext& c) {
+	projectileTransform_.scale = {1.2f, 1.2f, 3.5f};
+	projectileTransform_.rotate = c.transform.rotate;
+	projectileTransform_.translate = c.transform.translate;
+	projectileTransform_.translate.y += 1;
+	float yaw = c.transform.rotate.y;
+	Vector3 f = {std::sin(yaw), 0, std::cos(yaw)};
+	fieldTransform_.scale = {};
+	fieldTransform_.translate = c.transform.translate + f * 2;
+	fieldTransform_.translate.y -= c.height;
+	damagePosition_ = projectileTransform_.translate;
+	damageScale_ = {2, 2, 4};
+	ConfigureSpecialEmitter(*emitter_, {.75f, .55f, 1, 1}, 80, 15, .7f);
+	emitter_->SetFrequency(.2f);
+}
+void SizukuSpecialThunder::Update(const SizukuSpecialContext& c, float dt) {
+	float yaw = c.transform.rotate.y;
+	Vector3 f = {std::sin(yaw), 0, std::cos(yaw)};
+	float p = std::clamp(c.elapsedTime / kCharge, 0.f, 1.f);
+	fieldTransform_.scale = {4 * p, 4 * p, 1};
+	fieldTransform_.translate = c.transform.translate + f * 2;
+	fieldTransform_.translate.y -= c.height;
+	field_->SetCamera(c.camera);
+	field_->SetTransform(fieldTransform_);
+	field_->Update();
+	if (c.elapsedTime >= kCharge) {
+		projectileTransform_.translate = projectileTransform_.translate + f * (42 * dt);
+		damagePosition_ = projectileTransform_.translate;
+		projectile_->SetCamera(c.camera);
+		projectile_->SetTransform(projectileTransform_);
+		projectile_->Update();
+		emitter_->Update(projectileTransform_);
 	}
 }
-
-void SizukuSpecial::DrawThunderSpecial() {
-	Object3dCommon::GetInstance()->DrawCommon(Object3dCommon::DrawCommonType::NoCull);
-	Object3dCommon::GetInstance()->SetBlendMode(BlendMode::kBlendModeAdd);
-	thunderFieldPlane_->Draw();
-	Object3dCommon::GetInstance()->SetBlendMode(BlendMode::kBlendModeAlpha);
-	Object3dCommon::GetInstance()->DrawCommon();
-	if (elapsedTime_ >= kChargeDuration)
-		thunderProjectile_->Draw();
+void SizukuSpecialThunder::Draw() {
+	auto* common = Object3dCommon::GetInstance();
+	common->DrawCommon(Object3dCommon::DrawCommonType::NoCull);
+	common->SetBlendMode(BlendMode::kBlendModeAdd);
+	field_->Draw();
+	common->SetBlendMode(BlendMode::kBlendModeAlpha);
+	common->DrawCommon();
+	projectile_->Draw();
+	emitter_->Draw();
 }
-
-void SizukuSpecialThunder::Start(SizukuSpecial& special) { special.StartThunderSpecial(); }
-
-void SizukuSpecialThunder::Update(SizukuSpecial& special, float deltaTime) { special.UpdateThunderSpecial(deltaTime); }

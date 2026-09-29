@@ -384,6 +384,7 @@ copy "$(WindowsSdkDir)\bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)\
     <ClInclude Include="application\Object\Characters\Playable\Base\UPParametersType.h" />
     <ClInclude Include="application\Object\Characters\Playable\Individual\Sizuku\Skill\SizukuSkillAttributeBase.h" />
     <ClInclude Include="application\Object\Characters\Playable\Individual\Sizuku\Special\SizukuSpecialAttributeBase.h" />
+    <ClInclude Include="application\Object\Characters\Playable\Individual\Sizuku\Special\SIzukuSpecialParticle.h" />
     <ClInclude Include="application\Object\Characters\Playable\Weapon\Allow\Allow.h" />
     <ClInclude Include="application\CameraController\LockOnCamera\LockOnCamera.h" />
     <ClInclude Include="application\Object\Characters\Enemy\Adhesion\Adhesion.h" />

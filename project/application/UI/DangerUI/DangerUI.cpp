@@ -11,10 +11,10 @@ void DangerUI::Initialize() {
 	uint32_t handle = TextureManager::GetInstance()->GetTextureIndexByfilePath("Resources/2d/DangerUI/Pink.png");
 	dangerSprite_.back()->Initialize(handle);
 	dangerSprite_.emplace_back(std::make_unique<Sprite>());
-	uint32_t handle = TextureManager::GetInstance()->GetTextureIndexByfilePath("Resources/2d/DangerUI/SkyBlue.png");
+	handle = TextureManager::GetInstance()->GetTextureIndexByfilePath("Resources/2d/DangerUI/SkyBlue.png");
 	dangerSprite_.back()->Initialize(handle);
 	dangerSprite_.emplace_back(std::make_unique<Sprite>());
-	uint32_t handle = TextureManager::GetInstance()->GetTextureIndexByfilePath("Resources/2d/DangerUI/NavyBlue.png");
+	handle = TextureManager::GetInstance()->GetTextureIndexByfilePath("Resources/2d/DangerUI/NavyBlue.png");
 	dangerSprite_.back()->Initialize(handle);
 }
 void DangerUI::Update() {

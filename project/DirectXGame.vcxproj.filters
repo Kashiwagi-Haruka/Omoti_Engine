@@ -1129,6 +1129,7 @@
     <ClInclude Include="application\Object\Characters\Playable\Individual\Sizuku\Skill\SizukuSkillQuantum.h" />
     <ClInclude Include="application\Object\Characters\Playable\Individual\Sizuku\Skill\SizukuSkillAttributeBase.h" />
     <ClInclude Include="application\UI\DangerUI\DangerUI.h" />
+    <ClInclude Include="application\Object\Characters\Playable\Individual\Sizuku\Special\SIzukuSpecialParticle.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include=".editorconfig" />

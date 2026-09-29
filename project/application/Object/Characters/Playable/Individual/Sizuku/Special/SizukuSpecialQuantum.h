@@ -1,9 +1,19 @@
 #pragma once
+#include "ParticleEmitter.h"
 #include "SizukuSpecialAttributeBase.h"
-
-// シズクの量子属性必殺技を担当するクラス。
+#include <memory>
 class SizukuSpecialQuantum final : public SizukuSpecialAttributeBase {
+	std::unique_ptr<ParticleEmitter> main_, sub_;
+	Transform origin_{};
+	Vector3 damagePosition_{}, damageScale_{};
+	bool emitted_ = false;
+
 public:
-	void Start(SizukuSpecial& special) override;
-	void Update(SizukuSpecial& special, float deltaTime) override;
+	void Initialize() override;
+	void Start(const SizukuSpecialContext&) override;
+	void Update(const SizukuSpecialContext&, float) override;
+	void Draw() override;
+	float GetDuration() const override { return 4.2f; }
+	Vector3 GetDamagePosition() const override { return damagePosition_; }
+	Vector3 GetDamageScale() const override { return damageScale_; }
 };
