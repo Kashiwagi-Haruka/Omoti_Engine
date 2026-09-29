@@ -39,10 +39,10 @@ void SizukuSpecial::Initialize() {
 	fieldPlane_->Initialize(Primitive::Plane, "Resources/2d/Effect/sizukuField.png");
 	fieldPlane_->SetEnableLighting(false);
 	fieldPlaneTransform_.rotate.x = std::numbers::pi_v<float> / 2.0f;
-	thunderFieldPlane_->Initialize(Primitive::Plane, "Resources/3d/Character/Sizuku/Special/sizukuSpecialThunder.png");
+	thunderFieldPlane_->Initialize(Primitive::Plane, "Resources/3d/Character/Sizuku/Special/Thunder/sizukuSpecialThunder.png");
 	thunderFieldPlane_->SetEnableLighting(false);
 	thunderFieldPlaneTransform_.rotate.x = std::numbers::pi_v<float> / 2.0f;
-	imaginaryFieldPlane_->Initialize(Primitive::Plane, "Resources/3d/Character/Sizuku/Special/sizukuImaginaryField.png");
+	imaginaryFieldPlane_->Initialize(Primitive::Plane, "Resources/3d/Character/Sizuku/Special/Imaginary/sizukuImaginaryField.png");
 	imaginaryFieldPlane_->SetEnableLighting(false);
 	imaginaryFieldPlaneTransform_.rotate.x = std::numbers::pi_v<float> / 2.0f;
 
