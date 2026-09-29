@@ -7,7 +7,7 @@
 #include <cmath>
 #include <numbers>
 namespace {
-constexpr float kCharge = .5f;
+constexpr float kCharge = 0.75f;
 }
 void SizukuSpecialThunder::Initialize() {
 	ModelManager::GetInstance()->LoadModel("Resources/3d/Character/Sizuku/Special/Rain", "sizukuSpecialRain");
