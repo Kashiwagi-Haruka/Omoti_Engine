@@ -3,7 +3,7 @@
 #include "Transform.h"
 #include <vector>
 #include <memory>
-#include "Object/Characters/Playable/Individual/Sizuku/SizukuSkill.h"
+#include "Object/Characters/Playable/Individual/Sizuku/Skill/SizukuSkill.h"
 class PlayerSkill {
 
 private:
@@ -15,6 +15,7 @@ public:
 	void Update();
 	void Draw();
 	void SetCamera(Camera* camera);
+	void SetAttribute(Attribute attribute);
 	void StartAttack(const Transform& playerTransform);
 	void StartSpecialAttack(const Transform& playerTransform, int iceCount);
 	void UpdateSpecialAttack(const Transform& playerTransform);

@@ -723,3 +723,17 @@ void Object3dCommon::SetFullScreenSepiaEnabled(bool enable) {
 		dxCommon_->SetFullscreenSepiaEnabled(enable);
 	}
 }
+void Object3dCommon::SetFullScreenBinarizationEnabled(bool enable) {
+	fullScreenBinarizationEnabled_ = enable;
+	if (dxCommon_) {
+		dxCommon_->SetFullscreenBinarizationEnabled(enable);
+	}
+}
+
+void Object3dCommon::SetBinarizationThreshold(float threshold) {
+	if (dxCommon_) {
+		dxCommon_->SetBinarizationThreshold(threshold);
+	}
+}
+
+float Object3dCommon::GetBinarizationThreshold() const { return dxCommon_ ? dxCommon_->GetBinarizationThreshold() : 0.5f; }

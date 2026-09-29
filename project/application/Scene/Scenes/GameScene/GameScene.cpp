@@ -506,7 +506,7 @@ void GameScene::Update() {
 
 	Transform cameraPlayerTransform = {player->GetScale(), player->GetRotate(), player->GetPosition()};
 	cameraController->SetPlayerTransform(cameraPlayerTransform);
-	cameraController->SetSizukuSpecialCameraActive(player->GetIsSpecialAttack());
+	cameraController->SetSizukuSpecialCameraActive(player->IsSizuku() && player->GetIsSpecialAttack(), player->GetCurrentAttribute());
 	if (playAreaMode_ == PlayAreaMode::kSpiral && rasen_ && rasen_->GetHouse() && Input::GetInstance()->TriggerLeftTrigger()) {
 		cameraController->LookAtFromPlayerPosition(rasen_->GetHouse()->GetPosition());
 	}

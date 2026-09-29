@@ -213,6 +213,7 @@ void PlayerAttack::Update() {
 			ResetNormalAttackState();
 			isSkillAttack = true;
 			attackState_ = AttackState::kSkillAttack;
+			skill_->SetAttribute(models_->GetCurrentAttribute());
 			skill_->StartAttack(playerTransform_);
 			SEManager::GetInstance()->Play(SEManager::SEType::Magic);
 			// isSpecialAttack = true;
@@ -233,6 +234,10 @@ void PlayerAttack::Update() {
 			specialAttackCooldowns_[characterName_] = kSpecialAttackCooldownDuration_;
 			attackState_ = AttackState::kSpecialAttack;
 			special_->SetPlayerTransform(playerTransform_);
+			// シズクが現在まとっている属性を必殺技へ引き継ぐ。
+			if (models_ && characterName_ == "Sizuku") {
+				special_->SetAttribute(models_->GetCurrentAttribute());
+			}
 			special_->Start();
 
 			SEManager::GetInstance()->Play(SEManager::SEType::Magic);

@@ -18,6 +18,27 @@ constexpr float kScaleReturnRate = 0.25f;
 constexpr Vector2 kKeyboardDisplaySize{80.0f, 80.0f};
 constexpr Vector2 kPadDisplaySize{60.0f, 60.0f};
 constexpr float kKeyboardDisplayIconOffsetY = 50.0f;
+
+Vector4 GetSpecialGaugeColor(Attribute attribute) {
+	switch (attribute) {
+	case Attribute::Fire:
+		return {1.0f, 0.18f, 0.04f, 1.0f};
+	case Attribute::Ice:
+		return {0.2f, 0.75f, 1.0f, 1.0f};
+	case Attribute::Wind:
+		return {0.25f, 1.0f, 0.55f, 1.0f};
+	case Attribute::Thunder:
+		return {0.75f, 0.55f, 1.0f, 1.0f};
+	case Attribute::Imaginary:
+		return {1.0f, 0.78f, 0.18f, 1.0f};
+	case Attribute::Quantum:
+		return {0.55f, 0.12f, 1.0f, 1.0f};
+	case Attribute::None:
+	case Attribute::MAXATTRIBUTE:
+	default:
+		return {1.0f, 1.0f, 1.0f, 1.0f};
+	}
+}
 } // namespace
 AttackOperation::AttackOperation() {
 	// スキルアイコンのテクスチャハンドルを取得
@@ -122,6 +143,9 @@ void AttackOperation::Update() {
 	UpdateOperationSprite(dashSPData_, PlayCommand::GetDASH());
 
 	specialAttackSPData_.translate = {dashSPData_.translate.x - 80.0f, dashSPData_.translate.y + dashSPData_.size.y};
+	if (specialAttackSPData_.sprite) {
+		specialAttackSPData_.sprite->SetColor(specialCooldownRemaining_ > 0.0f ? Vector4{0.55f, 0.55f, 0.55f, 1.0f} : Vector4{1.0f, 1.0f, 1.0f, 1.0f});
+	}
 	UpdateOperationSprite(specialAttackSPData_, PlayCommand::GetSPECIAL_ATTACK());
 
 	normalAttackSPData_.translate = {specialAttackSPData_.translate.x - specialAttackSPData_.size.x - 20.0f, specialAttackSPData_.translate.y + specialAttackSPData_.size.y / 2.0f + 20.0f};
@@ -130,7 +154,7 @@ void AttackOperation::Update() {
 	UpdateOperationSprite(jumpSPData_, PlayCommand::GetJUMP());
 	specialGaugeSPData_.translate = specialAttackSPData_.translate;
 	if (specialGaugeSPData_.sprite) {
-		specialGaugeSPData_.sprite->SetColor(specialCooldownRemaining_ > 0.0f ? Vector4{0.5f, 0.5f, 0.5f, 1.0f} : Vector4{1.0f, 1.0f, 1.0f, 1.0f});
+		specialGaugeSPData_.sprite->SetColor(GetSpecialGaugeColor(currentAttribute_));
 	}
 	UpdateOperationSprite(specialGaugeSPData_, PlayCommand::GetSPECIAL_ATTACK());
 	attributeChangeSPData_.translate = {

@@ -163,6 +163,7 @@ private:
 	bool fullScreenGrayscaleEnabled_ = false;
 	// 全画面セピア有効化フラグ
 	bool fullScreenSepiaEnabled_ = false;
+	bool fullScreenBinarizationEnabled_ = false;
 	// エディタ指定ライトを強制使用するか
 	bool useEditorLights_ = false;
 	// エディタ指定のディレクショナルライト
@@ -353,6 +354,13 @@ public:
 	void SetFullScreenSepiaEnabled(bool enable);
 	// 全画面セピア状態取得
 	bool IsFullScreenSepiaEnabled() const { return fullScreenSepiaEnabled_; }
+	// 全画面二値化の有効化切り替え
+	void SetFullScreenBinarizationEnabled(bool enable);
+	// 全画面二値化状態取得
+	bool IsFullScreenBinarizationEnabled() const { return fullScreenBinarizationEnabled_; }
+	// 二値化に使用する輝度しきい値（0.0～1.0）
+	void SetBinarizationThreshold(float threshold);
+	float GetBinarizationThreshold() const;
 
 	// ビネット強度設定
 	void SetVignetteStrength(float strength);

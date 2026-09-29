@@ -76,6 +76,9 @@ void UIManager::Update() {
 	cursolSprite_->Update();
 
 	hpBarUI_->Update();
+	if (player_) {
+		attackOperationUI_->SetCurrentAttribute(player_->GetCurrentAttribute());
+	}
 
 	attackOperationUI_->Update();
 

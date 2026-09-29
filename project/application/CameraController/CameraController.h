@@ -5,6 +5,7 @@
 #include "PlayerCamera/PlayerCamera.h"
 #include "Transform.h"
 #include "Vector3.h"
+#include "Object/Characters/Base/Attribute.h"
 #include <memory>
 
 class Camera;
@@ -106,7 +107,7 @@ public:
 	/// <summary>プレイヤーの向きを含むトランスフォームを設定する。</summary>
 	void SetPlayerTransform(const Transform& transform);
 	/// <summary>シズクの必殺技カメラの使用状態を設定する。</summary>
-	void SetSizukuSpecialCameraActive(bool isActive);
+	void SetSizukuSpecialCameraActive(bool isActive, Attribute attribute);
 	/// <summary>
 	/// カメラを振動させる
 	/// </summary>

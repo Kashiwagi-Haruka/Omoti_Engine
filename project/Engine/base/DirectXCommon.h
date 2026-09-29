@@ -97,6 +97,9 @@ class DirectXCommon {
 		float selectiveBloomIntensity;
 		float selectiveBloomRadius;
 		float selectiveBloomPadding;
+		float fullscreenBinarizationEnabled;
+		float binarizationThreshold;
+		float binarizationPadding;
 	};
 	PostEffectParameters* postEffectParameterMappedData_ = nullptr;
 	float vignetteStrength_ = 0.0f;
@@ -121,6 +124,8 @@ class DirectXCommon {
 	bool selectiveBloomEnabled_ = true;
 	float selectiveBloomIntensity_ = 1.5f;
 	float selectiveBloomRadius_ = 18.0f;
+	bool fullscreenBinarizationEnabled_ = false;
+	float binarizationThreshold_ = 0.5f;
 	bool editorLayoutEnabled_ = false;
 	bool sceneCopiedToBackBufferThisFrame_ = false;
 	bool inOutlineRenderTarget_ = false;
@@ -204,6 +209,10 @@ public:
 	bool IsFullscreenGrayscaleEnabled() const { return fullscreenGrayscaleEnabled_; }
 	void SetFullscreenSepiaEnabled(bool enabled) { fullscreenSepiaEnabled_ = enabled; }
 	bool IsFullscreenSepiaEnabled() const { return fullscreenSepiaEnabled_; }
+	void SetFullscreenBinarizationEnabled(bool enabled);
+	bool IsFullscreenBinarizationEnabled() const { return fullscreenBinarizationEnabled_; }
+	void SetBinarizationThreshold(float threshold);
+	float GetBinarizationThreshold() const { return binarizationThreshold_; }
 
 	void SetEditorLayoutEnabled(bool enabled) { editorLayoutEnabled_ = enabled; }
 	bool IsEditorLayoutEnabled() const { return editorLayoutEnabled_; }

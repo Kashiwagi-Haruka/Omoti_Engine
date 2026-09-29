@@ -215,6 +215,7 @@ copy "$(WindowsSdkDir)\bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)\
     <ClCompile Include="application\Menu\CharacterDisplay\Icon\CharacterDisplayIcon.cpp" />
     <ClCompile Include="application\Object\Characters\Enemy\HostileIndicator\EnemyHostileIndicator.cpp" />
     <ClCompile Include="application\Object\Characters\Playable\Individual\Sizuku\ChangeAttribute\ChangeAttribute.cpp" />
+    <ClCompile Include="application\UI\DangerUI\DangerUI.cpp" />
     <ClCompile Include="Engine\Editor\EditorTool\Command\EditorCommand.cpp" />
     <ClCompile Include="Engine\Audio\AudioMixer.cpp" />
     <ClCompile Include="Engine\Editor\EditorData\Audio\EditorAudio.cpp" />
@@ -320,9 +321,9 @@ copy "$(WindowsSdkDir)\bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)\
     <ClCompile Include="application\Object\Characters\Playable\PlayableManager.cpp" />
     <ClCompile Include="application\CameraController\PlayerCamera\PlayerCamera.cpp" />
     <ClCompile Include="application\CameraController\NormalAttackCamera\NormalAttackCamera.cpp" />
-    <ClCompile Include="application\Object\Characters\Playable\Individual\Sizuku\SizukuSkill.cpp" />
+    <ClCompile Include="application\Object\Characters\Playable\Individual\Sizuku\Skill\SizukuSkill.cpp" />
     <ClCompile Include="application\UI\HPBar\HPBarUI.cpp" />
-    <ClCompile Include="application\Object\Characters\Playable\Individual\Sizuku\SizukuSpecial.cpp" />
+    <ClCompile Include="application\Object\Characters\Playable\Individual\Sizuku\Special\SizukuSpecial.cpp" />
     <ClCompile Include="application\Object\Characters\Playable\Individual\Yuzuki\YuzukiSpecial.cpp" />
     <ClCompile Include="application\Object\Characters\Playable\Weapon\Spear\Spear.cpp" />
     <ClCompile Include="application\Object\Characters\Playable\Weapon\Gun\Gun.cpp" />
@@ -342,6 +343,19 @@ copy "$(WindowsSdkDir)\bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)\
     <ClCompile Include="application\LightManager\LightManager.cpp" />
     <ClCompile Include="application\Object\Characters\Playable\Individual\Mei\MeiSkill.cpp" />
     <ClCompile Include="application\Object\Characters\Playable\Individual\Mei\MeiSpecial.cpp" />
+    <ClCompile Include="application\Object\Characters\Playable\Individual\Sizuku\Special\SizukuSpecialFire.cpp" />
+    <ClCompile Include="application\Object\Characters\Playable\Individual\Sizuku\Special\SizukuSpecialIce.cpp" />
+    <ClCompile Include="application\Object\Characters\Playable\Individual\Sizuku\Special\SizukuSpecialImaginary.cpp" />
+    <ClCompile Include="application\Object\Characters\Playable\Individual\Sizuku\Special\SizukuSpecialQuantum.cpp" />
+    <ClCompile Include="application\Object\Characters\Playable\Individual\Sizuku\Special\SizukuSpecialThunder.cpp" />
+    <ClCompile Include="application\Object\Characters\Playable\Individual\Sizuku\Special\SizukuSpecialWind.cpp" />
+    <ClCompile Include="application\Object\Load\GameLoad.cpp" />
+    <ClCompile Include="application\Object\Characters\Playable\Individual\Sizuku\Skill\SizukuSkillFire.cpp" />
+    <ClCompile Include="application\Object\Characters\Playable\Individual\Sizuku\Skill\SizukuSkillIce.cpp" />
+    <ClCompile Include="application\Object\Characters\Playable\Individual\Sizuku\Skill\SizukuSkillImaginary.cpp" />
+    <ClCompile Include="application\Object\Characters\Playable\Individual\Sizuku\Skill\SizukuSkillQuantum.cpp" />
+    <ClCompile Include="application\Object\Characters\Playable\Individual\Sizuku\Skill\SizukuSkillThunder.cpp" />
+    <ClCompile Include="application\Object\Characters\Playable\Individual\Sizuku\Skill\SizukuSkillWind.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include=".editorconfig" />
@@ -368,6 +382,9 @@ copy "$(WindowsSdkDir)\bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)\
     <ClInclude Include="application\Object\Characters\Playable\Base\Arcana.h" />
     <ClInclude Include="application\Object\Characters\Playable\Base\SkilltreeType.h" />
     <ClInclude Include="application\Object\Characters\Playable\Base\UPParametersType.h" />
+    <ClInclude Include="application\Object\Characters\Playable\Individual\Sizuku\Skill\SizukuSkillAttributeBase.h" />
+    <ClInclude Include="application\Object\Characters\Playable\Individual\Sizuku\Special\SizukuSpecialAttributeBase.h" />
+    <ClInclude Include="application\Object\Characters\Playable\Individual\Sizuku\Special\SIzukuSpecialParticle.h" />
     <ClInclude Include="application\Object\Characters\Playable\Weapon\Allow\Allow.h" />
     <ClInclude Include="application\CameraController\LockOnCamera\LockOnCamera.h" />
     <ClInclude Include="application\Object\Characters\Enemy\Adhesion\Adhesion.h" />
@@ -428,6 +445,7 @@ copy "$(WindowsSdkDir)\bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)\
     <ClInclude Include="application\Menu\CharacterDisplay\Icon\CharacterDisplayIcon.h" />
     <ClInclude Include="application\Object\Characters\Enemy\HostileIndicator\EnemyHostileIndicator.h" />
     <ClInclude Include="application\Object\Characters\Playable\Individual\Sizuku\ChangeAttribute\ChangeAttribute.h" />
+    <ClInclude Include="application\UI\DangerUI\DangerUI.h" />
     <ClInclude Include="Engine\Editor\EditorTool\Command\EditorCommand.h" />
     <ClInclude Include="Engine\Audio\AudioMixer.h" />
     <ClInclude Include="Engine\base\ScreenSize.h" />
@@ -537,9 +555,9 @@ copy "$(WindowsSdkDir)\bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)\
     <ClInclude Include="application\Object\Characters\Playable\PlayableManager.h" />
     <ClInclude Include="application\CameraController\PlayerCamera\PlayerCamera.h" />
     <ClInclude Include="application\CameraController\NormalAttackCamera\NormalAttackCamera.h" />
-    <ClInclude Include="application\Object\Characters\Playable\Individual\Sizuku\SizukuSkill.h" />
+    <ClInclude Include="application\Object\Characters\Playable\Individual\Sizuku\Skill\SizukuSkill.h" />
     <ClInclude Include="application\UI\HPBar\HPBarUI.h" />
-    <ClInclude Include="application\Object\Characters\Playable\Individual\Sizuku\SizukuSpecial.h" />
+    <ClInclude Include="application\Object\Characters\Playable\Individual\Sizuku\Special\SizukuSpecial.h" />
     <ClInclude Include="application\Object\Characters\Playable\Individual\Yuzuki\YuzukiSpecial.h" />
     <ClInclude Include="application\Object\Characters\Playable\Weapon\Spear\Spear.h" />
     <ClInclude Include="application\Object\Characters\Playable\Weapon\Gun\Gun.h" />
@@ -559,6 +577,19 @@ copy "$(WindowsSdkDir)\bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)\
     <ClInclude Include="application\LightManager\LightManager.h" />
     <ClInclude Include="application\Object\Characters\Playable\Individual\Mei\MeiSkill.h" />
     <ClInclude Include="application\Object\Characters\Playable\Individual\Mei\MeiSpecial.h" />
+    <ClInclude Include="application\Object\Characters\Playable\Individual\Sizuku\Special\SizukuSpecialFire.h" />
+    <ClInclude Include="application\Object\Characters\Playable\Individual\Sizuku\Special\SizukuSpecialIce.h" />
+    <ClInclude Include="application\Object\Characters\Playable\Individual\Sizuku\Special\SizukuSpecialImaginary.h" />
+    <ClInclude Include="application\Object\Characters\Playable\Individual\Sizuku\Special\SizukuSpecialQuantum.h" />
+    <ClInclude Include="application\Object\Characters\Playable\Individual\Sizuku\Special\SizukuSpecialThunder.h" />
+    <ClInclude Include="application\Object\Characters\Playable\Individual\Sizuku\Special\SizukuSpecialWind.h" />
+    <ClInclude Include="application\Object\Load\GameLoad.h" />
+    <ClInclude Include="application\Object\Characters\Playable\Individual\Sizuku\Skill\SizukuSkillFire.h" />
+    <ClInclude Include="application\Object\Characters\Playable\Individual\Sizuku\Skill\SizukuSkillIce.h" />
+    <ClInclude Include="application\Object\Characters\Playable\Individual\Sizuku\Skill\SizukuSkillImaginary.h" />
+    <ClInclude Include="application\Object\Characters\Playable\Individual\Sizuku\Skill\SizukuSkillQuantum.h" />
+    <ClInclude Include="application\Object\Characters\Playable\Individual\Sizuku\Skill\SizukuSkillThunder.h" />
+    <ClInclude Include="application\Object\Characters\Playable\Individual\Sizuku\Skill\SizukuSkillWind.h" />
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="Resources\shader\FullScreenCopy\CopyImage.PS.hlsl">

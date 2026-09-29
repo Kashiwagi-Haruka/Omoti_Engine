@@ -1,12 +1,27 @@
 #pragma once
 #include "Camera.h"
+#include "Engine/math/RigidBody.h"
+#include "Object/Characters/Base/Attribute.h"
 #include "Object3d/Object3d.h"
 #include "ParticleEmitter.h"
+#include "SizukuSkillAttributeBase.h"
 #include "Transform.h"
 #include <memory>
 #include <vector>
-#include "Engine/math/RigidBody.h"
+class SizukuSkillFire;
+class SizukuSkillIce;
+class SizukuSkillWind;
+class SizukuSkillThunder;
+class SizukuSkillImaginary;
+class SizukuSkillQuantum;
+
 class SizukuSkill {
+	friend class SizukuSkillFire;
+	friend class SizukuSkillIce;
+	friend class SizukuSkillWind;
+	friend class SizukuSkillThunder;
+	friend class SizukuSkillImaginary;
+	friend class SizukuSkillQuantum;
 
 private:
 	std::unique_ptr<Object3d> debugBox_;
@@ -42,8 +57,18 @@ private:
 	float specialStartHeight_ = 6.0f;
 	int specialTime_ = 0;
 	int specialTimeMax_ = 60;
+	Attribute attribute_ = Attribute::Ice;
+	std::unique_ptr<SizukuSkillAttributeBase> fireSkill_;
+	std::unique_ptr<SizukuSkillAttributeBase> iceSkill_;
+	std::unique_ptr<SizukuSkillAttributeBase> windSkill_;
+	std::unique_ptr<SizukuSkillAttributeBase> thunderSkill_;
+	std::unique_ptr<SizukuSkillAttributeBase> imaginarySkill_;
+	std::unique_ptr<SizukuSkillAttributeBase> quantumSkill_;
+	SizukuSkillAttributeBase* activeSkill_ = nullptr;
 
 	void EnsureIceFlowerCount(int count);
+	void StartAttributeSkill(const Transform& playerTransform, const Vector4& primaryColor, const Vector4& secondaryColor);
+	void UpdateAttributeSkill();
 
 	enum State {
 		up,
@@ -59,6 +84,8 @@ public:
 	void Update();
 	void Draw();
 	void SetCamera(Camera* camera);
+	void SetAttribute(Attribute attribute) { attribute_ = attribute; }
+	Attribute GetAttribute() const { return attribute_; }
 	void StartAttack(const Transform& playerTransform);
 	void StartSpecialAttack(const Transform& playerTransform, int iceCount);
 	void UpdateSpecialAttack(const Transform& playerTransform);

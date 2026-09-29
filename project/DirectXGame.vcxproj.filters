@@ -337,10 +337,10 @@
     <ClCompile Include="application\Object\Characters\Playable\Individual\Sizuku\Sizuku.cpp">
       <Filter>Application\Object\Character\Playable\Sizuku</Filter>
     </ClCompile>
-    <ClCompile Include="application\Object\Characters\Playable\Individual\Sizuku\SizukuSkill.cpp">
+    <ClCompile Include="application\Object\Characters\Playable\Individual\Sizuku\Skill\SizukuSkill.cpp">
       <Filter>Application\Object\Character\Playable\Sizuku</Filter>
     </ClCompile>
-    <ClCompile Include="application\Object\Characters\Playable\Individual\Sizuku\SizukuSpecial.cpp">
+    <ClCompile Include="application\Object\Characters\Playable\Individual\Sizuku\Special\SizukuSpecial.cpp">
       <Filter>Application\Object\Character\Playable\Sizuku</Filter>
     </ClCompile>
     <ClCompile Include="application\Object\Characters\Playable\Individual\Yuzuki\Yuzuki.cpp">
@@ -554,6 +554,20 @@
     <ClCompile Include="application\Object\Characters\Playable\Individual\Mei\MeiSpecial.cpp" />
     <ClCompile Include="application\Object\Characters\Playable\Individual\Mei\MeiSkill.cpp" />
     <ClCompile Include="application\Object\Characters\Playable\Individual\Sizuku\ChangeAttribute\ChangeAttribute.cpp" />
+    <ClCompile Include="application\Object\Characters\Playable\Individual\Sizuku\Special\SizukuSpecialWind.cpp" />
+    <ClCompile Include="application\Object\Characters\Playable\Individual\Sizuku\Special\SizukuSpecialThunder.cpp" />
+    <ClCompile Include="application\Object\Characters\Playable\Individual\Sizuku\Special\SizukuSpecialQuantum.cpp" />
+    <ClCompile Include="application\Object\Characters\Playable\Individual\Sizuku\Special\SizukuSpecialImaginary.cpp" />
+    <ClCompile Include="application\Object\Characters\Playable\Individual\Sizuku\Special\SizukuSpecialIce.cpp" />
+    <ClCompile Include="application\Object\Characters\Playable\Individual\Sizuku\Special\SizukuSpecialFire.cpp" />
+    <ClCompile Include="application\Object\Load\GameLoad.cpp" />
+    <ClCompile Include="application\Object\Characters\Playable\Individual\Sizuku\Skill\SizukuSkillFire.cpp" />
+    <ClCompile Include="application\Object\Characters\Playable\Individual\Sizuku\Skill\SizukuSkillIce.cpp" />
+    <ClCompile Include="application\Object\Characters\Playable\Individual\Sizuku\Skill\SizukuSkillWind.cpp" />
+    <ClCompile Include="application\Object\Characters\Playable\Individual\Sizuku\Skill\SizukuSkillThunder.cpp" />
+    <ClCompile Include="application\Object\Characters\Playable\Individual\Sizuku\Skill\SizukuSkillImaginary.cpp" />
+    <ClCompile Include="application\Object\Characters\Playable\Individual\Sizuku\Skill\SizukuSkillQuantum.cpp" />
+    <ClCompile Include="application\UI\DangerUI\DangerUI.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Engine\Camera\Camera.h">
@@ -841,10 +855,10 @@
     <ClInclude Include="application\Object\Characters\Playable\Individual\Sizuku\Sizuku.h">
       <Filter>Application\Object\Character\Playable\Sizuku</Filter>
     </ClInclude>
-    <ClInclude Include="application\Object\Characters\Playable\Individual\Sizuku\SizukuSkill.h">
+    <ClInclude Include="application\Object\Characters\Playable\Individual\Sizuku\Skill\SizukuSkill.h">
       <Filter>Application\Object\Character\Playable\Sizuku</Filter>
     </ClInclude>
-    <ClInclude Include="application\Object\Characters\Playable\Individual\Sizuku\SizukuSpecial.h">
+    <ClInclude Include="application\Object\Characters\Playable\Individual\Sizuku\Special\SizukuSpecial.h">
       <Filter>Application\Object\Character\Playable\Sizuku</Filter>
     </ClInclude>
     <ClInclude Include="application\Object\Characters\Playable\Individual\Yuzuki\Yuzuki.h">
@@ -1099,6 +1113,23 @@
     <ClInclude Include="application\Object\Characters\Playable\Individual\Mei\MeiSpecial.h" />
     <ClInclude Include="application\Object\Characters\Playable\Individual\Mei\MeiSkill.h" />
     <ClInclude Include="application\Object\Characters\Playable\Individual\Sizuku\ChangeAttribute\ChangeAttribute.h" />
+    <ClInclude Include="application\Object\Characters\Playable\Individual\Sizuku\Special\SizukuSpecialWind.h" />
+    <ClInclude Include="application\Object\Characters\Playable\Individual\Sizuku\Special\SizukuSpecialThunder.h" />
+    <ClInclude Include="application\Object\Characters\Playable\Individual\Sizuku\Special\SizukuSpecialQuantum.h" />
+    <ClInclude Include="application\Object\Characters\Playable\Individual\Sizuku\Special\SizukuSpecialImaginary.h" />
+    <ClInclude Include="application\Object\Characters\Playable\Individual\Sizuku\Special\SizukuSpecialIce.h" />
+    <ClInclude Include="application\Object\Characters\Playable\Individual\Sizuku\Special\SizukuSpecialFire.h" />
+    <ClInclude Include="application\Object\Characters\Playable\Individual\Sizuku\Special\SizukuSpecialAttributeBase.h" />
+    <ClInclude Include="application\Object\Load\GameLoad.h" />
+    <ClInclude Include="application\Object\Characters\Playable\Individual\Sizuku\Skill\SizukuSkillFire.h" />
+    <ClInclude Include="application\Object\Characters\Playable\Individual\Sizuku\Skill\SizukuSkillIce.h" />
+    <ClInclude Include="application\Object\Characters\Playable\Individual\Sizuku\Skill\SizukuSkillWind.h" />
+    <ClInclude Include="application\Object\Characters\Playable\Individual\Sizuku\Skill\SizukuSkillThunder.h" />
+    <ClInclude Include="application\Object\Characters\Playable\Individual\Sizuku\Skill\SizukuSkillImaginary.h" />
+    <ClInclude Include="application\Object\Characters\Playable\Individual\Sizuku\Skill\SizukuSkillQuantum.h" />
+    <ClInclude Include="application\Object\Characters\Playable\Individual\Sizuku\Skill\SizukuSkillAttributeBase.h" />
+    <ClInclude Include="application\UI\DangerUI\DangerUI.h" />
+    <ClInclude Include="application\Object\Characters\Playable\Individual\Sizuku\Special\SIzukuSpecialParticle.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include=".editorconfig" />

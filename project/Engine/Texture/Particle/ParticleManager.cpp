@@ -129,7 +129,11 @@ void ParticleManager::CreateParticleGroup(const std::string& name, const std::st
 	newGroup.textureSrvIndex = TextureManager::GetInstance()->GetTextureIndexByfilePath(textureFilePath);
 	particleGroups[name] = std::move(newGroup);
 }
-
+void ParticleManager::CreateParticleGroupIfMissing(const std::string& name, const std::string& textureFilePath) {
+	if (particleGroups.find(name) == particleGroups.end()) {
+		CreateParticleGroup(name, textureFilePath);
+	}
+}
 void ParticleManager::SetCamera(Camera* camera) { camera_ = camera; }
 
 void ParticleManager::Update(Camera* camera) {

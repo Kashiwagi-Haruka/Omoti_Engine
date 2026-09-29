@@ -30,7 +30,7 @@ void SceneTransition::Update() {
 
 	if (isIn_) {
 		fadeSPData.size.x += 40.0f;
-		fadeSPData.translate.x -= 40.0f;
+		fadeSPData.translate.x -= 27.5f;
 		if (fadeSPData.size.x >= 1800.0f) {
 			fadeSPData.size.x = 1800.0f;
 			isEnd = true;

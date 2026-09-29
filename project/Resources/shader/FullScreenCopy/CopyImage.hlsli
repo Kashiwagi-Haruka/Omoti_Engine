@@ -26,9 +26,13 @@ cbuffer PostEffectParameters : register(b0)
     float radialBlurSampleCount;
     float chromaticAberrationEnabled;
     float chromaticAberrationIntensity;
-    float2 chromaticAberrationPadding;
+    float chromaticAberrationPadding0;
+    float chromaticAberrationPadding1;
     float selectiveBloomEnabled;
     float selectiveBloomIntensity;
     float selectiveBloomRadius;
     float selectiveBloomPadding;
+    float fullscreenBinarizationEnabled;
+    float binarizationThreshold;
+    float binarizationPadding;
 };
