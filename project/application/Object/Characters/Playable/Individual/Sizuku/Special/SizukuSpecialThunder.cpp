@@ -31,7 +31,7 @@ void SizukuSpecialThunder::Start(const SizukuSpecialContext& c) {
 	Vector3 f = {std::sin(yaw), 0, std::cos(yaw)};
 	fieldTransform_.scale = {};
 	fieldTransform_.translate = c.transform.translate + f * 2;
-	fieldTransform_.translate.y -= c.height;
+	
 	damagePosition_ = projectileTransform_.translate;
 	damageScale_ = {2, 2, 4};
 	ConfigureSpecialEmitter(*emitter_, {.75f, .55f, 1, 1}, 80, 15, .7f);
@@ -43,7 +43,7 @@ void SizukuSpecialThunder::Update(const SizukuSpecialContext& c, float dt) {
 	float p = std::clamp(c.elapsedTime / kCharge, 0.f, 1.f);
 	fieldTransform_.scale = {10 * p, 10 * p, 1};
 	fieldTransform_.translate = c.transform.translate + f * 2;
-	fieldTransform_.translate.y -= c.height;
+	
 	field_->SetCamera(c.camera);
 	field_->SetTransform(fieldTransform_);
 	field_->Update();
