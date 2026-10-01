@@ -45,6 +45,7 @@ public:
 	struct ParticleGroup {
 		std::string textureFilePath;
 		uint32_t textureSrvIndex = 0;
+		uint32_t groupId = 0;
 		std::list<Particle> particles;
 		uint32_t drawCount = 1024;
 	};
@@ -87,12 +88,15 @@ private:
 		float emissionRightPadding = 0.0f;
 		Vector3 emissionUp{0.0f, 1.0f, 0.0f};
 		float emissionUpPadding = 0.0f;
+		uint32_t groupId = 0;
+		float groupIdPadding[3] = {0.0f, 0.0f, 0.0f};
 	};
 	static_assert(offsetof(EmitterSphere, beforeColor) == 64, "EmitterSphere.beforeColor layout mismatch with shader cbuffer");
 	static_assert(offsetof(EmitterSphere, afterColor) == 80, "EmitterSphere.afterColor layout mismatch with shader cbuffer");
 	static_assert(offsetof(EmitterSphere, emissionRight) == 112, "EmitterSphere.emissionRight layout mismatch with shader cbuffer");
 	static_assert(offsetof(EmitterSphere, emissionUp) == 128, "EmitterSphere.emissionUp layout mismatch with shader cbuffer");
-	static_assert(sizeof(EmitterSphere) == 144, "EmitterSphere size mismatch with shader cbuffer");
+	static_assert(offsetof(EmitterSphere, groupId) == 144, "EmitterSphere.groupId layout mismatch with shader cbuffer");
+	static_assert(sizeof(EmitterSphere) == 160, "EmitterSphere size mismatch with shader cbuffer");
 
 	struct PerFrame {
 		float time = 0.0f;
@@ -103,6 +107,8 @@ private:
 	struct PerView {
 		Matrix4x4 viewProjection;
 		Matrix4x4 billboardMatrix;
+		uint32_t groupId = 0;
+		float groupIdPadding[3] = {0.0f, 0.0f, 0.0f};
 	};
 
 	static constexpr uint32_t kMaxParticles_ = 4096;
@@ -112,6 +118,7 @@ private:
 	SrvManager* srvManager_ = nullptr;
 
 	std::unordered_map<std::string, ParticleGroup> particleGroups;
+	uint32_t nextGroupId_ = 1;
 	Camera* camera_ = nullptr;
 	D3D12_VERTEX_BUFFER_VIEW vbView_{};
 	Microsoft::WRL::ComPtr<ID3D12Resource> vertexBuffer_;

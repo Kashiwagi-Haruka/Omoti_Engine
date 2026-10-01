@@ -89,6 +89,7 @@ void main(uint3 DTid : SV_DispatchThreadID)
             gParticles[emitIndex].currentTime = 0.0f;
             gParticles[emitIndex].beforeColor = gEmitter.beforeColor;
             gParticles[emitIndex].afterColor = gEmitter.afterColor;
+            gParticles[emitIndex].groupId = gEmitter.groupId;
         }
         else
         {
