@@ -41,6 +41,7 @@ void MenuManager::Update() {
 			menuType_ = Menu::CharacterDisplay;
 		} else if (PlayCommand::GetPause()) {
 			menuType_ = Menu::Pause;
+			pause_->Update(true);
 		} else if (PlayCommand::GetTeamSelectDisplay()) {
 			menuType_ = Menu::TeamDisplay;
 			LoadTeamDisplay();
