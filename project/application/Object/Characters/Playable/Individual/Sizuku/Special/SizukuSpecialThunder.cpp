@@ -20,7 +20,7 @@ void SizukuSpecialThunder::Initialize() {
 	projectile_->SetEnableLighting(false);
 	projectile_->SetModel("sizukuSpecialRain");
 	projectile_->SetColor({.85f, .65f, 1, 1});
-	emitter_ = CreateSpecialEmitter("sizukuSpecialThunder");
+	emitter_ = CreateSpecialEmitter("sizukuSpecialThunder", "Resources/2d/Character/Special/sizukuSpecialThunderParticle.png");
 }
 void SizukuSpecialThunder::Start(const SizukuSpecialContext& c) {
 	projectileTransform_.scale = {1.2f, 1.2f, 3.5f};
@@ -74,5 +74,8 @@ void SizukuSpecialThunder::Draw() {
 	common->SetBlendMode(BlendMode::kBlendModeAlpha);
 	common->DrawCommon();
 	projectile_->Draw();
+	common->SetBlendMode(BlendMode::kBlendModeAdd);
 	emitter_->Draw();
+	common->SetBlendMode(BlendMode::kBlendModeAlpha);
+
 }

@@ -4,8 +4,8 @@
 #include <memory>
 #include <numbers>
 
-inline std::unique_ptr<ParticleEmitter> CreateSpecialEmitter(const char* groupName) {
-	ParticleManager::GetInstance()->CreateParticleGroupIfMissing(groupName, "Resources/2d/defaultParticle.png");
+inline std::unique_ptr<ParticleEmitter> CreateSpecialEmitter(const char* groupName, const char* texturePath = "Resources/2d/defaultParticle.png") {
+	ParticleManager::GetInstance()->CreateParticleGroupIfMissing(groupName, texturePath);
 	return std::make_unique<ParticleEmitter>(groupName);
 }
 
