@@ -14,7 +14,7 @@ void SizukuSpecialThunder::Initialize() {
 	field_ = std::make_unique<Primitive>();
 	field_->Initialize(Primitive::Plane, "Resources/3d/Character/Sizuku/Special/Thunder/sizukuSpecialThunder.png");
 	field_->SetEnableLighting(false);
-	fieldTransform_.rotate.x = std::numbers::pi_v<float> / 2;
+	
 	projectile_ = std::make_unique<Object3d>();
 	projectile_->Initialize();
 	projectile_->SetEnableLighting(false);
@@ -41,7 +41,7 @@ void SizukuSpecialThunder::Update(const SizukuSpecialContext& c, float dt) {
 	float yaw = c.transform.rotate.y;
 	Vector3 f = {std::sin(yaw), 0, std::cos(yaw)};
 	float p = std::clamp(c.elapsedTime / kCharge, 0.f, 1.f);
-	fieldTransform_.scale = {4 * p, 4 * p, 1};
+	fieldTransform_.scale = {10 * p, 10 * p, 1};
 	fieldTransform_.translate = c.transform.translate + f * 2;
 	fieldTransform_.translate.y -= c.height;
 	field_->SetCamera(c.camera);
@@ -66,7 +66,7 @@ void SizukuSpecialThunder::Update(const SizukuSpecialContext& c, float dt) {
 }
 void SizukuSpecialThunder::Draw() {
 	auto* common = Object3dCommon::GetInstance();
-	common->DrawCommon(Object3dCommon::DrawCommonType::NoCull);
+	common->DrawCommon(Object3dCommon::DrawCommonType::NoCullDepth);
 	common->SetBlendMode(BlendMode::kBlendModeAdd);
 	field_->Draw();
 	common->SetBlendMode(BlendMode::kBlendModeAlpha);
