@@ -569,6 +569,7 @@
     <ClCompile Include="application\Object\Characters\Playable\Individual\Sizuku\Skill\SizukuSkillQuantum.cpp" />
     <ClCompile Include="application\UI\DangerUI\DangerUI.cpp" />
     <ClCompile Include="application\Object\Heal\Heal.cpp" />
+    <ClCompile Include="application\Scene\Scenes\StageSelectScene\StageSelectScene.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Engine\Camera\Camera.h">
@@ -1132,6 +1133,7 @@
     <ClInclude Include="application\UI\DangerUI\DangerUI.h" />
     <ClInclude Include="application\Object\Characters\Playable\Individual\Sizuku\Special\SIzukuSpecialParticle.h" />
     <ClInclude Include="application\Object\Heal\Heal.h" />
+    <ClInclude Include="application\Scene\Scenes\StageSelectScene\StageSelectScene.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include=".editorconfig" />

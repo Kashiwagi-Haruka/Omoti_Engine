@@ -357,6 +357,7 @@ copy "$(WindowsSdkDir)\bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)\
     <ClCompile Include="application\Object\Characters\Playable\Individual\Sizuku\Skill\SizukuSkillThunder.cpp" />
     <ClCompile Include="application\Object\Characters\Playable\Individual\Sizuku\Skill\SizukuSkillWind.cpp" />
     <ClCompile Include="application\Object\Heal\Heal.cpp" />
+    <ClCompile Include="application\Scene\Scenes\StageSelectScene\StageSelectScene.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include=".editorconfig" />
@@ -592,6 +593,7 @@ copy "$(WindowsSdkDir)\bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)\
     <ClInclude Include="application\Object\Characters\Playable\Individual\Sizuku\Skill\SizukuSkillThunder.h" />
     <ClInclude Include="application\Object\Characters\Playable\Individual\Sizuku\Skill\SizukuSkillWind.h" />
     <ClInclude Include="application\Object\Heal\Heal.h" />
+    <ClInclude Include="application\Scene\Scenes\StageSelectScene\StageSelectScene.h" />
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="Resources\shader\FullScreenCopy\CopyImage.PS.hlsl">
