@@ -43,6 +43,7 @@ void SizukuSpecialThunder::Update(const SizukuSpecialContext& c, float dt) {
 	float p = std::clamp(c.elapsedTime / kCharge, 0.f, 1.f);
 	fieldTransform_.scale = {10 * p, 10 * p, 1};
 	fieldTransform_.translate = c.transform.translate + f * 2;
+	projectileTransform_.rotate = c.transform.rotate;
 	
 	field_->SetCamera(c.camera);
 	field_->SetTransform(fieldTransform_);
@@ -66,8 +67,8 @@ void SizukuSpecialThunder::Update(const SizukuSpecialContext& c, float dt) {
 }
 void SizukuSpecialThunder::Draw() {
 	auto* common = Object3dCommon::GetInstance();
-	common->DrawCommon(Object3dCommon::DrawCommonType::NoCullDepth);
 	common->SetBlendMode(BlendMode::kBlendModeAdd);
+	common->DrawCommon(Object3dCommon::DrawCommonType::NoCull);
 	field_->Draw();
 	common->SetBlendMode(BlendMode::kBlendModeAlpha);
 	common->DrawCommon();
