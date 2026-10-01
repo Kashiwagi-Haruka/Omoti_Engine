@@ -3,12 +3,12 @@
 #include "GameBase.h"
 #include "Model/ModelManager.h"
 #include "ParticleManager.h"
-#include "SizukuSpecialFire.h"
-#include "SizukuSpecialIce.h"
-#include "SizukuSpecialImaginary.h"
-#include "SizukuSpecialQuantum.h"
-#include "SizukuSpecialThunder.h"
-#include "SizukuSpecialWind.h"
+#include "Fire/SizukuSpecialFire.h"
+#include "Ice/SizukuSpecialIce.h"
+#include "Imaginary/SizukuSpecialImaginary.h"
+#include "Quantum/SizukuSpecialQuantum.h"
+#include "Thunder/SizukuSpecialThunder.h"
+#include "Wind/SizukuSpecialWind.h"
 #include <algorithm>
 #include <numbers>
 

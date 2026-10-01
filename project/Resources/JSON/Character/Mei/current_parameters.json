@@ -35,7 +35,8 @@
     "Deffence": 10.0,
     "HP": 100.0,
     "Level": 1,
-    "Speed": 1.0
+    "Speed": 1.0,
+    "HealingEffect": 0.0
   },
   "reinforcementAmount": 0
 }

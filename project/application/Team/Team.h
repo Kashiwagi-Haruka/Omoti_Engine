@@ -34,6 +34,8 @@ public:
 	std::string GetActiveCharacterName() const;
 	/// 現在操作中のキャラクターにダメージを与える。
 	void DamageActiveCharacter(int amount);
+	/// シズクの虚数必殺技による回復を、戦闘不能でないチーム全員に1度適用する。
+	bool HealTeamBySizukuImaginarySpecial();
 	/// 現在操作中のキャラクターが生存しているかを返す。
 	bool GetIsActiveCharacterAlive() const;
 	/// 指定スロットのキャラクターが生存しているかを返す。

@@ -2,7 +2,7 @@
 #include "Model/ModelManager.h"
 #include "Object3d/Object3dCommon.h"
 #include "Function.h"
-#include "SizukuSpecialParticle.h"
+#include "Object/Characters/Playable/Individual/Sizuku/Special/SizukuSpecialParticle.h"
 #include <algorithm>
 #include <cmath>
 #include <numbers>

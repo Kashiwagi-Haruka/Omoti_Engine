@@ -1,6 +1,6 @@
 #include "SizukuSpecialImaginary.h"
 #include "Object3d/Object3dCommon.h"
-#include "SizukuSpecialParticle.h"
+#include "Object/Characters/Playable/Individual/Sizuku/Special/SizukuSpecialParticle.h"
 #include <numbers>
 void SizukuSpecialImaginary::Initialize() {
 	field_ = std::make_unique<Primitive>();

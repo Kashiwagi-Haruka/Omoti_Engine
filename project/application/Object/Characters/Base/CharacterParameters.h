@@ -24,6 +24,8 @@ struct Parameter {
 	float CriticalRate;
 	// キャラクターのクリティカルダメージ
 	float CriticalDamage;
+	// キャラクターが行う回復の効果量（%）
+	float HealingEffect = 0.0f;
 	// キャラクターの属性親和度
 	float AttributeAffinity = 1.0f;
 	// キャラクターの属性ダメージ率

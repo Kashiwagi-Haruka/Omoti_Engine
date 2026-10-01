@@ -1,7 +1,7 @@
 #pragma once
 #include "Engine/Texture/Mesh/Object3d/Object3d.h"
 #include "Engine/Texture/Mesh/Primitive/Primitive.h"
-#include "SizukuSpecialAttributeBase.h"
+#include "Object/Characters/Playable/Individual/Sizuku/Special/SizukuSpecialAttributeBase.h"
 #include <memory>
 #include <random>
 class SizukuSpecialIce final : public SizukuSpecialAttributeBase {

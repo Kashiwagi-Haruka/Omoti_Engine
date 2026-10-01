@@ -1,5 +1,5 @@
 #include "SizukuSpecialFire.h"
-#include "SizukuSpecialParticle.h"
+#include "Object/Characters/Playable/Individual/Sizuku/Special/SizukuSpecialParticle.h"
 #include "Function.h"
 void SizukuSpecialFire::Initialize() {
 	mainEmitter_ = CreateSpecialEmitter("sizukuSpecialFireMain");

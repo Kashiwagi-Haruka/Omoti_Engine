@@ -1,5 +1,5 @@
 #include "SizukuSpecialQuantum.h"
-#include "SizukuSpecialParticle.h"
+#include "Object/Characters/Playable/Individual/Sizuku/Special/SizukuSpecialParticle.h"
 void SizukuSpecialQuantum::Initialize() {
 	main_ = CreateSpecialEmitter("sizukuSpecialQuantumMain");
 	sub_ = CreateSpecialEmitter("sizukuSpecialQuantumSub");

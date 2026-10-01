@@ -16,7 +16,7 @@ class StageSelectScene : public BaseScene {
 	std::unique_ptr<Sprite> stage1SP_;
 
 
-	
+	StageSelectScene::StageNames selectedStage_ = StageSelectScene::StageNames::TutorialStage;
 
 
 	public:

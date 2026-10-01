@@ -1,5 +1,5 @@
 #include "SizukuSpecialWind.h"
-#include "SizukuSpecialParticle.h"
+#include "Object/Characters/Playable/Individual/Sizuku/Special/SizukuSpecialParticle.h"
 void SizukuSpecialWind::Initialize() { emitter_ = CreateSpecialEmitter("sizukuSpecialWind"); }
 void SizukuSpecialWind::Start(const SizukuSpecialContext& c) {
 	particleTransform_ = c.transform;
