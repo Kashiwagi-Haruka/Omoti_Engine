@@ -1,10 +1,10 @@
 #pragma once
 #include "ParticleEmitter.h"
-#include "SizukuSpecialAttributeBase.h"
+#include "Object/Characters/Playable/Individual/Sizuku/Special/SizukuSpecialAttributeBase.h"
 #include <memory>
-class SizukuSpecialFire final : public SizukuSpecialAttributeBase {
-	std::unique_ptr<ParticleEmitter> mainEmitter_, subEmitter_;
-	Transform particleTransform_{};
+class SizukuSpecialQuantum final : public SizukuSpecialAttributeBase {
+	std::unique_ptr<ParticleEmitter> main_, sub_;
+	Transform origin_{};
 	Vector3 damagePosition_{}, damageScale_{};
 	bool emitted_ = false;
 
@@ -13,7 +13,7 @@ public:
 	void Start(const SizukuSpecialContext&) override;
 	void Update(const SizukuSpecialContext&, float) override;
 	void Draw() override;
-	float GetDuration() const override { return 4.0f; }
+	float GetDuration() const override { return 4.2f; }
 	Vector3 GetDamagePosition() const override { return damagePosition_; }
 	Vector3 GetDamageScale() const override { return damageScale_; }
 };
