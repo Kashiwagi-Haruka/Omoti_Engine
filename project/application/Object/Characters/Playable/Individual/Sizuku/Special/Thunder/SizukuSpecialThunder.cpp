@@ -8,7 +8,8 @@
 #include <numbers>
 namespace {
 constexpr float kCharge = 0.75f;
-constexpr Vector3 kTrailParticleScale = {0.45f, 0.45f, 0.45f};
+constexpr Vector3 kTrailParticleScale = {3.2f, 3.2f, 3.2f};
+constexpr uint32_t kTrailParticleCount = 12;
 } // namespace
 void SizukuSpecialThunder::Initialize() {
 	ModelManager::GetInstance()->LoadModel("Resources/3d/Character/Sizuku/Special/Rain", "sizukuSpecialRain");
@@ -38,7 +39,7 @@ void SizukuSpecialThunder::Start(const SizukuSpecialContext& c) {
 	damageScale_ = {2, 2, 4};
 	trailTransform_ = projectileTransform_;
 	trailTransform_.scale = kTrailParticleScale;
-	ConfigureSpecialEmitter(*emitter_, {.75f, .55f, 1, 1}, 4, 0, .65f);
+	ConfigureSpecialEmitter(*emitter_, {.75f, .55f, 1, 1}, kTrailParticleCount, 0, .65f);
 	emitter_->SetAcceleration({0, 0, 0});
 	emitter_->SetAreaMin({-.18f, -.18f, -.18f});
 	emitter_->SetAreaMax({.18f, .18f, .18f});
@@ -84,7 +85,7 @@ void SizukuSpecialThunder::Draw() {
 	common->DrawCommon();
 	projectile_->Draw();
 	auto* particleManager = ParticleManager::GetInstance();
-	particleManager->SetBlendMode(BlendMode::kBlendModeAdd);
+	//particleManager->SetBlendMode(BlendMode::kBlendModeAdd);
 	emitter_->Draw();
-	particleManager->SetBlendMode(BlendMode::kBlendModeAlpha);
+	//particleManager->SetBlendMode(BlendMode::kBlendModeAlpha);
 }
