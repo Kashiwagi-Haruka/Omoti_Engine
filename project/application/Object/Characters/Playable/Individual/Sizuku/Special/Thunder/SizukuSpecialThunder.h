@@ -8,7 +8,7 @@ class SizukuSpecialThunder final : public SizukuSpecialAttributeBase {
 	std::unique_ptr<Primitive> field_;
 	std::unique_ptr<Object3d> projectile_;
 	std::unique_ptr<ParticleEmitter> emitter_;
-	Transform fieldTransform_{}, projectileTransform_{};
+	Transform fieldTransform_{}, projectileTransform_{}, trailTransform_{};
 	Vector3 damagePosition_{}, damageScale_{};
 
 public:

@@ -8,7 +8,8 @@
 #include <numbers>
 namespace {
 constexpr float kCharge = 0.75f;
-}
+constexpr Vector3 kTrailParticleScale = {0.45f, 0.45f, 0.45f};
+} // namespace
 void SizukuSpecialThunder::Initialize() {
 	ModelManager::GetInstance()->LoadModel("Resources/3d/Character/Sizuku/Special/Rain", "sizukuSpecialRain");
 	field_ = std::make_unique<Primitive>();
@@ -35,8 +36,15 @@ void SizukuSpecialThunder::Start(const SizukuSpecialContext& c) {
 	
 	damagePosition_ = projectileTransform_.translate;
 	damageScale_ = {2, 2, 4};
-	ConfigureSpecialEmitter(*emitter_, {.75f, .55f, 1, 1}, 80, 15, .7f);
-	emitter_->SetFrequency(.2f);
+	trailTransform_ = projectileTransform_;
+	trailTransform_.scale = kTrailParticleScale;
+	ConfigureSpecialEmitter(*emitter_, {.75f, .55f, 1, 1}, 4, 0, .65f);
+	emitter_->SetAcceleration({0, 0, 0});
+	emitter_->SetAreaMin({-.18f, -.18f, -.18f});
+	emitter_->SetAreaMax({.18f, .18f, .18f});
+
+	emitter_->SetFrequency(1.0f);
+	emitter_->ResetTimer();
 }
 void SizukuSpecialThunder::Update(const SizukuSpecialContext& c, float dt) {
 	float yaw = c.transform.rotate.y;
@@ -60,7 +68,8 @@ void SizukuSpecialThunder::Update(const SizukuSpecialContext& c, float dt) {
 		projectile_->SetCamera(c.camera);
 		projectile_->SetTransform(projectileTransform_);
 		projectile_->Update();
-		emitter_->Update(projectileTransform_);
+		trailTransform_.translate = projectileTransform_.translate;
+		emitter_->Update(trailTransform_);
 		Object3dCommon::GetInstance()->SetFullScreenBinarizationEnabled(false);
 		Object3dCommon::GetInstance()->SetRadialBlurWidth(0.0f);
 	}
