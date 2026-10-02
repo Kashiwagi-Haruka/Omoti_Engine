@@ -74,8 +74,8 @@ void SizukuSpecialThunder::Draw() {
 	common->SetBlendMode(BlendMode::kBlendModeAlpha);
 	common->DrawCommon();
 	projectile_->Draw();
-	common->SetBlendMode(BlendMode::kBlendModeAdd);
+	auto* particleManager = ParticleManager::GetInstance();
+	particleManager->SetBlendMode(BlendMode::kBlendModeAdd);
 	emitter_->Draw();
-	common->SetBlendMode(BlendMode::kBlendModeAlpha);
-
+	particleManager->SetBlendMode(BlendMode::kBlendModeAlpha);
 }
