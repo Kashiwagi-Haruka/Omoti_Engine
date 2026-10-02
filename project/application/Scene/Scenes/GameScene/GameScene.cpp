@@ -543,6 +543,7 @@ void GameScene::DrawRemoteCameraScene(Camera* camera) {
 	skyDome->SetCamera(camera);
 	skyDome->Update();
 	field->SetCamera(camera);
+	ParticleManager::GetInstance()->SetCamera(camera);
 	field->Update();
 
 	skyDome->Draw();
@@ -568,13 +569,15 @@ void GameScene::Draw() {
 	if (remoteCamera_ && remoteCamera_->BeginRender()) {
 		DrawRemoteCameraScene(remoteCamera_->GetCamera());
 		remoteCamera_->EndRender();
-		player->SetCamera(cameraController->GetCamera());
+		Camera* mainCamera = cameraController->GetCamera();
+		ParticleManager::GetInstance()->SetCamera(mainCamera);
+		player->SetCamera(mainCamera);
 		if (playAreaMode_ == PlayAreaMode::kSpiral) {
-			rasen_->SetCamera(cameraController->GetCamera());
+			rasen_->SetCamera(mainCamera);
 		}
-		skyDome->SetCamera(cameraController->GetCamera());
+		skyDome->SetCamera(mainCamera);
 		skyDome->Update();
-		field->SetCamera(cameraController->GetCamera());
+		field->SetCamera(mainCamera);
 		field->Update();
 	}
 	Object3dCommon::GetInstance()->DrawCommon();
