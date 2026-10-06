@@ -2,6 +2,8 @@
 #include "Function.h"
 #include "Model/ModelManager.h"
 #include "Object3d/Object3dCommon.h"
+#include "Object/Characters/Playable/Individual/Sizuku/Special/SizukuSpecialParticle.h"
+#include "ParticleManager.h"
 #include <algorithm>
 #include <cmath>
 #include <numbers>
@@ -19,6 +21,7 @@ void SizukuSpecialThunder::Initialize() {
 	projectile_->SetEnableLighting(false);
 	projectile_->SetModel("sizukuSpecialRain");
 	projectile_->SetColor({.85f, .65f, 1, 1});
+	particleEmitter_ = CreateSpecialEmitter("sizukuSpecialThunderProjecttile", "Resources/2d/Character/Special/sizukuSpecialThunderParticle.png");
 }
 void SizukuSpecialThunder::Start(const SizukuSpecialContext& c) {
 	projectileTransform_.scale = {1.2f, 1.2f, 3.5f};
@@ -33,6 +36,13 @@ void SizukuSpecialThunder::Start(const SizukuSpecialContext& c) {
 
 	damagePosition_ = projectileTransform_.translate;
 	damageScale_ = {2, 2, 4};
+
+	ConfigureSpecialEmitter(*particleEmitter_, {0.75f, 0.55f, 1.0f, 1.0f}, 5.0f, 1.45f, 0.45f);
+	particleEmitter_->SetFrequency(0.35f);
+	particleEmitter_->SetAcceleration({0, 0, 0});
+	particleEmitter_->SetAreaMin({-0.5f, -0.5f, -0.5f});
+	particleEmitter_->SetAreaMax({0.5f, 0.5f, 0.5f});
+	particleEmitter_->ResetTimer();
 }
 void SizukuSpecialThunder::Update(const SizukuSpecialContext& c, float dt) {
 	float yaw = c.transform.rotate.y;
@@ -56,6 +66,10 @@ void SizukuSpecialThunder::Update(const SizukuSpecialContext& c, float dt) {
 		projectile_->SetCamera(c.camera);
 		projectile_->SetTransform(projectileTransform_);
 		projectile_->Update();
+		particleTransform_ = projectileTransform_;
+		particleTransform_.scale = {1.2f, 1.2f,1.0f};
+		ParticleManager::GetInstance()->SetCamera(c.camera);
+		particleEmitter_->Update(particleTransform_);
 		Object3dCommon::GetInstance()->SetFullScreenBinarizationEnabled(false);
 		Object3dCommon::GetInstance()->SetRadialBlurWidth(0.0f);
 	}
@@ -65,7 +79,10 @@ void SizukuSpecialThunder::Draw() {
 	common->SetBlendMode(BlendMode::kBlendModeAdd);
 	common->DrawCommon(Object3dCommon::DrawCommonType::NoCull);
 	field_->Draw();
+	common->DrawCommon(Object3dCommon::DrawCommonType::NoCullDepth);
+	particleEmitter_->Draw();
 	common->SetBlendMode(BlendMode::kBlendModeAlpha);
 	common->DrawCommon();
 	projectile_->Draw();
+	
 }
