@@ -59,11 +59,10 @@ public:
 	void Emit(
 	    const std::string& name, const Transform& transform, uint32_t count, const Vector3& accel, const AABB& area, float life, const Vector4& beforeColor, const Vector4& afterColor,
 	    float emissionAngle, float emissionSpeed = 1.0f);
-	void SetCamera(Camera* camera);
 	void SetBlendMode(BlendMode mode);
 
-	void Update(Camera* camera);
-	void Draw(const std::string& name);
+	void Update();
+	void Draw(const std::string& name, Camera* camera);
 	void Clear();
 	void Finalize();
 

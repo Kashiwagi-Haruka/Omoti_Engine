@@ -43,5 +43,5 @@ void SizukuSpecialImaginary::Draw(Camera* camera) {
 	field_->Draw();
 	common->SetBlendMode(BlendMode::kBlendModeAlpha);
 	common->DrawCommon();
-	emitter_->Draw();
+	emitter_->Draw(camera);
 }

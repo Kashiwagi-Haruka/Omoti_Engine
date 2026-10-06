@@ -136,10 +136,8 @@ void ParticleManager::CreateParticleGroupIfMissing(const std::string& name, cons
 		CreateParticleGroup(name, textureFilePath);
 	}
 }
-void ParticleManager::SetCamera(Camera* camera) { camera_ = camera; }
 
-void ParticleManager::Update(Camera* camera) {
-	camera_ = camera;
+void ParticleManager::Update() {
 	if (!isParticleInitialized_) {
 		InitializeParticlesByCompute();
 	}
@@ -150,7 +148,7 @@ void ParticleManager::Update(Camera* camera) {
 	UpdateParticlesByCompute();
 }
 
-void ParticleManager::Draw(const std::string& name) {
+void ParticleManager::Draw(const std::string& name, Camera* camera) {
 	struct alignas(256) MaterialCB {
 		float color[4];
 		int enableLighting;
@@ -192,9 +190,9 @@ void ParticleManager::Draw(const std::string& name) {
 
 	PerView perView{};
 	perView.groupId = it->second.groupId;
-	if (camera_) {
-		const Matrix4x4& view = camera_->GetViewMatrix();
-		const Matrix4x4& proj = camera_->GetProjectionMatrix();
+	if (camera) {
+		const Matrix4x4& view = camera->GetViewMatrix();
+		const Matrix4x4& proj = camera->GetProjectionMatrix();
 		perView.viewProjection = Function::Multiply(view, proj);
 		Matrix4x4 billboard = Function::Inverse(view);
 		billboard.m[3][0] = billboard.m[3][1] = billboard.m[3][2] = 0.0f;

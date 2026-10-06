@@ -25,6 +25,6 @@ void SizukuSpecialFire::Update(const SizukuSpecialContext& c, float) {
 	}
 }
 void SizukuSpecialFire::Draw(Camera* camera) {
-	mainEmitter_->Draw();
-	subEmitter_->Draw();
+	mainEmitter_->Draw(camera);
+	subEmitter_->Draw(camera);
 }

@@ -3,13 +3,14 @@
 #include "Vector3.h"
 #include <memory>
 
+class Camera;
 /// 回復時にプレイヤーの足元から立ち上るパーティクル。
 class Heal {
 public:
 	void Initialize();
 	void Start();
 	void Update(const Vector3& playerPosition, float deltaTime);
-	void Draw();
+	void Draw(Camera* camera);
 
 private:
 	static constexpr float kEmissionDuration_ = 2.0f;

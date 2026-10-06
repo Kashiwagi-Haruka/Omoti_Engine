@@ -26,11 +26,11 @@ void ParticleEmitter::Update(const Transform& parentTransform) {
 		timer -= 1.0f;
 	}
 }
-void ParticleEmitter::Draw() {
+void ParticleEmitter::Draw(Camera* camera) {
 	if (!emitVisible_) {
 		return;
 	}
-	ParticleManager::GetInstance()->Draw(name);
+	ParticleManager::GetInstance()->Draw(name, camera);
 }
 // -----------------------------------------
 // EmitVisible

@@ -345,7 +345,7 @@ void GameScene::Update() {
 	player->SetCamera(cameraController->GetCamera());
 	field->SetCamera(cameraController->GetCamera());
 
-		ParticleManager::GetInstance()->Update(cameraController->GetCamera());
+		ParticleManager::GetInstance()->Update();
 	skyDome->Update();
 	field->Update();
 	if (playAreaMode_ == PlayAreaMode::kSpiral && PlayCommand::GetNORMAL_ATTACK_TRIGGER() && !cameraController->IsLockOnCameraActive()) {
@@ -543,7 +543,6 @@ void GameScene::DrawRemoteCameraScene(Camera* camera) {
 	skyDome->SetCamera(camera);
 	skyDome->Update();
 	field->SetCamera(camera);
-	ParticleManager::GetInstance()->SetCamera(camera);
 	field->Update();
 
 	skyDome->Draw();
@@ -570,7 +569,6 @@ void GameScene::Draw() {
 		DrawRemoteCameraScene(remoteCamera_->GetCamera());
 		remoteCamera_->EndRender();
 		Camera* mainCamera = cameraController->GetCamera();
-		ParticleManager::GetInstance()->SetCamera(mainCamera);
 		player->SetCamera(mainCamera);
 		if (playAreaMode_ == PlayAreaMode::kSpiral) {
 			rasen_->SetCamera(mainCamera);
@@ -586,7 +584,7 @@ void GameScene::Draw() {
 	field->Draw();
 
 	player->Draw();
-	heal_->Draw();
+	heal_->Draw(cameraController->GetCamera());
 	EditorManager::GetInstance()->DrawEditorGridLines();
 	if (playAreaMode_ == PlayAreaMode::kSpiral) {
 		rasen_->Draw(boss_.get());

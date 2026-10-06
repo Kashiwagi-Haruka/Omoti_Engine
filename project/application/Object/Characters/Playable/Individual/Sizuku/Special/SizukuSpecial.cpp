@@ -95,6 +95,5 @@ void SizukuSpecial::Draw(Camera* camera) {
 	if (!isStarted_) {
 		return;
 	}
-	ParticleManager::GetInstance()->SetCamera(camera);
 		activeSpecial_->Draw(camera);
 }

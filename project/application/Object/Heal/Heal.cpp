@@ -39,9 +39,9 @@ void Heal::Update(const Vector3& playerPosition, float deltaTime) {
 	elapsedTime_ += deltaTime;
 }
 
-void Heal::Draw() {
+void Heal::Draw(Camera* camera) {
 	if (emitter_) {
-		emitter_->Draw();
+		emitter_->Draw(camera);
 		Object3dCommon::GetInstance()->DrawCommon();
 	}
 }

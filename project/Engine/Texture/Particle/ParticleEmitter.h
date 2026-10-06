@@ -5,6 +5,8 @@
 #include <cstdint>
 #include <string>
 
+class Camera;
+
 class ParticleEmitter {
 public:
 	// コンストラクタ
@@ -12,7 +14,7 @@ public:
 
 	// 更新
 	void Update(const Transform& transform);
-	void Draw();
+	void Draw(Camera* camera);
 	// 発生
 	void Emit();
 	void EmitVisible(bool v);
