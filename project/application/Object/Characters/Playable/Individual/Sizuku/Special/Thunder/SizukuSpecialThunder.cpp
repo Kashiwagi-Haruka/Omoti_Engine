@@ -68,13 +68,16 @@ void SizukuSpecialThunder::Update(const SizukuSpecialContext& c, float dt) {
 		projectile_->Update();
 		particleTransform_ = projectileTransform_;
 		particleTransform_.scale = {1.2f, 1.2f,1.0f};
-		ParticleManager::GetInstance()->SetCamera(c.camera);
 		particleEmitter_->Update(particleTransform_);
 		Object3dCommon::GetInstance()->SetFullScreenBinarizationEnabled(false);
 		Object3dCommon::GetInstance()->SetRadialBlurWidth(0.0f);
 	}
 }
-void SizukuSpecialThunder::Draw() {
+void SizukuSpecialThunder::Draw(Camera* camera) {
+	field_->SetCamera(camera);
+	field_->UpdateCameraMatrices();
+	projectile_->SetCamera(camera);
+	projectile_->UpdateCameraMatrices();
 	auto* common = Object3dCommon::GetInstance();
 	common->SetBlendMode(BlendMode::kBlendModeAdd);
 	common->DrawCommon(Object3dCommon::DrawCommonType::NoCull);

@@ -14,4 +14,4 @@ void SizukuSpecialWind::Update(const SizukuSpecialContext& c, float) {
 	emitter_->Update(particleTransform_);
 	damagePosition_ = c.transform.translate;
 }
-void SizukuSpecialWind::Draw() { emitter_->Draw(); }
+void SizukuSpecialWind::Draw(Camera* camera) { emitter_->Draw(); }

@@ -25,7 +25,7 @@ void SizukuSpecialQuantum::Update(const SizukuSpecialContext& c, float) {
 		emitted_ = true;
 	}
 }
-void SizukuSpecialQuantum::Draw() {
+void SizukuSpecialQuantum::Draw(Camera* camera) {
 	main_->Draw();
 	sub_->Draw();
 }

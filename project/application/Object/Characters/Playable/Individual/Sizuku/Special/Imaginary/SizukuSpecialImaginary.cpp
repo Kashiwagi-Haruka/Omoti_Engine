@@ -34,7 +34,9 @@ void SizukuSpecialImaginary::Update(const SizukuSpecialContext& c, float) {
 		emitted_ = true;
 	}
 }
-void SizukuSpecialImaginary::Draw() {
+void SizukuSpecialImaginary::Draw(Camera* camera) {
+	field_->SetCamera(camera);
+	field_->UpdateCameraMatrices();
 	auto* common = Object3dCommon::GetInstance();
 	common->DrawCommon(Object3dCommon::DrawCommonType::NoCullDepth);
 	common->SetBlendMode(BlendMode::kBlendModeAdd);

@@ -14,7 +14,7 @@ public:
 	void Initialize() override;
 	void Start(const SizukuSpecialContext&) override;
 	void Update(const SizukuSpecialContext&, float) override;
-	void Draw() override;
+	void Draw(Camera* camera) override;
 	float GetDuration() const override { return 4; }
 	Vector3 GetDamagePosition() const override { return damagePosition_; }
 	Vector3 GetDamageScale() const override { return damageScale_; }

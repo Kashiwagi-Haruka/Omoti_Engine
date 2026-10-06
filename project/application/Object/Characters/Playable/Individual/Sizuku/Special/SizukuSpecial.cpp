@@ -91,7 +91,10 @@ bool SizukuSpecial::IsFlowerDamaging() const {
 	}
 }
 bool SizukuSpecial::IsRainDamaging() const { return isStarted_ && (attribute_ == Attribute::Ice || attribute_ == Attribute::None) && elapsedTime_ >= 5; }
-void SizukuSpecial::Draw() {
-	if (isStarted_)
-		activeSpecial_->Draw();
+void SizukuSpecial::Draw(Camera* camera) {
+	if (!isStarted_) {
+		return;
+	}
+	ParticleManager::GetInstance()->SetCamera(camera);
+		activeSpecial_->Draw(camera);
 }
