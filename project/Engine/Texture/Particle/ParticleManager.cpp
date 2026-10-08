@@ -168,8 +168,9 @@ void ParticleManager::Draw(const std::string& name, Camera* camera) {
 	if (!cbResource_) {
 		cbResource_ = dxCommon_->CreateBufferResource(sizeof(MaterialCB));
 	}
-	if (!perViewCB_) {
-		perViewCB_ = dxCommon_->CreateBufferResource(sizeof(PerView));
+	auto& perViewResources = perViewResources_[name];
+	if (!perViewResources) {
+		perViewResources = dxCommon_->CreateBufferResource(sizeof(PerView));
 	}
 
 	{
@@ -203,9 +204,9 @@ void ParticleManager::Draw(const std::string& name, Camera* camera) {
 	}
 	{
 		void* p = nullptr;
-		perViewCB_->Map(0, nullptr, &p);
+		perViewResources->Map(0, nullptr, &p);
 		memcpy(p, &perView, sizeof(perView));
-		perViewCB_->Unmap(0, nullptr);
+		perViewResources->Unmap(0, nullptr);
 	}
 
 	if (particleResourceState_ != D3D12_RESOURCE_STATE_ALL_SHADER_RESOURCE) {
@@ -225,7 +226,7 @@ void ParticleManager::Draw(const std::string& name, Camera* camera) {
 	dxCommon_->GetCommandList()->SetGraphicsRootConstantBufferView(0, cbResource_->GetGPUVirtualAddress());
 	dxCommon_->GetCommandList()->SetGraphicsRootDescriptorTable(1, srvManager_->GetGPUDescriptorHandle(it->second.textureSrvIndex));
 	dxCommon_->GetCommandList()->SetGraphicsRootDescriptorTable(2, srvManager_->GetGPUDescriptorHandle(particleSrvIndex_));
-	dxCommon_->GetCommandList()->SetGraphicsRootConstantBufferView(3, perViewCB_->GetGPUVirtualAddress());
+	dxCommon_->GetCommandList()->SetGraphicsRootConstantBufferView(3, perViewResources->GetGPUVirtualAddress());
 	dxCommon_->GetCommandList()->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 	dxCommon_->GetCommandList()->IASetVertexBuffers(0, 1, &vbView_);
 	dxCommon_->GetCommandList()->SetPipelineState(graphicsPipelineState_[(int)currentBlendMode_].Get());
@@ -335,6 +336,7 @@ void ParticleManager::Finalize() {
 
 void ParticleManager::Clear() {
 	particleGroups.clear();
+	perViewResources_.clear();
 	nextGroupId_ = 1;
 	isParticleInitialized_ = false;
 }

@@ -129,7 +129,7 @@ private:
 	BlendMode currentBlendMode_ = BlendMode::kBlendModeAlpha;
 
 	Microsoft::WRL::ComPtr<ID3D12Resource> cbResource_;
-	Microsoft::WRL::ComPtr<ID3D12Resource> perViewCB_;
+	std::unordered_map<std::string,Microsoft::WRL::ComPtr<ID3D12Resource>> perViewResources_;
 
 	Microsoft::WRL::ComPtr<ID3D12Resource> particleResource_;
 	uint32_t particleSrvIndex_ = 0;
