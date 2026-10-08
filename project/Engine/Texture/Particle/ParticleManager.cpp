@@ -16,6 +16,7 @@
 namespace {
 constexpr uint32_t kParticleThreadGroupSize = 256;
 constexpr uint32_t kParticleDispatchCount = 4096 / kParticleThreadGroupSize;
+constexpr uint32_t kParticleStride = sizeof(float) * 24;
 Microsoft::WRL::ComPtr<ID3D12Resource> CreateDefaultBufferResource(DirectXCommon* dxCommon, size_t sizeInBytes, D3D12_RESOURCE_FLAGS flags, D3D12_RESOURCE_STATES initialState) {
 	D3D12_HEAP_PROPERTIES heapProperties{};
 	heapProperties.Type = D3D12_HEAP_TYPE_DEFAULT;
@@ -77,12 +78,12 @@ void ParticleManager::Initialize(DirectXCommon* dxCommon) {
 	memcpy(mapped, vertices, sizeof(vertices));
 	vertexBuffer_->Unmap(0, nullptr);
 
-	particleResource_ = CreateDefaultBufferResource(dxCommon_, sizeof(float) * 20 * kMaxParticles_, D3D12_RESOURCE_FLAG_ALLOW_UNORDERED_ACCESS, D3D12_RESOURCE_STATE_COMMON);
+	particleResource_ = CreateDefaultBufferResource(dxCommon_, kParticleStride * kMaxParticles_, D3D12_RESOURCE_FLAG_ALLOW_UNORDERED_ACCESS, D3D12_RESOURCE_STATE_COMMON);
 	particleResourceState_ = D3D12_RESOURCE_STATE_COMMON;
 	particleSrvIndex_ = srvManager_->Allocate();
-	srvManager_->CreateSRVforStructuredBuffer(particleSrvIndex_, particleResource_.Get(), kMaxParticles_, sizeof(float) * 20);
+	srvManager_->CreateSRVforStructuredBuffer(particleSrvIndex_, particleResource_.Get(), kMaxParticles_, kParticleStride);
 	particleUavIndex_ = srvManager_->Allocate();
-	srvManager_->CreateUAVforStructuredBuffer(particleUavIndex_, particleResource_.Get(), kMaxParticles_, sizeof(float) * 20);
+	srvManager_->CreateUAVforStructuredBuffer(particleUavIndex_, particleResource_.Get(), kMaxParticles_, kParticleStride);
 	freeListIndexResource_ = CreateDefaultBufferResource(dxCommon_, sizeof(int32_t), D3D12_RESOURCE_FLAG_ALLOW_UNORDERED_ACCESS, D3D12_RESOURCE_STATE_COMMON);
 	freeListIndexResourceState_ = D3D12_RESOURCE_STATE_COMMON;
 	freeListIndexUavIndex_ = srvManager_->Allocate();
@@ -103,7 +104,7 @@ void ParticleManager::Initialize(DirectXCommon* dxCommon) {
 	perFrameResource_->Map(0, nullptr, reinterpret_cast<void**>(&perFrameData_));
 	*perFrameData_ = PerFrame{};
 
-		updateEmitterResource_ = dxCommon_->CreateBufferResource(sizeof(EmitterSphere));
+	updateEmitterResource_ = dxCommon_->CreateBufferResource(sizeof(EmitterSphere));
 	updateEmitterResource_->Map(0, nullptr, reinterpret_cast<void**>(&updateEmitterData_));
 	*updateEmitterData_ = EmitterSphere{};
 
@@ -127,6 +128,7 @@ void ParticleManager::CreateParticleGroup(const std::string& name, const std::st
 	ParticleGroup newGroup{};
 	newGroup.textureFilePath = textureFilePath;
 	newGroup.textureSrvIndex = TextureManager::GetInstance()->GetTextureIndexByfilePath(textureFilePath);
+	newGroup.groupId = nextGroupId_++;
 	particleGroups[name] = std::move(newGroup);
 }
 void ParticleManager::CreateParticleGroupIfMissing(const std::string& name, const std::string& textureFilePath) {
@@ -134,10 +136,8 @@ void ParticleManager::CreateParticleGroupIfMissing(const std::string& name, cons
 		CreateParticleGroup(name, textureFilePath);
 	}
 }
-void ParticleManager::SetCamera(Camera* camera) { camera_ = camera; }
 
-void ParticleManager::Update(Camera* camera) {
-	camera_ = camera;
+void ParticleManager::Update() {
 	if (!isParticleInitialized_) {
 		InitializeParticlesByCompute();
 	}
@@ -148,7 +148,7 @@ void ParticleManager::Update(Camera* camera) {
 	UpdateParticlesByCompute();
 }
 
-void ParticleManager::Draw(const std::string& name) {
+void ParticleManager::Draw(const std::string& name, Camera* camera) {
 	struct alignas(256) MaterialCB {
 		float color[4];
 		int enableLighting;
@@ -168,8 +168,9 @@ void ParticleManager::Draw(const std::string& name) {
 	if (!cbResource_) {
 		cbResource_ = dxCommon_->CreateBufferResource(sizeof(MaterialCB));
 	}
-	if (!perViewCB_) {
-		perViewCB_ = dxCommon_->CreateBufferResource(sizeof(PerView));
+	auto& perViewResources = perViewResources_[name];
+	if (!perViewResources) {
+		perViewResources = dxCommon_->CreateBufferResource(sizeof(PerView));
 	}
 
 	{
@@ -189,9 +190,10 @@ void ParticleManager::Draw(const std::string& name) {
 	}
 
 	PerView perView{};
-	if (camera_) {
-		const Matrix4x4& view = camera_->GetViewMatrix();
-		const Matrix4x4& proj = camera_->GetProjectionMatrix();
+	perView.groupId = it->second.groupId;
+	if (camera) {
+		const Matrix4x4& view = camera->GetViewMatrix();
+		const Matrix4x4& proj = camera->GetProjectionMatrix();
 		perView.viewProjection = Function::Multiply(view, proj);
 		Matrix4x4 billboard = Function::Inverse(view);
 		billboard.m[3][0] = billboard.m[3][1] = billboard.m[3][2] = 0.0f;
@@ -202,9 +204,9 @@ void ParticleManager::Draw(const std::string& name) {
 	}
 	{
 		void* p = nullptr;
-		perViewCB_->Map(0, nullptr, &p);
+		perViewResources->Map(0, nullptr, &p);
 		memcpy(p, &perView, sizeof(perView));
-		perViewCB_->Unmap(0, nullptr);
+		perViewResources->Unmap(0, nullptr);
 	}
 
 	if (particleResourceState_ != D3D12_RESOURCE_STATE_ALL_SHADER_RESOURCE) {
@@ -224,7 +226,7 @@ void ParticleManager::Draw(const std::string& name) {
 	dxCommon_->GetCommandList()->SetGraphicsRootConstantBufferView(0, cbResource_->GetGPUVirtualAddress());
 	dxCommon_->GetCommandList()->SetGraphicsRootDescriptorTable(1, srvManager_->GetGPUDescriptorHandle(it->second.textureSrvIndex));
 	dxCommon_->GetCommandList()->SetGraphicsRootDescriptorTable(2, srvManager_->GetGPUDescriptorHandle(particleSrvIndex_));
-	dxCommon_->GetCommandList()->SetGraphicsRootConstantBufferView(3, perViewCB_->GetGPUVirtualAddress());
+	dxCommon_->GetCommandList()->SetGraphicsRootConstantBufferView(3, perViewResources->GetGPUVirtualAddress());
 	dxCommon_->GetCommandList()->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 	dxCommon_->GetCommandList()->IASetVertexBuffers(0, 1, &vbView_);
 	dxCommon_->GetCommandList()->SetPipelineState(graphicsPipelineState_[(int)currentBlendMode_].Get());
@@ -234,12 +236,15 @@ void ParticleManager::Draw(const std::string& name) {
 void ParticleManager::Emit(
     const std::string& name, const Transform& transform, uint32_t count, const Vector3& accel, const AABB& area, float life, const Vector4& beforeColor, const Vector4& afterColor, float emissionAngle,
     float emissionSpeed) {
-	(void)name;
 	if (!isParticleInitialized_) {
 		InitializeParticlesByCompute();
 	}
 
 	if (!emitterData_ || !perFrameData_ || !updateEmitterData_) {
+		return;
+	}
+	auto group = particleGroups.find(name);
+	if (group == particleGroups.end()) {
 		return;
 	}
 
@@ -253,6 +258,7 @@ void ParticleManager::Emit(
 	emitterData_->afterColor = afterColor;
 	emitterData_->emissionAngle = std::max(emissionAngle, 0.0f);
 	emitterData_->emissionSpeed = std::max(emissionSpeed, 0.0f);
+	emitterData_->groupId = group->second.groupId;
 	emitterData_->emissionRight = {1.0f, 0.0f, 0.0f};
 	emitterData_->emissionUp = {0.0f, 1.0f, 0.0f};
 	if (camera_) {
@@ -261,6 +267,7 @@ void ParticleManager::Emit(
 		emitterData_->emissionUp = {billboardMatrix.m[1][0], billboardMatrix.m[1][1], billboardMatrix.m[1][2]};
 	}
 	emitterData_->emit = 1;
+
 
 	perFrameData_->time = 0.0f;
 	perFrameData_->deltaTime = dxCommon_->GetDeltaTime();
@@ -329,6 +336,8 @@ void ParticleManager::Finalize() {
 
 void ParticleManager::Clear() {
 	particleGroups.clear();
+	perViewResources_.clear();
+	nextGroupId_ = 1;
 	isParticleInitialized_ = false;
 }
 

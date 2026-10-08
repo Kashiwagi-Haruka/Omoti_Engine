@@ -1,5 +1,5 @@
 #include "SizukuSpecialWind.h"
-#include "SizukuSpecialParticle.h"
+#include "Object/Characters/Playable/Individual/Sizuku/Special/SizukuSpecialParticle.h"
 void SizukuSpecialWind::Initialize() { emitter_ = CreateSpecialEmitter("sizukuSpecialWind"); }
 void SizukuSpecialWind::Start(const SizukuSpecialContext& c) {
 	particleTransform_ = c.transform;
@@ -14,4 +14,4 @@ void SizukuSpecialWind::Update(const SizukuSpecialContext& c, float) {
 	emitter_->Update(particleTransform_);
 	damagePosition_ = c.transform.translate;
 }
-void SizukuSpecialWind::Draw() { emitter_->Draw(); }
+void SizukuSpecialWind::Draw(Camera* camera) { emitter_->Draw(camera); }

@@ -18,7 +18,7 @@ public:
 	virtual void Initialize() = 0;
 	virtual void Start(const SizukuSpecialContext& context) = 0;
 	virtual void Update(const SizukuSpecialContext& context, float deltaTime) = 0;
-	virtual void Draw() = 0;
+	virtual void Draw(Camera* camera) = 0;
 	virtual float GetDuration() const = 0;
 	virtual Vector3 GetDamagePosition() const = 0;
 	virtual Vector3 GetDamageScale() const = 0;

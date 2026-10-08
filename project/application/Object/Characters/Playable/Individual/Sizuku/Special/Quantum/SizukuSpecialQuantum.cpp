@@ -1,5 +1,5 @@
 #include "SizukuSpecialQuantum.h"
-#include "SizukuSpecialParticle.h"
+#include "Object/Characters/Playable/Individual/Sizuku/Special/SizukuSpecialParticle.h"
 void SizukuSpecialQuantum::Initialize() {
 	main_ = CreateSpecialEmitter("sizukuSpecialQuantumMain");
 	sub_ = CreateSpecialEmitter("sizukuSpecialQuantumSub");
@@ -25,7 +25,7 @@ void SizukuSpecialQuantum::Update(const SizukuSpecialContext& c, float) {
 		emitted_ = true;
 	}
 }
-void SizukuSpecialQuantum::Draw() {
-	main_->Draw();
-	sub_->Draw();
+void SizukuSpecialQuantum::Draw(Camera* camera) {
+	main_->Draw(camera);
+	sub_->Draw(camera);
 }

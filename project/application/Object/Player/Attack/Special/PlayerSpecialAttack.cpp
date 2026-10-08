@@ -39,4 +39,4 @@ void PlayerSpecialAttack::Update() {
 }
 void PlayerSpecialAttack::SetPlayerTransform(const Transform& playerTransform) { transform_ = playerTransform; }
 
-void PlayerSpecialAttack::Draw() { useMei_ ? mei_->Draw() : sizuku_->Draw(); }
+void PlayerSpecialAttack::Draw() { useMei_ ? mei_->Draw() : sizuku_->Draw(camera_); }

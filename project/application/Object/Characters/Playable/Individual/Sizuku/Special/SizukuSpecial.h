@@ -18,7 +18,7 @@ public:
 	SizukuSpecial();
 	void Initialize();
 	void Update();
-	void Draw();
+	void Draw(Camera* camera);
 	void Start();
 	void End();
 	void SetCamera(Camera* c) { camera_ = c; }

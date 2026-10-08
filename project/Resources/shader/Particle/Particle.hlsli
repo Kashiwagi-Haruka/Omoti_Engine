@@ -15,6 +15,8 @@ struct Particle
     float currentTime;
     float4 beforeColor;
     float4 afterColor;
+    uint groupId;
+    float3 groupIdPadding;
 };
 
 struct EmitterSphere
@@ -38,6 +40,8 @@ struct EmitterSphere
     float emissionRightPadding;
     float3 emissionUp;
     float emissionUpPadding;
+    uint groupId;
+    float3 groupIdPadding;
 };
 
 struct PerFrame
@@ -51,6 +55,8 @@ struct PerView
 {
     float4x4 viewProjection;
     float4x4 billboardMatrix;
+    uint groupId;
+    float3 groupIdPadding;
 };
 
 float rand3dTo1d(float3 value, float3 dotDir)

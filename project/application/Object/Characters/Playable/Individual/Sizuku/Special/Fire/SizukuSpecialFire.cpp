@@ -1,5 +1,5 @@
 #include "SizukuSpecialFire.h"
-#include "SizukuSpecialParticle.h"
+#include "Object/Characters/Playable/Individual/Sizuku/Special/SizukuSpecialParticle.h"
 #include "Function.h"
 void SizukuSpecialFire::Initialize() {
 	mainEmitter_ = CreateSpecialEmitter("sizukuSpecialFireMain");
@@ -24,7 +24,7 @@ void SizukuSpecialFire::Update(const SizukuSpecialContext& c, float) {
 		emitted_ = true;
 	}
 }
-void SizukuSpecialFire::Draw() {
-	mainEmitter_->Draw();
-	subEmitter_->Draw();
+void SizukuSpecialFire::Draw(Camera* camera) {
+	mainEmitter_->Draw(camera);
+	subEmitter_->Draw(camera);
 }

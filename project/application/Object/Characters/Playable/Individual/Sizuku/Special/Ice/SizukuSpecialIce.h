@@ -1,7 +1,7 @@
 #pragma once
 #include "Engine/Texture/Mesh/Object3d/Object3d.h"
 #include "Engine/Texture/Mesh/Primitive/Primitive.h"
-#include "SizukuSpecialAttributeBase.h"
+#include "Object/Characters/Playable/Individual/Sizuku/Special/SizukuSpecialAttributeBase.h"
 #include <memory>
 #include <random>
 class SizukuSpecialIce final : public SizukuSpecialAttributeBase {
@@ -19,7 +19,7 @@ public:
 	void Initialize() override;
 	void Start(const SizukuSpecialContext&) override;
 	void Update(const SizukuSpecialContext&, float) override;
-	void Draw() override;
+	void Draw(Camera* camera) override;
 	float GetDuration() const override { return 8; }
 	Vector3 GetDamagePosition() const override { return damagePosition_; }
 	Vector3 GetDamageScale() const override { return damageScale_; }

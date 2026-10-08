@@ -206,7 +206,6 @@ void EnemyHitEffect::Update() {
 	Matrix4x4 c = camera_->GetWorldMatrix();
 	c.m[3][0] = c.m[3][1] = c.m[3][2] = 0;
 	Matrix4x4 world = Function::Multiply(c, Function::MakeAffineMatrix(hitTransform_.scale, hitTransform_.rotate, hitTransform_.translate));
-	ParticleManager::GetInstance()->SetCamera(camera_);
 	hitEffect_->SetCamera(camera_);
 	hitEffect_->SetWorldMatrix(world);
 	hitEffect_->Update();
@@ -239,7 +238,6 @@ void EnemyHitEffect::RefreshCameraMatrices() {
 	Matrix4x4 cameraWorldMatrix = camera_->GetWorldMatrix();
 	cameraWorldMatrix.m[3][0] = cameraWorldMatrix.m[3][1] = cameraWorldMatrix.m[3][2] = 0.0f;
 	const Matrix4x4 worldMatrix = Function::Multiply(cameraWorldMatrix, Function::MakeAffineMatrix(hitTransform_.scale, hitTransform_.rotate, hitTransform_.translate));
-	ParticleManager::GetInstance()->SetCamera(camera_);
 	hitEffect_->SetCamera(camera_);
 	hitEffect_->SetWorldMatrix(worldMatrix);
 	hitEffect_->UpdateCameraMatrices();
@@ -266,7 +264,7 @@ void EnemyHitEffect::Draw() {
 		}
 	}
 	if (hitParticleEmitter_) {
-		hitParticleEmitter_->Draw();
+		hitParticleEmitter_->Draw(camera_);
 	}
 	Object3dCommon::GetInstance()->DrawCommon(Object3dCommon::DrawCommonType::NoCullDepth);
 }

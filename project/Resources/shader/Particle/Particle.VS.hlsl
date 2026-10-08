@@ -16,6 +16,14 @@ VertexShaderOutput main(VertexShaderInput input, uint instanceId : SV_InstanceID
 
     Particle particle = gParticles[instanceId];
 
+    if (particle.groupId != gPerView.groupId)
+    {
+        output.position = float4(0.0f, 0.0f, 0.0f, 1.0f);
+        output.texcoord = input.texcoord;
+        output.color = float4(0.0f, 0.0f, 0.0f, 0.0f);
+        return output;
+    }
+
     float3 billboardRight = gPerView.billboardMatrix[0].xyz;
     float3 billboardUp = gPerView.billboardMatrix[1].xyz;
     float3 billboardForward = gPerView.billboardMatrix[2].xyz;

@@ -187,6 +187,7 @@ void Pause::Draw() {
 	if (!IsVisible()) {
 		return;
 	}
+	Object3dCommon::GetInstance()->SetFullScreenGrayscaleEnabled(false);
 	camera_->Update();
 	BG_->SetCamera(camera_.get());
 

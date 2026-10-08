@@ -181,6 +181,25 @@ void Team::DamageActiveCharacter(int amount) {
 	memberHP_[activeSlotIndex_] = std::max(0, memberHP_[activeSlotIndex_] - std::max(0, amount));
 }
 
+bool Team::HealTeamBySizukuImaginarySpecial() {
+	if (ownedCharacters_.empty() || !ownedCharacters_[0]) {
+		return false;
+	}
+
+	const Parameter& sizukuParameter = ownedCharacters_[0]->GetParameter();
+	const float healingMultiplier = 1.0f + std::max(0.0f, sizukuParameter.HealingEffect) / 100.0f;
+	const int healAmount = std::max(0, static_cast<int>(std::ceil(sizukuParameter.HP * 0.2f * healingMultiplier)));
+	bool healedAnyMember = false;
+	for (int i = 0; i < kMaxMembersCount; ++i) {
+		if (!occupiedSlots_[i] || memberHP_[i] <= 0 || memberHP_[i] >= memberHPMax_[i]) {
+			continue;
+		}
+		const int previousHP = memberHP_[i];
+		memberHP_[i] = std::min(memberHPMax_[i], memberHP_[i] + healAmount);
+		healedAnyMember |= memberHP_[i] > previousHP;
+	}
+	return healedAnyMember;
+}
 bool Team::GetIsActiveCharacterAlive() const { return GetActiveCharacterHP() > 0; }
 
 bool Team::GetIsMemberAlive(int slotIndex) const { return GetMemberHP(slotIndex) > 0; }

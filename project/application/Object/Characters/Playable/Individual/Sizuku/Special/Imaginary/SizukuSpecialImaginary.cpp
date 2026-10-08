@@ -1,6 +1,6 @@
 #include "SizukuSpecialImaginary.h"
 #include "Object3d/Object3dCommon.h"
-#include "SizukuSpecialParticle.h"
+#include "Object/Characters/Playable/Individual/Sizuku/Special/SizukuSpecialParticle.h"
 #include <numbers>
 void SizukuSpecialImaginary::Initialize() {
 	field_ = std::make_unique<Primitive>();
@@ -34,12 +34,14 @@ void SizukuSpecialImaginary::Update(const SizukuSpecialContext& c, float) {
 		emitted_ = true;
 	}
 }
-void SizukuSpecialImaginary::Draw() {
+void SizukuSpecialImaginary::Draw(Camera* camera) {
+	field_->SetCamera(camera);
+	field_->UpdateCameraMatrices();
 	auto* common = Object3dCommon::GetInstance();
 	common->DrawCommon(Object3dCommon::DrawCommonType::NoCullDepth);
 	common->SetBlendMode(BlendMode::kBlendModeAdd);
 	field_->Draw();
 	common->SetBlendMode(BlendMode::kBlendModeAlpha);
 	common->DrawCommon();
-	emitter_->Draw();
+	emitter_->Draw(camera);
 }

@@ -329,7 +329,7 @@ void SizukuSkill::Draw() {
 
 	if (state == State::damage) {
 		if (skillEmitter_) {
-			/*skillEmitter_->Draw();*/
+			/*skillEmitter_->Draw(camera_);*/
 		}
 	}
 	Object3dCommon::GetInstance()->DrawCommon();

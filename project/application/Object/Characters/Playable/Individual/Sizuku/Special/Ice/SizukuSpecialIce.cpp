@@ -81,7 +81,17 @@ void SizukuSpecialIce::Update(const SizukuSpecialContext& c, float dt) {
 			rains_[i]->Update();
 		}
 }
-void SizukuSpecialIce::Draw() {
+void SizukuSpecialIce::Draw(Camera* camera) {
+	field_->SetCamera(camera);
+	field_->UpdateCameraMatrices();
+	dome_->SetCamera(camera);
+	dome_->UpdateCameraMatrices();
+	flower_->SetCamera(camera);
+	flower_->UpdateCameraMatrices();
+	for (auto& r : rains_) {
+		r->SetCamera(camera);
+		r->UpdateCameraMatrices();
+	}
 	auto* c = Object3dCommon::GetInstance();
 	c->DrawCommon(Object3dCommon::DrawCommonType::NoCullDepth);
 	c->SetBlendMode(BlendMode::kBlendModeAdd);

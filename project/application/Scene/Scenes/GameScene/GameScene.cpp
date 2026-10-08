@@ -12,6 +12,7 @@
 #include "Object3d/Object3dCommon.h"
 #include "OpenWorld/OpenWorld.h"
 #include "ParticleManager.h"
+#include "Object/Heal/Heal.h"
 #include "PlayCommand/PlayCommand.h"
 #include "Rasen/Rasen.h"
 #include "SceneManager.h"
@@ -103,7 +104,7 @@ GameScene::GameScene() {
 	rasen_ = std::make_unique<Rasen>();
 	openWorld_ = std::make_unique<OpenWorld>();
 	specialGaugeBallManager_ = std::make_unique<SpecialGaugeBallManager>();
-
+	heal_ = std::make_unique<Heal>();
 	field = std::make_unique<Field>();
 	sceneTransition = std::make_unique<SceneTransition>();
 	uimanager = std::make_unique<UIManager>();
@@ -135,6 +136,8 @@ void GameScene::Initialize() {
 	skyDome->Initialize(cameraController->GetCamera());
 	player->Initialize(cameraController->GetCamera());
 	specialGaugeBallManager_->Initialize(cameraController->GetCamera());
+	heal_->Initialize();
+	wasSizukuImaginarySpecialAttacking_ = false;
 
 	field->Initialize(cameraController->GetCamera());
 	sceneTransition->Initialize(false);
@@ -342,7 +345,7 @@ void GameScene::Update() {
 	player->SetCamera(cameraController->GetCamera());
 	field->SetCamera(cameraController->GetCamera());
 
-		ParticleManager::GetInstance()->Update(cameraController->GetCamera());
+		ParticleManager::GetInstance()->Update();
 	skyDome->Update();
 	field->Update();
 	if (playAreaMode_ == PlayAreaMode::kSpiral && PlayCommand::GetNORMAL_ATTACK_TRIGGER() && !cameraController->IsLockOnCameraActive()) {
@@ -356,6 +359,12 @@ void GameScene::Update() {
 		}
 	}
 	player->Update();
+	const bool isSizukuImaginarySpecialAttacking = player->IsSizuku() && player->GetCurrentAttribute() == Attribute::Imaginary && player->GetIsSpecialAttack();
+	if (isSizukuImaginarySpecialAttacking && !wasSizukuImaginarySpecialAttacking_ && team_->HealTeamBySizukuImaginarySpecial()) {
+		heal_->Start();
+	}
+	wasSizukuImaginarySpecialAttacking_ = isSizukuImaginarySpecialAttacking;
+	heal_->Update(player->GetPosition(), deltaTime);
 	if (playAreaMode_ == PlayAreaMode::kSpiral && player->GetIsAlive()) {
 		for (auto& ball : specialGaugeBallManager_->SpecialGaugeBalls()) {
 			if (ball) {
@@ -559,13 +568,14 @@ void GameScene::Draw() {
 	if (remoteCamera_ && remoteCamera_->BeginRender()) {
 		DrawRemoteCameraScene(remoteCamera_->GetCamera());
 		remoteCamera_->EndRender();
-		player->SetCamera(cameraController->GetCamera());
+		Camera* mainCamera = cameraController->GetCamera();
+		player->SetCamera(mainCamera);
 		if (playAreaMode_ == PlayAreaMode::kSpiral) {
-			rasen_->SetCamera(cameraController->GetCamera());
+			rasen_->SetCamera(mainCamera);
 		}
-		skyDome->SetCamera(cameraController->GetCamera());
+		skyDome->SetCamera(mainCamera);
 		skyDome->Update();
-		field->SetCamera(cameraController->GetCamera());
+		field->SetCamera(mainCamera);
 		field->Update();
 	}
 	Object3dCommon::GetInstance()->DrawCommon();
@@ -574,6 +584,7 @@ void GameScene::Draw() {
 	field->Draw();
 
 	player->Draw();
+	heal_->Draw(cameraController->GetCamera());
 	EditorManager::GetInstance()->DrawEditorGridLines();
 	if (playAreaMode_ == PlayAreaMode::kSpiral) {
 		rasen_->Draw(boss_.get());

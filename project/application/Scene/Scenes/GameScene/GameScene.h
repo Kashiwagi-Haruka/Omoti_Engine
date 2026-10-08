@@ -26,6 +26,7 @@ class Boss;
 class Enemy;
 class Camera;
 class SpecialGaugeBallManager;
+class Heal;
 
 class GameScene : public BaseScene {
 
@@ -61,6 +62,8 @@ private:
 	std::unique_ptr<OpenWorld> openWorld_;
 	std::unique_ptr<SpecialGaugeBallManager> specialGaugeBallManager_;
 	PlayAreaMode playAreaMode_ = PlayAreaMode::kSpiral;
+	std::unique_ptr<Heal> heal_;
+	bool wasSizukuImaginarySpecialAttacking_ = false;
 
 	LightManager lightManager_;
 
