@@ -208,6 +208,19 @@ void GameScene::DebugImGui() {
 	if (ImGui::Begin("vinett")) {
 		ImGui::ColorEdit3("vinettcolor", &vinettColor_.x);
 		ImGui::DragFloat("vinnettstrength", &vinettStrength_, 0.1f);
+		auto* postEffects = Object3dCommon::GetInstance();
+		float grayscaleIntensity = postEffects->GetFullScreenGrayscaleIntensity();
+		if (ImGui::SliderFloat("Grayscale Intensity", &grayscaleIntensity, 0.0f, 1.0f)) {
+			postEffects->SetFullScreenGrayscaleIntensity(grayscaleIntensity);
+		}
+		bool glitchEnabled = postEffects->GetGlitchEnabled();
+		if (ImGui::Checkbox("Glitch Enabled", &glitchEnabled)) {
+			postEffects->SetGlitchEnabled(glitchEnabled);
+		}
+		float glitchIntensity = postEffects->GetGlitchIntensity();
+		if (ImGui::SliderFloat("Glitch Intensity", &glitchIntensity, 0.0f, 1.0f)) {
+			postEffects->SetGlitchIntensity(glitchIntensity);
+		}
 		const char* filterTypes[] = {"Box", "Gaussian", "Radial"};
 		if (ImGui::Combo("Fullscreen Filter", &fullscreenFilterType_, filterTypes, IM_ARRAYSIZE(filterTypes))) {
 			Object3dCommon::GetInstance()->SetFullscreenFilterType(fullscreenFilterType_);

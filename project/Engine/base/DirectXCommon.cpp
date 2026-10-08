@@ -627,6 +627,10 @@ void DirectXCommon::SceneCopyPipelineCreate() {
 	postEffectParameterMappedData_->fullscreenBinarizationEnabled = fullscreenBinarizationEnabled_ ? 1.0f : 0.0f;
 	postEffectParameterMappedData_->binarizationThreshold = binarizationThreshold_;
 	postEffectParameterMappedData_->binarizationPadding = 0.0f;
+	postEffectParameterMappedData_->fullscreenGrayscaleIntensity = std::max(fullscreenGrayscaleEnabled_ ? fullscreenGrayscaleIntensity_ : 0.0f, fullscreenGrayscaleOverlayIntensity_);
+	postEffectParameterMappedData_->glitchEnabled = glitchEnabled_ ? 1.0f : 0.0f;
+	postEffectParameterMappedData_->glitchIntensity = glitchIntensity_;
+	postEffectParameterMappedData_->glitchTime = randomNoiseTime_;
 }
 void DirectXCommon::DepthStencilViewInitialize() {
 
@@ -825,11 +829,19 @@ void DirectXCommon::SetSelectiveBloomRadius(float radius) {
 		postEffectParameterMappedData_->selectiveBloomRadius = selectiveBloomRadius_;
 	}
 }
+void DirectXCommon::SetFullscreenGrayscaleIntensity(float intensity) { fullscreenGrayscaleIntensity_ = std::clamp(intensity, 0.0f, 1.0f); }
+void DirectXCommon::SetFullscreenGrayscaleOverlayIntensity(float intensity) { fullscreenGrayscaleOverlayIntensity_ = std::clamp(intensity, 0.0f, 1.0f); }
+void DirectXCommon::SetGlitchEnabled(bool enabled) { glitchEnabled_ = enabled; }
+void DirectXCommon::SetGlitchIntensity(float intensity) { glitchIntensity_ = std::clamp(intensity, 0.0f, 1.0f); }
 void DirectXCommon::PreDraw() {
 	sceneCopiedToBackBufferThisFrame_ = false;
 	randomNoiseTime_ += deltaTime_;
 	if (postEffectParameterMappedData_) {
 		postEffectParameterMappedData_->randomNoiseTime = randomNoiseTime_;
+		postEffectParameterMappedData_->fullscreenGrayscaleIntensity = std::max(fullscreenGrayscaleEnabled_ ? fullscreenGrayscaleIntensity_ : 0.0f, fullscreenGrayscaleOverlayIntensity_);
+		postEffectParameterMappedData_->glitchEnabled = glitchEnabled_ ? 1.0f : 0.0f;
+		postEffectParameterMappedData_->glitchIntensity = glitchIntensity_;
+		postEffectParameterMappedData_->glitchTime = randomNoiseTime_;
 		postEffectParameterMappedData_->fullscreenGrayscaleEnabled = fullscreenGrayscaleEnabled_ ? 1.0f : 0.0f;
 		postEffectParameterMappedData_->fullscreenSepiaEnabled = fullscreenSepiaEnabled_ ? 1.0f : 0.0f;
 		postEffectParameterMappedData_->dissolveEnabled = dissolveEnabled_ ? 1.0f : 0.0f;

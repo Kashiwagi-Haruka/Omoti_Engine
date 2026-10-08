@@ -30,6 +30,9 @@ void SizukuSpecial::Initialize() {
 	animationTime_ = 0;
 }
 void SizukuSpecial::Start() {
+	if (isStarted_) {
+		End();
+	}
 	isStarted_ = true;
 	isEnd_ = false;
 	elapsedTime_ = animationTime_ = 0;
@@ -69,6 +72,9 @@ void SizukuSpecial::Update() {
 		End();
 }
 void SizukuSpecial::End() {
+	if (isStarted_ && activeSpecial_) {
+		activeSpecial_->End();
+	}
 	isStarted_ = false;
 	isEnd_ = true;
 }

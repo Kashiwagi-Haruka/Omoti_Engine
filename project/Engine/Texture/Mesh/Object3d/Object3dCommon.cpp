@@ -710,6 +710,14 @@ Microsoft::WRL::ComPtr<ID3D12Resource> Object3dCommon::CreateBufferResource(size
 
 	return bufferResource;
 }
+void Object3dCommon::SetFullScreenGrayscaleIntensity(float intensity) { dxCommon_->SetFullscreenGrayscaleIntensity(intensity); }
+float Object3dCommon::GetFullScreenGrayscaleIntensity() const { return dxCommon_->GetFullscreenGrayscaleIntensity(); }
+void Object3dCommon::SetFullScreenGrayscaleOverlayIntensity(float intensity) { dxCommon_->SetFullscreenGrayscaleOverlayIntensity(intensity); }
+void Object3dCommon::SetGlitchEnabled(bool enabled) { dxCommon_->SetGlitchEnabled(enabled); }
+bool Object3dCommon::GetGlitchEnabled() const { return dxCommon_->GetGlitchEnabled(); }
+void Object3dCommon::SetGlitchIntensity(float intensity) { dxCommon_->SetGlitchIntensity(intensity); }
+float Object3dCommon::GetGlitchIntensity() const { return dxCommon_->GetGlitchIntensity(); }
+
 void Object3dCommon::SetFullScreenGrayscaleEnabled(bool enable) {
 	fullScreenGrayscaleEnabled_ = enable;
 	if (dxCommon_) {

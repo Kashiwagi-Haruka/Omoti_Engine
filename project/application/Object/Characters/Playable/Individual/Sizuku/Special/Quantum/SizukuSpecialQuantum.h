@@ -7,9 +7,14 @@ class SizukuSpecialQuantum final : public SizukuSpecialAttributeBase {
 	Transform origin_{};
 	Vector3 damagePosition_{}, damageScale_{};
 	bool emitted_ = false;
+	bool postEffectsActive_ = false;
+	bool previousGlitchEnabled_ = false;
+	float previousGlitchIntensity_ = 0.0f;
 
 public:
+	~SizukuSpecialQuantum() override;
 	void Initialize() override;
+	void End() override;
 	void Start(const SizukuSpecialContext&) override;
 	void Update(const SizukuSpecialContext&, float) override;
 	void Draw(Camera* camera) override;

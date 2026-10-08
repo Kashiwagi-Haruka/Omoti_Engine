@@ -348,6 +348,13 @@ public:
 
 	// 全画面グレースケールの有効化切り替え
 	void SetFullScreenGrayscaleEnabled(bool enable);
+	void SetFullScreenGrayscaleIntensity(float intensity);
+	float GetFullScreenGrayscaleIntensity() const;
+	void SetFullScreenGrayscaleOverlayIntensity(float intensity);
+	void SetGlitchEnabled(bool enabled);
+	bool GetGlitchEnabled() const;
+	void SetGlitchIntensity(float intensity);
+	float GetGlitchIntensity() const;	
 	// 全画面グレースケール状態取得
 	bool IsFullScreenGrayscaleEnabled() const { return fullScreenGrayscaleEnabled_; }
 	// 全画面セピアの有効化切り替え

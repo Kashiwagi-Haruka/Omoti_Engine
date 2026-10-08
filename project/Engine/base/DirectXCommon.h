@@ -100,6 +100,10 @@ class DirectXCommon {
 		float fullscreenBinarizationEnabled;
 		float binarizationThreshold;
 		float binarizationPadding;
+		float fullscreenGrayscaleIntensity;
+		float glitchEnabled;
+		float glitchIntensity;
+		float glitchTime;
 	};
 	PostEffectParameters* postEffectParameterMappedData_ = nullptr;
 	float vignetteStrength_ = 0.0f;
@@ -120,6 +124,10 @@ class DirectXCommon {
 	bool chromaticAberrationEnabled_ = false;
 	float chromaticAberrationIntensity_ = 0.0f;
 	bool fullscreenGrayscaleEnabled_ = false;
+	float fullscreenGrayscaleIntensity_ = 1.0f;
+	float fullscreenGrayscaleOverlayIntensity_ = 0.0f;
+	bool glitchEnabled_ = false;
+	float glitchIntensity_ = 0.0f;
 	bool fullscreenSepiaEnabled_ = false;
 	bool selectiveBloomEnabled_ = true;
 	float selectiveBloomIntensity_ = 1.5f;
@@ -207,6 +215,14 @@ public:
 	float GetDissolveEdgeWidth() const { return dissolveEdgeWidth_; }
 	void SetFullscreenGrayscaleEnabled(bool enabled) { fullscreenGrayscaleEnabled_ = enabled; }
 	bool IsFullscreenGrayscaleEnabled() const { return fullscreenGrayscaleEnabled_; }
+	void SetFullscreenGrayscaleIntensity(float intensity);
+	float GetFullscreenGrayscaleIntensity() const { return fullscreenGrayscaleIntensity_; }
+	void SetFullscreenGrayscaleOverlayIntensity(float intensity);
+	void SetGlitchEnabled(bool enabled);
+	bool GetGlitchEnabled() const { return glitchEnabled_; }
+	void SetGlitchIntensity(float intensity);
+	float GetGlitchIntensity() const { return glitchIntensity_; }
+
 	void SetFullscreenSepiaEnabled(bool enabled) { fullscreenSepiaEnabled_ = enabled; }
 	bool IsFullscreenSepiaEnabled() const { return fullscreenSepiaEnabled_; }
 	void SetFullscreenBinarizationEnabled(bool enabled);

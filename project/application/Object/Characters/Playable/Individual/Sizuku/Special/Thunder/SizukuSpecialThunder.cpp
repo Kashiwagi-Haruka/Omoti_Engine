@@ -84,8 +84,8 @@ void SizukuSpecialThunder::Draw(Camera* camera) {
 	field_->Draw();
 	common->DrawCommon(Object3dCommon::DrawCommonType::NoCullDepth);
 	particleEmitter_->Draw(camera);
-	common->SetBlendMode(BlendMode::kBlendModeAlpha);
 	common->DrawCommon();
 	projectile_->Draw();
+	common->SetBlendMode(BlendMode::kBlendModeAlpha);
 	
 }

@@ -35,4 +35,8 @@ cbuffer PostEffectParameters : register(b0)
     float fullscreenBinarizationEnabled;
     float binarizationThreshold;
     float binarizationPadding;
+    float fullscreenGrayscaleIntensity;
+    float glitchEnabled;
+    float glitchIntensity;
+    float glitchTime;
 };
