@@ -1,6 +1,6 @@
 #pragma once
 #include "SizukuSkillAttributeBase.h"
-
+class SizukuSkill;
 // シズクの虚数属性スキルを担当するクラス。
 class SizukuSkillImaginary final : public SizukuSkillAttributeBase {
 public:

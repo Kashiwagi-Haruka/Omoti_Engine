@@ -16,12 +16,7 @@ class SizukuSkillImaginary;
 class SizukuSkillQuantum;
 
 class SizukuSkill {
-	friend class SizukuSkillFire;
-	friend class SizukuSkillIce;
-	friend class SizukuSkillWind;
-	friend class SizukuSkillThunder;
-	friend class SizukuSkillImaginary;
-	friend class SizukuSkillQuantum;
+
 
 private:
 	std::unique_ptr<Object3d> debugBox_;
@@ -67,8 +62,7 @@ private:
 	SizukuSkillAttributeBase* activeSkill_ = nullptr;
 
 	void EnsureIceFlowerCount(int count);
-	void StartAttributeSkill(const Transform& playerTransform, const Vector4& primaryColor, const Vector4& secondaryColor);
-	void UpdateAttributeSkill();
+
 
 	enum State {
 		up,
@@ -98,4 +92,6 @@ public:
 	Vector3 GetDamageScale() const { return damageTransform2_.scale; }
 	const std::vector<Transform>& GetSpecialIceFlowerTransforms() const { return iceFlowerTransforms_; }
 	int GetSkillDamageId() const { return skillDamageId_; }
+	void StartAttributeSkill(const Transform& playerTransform, const Vector4& primaryColor, const Vector4& secondaryColor);
+	void UpdateAttributeSkill();
 };

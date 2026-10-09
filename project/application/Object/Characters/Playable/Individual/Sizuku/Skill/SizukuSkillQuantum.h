@@ -1,6 +1,6 @@
 #pragma once
 #include "SizukuSkillAttributeBase.h"
-
+class SizukuSkill;
 // シズクの量子属性スキルを担当するクラス。
 class SizukuSkillQuantum final : public SizukuSkillAttributeBase {
 public:
