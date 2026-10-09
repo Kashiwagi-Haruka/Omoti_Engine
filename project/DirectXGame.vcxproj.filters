@@ -570,6 +570,8 @@
     <ClCompile Include="application\UI\DangerUI\DangerUI.cpp" />
     <ClCompile Include="application\Object\Heal\Heal.cpp" />
     <ClCompile Include="application\Scene\Scenes\StageSelectScene\StageSelectScene.cpp" />
+    <ClCompile Include="application\Object\Characters\Playable\Individual\Sizuku\Special\Thunder\SizukuSpecialThunderHitEffect.cpp" />
+    <ClCompile Include="application\Object\StageSelect\Gate\StageSelectGate.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Engine\Camera\Camera.h">
@@ -1134,6 +1136,8 @@
     <ClInclude Include="application\Object\Characters\Playable\Individual\Sizuku\Special\SIzukuSpecialParticle.h" />
     <ClInclude Include="application\Object\Heal\Heal.h" />
     <ClInclude Include="application\Scene\Scenes\StageSelectScene\StageSelectScene.h" />
+    <ClInclude Include="application\Object\Characters\Playable\Individual\Sizuku\Special\Thunder\SizukuSpecialThunderHitEffect.h" />
+    <ClInclude Include="application\Object\StageSelect\Gate\StageSelectGate.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include=".editorconfig" />

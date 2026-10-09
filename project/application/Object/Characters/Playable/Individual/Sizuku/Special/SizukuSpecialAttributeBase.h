@@ -17,6 +17,7 @@ public:
 	virtual ~SizukuSpecialAttributeBase() = default;
 	virtual void Initialize() = 0;
 	virtual void Start(const SizukuSpecialContext& context) = 0;
+	virtual void End() {}
 	virtual void Update(const SizukuSpecialContext& context, float deltaTime) = 0;
 	virtual void Draw(Camera* camera) = 0;
 	virtual float GetDuration() const = 0;

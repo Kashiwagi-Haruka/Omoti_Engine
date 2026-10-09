@@ -1,22 +1,22 @@
 #pragma once
 #include "BaseScene.h"
-#include "Sprite.h"
+#include "Object3d/Object3d.h"
 #include <memory>
 
 class StageSelectScene : public BaseScene {
 
 	enum class StageNames {
-		Back,
-		TutorialStage,
-		Stage1,
+		NONE,
+		BACK,
+		TUTORIAL_STAGE,
+		STAGE1,
 	};
 
-	std::unique_ptr<Sprite> backgroundSP_;
-	std::unique_ptr<Sprite> tutorialStageSP_;
-	std::unique_ptr<Sprite> stage1SP_;
+	std::unique_ptr<Object3d> tutorialStageGate_;
+	std::unique_ptr<Object3d> stage1Gate_;
 
 
-	StageSelectScene::StageNames selectedStage_ = StageSelectScene::StageNames::TutorialStage;
+	StageSelectScene::StageNames selectedStage_ = StageSelectScene::StageNames::NONE;
 
 
 	public:

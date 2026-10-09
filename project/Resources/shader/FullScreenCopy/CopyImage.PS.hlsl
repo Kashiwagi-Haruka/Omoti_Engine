@@ -19,13 +19,14 @@ float rand2dTo1d(float2 value)
 }
 float3 ApplyGrayscale(float3 color)
 {
-    if (fullscreenGrayscaleEnabled < 0.5f)
+    if (fullscreenGrayscaleIntensity <= 0.0f)
     {
         return color;
     }
     float y = dot(color, float3(0.2125f, 0.7154f, 0.0721f));
-    return float3(y, y, y);
+    return lerp(color, float3(y, y, y), saturate(fullscreenGrayscaleIntensity));
 }
+
 
 float3 ApplySepia(float3 color)
 {
@@ -108,6 +109,15 @@ float3 BlurEmission(float2 texcoord, float2 texelSize, float radius, float sigma
 PixelShaderOutput main(VertexShaderOutput input)
 {
     PixelShaderOutput output;
+    float glitchAmount = glitchEnabled > 0.5f ? saturate(glitchIntensity) : 0.0f;
+    float glitchFrame = floor(glitchTime * 30.0f);
+    float band = floor(input.texcoord.y * 48.0f);
+    float bandNoise = rand2dTo1d(float2(band, glitchFrame));
+    float activeBand = step(1.0f - glitchAmount * 0.65f, bandNoise);
+    float horizontalShift = (rand2dTo1d(float2(glitchFrame, band + 71.0f)) * 2.0f - 1.0f)
+        * 0.08f * glitchAmount * activeBand;
+    input.texcoord = saturate(input.texcoord + float2(horizontalShift, 0.0f));
+   
     output.color = gTexture.Sample(gSampler, input.texcoord);
 
     if (fullscreenFilterType > 1.5f)
@@ -164,6 +174,15 @@ PixelShaderOutput main(VertexShaderOutput input)
         output.color.r = gTexture.Sample(gSampler, saturate(input.texcoord + offset)).r;
         output.color.b = gTexture.Sample(gSampler, saturate(input.texcoord - offset)).b;
     }
+    if (glitchAmount > 0.0f)
+    {
+        float2 rgbOffset = float2(0.012f * glitchAmount * (0.25f + activeBand), 0.0f);
+        float3 splitColor = float3(
+            gTexture.Sample(gSampler, saturate(input.texcoord + rgbOffset)).r,
+            output.color.g,
+            gTexture.Sample(gSampler, saturate(input.texcoord - rgbOffset)).b);
+        output.color.rgb = lerp(output.color.rgb, splitColor, glitchAmount);
+    }
     if (dissolveEnabled > 0.5f)
     {
         float mask = gMaskTexture.Sample(gSampler, input.texcoord).r;
@@ -210,7 +229,7 @@ PixelShaderOutput main(VertexShaderOutput input)
 
         output.color.rgb = saturate(output.color.rgb);
     }
-    output.color.rgb = ApplyGrayscale(output.color.rgb);
+    
     output.color.rgb = ApplySepia(output.color.rgb);
     
     if (selectiveBloomEnabled > 0.5f && selectiveBloomIntensity > 0.0f)
@@ -230,7 +249,7 @@ PixelShaderOutput main(VertexShaderOutput input)
     float4 outlineColor = gOutlineTexture.Sample(gSampler, input.texcoord);
     output.color.rgb = lerp(output.color.rgb, outlineColor.rgb, saturate(outlineColor.a));
     
-    
+    output.color.rgb = ApplyGrayscale(output.color.rgb);
     output.color.rgb = ApplyBinarization(output.color.rgb);
 
     return output;
