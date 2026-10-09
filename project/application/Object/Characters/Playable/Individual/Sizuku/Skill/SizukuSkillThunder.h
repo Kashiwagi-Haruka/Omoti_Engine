@@ -1,6 +1,6 @@
 #pragma once
 #include "SizukuSkillAttributeBase.h"
-
+class SizukuSkill;
 // シズクの雷属性スキルを担当するクラス。
 class SizukuSkillThunder final : public SizukuSkillAttributeBase {
 public:
