@@ -208,7 +208,7 @@ void GameScene::DebugImGui() {
 	if (ImGui::Begin("vinett")) {
 		ImGui::ColorEdit3("vinettcolor", &vinettColor_.x);
 		ImGui::DragFloat("vinnettstrength", &vinettStrength_, 0.1f);
-		auto* postEffects = Object3dCommon::GetInstance();
+				auto* postEffects = Object3dCommon::GetInstance();
 		float grayscaleIntensity = postEffects->GetFullScreenGrayscaleIntensity();
 		if (ImGui::SliderFloat("Grayscale Intensity", &grayscaleIntensity, 0.0f, 1.0f)) {
 			postEffects->SetFullScreenGrayscaleIntensity(grayscaleIntensity);
@@ -529,7 +529,7 @@ void GameScene::Update() {
 	Transform cameraPlayerTransform = {player->GetScale(), player->GetRotate(), player->GetPosition()};
 	cameraController->SetPlayerTransform(cameraPlayerTransform);
 	cameraController->SetSizukuSpecialCameraActive(player->IsSizuku() && player->GetIsSpecialAttack(), player->GetCurrentAttribute());
-	if (playAreaMode_ == PlayAreaMode::kSpiral && rasen_ && rasen_->GetHouse() && Input::GetInstance()->TriggerLeftTrigger()) {
+	if (playAreaMode_ == PlayAreaMode::kSpiral && rasen_ && rasen_->GetHouse() && Input::GetInstance()->TriggerButton(Input::PadButton::kButtonDown)) {
 		cameraController->LookAtFromPlayerPosition(rasen_->GetHouse()->GetPosition());
 	}
 	cameraController->Update();

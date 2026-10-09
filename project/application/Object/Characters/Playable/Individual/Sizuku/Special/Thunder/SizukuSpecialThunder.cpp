@@ -50,7 +50,8 @@ void SizukuSpecialThunder::Update(const SizukuSpecialContext& c, float dt) {
 	float p = std::clamp(c.elapsedTime / kCharge, 0.f, 1.f);
 	fieldTransform_.scale = {10 * p, 10 * p, 1};
 	fieldTransform_.translate = c.transform.translate + f * 2;
-	projectileTransform_.rotate.y = c.transform.rotate.y + std::numbers::pi_v<float> / 2.0f;
+	fieldTransform_.rotate.y = c.transform.rotate.y;
+	projectileTransform_.rotate.y = c.transform.rotate.y;
 
 	field_->SetCamera(c.camera);
 	field_->SetTransform(fieldTransform_);

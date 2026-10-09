@@ -1,34 +1,31 @@
 #include "StageSelectScene.h"
 #include "TextureManager.h"
-#include "SpriteCommon.h"
+#include "Model/ModelManager.h"
 
 StageSelectScene::StageSelectScene() { 
-	backgroundSP_ = std::make_unique<Sprite>();
-	tutorialStageSP_ = std::make_unique<Sprite>();
-	stage1SP_ = std::make_unique<Sprite>();
+	tutorialStageGate_ = std::make_unique<Object3d>();
+	stage1Gate_ = std::make_unique<Object3d>();
 }
 
 void StageSelectScene::Finalize(){};
 
 void StageSelectScene::Initialize() {
-	uint32_t handle = TextureManager::GetInstance()->GetTextureIndexByfilePath("Resources/2d/StageSelect/background.png");
-	backgroundSP_->Initialize(handle);
-	handle = TextureManager::GetInstance()->GetTextureIndexByfilePath("Resources/2d/StageSelect/tutorialStage.png");
-	tutorialStageSP_->Initialize(handle);
-	handle = TextureManager::GetInstance()->GetTextureIndexByfilePath("Resources/2d/StageSelect/stage1.png");
-	stage1SP_->Initialize(handle);
-	selectedStage_ = StageSelectScene::StageNames::TutorialStage;
+
+	ModelManager::GetInstance()->LoadModel("Resources/3d/Rasen/Select/gate", "gate");
+
+	tutorialStageGate_->SetModel("gate");
+	tutorialStageGate_->Initialize();
+
+	stage1Gate_->SetModel("gate");
+	stage1Gate_->Initialize();
+
+	selectedStage_ = StageSelectScene::StageNames::NONE;
 }
 
 void StageSelectScene::Update() { 
-	backgroundSP_->Update();
-	tutorialStageSP_->Update();
-	stage1SP_->Update();
+
 }
 
 void StageSelectScene::Draw() { 
-	SpriteCommon::GetInstance()->DrawCommon();
-	backgroundSP_->Draw(); 
-	tutorialStageSP_->Draw();
-	stage1SP_->Draw();
+
 }
