@@ -15,9 +15,7 @@
 
 Player::Player() {
 
-	ModelManager::GetInstance()->LoadModel("Resources/3d","FallingEffect");
-	ModelManager::GetInstance()->LoadModel("Resources/3d","playerSkillUp");
-	ModelManager::GetInstance()->LoadModel("Resources/3d","playerSkillUnder");
+
 	models_ = std::make_unique<PlayerModels>();
 	
 }

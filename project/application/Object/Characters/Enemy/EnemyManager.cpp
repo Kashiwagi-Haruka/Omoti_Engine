@@ -98,8 +98,7 @@ void EnemyManager::Initialize(Camera* camera) {
 	waveDelay_ = 3.0f; // ウェーブ間の待機時間（秒）
 	totalEnemiesKilled_ = 0;
 	allWavesComplete_ = false;
-	ModelManager::GetInstance()->LoadModel("Resources/3d", "EnemyStun");
-	ModelManager::GetInstance()->LoadModel("Resources/3d", "EnemyAttack"); // 鎌モデル
+
 	// 最初のウェーブを開始
 	StartNextWave();
 }

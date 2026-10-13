@@ -170,7 +170,6 @@ copy "$(WindowsSdkDir)\bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)\
     <ClCompile Include="application\Object\Characters\Playable\Base\Equipment.h" />
     <ClCompile Include="application\Menu\CharacterDisplay\CharacterDisplay.cpp" />
     <ClCompile Include="application\Menu\CharacterDisplay\Background\CharacterDisplaySkyDome.cpp" />
-    <ClCompile Include="application\Object\Characters\Model\CharacterModel.cpp" />
     <ClCompile Include="application\Object\Characters\Playable\Individual\Sizuku\Sizuku.cpp" />
     <ClCompile Include="application\Object\Characters\Enemy\Enemy.cpp" />
     <ClCompile Include="application\Object\Characters\Enemy\EnemyAttack.cpp" />
@@ -401,7 +400,6 @@ copy "$(WindowsSdkDir)\bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)\
     <ClInclude Include="application\Object\Characters\Base\CharacterParameters.h" />
     <ClInclude Include="application\Menu\CharacterDisplay\CharacterDisplay.h" />
     <ClInclude Include="application\Menu\CharacterDisplay\Background\CharacterDisplaySkyDome.h" />
-    <ClInclude Include="application\Object\Characters\Model\CharacterModel.h" />
     <ClInclude Include="application\Object\Characters\Playable\Individual\Sizuku\Sizuku.h" />
     <ClInclude Include="application\Object\Characters\Enemy\Base\BaseEnemy.h" />
     <ClInclude Include="application\Object\Characters\Enemy\Enemy.h" />

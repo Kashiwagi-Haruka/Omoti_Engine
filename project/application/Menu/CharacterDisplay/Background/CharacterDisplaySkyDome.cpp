@@ -1,7 +1,7 @@
 #include "CharacterDisplaySkyDome.h"
 #include "Model/ModelManager.h"
 void CharacterDisplaySkyDome::Initialize(Camera* camera) { 
-	ModelManager::GetInstance()->LoadModel("Resources/3d/CharacterDisplay", "CharacterDisplaySkydome");
+	
 	object_ = std::make_unique<Object3d>(); 
 	object_->Initialize();
 	object_->SetModel("CharacterDisplaySkydome");

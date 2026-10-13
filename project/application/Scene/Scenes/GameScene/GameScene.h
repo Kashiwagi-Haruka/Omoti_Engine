@@ -5,7 +5,6 @@
 #include "GameBase.h"
 #include "LightManager/LightManager.h"
 #include "Menu/MenuManager.h"
-#include "Object/Characters/Model/CharacterModel.h"
 #include "Object/Field/Field.h"
 #include "Object/RemoteCamera/RemoteCamera.h"
 #include "Object3d/Object3d.h"
@@ -52,7 +51,6 @@ private:
 	bool isTransitionOut = false;
 	std::string nextSceneName;
 
-	CharacterModel characterModel;
 	std::unique_ptr<Team> team_;
 
 	enum class PlayAreaMode { kSpiral, kOpenWorld };

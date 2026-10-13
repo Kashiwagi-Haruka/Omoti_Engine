@@ -4,7 +4,6 @@
 #include "CameraController/CameraController.h"
 #include "Input.h"
 #include "Object/Background/Sky.h"
-#include "Object/Characters/Model/CharacterModel.h"
 #include "Object/SpecialGaugeBall/SpecialGaugeBallManager.h"
 #include "Object/Field/Field.h"
 #include "Object/Player/Player.h"
@@ -23,8 +22,6 @@ namespace {
 const Vector3 kTutorialExpCubeSpawnOffset{2.5f, 0.0f, 2.5f};
 } // namespace
 void TutorialScene::Initialize() {
-	CharacterModel characterModel;
-	characterModel.LoadModel();
 	cameraController_ = std::make_unique<CameraController>();
 	skyDome_ = std::make_unique<Sky>();
 	player_ = std::make_unique<Player>();

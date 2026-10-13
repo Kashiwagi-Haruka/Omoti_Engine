@@ -21,7 +21,6 @@ SizukuSkill::SizukuSkill() {
 	state = up;
 	isSkillEnd = true;
 	isSpecialEnd_ = true;
-	ModelManager::GetInstance()->LoadModel("Resources/3d/iceFlower", "iceFlower");
 }
 void SizukuSkill::SetCamera(Camera* camera) {
 	camera_ = camera;

@@ -11,7 +11,6 @@ namespace {
 constexpr float kCharge = 0.75f;
 } // namespace
 void SizukuSpecialThunder::Initialize() {
-	ModelManager::GetInstance()->LoadModel("Resources/3d/Character/Sizuku/Special/Rain", "sizukuSpecialRain");
 	field_ = std::make_unique<Primitive>();
 	field_->Initialize(Primitive::Plane, "Resources/3d/Character/Sizuku/Special/Thunder/sizukuSpecialThunder.png");
 	field_->SetEnableLighting(false);

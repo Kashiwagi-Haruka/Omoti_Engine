@@ -5,6 +5,7 @@
 #include "Sprite/SpriteCommon.h"
 #include "TextureManager.h"
 #include "AudioManager/BGMManager/BGMManager.h"
+#include "Object/Load/GameLoad.h"
 #include <imgui.h>
 TitleScene::TitleScene() {
 	BGSP_.handle = TextureManager::GetInstance()->GetTextureIndexByfilePath("Resources/2d/title.png");
@@ -17,7 +18,6 @@ TitleScene::TitleScene() {
 	ruleSP_.sprite = std::make_unique<Sprite>();
 	ruleSP_.sprite->Initialize(ruleSP_.handle);
 	transition = std::make_unique<SceneTransition>();
-	characterModel_.LoadModel();
 }
 
 void TitleScene::Finalize() {}
@@ -65,7 +65,7 @@ void TitleScene::Update() {
 	if (PlayCommand::GetDESIDE() && !isTransitionOut) {
 		transition->Initialize(true);
 		isTransitionOut = true;
-
+		GameLoad::GetInstance()->GameSceneLoad();
 	}
 
 	if (isTransitionIn || isTransitionOut) {

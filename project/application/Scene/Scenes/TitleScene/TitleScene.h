@@ -1,7 +1,6 @@
 #pragma once
 #include "Audio.h"
 #include "BaseScene.h"
-#include "Object/Characters/Model/CharacterModel.h"
 #include "SceneTransition/SceneTransition.h"
 #include "Sprite.h"
 #include <memory>
@@ -27,8 +26,6 @@ class TitleScene : public BaseScene {
 	bool isTransitionIn = false;
 	bool isTransitionOut = false;
 	std::unique_ptr<SceneTransition> transition = nullptr;
-
-	CharacterModel characterModel_;
 
 public:
 	TitleScene();
