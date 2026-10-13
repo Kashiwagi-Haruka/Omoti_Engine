@@ -34,5 +34,7 @@ public:
 	void UnloadModel(const std::string& filePath);
 	Model* FindModel(const std::string& filePath);
 	std::unique_ptr<Model> CreateModelInstance(const std::string& filePath);
+	 public:
+    void RegisterLoadedModel(const std::string& key , const std::string& directoryPath , const std::string& filename , bool isGltf , std::unique_ptr<Model> model);
 	void Finalize();
 };

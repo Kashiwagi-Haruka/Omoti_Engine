@@ -37,6 +37,14 @@ private:
 		MaterialData material;
 		Node rootnode;
 	};
+	    struct PendingEmbeddedTexture {
+        std::string key;
+        uint32_t width = 0;
+        uint32_t height = 0;
+        std::vector<uint8_t> bytes;
+    };
+
+    std::vector<PendingEmbeddedTexture> pendingEmbeddedTextures_;
 
 	ModelData modelData_;
 
