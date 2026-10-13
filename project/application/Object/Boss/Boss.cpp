@@ -19,9 +19,7 @@ const Vector4 kDefaultColor = {1.0f, 1.0f, 1.0f, 1.0f};
 
 Boss::Boss() {
 	object_ = std::make_unique<Object3d>();
-#ifdef _DEBUG
-	ModelManager::GetInstance()->LoadModel("Resources/3d", "debugBox");
-#endif // _DEBUG
+
 }
 
 void Boss::Initialize(Camera* camera, const Vector3& position) {
@@ -44,7 +42,7 @@ void Boss::Initialize(Camera* camera, const Vector3& position) {
 	camera_ = camera;
 	object_->Initialize();
 	if (!ModelManager::GetInstance()->FindModel("WaterBoss")) {
-		ModelManager::GetInstance()->LoadGltfModel("Resources/3d", "WaterBoss");
+
 	}
 	object_->SetModel("WaterBoss");
 

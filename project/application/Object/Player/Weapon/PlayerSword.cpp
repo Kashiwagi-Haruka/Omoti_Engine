@@ -5,8 +5,7 @@
 #include "Object3d/Object3dCommon.h"
 PlayerSword::PlayerSword() {
 
-	ModelManager::GetInstance()->LoadModel("Resources/3d", "playerSword");
-	ModelManager::GetInstance()->LoadModel("Resources/3d", "debugBox");
+
 }
 
 void PlayerSword::Initialize() {

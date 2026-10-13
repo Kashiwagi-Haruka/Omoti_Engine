@@ -4,7 +4,7 @@
 #include "Object3d/Object3dCommon.h"
 #include <numbers>
 PlayerSpecialAttack::PlayerSpecialAttack() {
-	ModelManager::GetInstance()->LoadModel("Resources/3d", "iceFlower");
+	
 	sizuku_ = std::make_unique<SizukuSpecial>();
 	mei_ = std::make_unique<MeiSpecial>();
 }

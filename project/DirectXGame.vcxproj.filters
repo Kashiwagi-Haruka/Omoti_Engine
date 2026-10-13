@@ -271,9 +271,6 @@
     <ClCompile Include="application\Object\Characters\Enemy\Individual\brain\brain.cpp">
       <Filter>Application\Object\Character\Enemy</Filter>
     </ClCompile>
-    <ClCompile Include="application\Object\Characters\Model\CharacterModel.cpp">
-      <Filter>Application\Object\Character</Filter>
-    </ClCompile>
     <ClCompile Include="application\CollisionManager\CollisionManager.cpp">
       <Filter>Application\CollisionManager</Filter>
     </ClCompile>
@@ -786,9 +783,6 @@
     </ClInclude>
     <ClInclude Include="application\Object\Characters\Enemy\Individual\brain\brain.h">
       <Filter>Application\Object\Character\Enemy</Filter>
-    </ClInclude>
-    <ClInclude Include="application\Object\Characters\Model\CharacterModel.h">
-      <Filter>Application\Object\Character</Filter>
     </ClInclude>
     <ClInclude Include="application\Object\Characters\Base\CharacterParameters.h">
       <Filter>Application\Object\Character</Filter>

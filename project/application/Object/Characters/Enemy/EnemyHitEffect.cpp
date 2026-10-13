@@ -42,8 +42,7 @@ Vector3 MakeRandomUnitVector() {
 
 void EnemyHitEffect::Initialize() {
 
-	ModelManager::GetInstance()->LoadModel("Resources/3d", "HitEffect");
-	ModelManager::GetInstance()->LoadModel("Resources/3d/HitIce", "HitIce");
+
 
 	hitEffect_ = std::make_unique<Object3d>();
 	hitEffect_->Initialize();

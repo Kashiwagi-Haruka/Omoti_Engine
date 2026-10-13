@@ -96,7 +96,6 @@ bool ContainsLockOnEnemy(EnemyManager& enemyManager, Enemy* lockOnEnemy) {
 } // namespace
 
 GameScene::GameScene() {
-	characterModel.LoadModel();
 	cameraController = std::make_unique<CameraController>();
 	skyDome = std::make_unique<Sky>();
 	player = std::make_unique<Player>();

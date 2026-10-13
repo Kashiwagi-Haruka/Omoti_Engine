@@ -16,7 +16,7 @@ PlayerKey::PlayerKey() {
 	keyObj_ = std::make_unique<Object3d>();
 	keyHoleObj_ = std::make_unique<Primitive>();
 	planeCircleObj_ = std::make_unique<Primitive>();
-	ModelManager::GetInstance()->LoadModel("Resources/3d/Key", "Key");
+	
 }
 PlayerKey::~PlayerKey() = default;
 
