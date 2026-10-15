@@ -105,7 +105,16 @@ Model* ModelManager::FindModel(const std::string& filePath) {
 	}
 	return nullptr;
 }
+void ModelManager::RegisterLoadedModel(const std::string& key, const std::string& directoryPath, const std::string& filename, bool isGltf, std::unique_ptr<Model> model) {
+	std::lock_guard<std::mutex> lock(mutex_);
+	if (models.contains(key)) {
+		return;
+		
+	}
+	modelSources[key] = ModelSource{directoryPath, filename, isGltf  };
+	models.emplace(key, std::move(model));
 
+}
 void ModelManager::Finalize() {
 	{
 		std::lock_guard<std::mutex> lock(mutex_);

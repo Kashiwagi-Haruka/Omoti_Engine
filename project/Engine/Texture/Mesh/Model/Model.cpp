@@ -12,6 +12,19 @@
 #include <sstream>
 
 void Model::Initialize() {
+	auto* textures = TextureManager::GetInstance();
+	for (const auto& pending : pendingEmbeddedTextures_) {
+		if (pending.height == 0) {
+			textures->LoadTextureFromMemory(pending.key, pending.bytes.data(), pending.bytes.size());
+			
+		}
+		else {
+			textures->LoadTextureFromRGBA8(pending.key, pending.width, pending.height, +pending.bytes.data());
+			
+		}
+		
+	}
+	pendingEmbeddedTextures_.clear();
 
 	vertexResource_ = ModelCommon::GetInstance()->CreateBufferResource(sizeof(VertexData) * modelData_.vertices.size());
 	vertexBufferView_.BufferLocation = vertexResource_->GetGPUVirtualAddress();
@@ -246,6 +259,7 @@ Model::MaterialData Model::LoadMaterialTemplateFile(const std::string& directory
 	return matData;
 }
 void Model::LoadObjFileAssimp(const std::string& directoryPath, const std::string& filename) {
+	pendingEmbeddedTextures_.clear();
 	ModelData modelData;
 	std::string path = directoryPath + "/" + filename;
 
@@ -296,13 +310,16 @@ void Model::LoadObjFileAssimp(const std::string& directoryPath, const std::strin
 			if (!texturePath.empty() && texturePath[0] == '*') {
 				const aiTexture* embeddedTexture = scene->GetEmbeddedTexture(textureFilepath.C_Str());
 				if (embeddedTexture != nullptr) {
-					if (embeddedTexture->mHeight == 0) {
-						TextureManager::GetInstance()->LoadTextureFromMemory(texturePath, reinterpret_cast<const uint8_t*>(embeddedTexture->pcData), embeddedTexture->mWidth);
-					} else {
-						TextureManager::GetInstance()->LoadTextureFromRGBA8(texturePath, embeddedTexture->mWidth, embeddedTexture->mHeight, reinterpret_cast<const uint8_t*>(embeddedTexture->pcData));
-					}
-					modelData.material.textureFilePath = texturePath;
-					modelData.material.textureIndex = TextureManager::GetInstance()->GetTextureIndexByfilePath(texturePath);
+					PendingEmbeddedTexture pending;
+					// "*0" だけだと別モデルの埋め込み画像と衝突する
+					pending.key = path + "::" + texturePath;
+					pending.width = embeddedTexture->mWidth;
+					pending.height = embeddedTexture->mHeight;
+					const auto* begin = +reinterpret_cast<const uint8_t*>(embeddedTexture->pcData);
+					const size_t byteCount = +pending.height == 0 ? static_cast<size_t>(pending.width): static_cast<size_t>(pending.width) * pending.height *sizeof(aiTexel);
+					pending.bytes.assign(begin, begin + byteCount);
+					modelData.material.textureFilePath = pending.key;
+					pendingEmbeddedTextures_.push_back(std::move(pending));
 				}
 			} else if (!texturePath.empty()) {
 				modelData.material.textureFilePath = directoryPath + "/" + texturePath;
@@ -314,6 +331,7 @@ void Model::LoadObjFileAssimp(const std::string& directoryPath, const std::strin
 	modelData_ = std::move(modelData);
 }
 void Model::LoadObjFileGltf(const std::string& directoryPath, const std::string& filename) {
+	pendingEmbeddedTextures_.clear();
 	ModelData modelData;
 	std::string path = directoryPath + "/" + filename;
 
@@ -387,13 +405,16 @@ void Model::LoadObjFileGltf(const std::string& directoryPath, const std::string&
 			if (!texturePath.empty() && texturePath[0] == '*') {
 				const aiTexture* embeddedTexture = scene->GetEmbeddedTexture(textureFilepath.C_Str());
 				if (embeddedTexture != nullptr) {
-					if (embeddedTexture->mHeight == 0) {
-						TextureManager::GetInstance()->LoadTextureFromMemory(texturePath, reinterpret_cast<const uint8_t*>(embeddedTexture->pcData), embeddedTexture->mWidth);
-					} else {
-						TextureManager::GetInstance()->LoadTextureFromRGBA8(texturePath, embeddedTexture->mWidth, embeddedTexture->mHeight, reinterpret_cast<const uint8_t*>(embeddedTexture->pcData));
-					}
-					modelData.material.textureFilePath = texturePath;
-					modelData.material.textureIndex = TextureManager::GetInstance()->GetTextureIndexByfilePath(texturePath);
+					PendingEmbeddedTexture pending;
+					// "*0" だけだと別モデルの埋め込み画像と衝突する
+					pending.key = path + "::" + texturePath;
+					pending.width = embeddedTexture->mWidth;
+					pending.height = embeddedTexture->mHeight;
+					const auto* begin = +reinterpret_cast<const uint8_t*>(embeddedTexture->pcData);
+					const size_t byteCount = +pending.height == 0 ? static_cast<size_t>(pending.width) : static_cast<size_t>(pending.width) * pending.height * sizeof(aiTexel);
+					pending.bytes.assign(begin, begin + byteCount);
+					modelData.material.textureFilePath = pending.key;
+					pendingEmbeddedTextures_.push_back(std::move(pending));
 				}
 			} else if (!texturePath.empty()) {
 				modelData.material.textureFilePath = directoryPath + "/" + texturePath;

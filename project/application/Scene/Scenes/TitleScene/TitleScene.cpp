@@ -52,10 +52,14 @@ void TitleScene::Initialize() {
 	transition->Initialize(false);
 	Input::GetInstance()->SetIsCursorStability(false);
 	Input::GetInstance()->SetIsCursorVisible(true);
+
+	GameLoad::GetInstance()->InitializeLoadSprites();
 }
 
 void TitleScene::Update() {
 	BGMManager::GetInstance()->Play(BGMManager::BGMType::Title);
+	
+	GameLoad::GetInstance()->Update();
 
 	BGSP_.rotate += 0.01f;
 
@@ -73,7 +77,7 @@ void TitleScene::Update() {
 		if (transition->IsEnd() && isTransitionIn) {
 			isTransitionIn = false;
 		}
-		if (transition->IsEnd() && isTransitionOut) {
+		if (transition->IsEnd() && isTransitionOut && GameLoad::GetInstance()->IsLoadComplete()) {
 			/*SceneManager::GetInstance()->ChangeScene("Tutorial");*/
 			SceneManager::GetInstance()->ChangeScene("Game");
 		}
@@ -104,5 +108,9 @@ void TitleScene::Draw() {
 
 	if (isTransitionOut) {
 		ruleSP_.sprite->Draw();
+	}
+	if (isTransitionOut) {
+		GameLoad::GetInstance()->DrawLoadProgress();
+		
 	}
 }
