@@ -31,7 +31,7 @@
     std::future<LoadedModel> loadFuture_;
     std::vector<uint32_t> materialTextureHandles_;
 
-    std::unique_ptr<Sprite> illustration_;
+    std::unique_ptr<Sprite> loadingSpinner_;
     std::unique_ptr<Sprite> barBackground_;
     std::unique_ptr<Sprite> barFill_;
     uint32_t illustrationHandle_ = 0;
@@ -48,9 +48,10 @@
      void Finalize();
 
     void InitializeLoadSprites();
-     void GameSceneLoad();
+	void UpdateLoadSprites();
+    void GameSceneLoad();
     void Update();
-     void DrawLoadProgress();
+    void DrawLoadProgress();
 
     bool IsLoadComplete() const { return isLoadComplete_; }
     bool HasLoadError() const { return hasLoadError_; }

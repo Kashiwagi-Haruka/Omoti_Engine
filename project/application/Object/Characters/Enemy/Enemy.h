@@ -16,8 +16,8 @@ class Object3d;
 
 class Enemy {
 
-	int HP = 40;
-	int maxHP_ = 100;
+	int HP = 1000;
+	int maxHP_ = 1000;
 	BaseParameter baseParameter_{10.0f, 0.0f, 10.0f};
 	Parameter parameter_{};
 	bool isAlive = true;

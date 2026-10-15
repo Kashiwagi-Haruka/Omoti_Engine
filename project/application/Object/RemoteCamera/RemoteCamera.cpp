@@ -46,8 +46,7 @@ bool RemoteCamera::BeginRender() {
 	}
 
 	renderTexture_.BeginRender();
-	// Some drawables fall back to Object3dCommon's default camera when they do
-	// not own a camera.  Switch that fallback for the entire off-screen pass.
+
 	Object3dCommon* const object3dCommon = Object3dCommon::GetInstance();
 	previousDefaultCamera_ = object3dCommon->GetDefaultCamera();
 	object3dCommon->SetDefaultCamera(&camera_);

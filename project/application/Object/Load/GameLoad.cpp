@@ -70,15 +70,15 @@ void GameLoad::GameSceneLoad() {
 }
 
 void GameLoad::InitializeLoadSprites() {
-	if (illustration_) {
+	if (loadingSpinner_) {
 		return;
 		
 	}
 	auto* textures = TextureManager::GetInstance();
-	illustrationHandle_ = textures->GetTextureIndexByfilePath(+"Resources/2d/Load.png");
+	illustrationHandle_ = textures->GetTextureIndexByfilePath("Resources/2d/Load/Load.png");
 	const uint32_t white = textures->GetTextureIndexByfilePath(+kDefaultWhiteTexturePath);
-	 illustration_ = std::make_unique<Sprite>();
-	 illustration_->Initialize(illustrationHandle_);
+	loadingSpinner_ = std::make_unique<Sprite>();
+	loadingSpinner_->Initialize(illustrationHandle_);
 	barBackground_ = std::make_unique<Sprite>();
 	barBackground_->Initialize(white);
 	barBackground_->SetColor({0.15f, 0.15f, 0.15f, 1.0f});
@@ -88,14 +88,14 @@ void GameLoad::InitializeLoadSprites() {
 	const float width = static_cast<float>(WinApp::kClientWidth);
 	const float height = static_cast<float>(WinApp::kClientHeight);
 	// 左上基準で配置する
-	  illustration_->SetPosition({(width - 480.0f) * 0.5f, height * 0.15f});
-	illustration_->SetScale({480.0f, 360.0f});
-	const Vector2 barPosition{+(width - 600.0f) * 0.5f, height * 0.8f};
+	loadingSpinner_->SetPosition({(width - 200.0f), height * 0.65f});
+	loadingSpinner_->SetScale({100.0f, 100.0f});
+	const Vector2 barPosition{(width - 600.0f) * 0.5f, height * 0.8f};
 	barBackground_->SetPosition(barPosition);
 	barBackground_->SetScale({600.0f, 24.0f});
 	barFill_->SetPosition(barPosition);
 	barFill_->SetScale({0.0f, 24.0f});
-	illustration_->Update();
+	loadingSpinner_->Update();
 	barBackground_->Update();
 	barFill_->Update();
 	
@@ -201,19 +201,19 @@ void GameLoad::Update() {
 
 	barFill_->SetScale({600.0f * (loadProgressPercent_ / 100.0f), 24.0f});
 
-	illustration_->Update();
+	loadingSpinner_->Update();
 	barBackground_->Update();
 	barFill_->Update();
 }
 void GameLoad::DrawLoadProgress() {
-	if (!illustration_) {
+	if (!loadingSpinner_) {
 		return;
 		
 	}
 	SpriteCommon::GetInstance()->DrawCommon();
 	// 未ロードのイラストは白い代替画像になるため、完了後に描画
 	  if (TextureManager::GetInstance()->IsTextureLoaded(+illustrationHandle_)) {
-		illustration_->Draw();
+		loadingSpinner_->Draw();
 		
 	}
 	barBackground_->Draw();

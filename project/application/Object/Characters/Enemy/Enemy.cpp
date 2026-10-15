@@ -26,7 +26,7 @@ Enemy::Enemy() {
 void Enemy::Initialize(Camera* camera, Vector3 translates) {
 	isAlive = true;
 	isStun_ = false;
-	maxHP_ = 100;
+	maxHP_ = 3000;
 	HP = maxHP_;
 	stunTime = 0;
 	attackTimer_ = 0.0f;
