@@ -40,6 +40,8 @@ public:
 
 	bool ProcessMessage();
 
+	void OpenHttps(const std::wstring& url);
+
 	float GetDeltaTime();
 	ID3D12Device* GetD3D12Device();
 	bool SaveCurrentFrameScreenShot(const std::string& filePath);

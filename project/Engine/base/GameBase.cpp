@@ -14,12 +14,16 @@
 #include <DbgHelp.h>
 #include <dxgidebug.h>
 #include <strsafe.h>
+#include <shellapi.h>
 
 #pragma comment(lib, "d3d12.lib")
 #pragma comment(lib, "dxgi.lib")
 #pragma comment(lib, "Dbghelp.lib")
 #pragma comment(lib, "dxguid.lib")
 #pragma comment(lib, "dxcompiler.lib")
+#pragma comment(lib, "Shell32.lib")
+
+
 
 std::unique_ptr<GameBase> GameBase::instance = nullptr;
 
@@ -131,7 +135,7 @@ void GameBase::EndFlame() {
 	dxCommon_->PostDraw();
 	FreeTypeManager::ResetFontUsage();
 }
-
+void GameBase::OpenHttps(const std::wstring& url) { ShellExecuteW(nullptr, L"open", url.c_str(), nullptr, nullptr, SW_SHOWNORMAL); }
 float GameBase::GetDeltaTime() { return dxCommon_->GetDeltaTime(); }
 ID3D12Device* GameBase::GetD3D12Device() {
 	if (!dxCommon_) {
