@@ -1,4 +1,5 @@
 #include "TitleScene.h"
+#include "GameBase.h"
 #include "PlayCommand/PlayCommand.h"
 #include "Input.h"
 #include "SceneManager.h"
@@ -17,6 +18,9 @@ TitleScene::TitleScene() {
 	ruleSP_.handle = TextureManager::GetInstance()->GetTextureIndexByfilePath("Resources/2d/rule.png");
 	ruleSP_.sprite = std::make_unique<Sprite>();
 	ruleSP_.sprite->Initialize(ruleSP_.handle);
+	OfficialWebsiteSP_.handle = TextureManager::GetInstance()->GetTextureIndexByfilePath("Resources/2d/Title/OfficialWebsite.png");
+	OfficialWebsiteSP_.sprite = std::make_unique<Sprite>();
+	OfficialWebsiteSP_.sprite->Initialize(OfficialWebsiteSP_.handle);
 	transition = std::make_unique<SceneTransition>();
 }
 
@@ -38,6 +42,10 @@ void TitleScene::Initialize() {
 	ruleSP_.sprite->SetScale({640, 360});
 	ruleSP_.sprite->SetPosition({640, 300});
 	ruleSP_.sprite->Update();
+	OfficialWebsiteSP_.sprite->SetAnchorPoint({0.5f, 0.5f});
+	OfficialWebsiteSP_.sprite->SetPosition({1000, 80});
+	OfficialWebsiteSP_.sprite->SetScale({300, 60});
+	OfficialWebsiteSP_.sprite->Update();
 	pressSpaceHandle = TextureManager::GetInstance()->GetTextureIndexByfilePath("Resources/2d/SPACE.png");
 
 	pressSpaceSprite = std::make_unique<Sprite>();
@@ -65,6 +73,19 @@ void TitleScene::Update() {
 
 	BGSP_.sprite->SetRotation(BGSP_.rotate);
 	BGSP_.sprite->Update();
+	
+	if (Input::GetInstance()->GetMouseX()>-OfficialWebsiteSP_.sprite->GetScale().x*0.5f+OfficialWebsiteSP_.sprite->GetPosition().x && Input::GetInstance()->GetMouseX()<OfficialWebsiteSP_.sprite->GetScale().x*0.5f+OfficialWebsiteSP_.sprite->GetPosition().x) {
+		if (Input::GetInstance()->GetMouseY() > -OfficialWebsiteSP_.sprite->GetScale().y * 0.5f + OfficialWebsiteSP_.sprite->GetPosition().y &&
+		    Input::GetInstance()->GetMouseY() < OfficialWebsiteSP_.sprite->GetScale().y * 0.5f + OfficialWebsiteSP_.sprite->GetPosition().y) {
+			OfficialWebsiteSP_.sprite->SetColor({1.0f, 1.0f, 0.0f, 1.0f});
+			if (Input::GetInstance()->TriggerMouseButton(Input::MouseButton::kLeft)) {
+				GameBase::GetInstance()->OpenHttps(L"https://iceflowergame.github.io/OfficialWebsite/");
+			}
+		} else {
+			OfficialWebsiteSP_.sprite->SetColor({1.0f, 1.0f, 1.0f, 1.0f});
+		}
+		
+	}
 
 	if (PlayCommand::GetDESIDE() && !isTransitionOut) {
 		transition->Initialize(true);
@@ -78,7 +99,7 @@ void TitleScene::Update() {
 			isTransitionIn = false;
 		}
 		if (transition->IsEnd() && isTransitionOut && GameLoad::GetInstance()->IsLoadComplete()) {
-			/*SceneManager::GetInstance()->ChangeScene("Tutorial");*/
+			/*SceneManager::GetInstance()->ChangeScene("StageSelect");*/
 			SceneManager::GetInstance()->ChangeScene("Game");
 		}
 	}
@@ -102,6 +123,7 @@ void TitleScene::Draw() {
 	BGSP_.sprite->Draw();
 	logoSP_.sprite->Draw();
 	pressSpaceSprite->Draw();
+	OfficialWebsiteSP_.sprite->Draw();
 	if (isTransitionIn || isTransitionOut) {
 		transition->Draw();
 	}

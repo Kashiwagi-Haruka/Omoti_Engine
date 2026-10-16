@@ -5,6 +5,7 @@
 #include "Scene/Scenes/ResultScene/ResultScene.h"
 #include "Scene/Scenes/TitleScene/TitleScene.h"
 #include "Scene/Scenes/TutorialScene/TutorialScene.h"
+#include "Scene/Scenes/StageSelectScene/StageSelectScene.h"
 #include <memory>
 std::unique_ptr<BaseScene> SceneFactory::CreateScene(const std::string& sceneName) {
 	std::unique_ptr<BaseScene> scene = nullptr;
@@ -21,11 +22,12 @@ std::unique_ptr<BaseScene> SceneFactory::CreateScene(const std::string& sceneNam
 		scene = std::make_unique<SampleScene>();
 	}else if (sceneName == "Tutorial") {
 		scene = std::make_unique<TutorialScene>();
+	} else if (sceneName == "StageSelect") {
+		scene = std::make_unique<StageSelectScene>();
 	}
 	return scene;
 }
 std::vector<std::string> SceneFactory::GetSceneNames() const {
-	return {
-	    "Title", "Game", "Result", "GameOver", "Sample",
+	return {"Title", "Game", "Result", "GameOver", "Sample", "StageSelect"
 	};
 }

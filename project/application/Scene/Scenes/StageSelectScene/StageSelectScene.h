@@ -1,6 +1,9 @@
 #pragma once
 #include "BaseScene.h"
-#include "Object3d/Object3d.h"
+#include "Object/StageSelect/Gate/StageSelectGate.h"
+#include "Object/Player/Player.h"
+#include "CameraController/CameraController.h"
+#include "Mesh/SkyBox/SkyBox.h"
 #include <memory>
 
 class StageSelectScene : public BaseScene {
@@ -12,10 +15,14 @@ class StageSelectScene : public BaseScene {
 		STAGE1,
 	};
 
-	std::unique_ptr<Object3d> tutorialStageGate_;
-	std::unique_ptr<Object3d> stage1Gate_;
+	std::unique_ptr<StageSelectGate> tutorialStageGate_;
+	std::unique_ptr<StageSelectGate> stage1Gate_;
 
+	std::unique_ptr<Player> player_;
+	std::unique_ptr<CameraController> cameraController_;
+	std::unique_ptr<SkyBox> skyBox_;
 
+	
 	StageSelectScene::StageNames selectedStage_ = StageSelectScene::StageNames::NONE;
 
 
