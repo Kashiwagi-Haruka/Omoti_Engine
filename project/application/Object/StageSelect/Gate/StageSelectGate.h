@@ -12,7 +12,8 @@ class StageSelectGate {
 	std::unique_ptr<Primitive> Portal_;
 	Transform gateTransform_{};
 	AABB gateAABB_{};
-
+	AABB portalAABB_{};
+	AABB portalBootAABB_{};
 
 	Camera* camera_ = nullptr;
 
@@ -22,5 +23,6 @@ class StageSelectGate {
 	    void Initialize();
 	    void Update();
 	    void Draw();
+		
 	    void SetCamera(Camera* camera) { camera_ = camera; }
 };

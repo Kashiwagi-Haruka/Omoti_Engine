@@ -9,7 +9,7 @@ void Game::Initialize() {
 	GameBase::GetInstance()->Initialize(L"LE3A_04_カシワギハルカ_氷華", 1280, 720);
 
 	SetUnhandledExceptionFilter(GameBase::GetInstance()->ExportDump);
-
+	GameBase::GetInstance()->SetWindowIconFromFile(L"Resources/2d/GameIcon/GameIcon.ico");
 	sceneFactory_ = std::make_unique<SceneFactory>();
 	SceneManager::GetInstance()->SetSceneFactory(sceneFactory_.get());
 	SceneManager::GetInstance()->ChangeScene("Title");

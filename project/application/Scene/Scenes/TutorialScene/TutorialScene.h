@@ -23,6 +23,10 @@ public:
 	void Finalize() override;
 
 private:
+
+	enum class TutorialStep { kMove = 0, kLook, kAttack, kSkill, kCollectExpCube, kComboAttack, kPause, kComplete };
+
+
 	static constexpr int kStepCount = 8;
 	static constexpr int kExpCubeTargetCount = 4;
 	static constexpr int kSkillUseTargetCount = 3;
