@@ -2,6 +2,11 @@
 #include "Object/Characters/Enemy/Base/BaseEnemy.h"
 
 class brain : public BaseEnemy {
+
+	
+
+
+
 public:
 	brain();
 	~brain() override = default;

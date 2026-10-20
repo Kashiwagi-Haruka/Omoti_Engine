@@ -99,8 +99,8 @@ void TitleScene::Update() {
 			isTransitionIn = false;
 		}
 		if (transition->IsEnd() && isTransitionOut && GameLoad::GetInstance()->IsLoadComplete()) {
-			/*SceneManager::GetInstance()->ChangeScene("StageSelect");*/
-			SceneManager::GetInstance()->ChangeScene("Game");
+			SceneManager::GetInstance()->ChangeScene("StageSelect");
+			/*SceneManager::GetInstance()->ChangeScene("Game");*/
 		}
 	}
 #ifdef USE_IMGUI
