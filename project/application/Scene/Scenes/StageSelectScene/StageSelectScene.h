@@ -1,13 +1,15 @@
 #pragma once
+
 #include "BaseScene.h"
-#include "Object/StageSelect/Gate/StageSelectGate.h"
-#include "Object/Player/Player.h"
 #include "CameraController/CameraController.h"
 #include "Mesh/SkyBox/SkyBox.h"
+#include "Object/Player/Player.h"
+#include "Object/StageSelect/Gate/StageSelectGate.h"
+#include "Object/Field/Field.h"
 #include <memory>
 
 class StageSelectScene : public BaseScene {
-
+private:
 	enum class StageNames {
 		NONE,
 		BACK,
@@ -17,19 +19,17 @@ class StageSelectScene : public BaseScene {
 
 	std::unique_ptr<StageSelectGate> tutorialStageGate_;
 	std::unique_ptr<StageSelectGate> stage1Gate_;
-
+	std::unique_ptr<Field> field_;
 	std::unique_ptr<Player> player_;
 	std::unique_ptr<CameraController> cameraController_;
 	std::unique_ptr<SkyBox> skyBox_;
 
-	
-	StageSelectScene::StageNames selectedStage_ = StageSelectScene::StageNames::NONE;
+	StageNames selectedStage_ = StageNames::NONE;
 
-
-	public:
-
+public:
 	StageSelectScene();
 	~StageSelectScene() override = default;
+
 	void Initialize() override;
 	void Update() override;
 	void Draw() override;

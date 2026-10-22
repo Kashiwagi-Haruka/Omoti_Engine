@@ -1,0 +1,57 @@
+{
+  "common": {
+    "backStepDistance": 5.0,
+    "backStepDuration": 0.18000000715255737,
+    "baseParameter": {
+      "Attack": 0.0,
+      "Deffence": 10.0,
+      "HP": 10.0
+    },
+    "damageInvincibleDuration": 0.30000001192092896,
+    "deathDuration": 0.44999998807907104,
+    "deathRotateZ": 1.5700000524520874,
+    "modelName": "Enemy",
+    "parameter": {
+      "Attack": 0.0,
+      "AttributeAffinity": 1.0,
+      "AttributeDamageRate": [
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "AttributeResistanceRate": [
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "CriticalDamage": 1.5,
+      "CriticalRate": 0.0,
+      "Deffence": 0.0,
+      "HP": 3000.0,
+      "HealingEffect": 0.0,
+      "Speed": 0.10000000149011612,
+      "level": 1
+    },
+    "scale": [
+      3.0,
+      3.0,
+      3.0
+    ],
+    "stunDuration": 0.75
+  },
+  "schemaVersion": 1,
+  "specific": {
+    "attackCooldown": 0.6000000238418579,
+    "attackRange": 1.5,
+    "playerChaseRange": 8.0
+  },
+  "type": "BrainStealer"
+}
