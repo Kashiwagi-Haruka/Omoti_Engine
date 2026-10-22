@@ -24,7 +24,7 @@ public:
 
 private:
 
-	enum class TutorialStep { kMove = 0, kLook, kAttack, kSkill, kCollectExpCube, kComboAttack, kPause, kComplete };
+	enum class TutorialStep { kMove = 0, kLook, kAttack, kSkill, kSpecial,kAttributeChange,kPause, kComplete };
 
 
 	static constexpr int kStepCount = 8;
