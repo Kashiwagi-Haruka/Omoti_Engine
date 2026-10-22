@@ -6,7 +6,7 @@
 void TutorialUI::Initialize() {
 	tutorialIconHandle_ = TextureManager::GetInstance()->GetTextureIndexByfilePath("Resources/2d/tuatorial/Icon.png");
 	tutorialProgressBackHandle_ = TextureManager::GetInstance()->GetTextureIndexByfilePath("Resources/2d/ExpBackGauge.png");
-	tutorialProgressFillHandle_ = TextureManager::GetInstance()->GetTextureIndexByfilePath("Resources/2d/ExpGauge.png");
+	tutorialProgressFillHandle_ = TextureManager::GetInstance()->GetTextureIndexByfilePath("Resources/2d/white2x2.png");
 	tutorialProgressLabelHandle_ = TextureManager::GetInstance()->GetTextureIndexByfilePath("Resources/2d/tutoriaGauge.png");
 	tutorialSkipBackHandle_ = tutorialProgressBackHandle_;
 	tutorialSkipFillHandle_ = tutorialProgressFillHandle_;
@@ -49,6 +49,7 @@ void TutorialUI::Initialize() {
 	tutorialProgressFillSprite_->Initialize(tutorialProgressFillHandle_);
 	tutorialProgressFillSprite_->SetScale({kProgressBarWidth, kProgressBarHeight});
 	tutorialProgressFillSprite_->SetPosition({100.0f, 80.0f});
+	tutorialProgressFillSprite_->SetColor({0.0f, 0.0f, 1.0f, 1.0f});
 	tutorialProgressFillSprite_->Update();
 
 	tutorialProgressLabelSprite_->Initialize(tutorialProgressLabelHandle_);
@@ -65,6 +66,7 @@ void TutorialUI::Initialize() {
 	tutorialSkipFillSprite_->Initialize(tutorialSkipFillHandle_);
 	tutorialSkipFillSprite_->SetScale({kSkipBarWidth, kSkipBarHeight});
 	tutorialSkipFillSprite_->SetPosition({100.0f, 110.0f});
+	tutorialSkipFillSprite_->SetColor({0.0f, 1.0f, 0.0f, 1.0f});
 	tutorialSkipFillSprite_->Update();
 
 	tutorialSkipLabelSprite_->Initialize(tutorialSkipLabelHandle_);

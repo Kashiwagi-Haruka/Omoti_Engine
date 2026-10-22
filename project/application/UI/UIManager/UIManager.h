@@ -1,5 +1,4 @@
 #pragma once
-#include "Object/Characters/Base/Attribute.h"
 #include "Object/Player/PlayerParameters.h"
 #include "Sprite.h"
 #include "UI/AttackOperation/AttackOperation.h"
@@ -9,30 +8,40 @@
 #include "UI/PadMenu/PadMenu.h"
 #include "UI/Team/TeamUI.h"
 #include "UI/Tower/TowerUI.h"
-#include <array>
+#include "UI/Attribute/AttributeUI.h"
 
-class GameBase;
+class Team;
 class Player;
 class UIManager {
 
-	// プレイヤーパラメータの保持領域。
+	// プレイヤーパラメータの保持。
 	Parameters parameters_;
 
+	// カーソルスプライト
 	std::unique_ptr<Sprite> cursolSprite_;
+	// コントローラースプライト
 	std::unique_ptr<Sprite> controllerSprite_;
-
+	// プレイヤーのHPバーUI
 	std::unique_ptr<HPBarUI> hpBarUI_;
+	// 攻撃の操作UI
 	std::unique_ptr<AttackOperation> attackOperationUI_;
+	// ダッシュゲージUI
 	std::unique_ptr<DashGauge> dashGaugeUI_;
+	// 拠点UI
 	std::unique_ptr<TowerUI> towerUI_;
+	// メニューUI
 	std::unique_ptr<Menu> menuUI_;
+	// チームUI
 	std::unique_ptr<TeamUI> teamUI_;
+	// パッドメニューUI
 	std::unique_ptr<PadMenu> padMenuUI_;
+	// 属性メニューUI
+	std::unique_ptr<AttributeUI> attributeUI_;
+
+	// チーム
 	Team* team_ = nullptr;
-	Player* player_ = nullptr;
-	std::array<std::unique_ptr<Sprite>, 6> attributeSprites_{};
-	int selectedAttributeIndex_ = 1;
-	bool isAttributeMenuOpen_ = false;
+	// プレイヤー
+	Player* player_;
 
 public:
 	// 生成時にUIリソースを読み込む。
@@ -45,8 +54,10 @@ public:
 	void Update();
 	// UIを描画する。
 	void Draw();
+	// チーム情報を受け取る
 	void SetTeam(Team* team);
-	void SetPlayer(Player* player) { player_ = player; }
+	// プレイヤー情報を受けとる
+	void SetPlayer(Player* player);
 
 	// 現在のプレイヤーHPを設定する。
 	void SetPlayerHP(int HP);
@@ -56,5 +67,6 @@ public:
 	void SetPlayerParameters(Parameters parameters);
 	// 現在のダッシュゲージを設定する。
 	void SetPlayerDashGauge(float dashGauge, float dashGaugeMax, bool isDashUIView);
+	// 必殺技のクールタイムを受け取る
 	void SetSpecialAttackCooldown(float remainingSeconds);
 };

@@ -6,20 +6,9 @@
 #include "ScreenSize.h"
 #include "Sprite/SpriteCommon.h"
 #include "TextureManager.h"
-#include <array>
-#include <cmath>
-#include <numbers>
-
-namespace {
-constexpr float kAttributeIconDistance = 150.0f;
-constexpr float kAttributeIconSize = 64.0f;
-constexpr float kAttributeStickDeadZone = 0.45f;
-constexpr std::array<const char*, 6> kAttributeTexturePaths = {"Resources/2d/Attribute/Fire.png",   "Resources/2d/Attribute/Ice.png",       "Resources/2d/Attribute/Wind.png",
-                                                               "Resources/2d/Attribute/Thunder.png", "Resources/2d/Attribute/Imaginary.png", "Resources/2d/Attribute/Quantum.png"};
-constexpr std::array<Attribute, 6> kAttributes = {Attribute::Fire, Attribute::Ice, Attribute::Wind, Attribute::Thunder, Attribute::Imaginary, Attribute::Quantum};
-} // namespace
 
 UIManager::UIManager() {
+	//生成
 	cursolSprite_ = std::make_unique<Sprite>();
 	controllerSprite_ = std::make_unique<Sprite>();
 	hpBarUI_ = std::make_unique<HPBarUI>();
@@ -29,15 +18,13 @@ UIManager::UIManager() {
 	menuUI_ = std::make_unique<Menu>();
 	teamUI_ = std::make_unique<TeamUI>();
 	padMenuUI_ = std::make_unique<PadMenu>();
-	for (auto& sprite : attributeSprites_) {
-		sprite = std::make_unique<Sprite>();
-	}
+	attributeUI_ = std::make_unique<AttributeUI>();
 }
 
 UIManager::~UIManager() {}
 
 void UIManager::Initialize() {
-
+	// 初期化
 	cursolSprite_->Initialize(TextureManager::GetInstance()->GetTextureIndexByfilePath("Resources/2d/Cursor.png"));
 	cursolSprite_->SetScale({30.0f, 30.0f});
 
@@ -58,16 +45,10 @@ void UIManager::Initialize() {
 	menuUI_->Initialize();
 
 	padMenuUI_->Initialize();
-	const Vector2 center = {SCREEN_SIZE::WIDTH / 2.0f, SCREEN_SIZE::HEIGHT / 2.0f};
-	for (size_t i = 0; i < attributeSprites_.size(); ++i) {
-		attributeSprites_[i]->Initialize(TextureManager::GetInstance()->GetTextureIndexByfilePath(kAttributeTexturePaths[i]));
-		const float angle = 2.0f * std::numbers::pi_v<float> * static_cast<float>(i) / static_cast<float>(attributeSprites_.size());
-		attributeSprites_[i]->SetPosition({center.x + std::sin(angle) * kAttributeIconDistance, center.y - std::cos(angle) * kAttributeIconDistance});
-		attributeSprites_[i]->SetAnchorPoint({0.5f, 0.5f});
-	}
 	if (team_) {
 		teamUI_->Initialize(*team_);
 	}
+	attributeUI_->Initialize();
 }
 
 void UIManager::Update() {
@@ -89,45 +70,12 @@ void UIManager::Update() {
 	menuUI_->Update();
 
 	padMenuUI_->Update();
-	isAttributeMenuOpen_ = player_ && player_->IsSizuku() && (Input::GetInstance()->PushLeftTrigger() || Input::GetInstance()->PushKey(DIK_Y));
-	if (isAttributeMenuOpen_) {
-		Input::GetInstance()->SetIsCursorStability(false);
-		bool hasSelectionInput = false;
-		const Vector2 stick = Input::GetInstance()->GetJoyStickLXY();
-		if (stick.x * stick.x + stick.y * stick.y >= kAttributeStickDeadZone * kAttributeStickDeadZone) {
-			float angle = std::atan2(stick.x, stick.y);
-			if (angle < 0.0f) {
-				angle += 2.0f * std::numbers::pi_v<float>;
-			}
-			const float sector = 2.0f * std::numbers::pi_v<float> / static_cast<float>(attributeSprites_.size());
-			selectedAttributeIndex_ = static_cast<int>((angle + sector * 0.5f) / sector) % static_cast<int>(attributeSprites_.size());
-			hasSelectionInput = true;
-		}
 
-		const Vector2 mousePosition = {Input::GetInstance()->GetMouseX(), Input::GetInstance()->GetMouseY()};
-		for (size_t i = 0; i < attributeSprites_.size(); ++i) {
-			const Vector2 iconPosition = attributeSprites_[i]->GetPosition();
-			const float halfIconSize = kAttributeIconSize * 0.5f;
-			if (std::abs(mousePosition.x - iconPosition.x) <= halfIconSize && std::abs(mousePosition.y - iconPosition.y) <= halfIconSize) {
-				selectedAttributeIndex_ = static_cast<int>(i);
-				hasSelectionInput = true;
-				break;
-			}
-		}
-
-		if (hasSelectionInput) {
-			player_->SetCurrentAttribute(kAttributes[selectedAttributeIndex_]);
-		}
-	}
-	for (size_t i = 0; i < attributeSprites_.size(); ++i) {
-		const float size = static_cast<int>(i) == selectedAttributeIndex_ ? kAttributeIconSize * 1.25f : kAttributeIconSize;
-		attributeSprites_[i]->SetScale({size, size});
-		attributeSprites_[i]->SetColor(static_cast<int>(i) == selectedAttributeIndex_ ? Vector4{1.0f, 1.0f, 1.0f, 1.0f} : Vector4{0.65f, 0.65f, 0.65f, 0.85f});
-		attributeSprites_[i]->Update();
-	}
 	if (team_) {
 		teamUI_->Update(*team_);
 	}
+	attributeUI_->SetPlayer(player_);
+	attributeUI_->Update();
 }
 
 
@@ -147,17 +95,14 @@ void UIManager::Draw() {
 		teamUI_->Draw();
 	}
 	padMenuUI_->Draw();
-	if (isAttributeMenuOpen_) {
-		for (const auto& sprite : attributeSprites_) {
-			sprite->Draw();
-		}
-	}
+
 	controllerSprite_->Draw();
-	if (PlayCommand::GetCURSOR_DISPLAY() || isAttributeMenuOpen_) {
+	if (PlayCommand::GetCURSOR_DISPLAY() || attributeUI_->GetIsAttributeMenuOpen()) {
 		if (cursolSprite_) {
 			cursolSprite_->Draw();
 		}
 	}
+	attributeUI_->Draw();
 }
 
 void UIManager::SetPlayerHP(int HP) { hpBarUI_->SetPlayerHP(HP); }
@@ -169,4 +114,5 @@ void UIManager::SetPlayerDashGauge(float dashGauge, float dashGaugeMax, bool isD
 	dashGaugeUI_->SetGaugeRate(gaugeRate);
 	dashGaugeUI_->SetDamageUIView(isDashView);
 }
+void UIManager::SetPlayer(Player* player) { player_ = player; }
 void UIManager::SetSpecialAttackCooldown(float remainingSeconds) { attackOperationUI_->SetSpecialCooldownRemaining(remainingSeconds); }

@@ -4,11 +4,11 @@
 
 const std::array<BGMManager::BGMInfo, BGMManager::kBGMCount> BGMManager::kBGMInfos = {
     {
-     {"Resources/audio/BGM/Rendez-vous_2.mp3", 0.3f},
-     {"Resources/audio/BGM/Tailshaft.mp3", 0.3f},
-     {"Resources/audio/BGM/Tailshaft.mp3", 0.3f},
-     {"Resources/audio/BGM/おそろい.mp3", 1.0f},
-     {"Resources/audio/BGM/アンドロイドの涙.mp3", 1.0f},
+     {"Resources/audio/BGM/Rendez-vous_2.mp3", 0.3f},//タイトル
+     {"Resources/audio/BGM/Tailshaft.mp3", 0.3f},//チュートリアル
+     {"Resources/audio/BGM/Tailshaft.mp3", 0.3f},//ゲームシーン
+     {"Resources/audio/BGM/おそろい.mp3", 1.0f},//ゲームオーバー
+     {"Resources/audio/BGM/アンドロイドの涙.mp3", 1.0f},//リザルト
      }
 };
 
