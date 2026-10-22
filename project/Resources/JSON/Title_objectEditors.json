@@ -1,0 +1,27 @@
+{
+  "audio": {
+    "sounds": []
+  },
+  "lights": {
+    "area": [],
+    "directional": {
+      "color": [
+        1.0,
+        1.0,
+        1.0,
+        1.0
+      ],
+      "direction": [
+        0.0,
+        -1.0,
+        0.0
+      ],
+      "intensity": 1.0
+    },
+    "overrideSceneLights": false,
+    "point": [],
+    "spot": []
+  },
+  "objects": [],
+  "primitives": []
+}

@@ -569,6 +569,7 @@
     <ClCompile Include="application\Scene\Scenes\StageSelectScene\StageSelectScene.cpp" />
     <ClCompile Include="application\Object\Characters\Playable\Individual\Sizuku\Special\Thunder\SizukuSpecialThunderHitEffect.cpp" />
     <ClCompile Include="application\Object\StageSelect\Gate\StageSelectGate.cpp" />
+    <ClCompile Include="application\UI\Attribute\AttributeUI.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Engine\Camera\Camera.h">
@@ -1132,6 +1133,7 @@
     <ClInclude Include="application\Scene\Scenes\StageSelectScene\StageSelectScene.h" />
     <ClInclude Include="application\Object\Characters\Playable\Individual\Sizuku\Special\Thunder\SizukuSpecialThunderHitEffect.h" />
     <ClInclude Include="application\Object\StageSelect\Gate\StageSelectGate.h" />
+    <ClInclude Include="application\UI\Attribute\AttributeUI.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include=".editorconfig" />
