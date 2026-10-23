@@ -1052,9 +1052,6 @@
     <ClInclude Include="Engine\Texture\Data\SkinningData.h">
       <Filter>Engine\Texture\Animation</Filter>
     </ClInclude>
-    <ClInclude Include="Engine\base\ScreenSize.h">
-      <Filter>Engine\Base</Filter>
-    </ClInclude>
     <ClInclude Include="Engine\Editor\EditorTool\Asset\EditorAsset.h">
       <Filter>Engine\Editor\Asset</Filter>
     </ClInclude>
@@ -1105,7 +1102,6 @@
     <ClInclude Include="application\Object\Characters\Enemy\LockOn\LockOnEnemy.h" />
     <ClInclude Include="application\Object\Characters\Playable\Base\Arcana.h" />
     <ClInclude Include="application\Object\Characters\Playable\Base\UPParametersType.h" />
-    <ClInclude Include="application\BagItem\reinforcementAmount\BaserinforcementAmountItem.h" />
     <ClInclude Include="application\Object\RemoteCamera\RemoteCamera.h" />
     <ClInclude Include="application\Menu\MenuManager.h" />
     <ClInclude Include="application\LightManager\LightManager.h" />

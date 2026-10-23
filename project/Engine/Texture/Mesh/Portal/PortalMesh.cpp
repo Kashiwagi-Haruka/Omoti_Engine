@@ -1,5 +1,5 @@
 #include "PortalMesh.h"
-
+#include "GameBase.h"
 #include "Camera.h"
 #include "Engine/Texture/TextureManager.h"
 #include "Engine/base/DirectXCommon.h"
@@ -119,7 +119,7 @@ void PortalMesh::Update() {
 
 	objectCameraResource_->Map(0, nullptr, reinterpret_cast<void**>(&objectCameraData_));
 	objectCameraData_->worldPosition = activeObjectCamera->GetWorldTranslate();
-	objectCameraData_->screenSize = {static_cast<float>(WinApp::kClientWidth), static_cast<float>(WinApp::kClientHeight)};
+	objectCameraData_->screenSize = {static_cast<float>(GameBase::GetInstance()->GetScreenWidth()), static_cast<float>(GameBase::GetInstance()->GetScreenHeight())};
 	objectCameraData_->fullscreenGrayscaleEnabled = Object3dCommon::GetInstance()->IsFullScreenGrayscaleEnabled() ? 1 : 0;
 	objectCameraData_->fullscreenSepiaEnabled = Object3dCommon::GetInstance()->IsFullScreenSepiaEnabled() ? 1 : 0;
 	objectCameraData_->usePortalProjection = 1;

@@ -5,6 +5,7 @@
 #include "Model/Model.h"
 #include "Sprite/SpriteCommon.h"
 #include "WinApp.h"
+#include "GameBase.h"
 #include <chrono>
 #include <filesystem>
 #include <stdexcept>
@@ -85,8 +86,8 @@ void GameLoad::InitializeLoadSprites() {
 	barFill_ = std::make_unique<Sprite>();
 	barFill_->Initialize(white);
 	barFill_->SetColor({0.2f, 0.7f, 1.0f, 1.0f});
-	const float width = static_cast<float>(WinApp::kClientWidth);
-	const float height = static_cast<float>(WinApp::kClientHeight);
+	const float width = static_cast<float>(GameBase::GetInstance()->GetScreenWidth());
+	const float height = static_cast<float>(GameBase::GetInstance()->GetScreenHeight());
 	// 左上基準で配置する
 	loadingSpinner_->SetPosition({(width - 200.0f), height * 0.65f});
 	loadingSpinner_->SetScale({100.0f, 100.0f});

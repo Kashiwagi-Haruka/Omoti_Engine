@@ -1,9 +1,9 @@
 #include "CharacterDisplayReinforcement.h"
-#include "ScreenSize.h"
+#include "GameBase.h"
 #include "TextureManager.h"
 namespace{
 //中心位置
-Vector2 spriteCenterPos = {SCREEN_SIZE::HALF_WIDTH + 100.0f, SCREEN_SIZE::HALF_HEIGHT};
+Vector2 spriteCenterPos = {GameBase::GetInstance()->GetScreenHalfWidth() + 100.0f, GameBase::GetInstance()->GetScreenHalfHeight()};
 // 比率
 Vector2 spriteRatio = {16.0f, 9.0f};
 //倍率

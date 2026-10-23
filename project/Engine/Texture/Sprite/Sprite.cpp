@@ -4,6 +4,7 @@
 #include "SpriteCommon.h"
 #include "SrvManager/SrvManager.h"
 #include "TextureManager.h"
+#include "GameBase.h"
 void Sprite::Initialize(uint32_t Handle) {
 
 	textureIndex = Handle;
@@ -152,7 +153,7 @@ void Sprite::Update() {
 	Matrix4x4 world = Function::MakeAffineMatrix(transform_.scale, transform_.rotate, transform_.translate);
 
 	// 画面サイズに基づく正射影。left=0, top=0, right=幅, bottom=高さ, near=0, far=1
-	Matrix4x4 ortho = Function::MakeOrthographicMatrix(0.0f, 0.0f, static_cast<float>(WinApp::kClientWidth), static_cast<float>(WinApp::kClientHeight), 0.0f, 1.0f);
+	Matrix4x4 ortho = Function::MakeOrthographicMatrix(0.0f, 0.0f, static_cast<float>(GameBase::GetInstance()->GetScreenWidth()), static_cast<float>(GameBase::GetInstance()->GetScreenHeight()), 0.0f, 1.0f);
 
 	// 行列の掛け順は VS 側の mul(input.position, WVP) に合わせる
 	Matrix4x4 wvp = Function::Multiply(world, ortho);

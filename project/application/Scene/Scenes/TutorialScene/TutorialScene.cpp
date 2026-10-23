@@ -1,9 +1,8 @@
 #define NOMINMAX
 #include "TutorialScene.h"
-
+#include "GameBase.h"
 #include "AudioManager/BGMManager/BGMManager.h"
 #include "CameraController/CameraController.h"
-#include "Engine/base/ScreenSize.h"
 #include "Input.h"
 #include "Object/Background/Sky.h"
 #include "Object/Field/Field.h"
@@ -82,7 +81,7 @@ void TutorialScene::Initialize() {
 	guideText_.Initialize(fontHandle);
 	guideText_.SetSize({580.0f, 260.0f});
 	guideText_.SetPosition({
-	    SCREEN_SIZE::WIDTH - 600.0f,
+	    GameBase::GetInstance()->GetScreenWidth() - 600.0f,
 	    120.0f,
 	});
 	guideText_.SetAlign(TextAlign::Left);
@@ -112,8 +111,8 @@ void TutorialScene::Initialize() {
 
 void TutorialScene::InitializeAttributeMenu() {
 	const Vector2 center{
-	    SCREEN_SIZE::WIDTH * 0.5f,
-	    SCREEN_SIZE::HEIGHT * 0.5f,
+	    GameBase::GetInstance()->GetScreenWidth() * 0.5f,
+	    GameBase::GetInstance()->GetScreenHeight() * 0.5f,
 	};
 
 	selectedAttributeIndex_ = 1;

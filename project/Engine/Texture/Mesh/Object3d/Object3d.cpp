@@ -6,6 +6,7 @@
 #include "Function.h"
 #include "Model/Model.h"
 #include "Model/ModelManager.h"
+#include "GameBase.h"
 #include "Object3d/Object3dCommon.h"
 #include "TextureManager.h"
 #include <algorithm>
@@ -217,7 +218,7 @@ void Object3d::UpdateCameraMatrices() {
 	} else {
 		cameraData_->worldPosition = {transform_.translate};
 	}
-	cameraData_->screenSize = {static_cast<float>(WinApp::kClientWidth), static_cast<float>(WinApp::kClientHeight)};
+	cameraData_->screenSize = {static_cast<float>(GameBase::GetInstance()->GetScreenWidth()), static_cast<float>(GameBase::GetInstance()->GetScreenHeight())};
 	cameraData_->fullscreenGrayscaleEnabled = Object3dCommon::GetInstance()->IsFullScreenGrayscaleEnabled() ? 1 : 0;
 	cameraData_->fullscreenSepiaEnabled = Object3dCommon::GetInstance()->IsFullScreenSepiaEnabled() ? 1 : 0;
 	cameraResource_->Unmap(0, nullptr);

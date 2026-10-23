@@ -175,7 +175,7 @@ void GameScene::Initialize() {
 	hitVinettSprite_ = std::make_unique<Sprite>();
 	hitVinettSprite_->Initialize(hitVinettTextureHandle_);
 	hitVinettSprite_->SetPosition({0.0f, 0.0f});
-	hitVinettSprite_->SetScale({static_cast<float>(WinApp::kClientWidth), static_cast<float>(WinApp::kClientHeight)});
+	hitVinettSprite_->SetScale({static_cast<float>(GameBase::GetInstance()->GetScreenWidth()), static_cast<float>(GameBase::GetInstance()->GetScreenHeight())});
 	hitVinettSprite_->SetColor({1.0f, 1.0f, 1.0f, 0.0f});
 	hitVinettSprite_->Update();
 	hitVinettTimer_ = 0.0f;

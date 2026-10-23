@@ -4,11 +4,11 @@
 #include"WinApp.h"
 #include"SpriteCommon.h"
 #include"DirectXCommon.h"
-#include"Engine/base/ScreenSize.h"
+#include "GameBase.h"
 
 void Text::Initialize(uint32_t fontHandle) {
     fontHandle_ = fontHandle;
-    size_ = {SCREEN_SIZE::WIDTH,SCREEN_SIZE::HEIGHT};
+	size_ = {GameBase::GetInstance()->GetScreenWidth(), GameBase::GetInstance()->GetScreenHeight()};
 }
 
 void Text::SetString(const std::u32string& text) {

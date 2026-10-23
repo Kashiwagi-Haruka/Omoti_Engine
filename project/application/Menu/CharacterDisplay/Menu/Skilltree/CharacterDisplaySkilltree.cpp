@@ -1,6 +1,6 @@
 #include "CharacterDisplaySkilltree.h"
 #include "TextureManager.h"
-#include "ScreenSize.h"
+#include "GameBase.h"
 #include <numbers>
 namespace{
 float skillTreeIconSize = 40.0f;
@@ -62,8 +62,8 @@ void CharacterDisplaySkilltree::Update() {
 
 	switch (selectCharacterArcana_) {
 	case Arcana::FOOL:
-		AddAbilityLeftSprite_->SetPosition({SCREEN_SIZE::HALF_WIDTH - 60.0f, SCREEN_SIZE::HALF_HEIGHT - 180.0f});
-		AddAbilityRightSprite_->SetPosition({SCREEN_SIZE::HALF_WIDTH + 60.0f, SCREEN_SIZE::HALF_HEIGHT - 180.0f});
+		AddAbilityLeftSprite_->SetPosition({GameBase::GetInstance()->GetScreenHalfWidth() - 60.0f, GameBase::GetInstance()->GetScreenHalfHeight() - 180.0f});
+		AddAbilityRightSprite_->SetPosition({GameBase::GetInstance()->GetScreenHalfWidth() + 60.0f, GameBase::GetInstance()->GetScreenHalfHeight() - 180.0f});
 		skillAttackSprite_->SetPosition({AddAbilityLeftSprite_->GetPosition().x-60.0f, AddAbilityLeftSprite_->GetPosition().y-60.0f});
 		normalAttackSprite_->SetPosition({skillAttackSprite_->GetPosition().x - 60.0f, skillAttackSprite_->GetPosition().y - 60.0f});
 		specialAttackSprite_->SetPosition({AddAbilityRightSprite_->GetPosition().x+60.0f, AddAbilityRightSprite_->GetPosition().y-60.0f});
@@ -93,7 +93,7 @@ void CharacterDisplaySkilltree::Update() {
 		break;
 	case Arcana::Hermit:
 
-		normalAttackSprite_->SetPosition({SCREEN_SIZE::HALF_WIDTH-60.0f, SCREEN_SIZE::HALF_HEIGHT - 260.0f});
+		normalAttackSprite_->SetPosition({GameBase::GetInstance()->GetScreenHalfWidth() - 60.0f, GameBase::GetInstance()->GetScreenHalfHeight() - 260.0f});
 		skillAttackSprite_->SetPosition(
 		    {normalAttackSprite_->GetPosition().x - sinf(std::numbers::pi_v<float> / 8.0f) * 240.0f, normalAttackSprite_->GetPosition().y + sinf(std::numbers::pi_v<float> / 8.0f) * 60.0f});
 		specialAttackSprite_->SetPosition(
@@ -130,7 +130,7 @@ void CharacterDisplaySkilltree::Update() {
 		break;
 	case Arcana::Moon:
 
-		normalAttackSprite_->SetPosition({SCREEN_SIZE::HALF_WIDTH, SCREEN_SIZE::HALF_HEIGHT - 260.0f});
+		normalAttackSprite_->SetPosition({GameBase::GetInstance()->GetScreenHalfWidth(), GameBase::GetInstance()->GetScreenHalfHeight() - 260.0f});
 
 		skillAttackSprite_->SetPosition(
 		    {normalAttackSprite_->GetPosition().x + sinf(std::numbers::pi_v<float>*1.0f / 6.0f) * 250.0f, 
