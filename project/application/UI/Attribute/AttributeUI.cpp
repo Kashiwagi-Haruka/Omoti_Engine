@@ -1,6 +1,6 @@
 #include "AttributeUI.h"
 #include "TextureManager.h"
-#include "ScreenSize.h"
+#include "GameBase.h"
 #include "Input.h"
 #include "Object/Player/Player.h"
 #include <numbers>
@@ -14,7 +14,8 @@ void AttributeUI::Initialize() {
 	for (size_t i = 0; i < attributeSprites_.size(); ++i) {
 		attributeSprites_[i]->Initialize(TextureManager::GetInstance()->GetTextureIndexByfilePath(kAttributeTexturePaths[i]));
 		const float angle = 2.0f * std::numbers::pi_v<float> * static_cast<float>(i) / static_cast<float>(attributeSprites_.size());
-		attributeSprites_[i]->SetPosition({SCREEN_SIZE::HALF_WIDTH + std::sin(angle) * kAttributeIconDistance, SCREEN_SIZE::HALF_HEIGHT - std::cos(angle) * kAttributeIconDistance});
+		attributeSprites_[i]->SetPosition(
+		    {GameBase::GetInstance()->GetScreenHalfWidth() + std::sin(angle) * kAttributeIconDistance, GameBase::GetInstance()->GetScreenHalfHeight() - std::cos(angle) * kAttributeIconDistance});
 		attributeSprites_[i]->SetAnchorPoint({0.5f, 0.5f});
 	}
 }

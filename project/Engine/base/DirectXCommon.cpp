@@ -17,6 +17,7 @@
 #include <random>
 #include <thread>
 
+// DirectXとシェーダーコンパイラに必要なライブラリをリンクする。
 #pragma comment(lib, "d3d12.lib")
 #pragma comment(lib, "dxgi.lib")
 #pragma comment(lib, "Dbghelp.lib")
@@ -25,6 +26,7 @@
 
 using namespace Microsoft::WRL;
 
+// 描画に必要なオブジェクトを、依存関係に沿った順番で初期化する。
 void DirectXCommon::initialize(WinApp* winApp) {
 	assert(winApp);
 	winApp_ = winApp;
@@ -53,6 +55,8 @@ void DirectXCommon::initialize(WinApp* winApp) {
 	SceneColorViewCreate();
 	// シーンカラーをバックバッファにコピーするためのPSO作成
 	SceneCopyPipelineCreate();
+
+	// 初期値を各設定関数へ渡し、範囲の補正と定数バッファへの反映を行う。
 	SetVignetteStrength(vignetteStrength_);
 	SetVignetteColor(vignetteColor_);
 	SetRandomNoiseEnabled(randomNoiseEnabled_);
@@ -76,11 +80,16 @@ void DirectXCommon::initialize(WinApp* winApp) {
 	ScissorRectInitialize();
 }
 #pragma region FixFPS
+
+// フレーム時間の計測開始時刻を保存する。
 void DirectXCommon::InitializeFixFPS() { reference_ = std::chrono::steady_clock::now(); }
+
+// 必要に応じて待機し、待機時間を含めたフレーム経過秒数を記録する。
 void DirectXCommon::UpdateFixFPS() {
 
 	const std::chrono::microseconds kMinTime(uint64_t(1000000.0f / 60.0f));
 
+	// 待機処理へ入るかどうかは、1/65秒を基準に判定する。
 	const std::chrono::microseconds kMinCheckTime(uint64_t(1000000.0f / 65.0f));
 
 	// 　現在時刻を取得する
@@ -106,6 +115,8 @@ void DirectXCommon::UpdateFixFPS() {
 #pragma endregion
 
 #pragma region DeviceInitialize
+
+// デバッグビルド時に、DirectXのAPI使用状況を検証するレイヤーを有効にする。
 void DirectXCommon::DebugLayer() {
 
 #ifdef _DEBUG
@@ -114,11 +125,14 @@ void DirectXCommon::DebugLayer() {
 		// デバッグレイヤー
 		debugController_->EnableDebugLayer();
 		// 更にGPU側でもチェックを行うようにする
+		// 現在の引数はFALSEのため、GPUベースの検証は無効になっている。
 		debugController_->SetEnableGPUBasedValidation(FALSE);
 	}
 
 #endif // DEBUG
 }
+
+// 利用するGPUを選択し、対応可能な機能レベルでD3D12デバイスを生成する。
 void DirectXCommon::DeviceInitialize() {
 
 	/// Debuglayer
@@ -175,6 +189,8 @@ void DirectXCommon::DeviceInitialize() {
 	Logger::Log("Complete create D3D12Device!!!\n"); // 初期化完了のログをだす
 	DebugError();
 }
+
+// デバッグメッセージの停止条件と、表示を抑制するメッセージを設定する。
 void DirectXCommon::DebugError() {
 
 #ifdef _DEBUG
@@ -210,6 +226,8 @@ void DirectXCommon::DebugError() {
 
 #endif // _DEBUG
 }
+
+// コマンドをGPUへ送るキューと、記録用アロケーター・リストを作成する。
 void DirectXCommon::CommandListInitialize() {
 
 	// コマンドキューを生成する
@@ -235,13 +253,15 @@ void DirectXCommon::CommandListInitialize() {
 	    nullptr, IID_PPV_ARGS(&commandList_));
 	assert(SUCCEEDED(hr_));
 }
+
+// 画面表示用のダブルバッファを持つスワップチェインを作成する。
 void DirectXCommon::SwapChainInitialize() {
 
 	swapChain_ = nullptr;
 	swapChainDesc_ = {};
 
-	swapChainDesc_.Width = WinApp::kClientWidth;
-	swapChainDesc_.Height = WinApp::kClientHeight;
+	swapChainDesc_.Width = WinApp::GetClientWidth();
+	swapChainDesc_.Height = WinApp::GetClientHeight();
 	swapChainDesc_.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
 	swapChainDesc_.SampleDesc.Count = 1;
 	swapChainDesc_.BufferUsage = DXGI_USAGE_RENDER_TARGET_OUTPUT;
@@ -255,14 +275,16 @@ void DirectXCommon::SwapChainInitialize() {
 
 	backBufferIndex_ = swapChain_->GetCurrentBackBufferIndex();
 }
+
+// ウィンドウと同じ大きさの深度・ステンシルバッファを作成する。
 void DirectXCommon::DepthBufferCreate() {
 	// ================================
 	// 1. 深度バッファリソースの設定
 	// ================================
 	D3D12_RESOURCE_DESC depthDesc{};
 	depthDesc.Dimension = D3D12_RESOURCE_DIMENSION_TEXTURE2D;
-	depthDesc.Width = WinApp::kClientWidth;
-	depthDesc.Height = WinApp::kClientHeight;
+	depthDesc.Width = WinApp::GetClientWidth();
+	depthDesc.Height = WinApp::GetClientHeight();
 	depthDesc.DepthOrArraySize = 1;
 	depthDesc.MipLevels = 1;
 	depthDesc.Format = DXGI_FORMAT_D24_UNORM_S8_UINT; // 深度24bit + ステンシル8bit
@@ -292,20 +314,25 @@ void DirectXCommon::DepthBufferCreate() {
 	    &clearValue, IID_PPV_ARGS(&depthStenicilResource_));
 	assert(SUCCEEDED(hr_));
 }
+
+// 各種ディスクリプタの間隔を取得し、必要なビューの格納領域を確保する。
 void DirectXCommon::DescriptorHeapCreate() {
 
 	descriptorSizeRTV_ = device_->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_RTV);
 	descriptorSizeSRV_ = device_->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV);
-
 	descriptorSizeDSV_ = device_->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_DSV);
 
 	// ディスクリプタヒープの生成
 
+	// RTVはバックバッファ2枚と、シーン・アウトライン・発光の計5枚分。
 	rtvDescriptorHeap_ = CreateDescriptorHeap(D3D12_DESCRIPTOR_HEAP_TYPE_RTV, 5, false);
+	// SRVはシーン、アウトライン、ディゾルブマスク、発光の計4枚分。
 	sceneSrvDescriptorHeap_ = CreateDescriptorHeap(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV, 4, true);
 
 	dsvDescriptorHeap_ = CreateDescriptorHeap(D3D12_DESCRIPTOR_HEAP_TYPE_DSV, 1, false);
 }
+
+// shaderVisibleがtrueの場合、シェーダーから参照できるヒープとして作成する。
 Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> DirectXCommon::CreateDescriptorHeap(D3D12_DESCRIPTOR_HEAP_TYPE heapType, UINT numDescriptors, bool shaderVisible) {
 
 	Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> descriptorHeap = nullptr;
@@ -318,6 +345,8 @@ Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> DirectXCommon::CreateDescriptorHeap
 
 	return descriptorHeap;
 }
+
+// スワップチェインからバックバッファを取得し、それぞれのRTVを作成する。
 void DirectXCommon::RenderTargetViewInitialize() {
 
 	hr_ = swapChain_->GetBuffer(0, IID_PPV_ARGS(&swapChainResources_[0]));
@@ -345,11 +374,13 @@ void DirectXCommon::RenderTargetViewInitialize() {
 	// 2つ目を作る
 	device_->CreateRenderTargetView(swapChainResources_[1].Get(), &rtvDesc_, rtvHandles_[1]);
 }
+
+// 通常のシーン、アウトライン、発光を個別に描画するテクスチャを作成する。
 void DirectXCommon::SceneColorResourceCreate() {
 	D3D12_RESOURCE_DESC textureDesc{};
 	textureDesc.Dimension = D3D12_RESOURCE_DIMENSION_TEXTURE2D;
-	textureDesc.Width = WinApp::kClientWidth;
-	textureDesc.Height = WinApp::kClientHeight;
+	textureDesc.Width = WinApp::GetClientWidth();
+	textureDesc.Height = WinApp::GetClientHeight();
 	textureDesc.DepthOrArraySize = 1;
 	textureDesc.MipLevels = 1;
 	// sRGB で描画する各 PSO と整合するように typeless で確保し、
@@ -372,6 +403,8 @@ void DirectXCommon::SceneColorResourceCreate() {
 
 	hr_ = device_->CreateCommittedResource(&heapProps, D3D12_HEAP_FLAG_NONE, &textureDesc, D3D12_RESOURCE_STATE_RENDER_TARGET, &clearValue, IID_PPV_ARGS(&sceneColorResource_));
 	assert(SUCCEEDED(hr_));
+
+	// 補助テクスチャは、対象が描画されていない領域を透明な黒として扱う。
 	clearValue.Format = DXGI_FORMAT_R8G8B8A8_UNORM_SRGB;
 	clearValue.Color[0] = 0.0f;
 	clearValue.Color[1] = 0.0f;
@@ -382,8 +415,11 @@ void DirectXCommon::SceneColorResourceCreate() {
 	hr_ = device_->CreateCommittedResource(&heapProps, D3D12_HEAP_FLAG_NONE, &textureDesc, D3D12_RESOURCE_STATE_RENDER_TARGET, &clearValue, IID_PPV_ARGS(&sceneEmissionResource_));
 	assert(SUCCEEDED(hr_));
 }
+
+// オフスクリーンテクスチャを描画先・シェーダー参照先として使うためのビューを作成する。
 void DirectXCommon::SceneColorViewCreate() {
 	// RTV
+	// RTVヒープの先頭2個はバックバッファ用なので、その後ろへ配置する。
 	D3D12_CPU_DESCRIPTOR_HANDLE rtvStart = rtvDescriptorHeap_->GetCPUDescriptorHandleForHeapStart();
 	sceneRtvHandle_.ptr = rtvStart.ptr + descriptorSizeRTV_ * 2;
 	sceneOutlineRtvHandle_.ptr = rtvStart.ptr + descriptorSizeRTV_ * 3;
@@ -399,6 +435,7 @@ void DirectXCommon::SceneColorViewCreate() {
 	device_->CreateRenderTargetView(sceneEmissionResource_.Get(), &outlineRtvDesc, sceneEmissionRtvHandle_);
 
 	// SRV
+	// SRVの配置順は、シーン(t0)、アウトライン(t1)、マスク(t2)、発光(t3)。
 	sceneSrvHandleCPU_ = sceneSrvDescriptorHeap_->GetCPUDescriptorHandleForHeapStart();
 	sceneSrvHandleGPU_ = sceneSrvDescriptorHeap_->GetGPUDescriptorHandleForHeapStart();
 	D3D12_SHADER_RESOURCE_VIEW_DESC srvDesc{};
@@ -421,10 +458,14 @@ void DirectXCommon::SceneColorViewCreate() {
 	device_->CreateShaderResourceView(sceneEmissionResource_.Get(), &outlineSrvDesc, emissionSrvHandleCPU);
 	DissolveMaskTextureCreate();
 }
+
+// ディゾルブの消失順序を決めるノイズ画像を生成し、GPUへ転送する。
 void DirectXCommon::DissolveMaskTextureCreate() {
 	constexpr UINT kMaskWidth = 256;
 	constexpr UINT kMaskHeight = 256;
 	std::vector<uint8_t> pixels(kMaskWidth * kMaskHeight * 4);
+
+	// シードを固定し、起動するたびに同じノイズ画像を生成する。
 	std::mt19937 randomEngine(0);
 	std::uniform_int_distribution<int> randomValue(0, 255);
 	for (UINT y = 0; y < kMaskHeight; ++y) {
@@ -438,6 +479,7 @@ void DirectXCommon::DissolveMaskTextureCreate() {
 		}
 	}
 
+	// 転送先のGPU用テクスチャを、コピーを受け付ける状態で確保する。
 	D3D12_RESOURCE_DESC textureDesc{};
 	textureDesc.Dimension = D3D12_RESOURCE_DIMENSION_TEXTURE2D;
 	textureDesc.Width = kMaskWidth;
@@ -452,6 +494,7 @@ void DirectXCommon::DissolveMaskTextureCreate() {
 	hr_ = device_->CreateCommittedResource(&defaultHeapProps, D3D12_HEAP_FLAG_NONE, &textureDesc, D3D12_RESOURCE_STATE_COPY_DEST, nullptr, IID_PPV_ARGS(&dissolveMaskResource_));
 	assert(SUCCEEDED(hr_));
 
+	// テクスチャ転送時のアラインメントを含めたサイズでUPLOADバッファを確保する。
 	const UINT64 uploadBufferSize = GetRequiredIntermediateSize(dissolveMaskResource_.Get(), 0, 1);
 	D3D12_RESOURCE_DESC uploadDesc{};
 	uploadDesc.Dimension = D3D12_RESOURCE_DIMENSION_BUFFER;
@@ -466,11 +509,14 @@ void DirectXCommon::DissolveMaskTextureCreate() {
 	hr_ = device_->CreateCommittedResource(&uploadHeapProps, D3D12_HEAP_FLAG_NONE, &uploadDesc, D3D12_RESOURCE_STATE_GENERIC_READ, nullptr, IID_PPV_ARGS(&dissolveMaskUploadResource_));
 	assert(SUCCEEDED(hr_));
 
+	// CPU上の画像をUPLOADバッファへ書き込み、テクスチャへのコピーを記録する。
 	D3D12_SUBRESOURCE_DATA subresource{};
 	subresource.pData = pixels.data();
 	subresource.RowPitch = static_cast<LONG_PTR>(kMaskWidth * 4);
 	subresource.SlicePitch = subresource.RowPitch * kMaskHeight;
 	UpdateSubresources(commandList_.Get(), dissolveMaskResource_.Get(), dissolveMaskUploadResource_.Get(), 0, 0, 1, &subresource);
+
+	// コピー後はピクセルシェーダーから読み取れる状態へ変更する。
 	D3D12_RESOURCE_BARRIER barrier{};
 	barrier.Type = D3D12_RESOURCE_BARRIER_TYPE_TRANSITION;
 	barrier.Transition.pResource = dissolveMaskResource_.Get();
@@ -478,6 +524,8 @@ void DirectXCommon::DissolveMaskTextureCreate() {
 	barrier.Transition.StateAfter = D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE;
 	barrier.Transition.Subresource = D3D12_RESOURCE_BARRIER_ALL_SUBRESOURCES;
 	commandList_->ResourceBarrier(1, &barrier);
+
+	// 転送コマンドを実行し、GPU側で完了するまで待つ。
 	hr_ = commandList_->Close();
 	assert(SUCCEEDED(hr_));
 	Microsoft::WRL::ComPtr<ID3D12CommandList> lists[] = {commandList_.Get()};
@@ -488,11 +536,14 @@ void DirectXCommon::DissolveMaskTextureCreate() {
 		fence_->SetEventOnCompletion(fenceValue_, fenceEvent_);
 		WaitForSingleObject(fenceEvent_, INFINITE);
 	}
+
+	// 転送完了後、次のコマンドを記録できる状態へ戻す。
 	hr_ = commandAllocators_[frameIndex_]->Reset();
 	assert(SUCCEEDED(hr_));
 	hr_ = commandList_->Reset(commandAllocators_[frameIndex_].Get(), nullptr);
 	assert(SUCCEEDED(hr_));
 
+	// SRVテーブルの3番目を、ディゾルブマスク用のt2として使用する。
 	D3D12_CPU_DESCRIPTOR_HANDLE maskSrvHandleCPU = sceneSrvHandleCPU_;
 	maskSrvHandleCPU.ptr += descriptorSizeSRV_ * 2;
 	D3D12_SHADER_RESOURCE_VIEW_DESC maskSrvDesc{};
@@ -502,24 +553,30 @@ void DirectXCommon::DissolveMaskTextureCreate() {
 	maskSrvDesc.Texture2D.MipLevels = 1;
 	device_->CreateShaderResourceView(dissolveMaskResource_.Get(), &maskSrvDesc, maskSrvHandleCPU);
 }
+
+// シーン画像にポストエフェクトをかける全画面描画用のパイプラインを作成する。
 void DirectXCommon::SceneCopyPipelineCreate() {
+	// ピクセルシェーダーへ、t0からt3までの4枚のテクスチャを渡す。
 	D3D12_DESCRIPTOR_RANGE range{};
 	range.RangeType = D3D12_DESCRIPTOR_RANGE_TYPE_SRV;
 	range.NumDescriptors = 4;
 	range.BaseShaderRegister = 0;
 	range.OffsetInDescriptorsFromTableStart = D3D12_DESCRIPTOR_RANGE_OFFSET_APPEND;
 
+	// ルートパラメーター0はテクスチャのディスクリプタテーブル。
 	D3D12_ROOT_PARAMETER rootParameters[2]{};
 	rootParameters[0].ParameterType = D3D12_ROOT_PARAMETER_TYPE_DESCRIPTOR_TABLE;
 	rootParameters[0].ShaderVisibility = D3D12_SHADER_VISIBILITY_PIXEL;
 	rootParameters[0].DescriptorTable.NumDescriptorRanges = 1;
 	rootParameters[0].DescriptorTable.pDescriptorRanges = &range;
 
+	// ルートパラメーター1は、b0に渡すポストエフェクト設定の定数バッファ。
 	rootParameters[1].ParameterType = D3D12_ROOT_PARAMETER_TYPE_CBV;
 	rootParameters[1].ShaderVisibility = D3D12_SHADER_VISIBILITY_PIXEL;
 	rootParameters[1].Descriptor.ShaderRegister = 0;
 	rootParameters[1].Descriptor.RegisterSpace = 0;
 
+	// 線形補間でテクスチャを参照し、画像の外側は端の値に固定する。
 	D3D12_STATIC_SAMPLER_DESC staticSampler{};
 	staticSampler.Filter = D3D12_FILTER_MIN_MAG_MIP_LINEAR;
 	staticSampler.AddressU = D3D12_TEXTURE_ADDRESS_MODE_CLAMP;
@@ -536,6 +593,7 @@ void DirectXCommon::SceneCopyPipelineCreate() {
 	rootSignatureDesc.NumStaticSamplers = 1;
 	rootSignatureDesc.pStaticSamplers = &staticSampler;
 
+	// ルートシグネチャの設定をバイナリ化してから、デバイス上に作成する。
 	Microsoft::WRL::ComPtr<ID3DBlob> signatureBlob;
 	Microsoft::WRL::ComPtr<ID3DBlob> errorBlob;
 	hr_ = D3D12SerializeRootSignature(&rootSignatureDesc, D3D_ROOT_SIGNATURE_VERSION_1, &signatureBlob, &errorBlob);
@@ -557,6 +615,8 @@ void DirectXCommon::SceneCopyPipelineCreate() {
 	psoDesc.pRootSignature = copyRootSignature_.Get();
 	psoDesc.VS = {vsBlob->GetBufferPointer(), vsBlob->GetBufferSize()};
 	psoDesc.PS = {psBlob->GetBufferPointer(), psBlob->GetBufferSize()};
+
+	// 全画面描画の結果を、そのまま出力先へ書き込む。
 	D3D12_BLEND_DESC blendDesc{};
 	blendDesc.RenderTarget[0].RenderTargetWriteMask = D3D12_COLOR_WRITE_ENABLE_ALL;
 	blendDesc.RenderTarget[0].BlendEnable = FALSE;
@@ -576,6 +636,7 @@ void DirectXCommon::SceneCopyPipelineCreate() {
 	rasterizerDesc.ConservativeRaster = D3D12_CONSERVATIVE_RASTERIZATION_MODE_OFF;
 	psoDesc.RasterizerState = rasterizerDesc;
 
+	// 画面全体への画像出力なので、深度判定と深度書き込みは行わない。
 	D3D12_DEPTH_STENCIL_DESC depthStencilDesc{};
 	depthStencilDesc.DepthEnable = FALSE;
 	depthStencilDesc.StencilEnable = FALSE;
@@ -587,14 +648,20 @@ void DirectXCommon::SceneCopyPipelineCreate() {
 	psoDesc.NumRenderTargets = 1;
 	psoDesc.RTVFormats[0] = DXGI_FORMAT_R8G8B8A8_UNORM_SRGB;
 	psoDesc.SampleDesc.Count = 1;
+
+	// 頂点はシェーダー内で生成するため、頂点入力レイアウトは不要。
 	psoDesc.InputLayout.pInputElementDescs = nullptr;
 	psoDesc.InputLayout.NumElements = 0;
 
 	hr_ = device_->CreateGraphicsPipelineState(&psoDesc, IID_PPV_ARGS(&copyPipelineState_));
 	assert(SUCCEEDED(hr_));
+
+	// 定数バッファをMapし、以降CPUから設定値を書き込めるようにする。
 	postEffectParameterResource_ = CreateBufferResource(sizeof(PostEffectParameters));
 	hr_ = postEffectParameterResource_->Map(0, nullptr, reinterpret_cast<void**>(&postEffectParameterMappedData_));
 	assert(SUCCEEDED(hr_));
+
+	// CPU側で保持している初期値を、シェーダーへ渡す領域に設定する。
 	postEffectParameterMappedData_->vignetteStrength = vignetteStrength_;
 	postEffectParameterMappedData_->vignetteColor[0] = vignetteColor_.x;
 	postEffectParameterMappedData_->vignetteColor[1] = vignetteColor_.y;
@@ -632,6 +699,8 @@ void DirectXCommon::SceneCopyPipelineCreate() {
 	postEffectParameterMappedData_->glitchIntensity = glitchIntensity_;
 	postEffectParameterMappedData_->glitchTime = randomNoiseTime_;
 }
+
+// 作成済みの深度バッファに対してDSVを作成する。
 void DirectXCommon::DepthStencilViewInitialize() {
 
 	// depthStenicilResource_ は DepthBufferCreate() で作成済みのはず
@@ -641,6 +710,8 @@ void DirectXCommon::DepthStencilViewInitialize() {
 
 	device_->CreateDepthStencilView(depthStenicilResource_.Get(), &dsvDesc, dsvDescriptorHeap_->GetCPUDescriptorHandleForHeapStart());
 }
+
+// HLSLのコンパイルに必要なDXCオブジェクトを作成する。
 void DirectXCommon::DXCCompilerCreate() {
 
 	// dxcCompilerを初期化
@@ -656,6 +727,8 @@ void DirectXCommon::DXCCompilerCreate() {
 	hr_ = dxcUtils_->CreateDefaultIncludeHandler(&includeHandler_);
 	assert(SUCCEEDED(hr_));
 }
+
+// GPUの処理完了をCPU側で確認するためのフェンスとイベントを作成する。
 void DirectXCommon::FenceCreate() {
 	// Fenceを作る
 	fenceValue_ = 0;
@@ -672,32 +745,40 @@ void DirectXCommon::FenceCreate() {
 	hr_ = commandQueue_->Signal(fence_.Get(), fenceValue_);
 	assert(SUCCEEDED(hr_));
 }
+
+// 描画結果を配置する範囲を、ウィンドウ全体に設定する。
 void DirectXCommon::ViewportRectInitialize() {
 
 	// ビューポートとシザー設定
 	viewport_ = {};
-	viewport_.Width = float(WinApp::kClientWidth);
-	viewport_.Height = float(WinApp::kClientHeight);
+	viewport_.Width = float(WinApp::GetClientWidth());
+	viewport_.Height = float(WinApp::GetClientHeight());
 	viewport_.TopLeftX = 0;
 	viewport_.TopLeftY = 0;
 	viewport_.MinDepth = 0.0f;
 	viewport_.MaxDepth = 1.0f;
 }
+
+// ピクセルを書き込める矩形範囲を、ウィンドウ全体に設定する。
 void DirectXCommon::ScissorRectInitialize() {
 
 	scissorRect_ = {};
 	scissorRect_.left = 0;
-	scissorRect_.right = WinApp::kClientWidth;
+	scissorRect_.right = WinApp::GetClientWidth();
 	scissorRect_.top = 0;
-	scissorRect_.bottom = WinApp::kClientHeight;
+	scissorRect_.bottom = WinApp::GetClientHeight();
 }
 #pragma endregion
+
+// ビネットの強さを0以上に補正し、定数バッファがあれば即座に反映する。
 void DirectXCommon::SetVignetteStrength(float strength) {
 	vignetteStrength_ = std::max(strength, 0.0f);
 	if (postEffectParameterMappedData_) {
 		postEffectParameterMappedData_->vignetteStrength = vignetteStrength_;
 	}
 }
+
+// ビネットの各色成分を0～1に制限する。
 void DirectXCommon::SetVignetteColor(const Vector3& color) {
 	vignetteColor_.x = std::clamp(color.x, 0.0f, 1.0f);
 	vignetteColor_.y = std::clamp(color.y, 0.0f, 1.0f);
@@ -708,6 +789,8 @@ void DirectXCommon::SetVignetteColor(const Vector3& color) {
 		postEffectParameterMappedData_->vignetteColor[2] = vignetteColor_.z;
 	}
 }
+
+// ノイズの有効状態を、シェーダー用のfloat値へ変換する。
 void DirectXCommon::SetRandomNoiseEnabled(bool enabled) {
 	randomNoiseEnabled_ = enabled;
 	if (postEffectParameterMappedData_) {
@@ -715,18 +798,24 @@ void DirectXCommon::SetRandomNoiseEnabled(bool enabled) {
 	}
 }
 
+// ノイズスケールの下限を1にする。
 void DirectXCommon::SetRandomNoiseScale(float scale) {
 	randomNoiseScale_ = std::max(scale, 1.0f);
 	if (postEffectParameterMappedData_) {
 		postEffectParameterMappedData_->randomNoiseScale = randomNoiseScale_;
 	}
 }
+
+// ノイズの合成方式を0～4の範囲に制限する。
 void DirectXCommon::SetRandomNoiseBlendMode(int blendMode) {
 	randomNoiseBlendMode_ = std::clamp(blendMode, 0, 4);
 	if (postEffectParameterMappedData_) {
 		postEffectParameterMappedData_->randomNoiseBlendMode = static_cast<float>(randomNoiseBlendMode_);
 	}
 }
+
+// カーネルサイズを1～15の奇数に補正する。
+// 奇数にすることで、注目ピクセルを中心とした対称な範囲を扱える。
 void DirectXCommon::SetBoxFilterKernelSize(int kernelSize) {
 	int clampedKernelSize = std::clamp(kernelSize, 1, 15);
 	if ((clampedKernelSize % 2) == 0) {
@@ -737,18 +826,24 @@ void DirectXCommon::SetBoxFilterKernelSize(int kernelSize) {
 		postEffectParameterMappedData_->boxFilterKernelSize = static_cast<float>(boxFilterKernelSize_);
 	}
 }
+
+// 全画面フィルターの種類を0～2の範囲に制限する。
 void DirectXCommon::SetFullscreenFilterType(int filterType) {
 	fullscreenFilterType_ = std::clamp(filterType, 0, 2);
 	if (postEffectParameterMappedData_) {
 		postEffectParameterMappedData_->fullscreenFilterType = static_cast<float>(fullscreenFilterType_);
 	}
 }
+
+// ガウシアンフィルターの標準偏差が0にならないように下限を設ける。
 void DirectXCommon::SetGaussianFilterSigma(float sigma) {
 	gaussianFilterSigma_ = std::max(sigma, 0.001f);
 	if (postEffectParameterMappedData_) {
 		postEffectParameterMappedData_->gaussianFilterSigma = gaussianFilterSigma_;
 	}
 }
+
+// 放射状ブラーの中心を、0～1の正規化された画面座標で指定する。
 void DirectXCommon::SetRadialBlurCenter(const Vector2& center) {
 	radialBlurCenter_.x = std::clamp(center.x, 0.0f, 1.0f);
 	radialBlurCenter_.y = std::clamp(center.y, 0.0f, 1.0f);
@@ -757,87 +852,119 @@ void DirectXCommon::SetRadialBlurCenter(const Vector2& center) {
 		postEffectParameterMappedData_->radialBlurCenter[1] = radialBlurCenter_.y;
 	}
 }
+
+// 放射状ブラーの幅を0～0.2に制限する。
 void DirectXCommon::SetRadialBlurWidth(float width) {
 	radialBlurWidth_ = std::clamp(width, 0.0f, 0.2f);
 	if (postEffectParameterMappedData_) {
 		postEffectParameterMappedData_->radialBlurWidth = radialBlurWidth_;
 	}
 }
+
+// 放射状ブラーのサンプル数を1～32に制限する。
 void DirectXCommon::SetRadialBlurSampleCount(int sampleCount) {
 	radialBlurSampleCount_ = std::clamp(sampleCount, 1, 32);
 	if (postEffectParameterMappedData_) {
 		postEffectParameterMappedData_->radialBlurSampleCount = static_cast<float>(radialBlurSampleCount_);
 	}
 }
+
+// 色収差の有効状態を設定する。
 void DirectXCommon::SetChromaticAberrationEnabled(bool enabled) {
 	chromaticAberrationEnabled_ = enabled;
 	if (postEffectParameterMappedData_) {
 		postEffectParameterMappedData_->chromaticAberrationEnabled = chromaticAberrationEnabled_ ? 1.0f : 0.0f;
 	}
 }
+
+// 色収差の強さを0～0.1に制限する。
 void DirectXCommon::SetChromaticAberrationIntensity(float intensity) {
 	chromaticAberrationIntensity_ = std::clamp(intensity, 0.0f, 0.1f);
 	if (postEffectParameterMappedData_) {
 		postEffectParameterMappedData_->chromaticAberrationIntensity = chromaticAberrationIntensity_;
 	}
 }
+
+// ディゾルブの有効状態を設定する。
 void DirectXCommon::SetDissolveEnabled(bool enabled) {
 	dissolveEnabled_ = enabled;
 	if (postEffectParameterMappedData_) {
 		postEffectParameterMappedData_->dissolveEnabled = dissolveEnabled_ ? 1.0f : 0.0f;
 	}
 }
+
+// ディゾルブの消失判定に用いるしきい値を0～1に制限する。
 void DirectXCommon::SetDissolveThreshold(float threshold) {
 	dissolveThreshold_ = std::clamp(threshold, 0.0f, 1.0f);
 	if (postEffectParameterMappedData_) {
 		postEffectParameterMappedData_->dissolveThreshold = dissolveThreshold_;
 	}
 }
+
+// ディゾルブ境界の幅を0～0.5に制限する。
 void DirectXCommon::SetDissolveEdgeWidth(float width) {
 	dissolveEdgeWidth_ = std::clamp(width, 0.0f, 0.5f);
 	if (postEffectParameterMappedData_) {
 		postEffectParameterMappedData_->dissolveEdgeWidth = dissolveEdgeWidth_;
 	}
 }
+
+// 二値化の有効状態を設定する。
 void DirectXCommon::SetFullscreenBinarizationEnabled(bool enabled) {
 	fullscreenBinarizationEnabled_ = enabled;
 	if (postEffectParameterMappedData_) {
 		postEffectParameterMappedData_->fullscreenBinarizationEnabled = enabled ? 1.0f : 0.0f;
 	}
 }
+
+// 二値化のしきい値を0～1に制限する。
 void DirectXCommon::SetBinarizationThreshold(float threshold) {
 	binarizationThreshold_ = std::clamp(threshold, 0.0f, 1.0f);
 	if (postEffectParameterMappedData_) {
 		postEffectParameterMappedData_->binarizationThreshold = binarizationThreshold_;
 	}
 }
+
+// 発光用テクスチャを利用するブルームの有効状態を設定する。
 void DirectXCommon::SetSelectiveBloomEnabled(bool enabled) {
 	selectiveBloomEnabled_ = enabled;
 	if (postEffectParameterMappedData_) {
 		postEffectParameterMappedData_->selectiveBloomEnabled = enabled ? 1.0f : 0.0f;
 	}
 }
+
+// ブルームの強さを0～8に制限する。
 void DirectXCommon::SetSelectiveBloomIntensity(float intensity) {
 	selectiveBloomIntensity_ = std::clamp(intensity, 0.0f, 8.0f);
 	if (postEffectParameterMappedData_) {
 		postEffectParameterMappedData_->selectiveBloomIntensity = selectiveBloomIntensity_;
 	}
 }
+
+// ブルームの広がりを0～48に制限する。
 void DirectXCommon::SetSelectiveBloomRadius(float radius) {
 	selectiveBloomRadius_ = std::clamp(radius, 0.0f, 48.0f);
 	if (postEffectParameterMappedData_) {
 		postEffectParameterMappedData_->selectiveBloomRadius = selectiveBloomRadius_;
 	}
 }
+
+// これらの値はCPU側へ保存し、PreDrawで定数バッファへ反映する。
 void DirectXCommon::SetFullscreenGrayscaleIntensity(float intensity) { fullscreenGrayscaleIntensity_ = std::clamp(intensity, 0.0f, 1.0f); }
 void DirectXCommon::SetFullscreenGrayscaleOverlayIntensity(float intensity) { fullscreenGrayscaleOverlayIntensity_ = std::clamp(intensity, 0.0f, 1.0f); }
 void DirectXCommon::SetGlitchEnabled(bool enabled) { glitchEnabled_ = enabled; }
 void DirectXCommon::SetGlitchIntensity(float intensity) { glitchIntensity_ = std::clamp(intensity, 0.0f, 1.0f); }
+
+// フレーム開始時の設定更新と、描画先の準備を行う。
 void DirectXCommon::PreDraw() {
 	sceneCopiedToBackBufferThisFrame_ = false;
+
+	// 時間で変化するノイズとグリッチに、累積時間を渡す。
 	randomNoiseTime_ += deltaTime_;
 	if (postEffectParameterMappedData_) {
 		postEffectParameterMappedData_->randomNoiseTime = randomNoiseTime_;
+
+		// 通常のグレースケールとオーバーレイ指定のうち、強い方を採用する。
 		postEffectParameterMappedData_->fullscreenGrayscaleIntensity = std::max(fullscreenGrayscaleEnabled_ ? fullscreenGrayscaleIntensity_ : 0.0f, fullscreenGrayscaleOverlayIntensity_);
 		postEffectParameterMappedData_->glitchEnabled = glitchEnabled_ ? 1.0f : 0.0f;
 		postEffectParameterMappedData_->glitchIntensity = glitchIntensity_;
@@ -858,11 +985,14 @@ void DirectXCommon::PreDraw() {
 	assert(swapChainResources_[backBufferIndex_] != nullptr); // 安全強化！
 
 	// ③ コマンドリストのリセット
+	// この関数内では、現在のバックバッファに対応するframeIndex_を更新する。
 	FrameStart();
 
 	// ④ バックバッファへのバリア & RTV 設定 & クリア
 	DrawCommandList();
 }
+
+// 描画コマンドの送信、画面表示、GPU完了待ち、次回の記録準備を行う。
 void DirectXCommon::PostDraw() {
 	// Present前にバックバッファをRTV状態からPresent状態へ戻す
 	D3D12_RESOURCE_BARRIER presentBarrier{};
@@ -881,6 +1011,7 @@ void DirectXCommon::PostDraw() {
 	commandQueue_->ExecuteCommandLists(1, lists->GetAddressOf());
 
 	// 画面を切り替え
+	// 第1引数が1なので、垂直同期に合わせて表示する。
 	swapChain_->Present(1, 0);
 
 	// フェンスで CPU/GPU 同期
@@ -890,12 +1021,17 @@ void DirectXCommon::PostDraw() {
 		fence_->SetEventOnCompletion(fenceValue_, fenceEvent_);
 		WaitForSingleObject(fenceEvent_, INFINITE);
 	}
+
 	UpdateFixFPS();
+
+	// GPUでの使用完了を確認した後、コマンド記録用メモリを再利用する。
 	hr_ = commandAllocators_[frameIndex_]->Reset();
 	assert(SUCCEEDED(hr_));
 	hr_ = commandList_->Reset(commandAllocators_[frameIndex_].Get(), nullptr);
 	assert(SUCCEEDED(hr_));
 }
+
+// 画面表示を行わず、現在記録されているコマンドの実行と完了待ちを行う。
 void DirectXCommon::ExecuteCommandListAndWait() {
 	hr_ = commandList_->Close();
 	assert(SUCCEEDED(hr_));
@@ -913,12 +1049,19 @@ void DirectXCommon::ExecuteCommandListAndWait() {
 	assert(SUCCEEDED(hr_));
 	hr_ = commandList_->Reset(commandAllocators_[frameIndex_].Get(), nullptr);
 	assert(SUCCEEDED(hr_));
+
+	// リストのReset後に、通常描画用のSRV設定を再適用する。
 	TextureManager::GetInstance()->GetSrvManager()->PreDraw();
 }
+
+// オフスクリーンのシーン画像を、ポストエフェクト付きでバックバッファへ描画する。
 void DirectXCommon::DrawSceneTextureToBackBuffer() {
+	// 同じフレーム内での重複した画面出力を防ぐ。
 	if (sceneCopiedToBackBufferThisFrame_) {
 		return;
 	}
+
+	// シーン・アウトライン・発光を、描画先からシェーダーの読み取り対象へ切り替える。
 	D3D12_RESOURCE_BARRIER barriers[6]{};
 	barriers[0].Type = D3D12_RESOURCE_BARRIER_TYPE_TRANSITION;
 	barriers[0].Flags = D3D12_RESOURCE_BARRIER_FLAG_NONE;
@@ -936,6 +1079,7 @@ void DirectXCommon::DrawSceneTextureToBackBuffer() {
 	barriers[2].Transition.pResource = sceneEmissionResource_.Get();
 	commandList_->ResourceBarrier(3, barriers);
 
+	// 描画先を表示用バックバッファに切り替え、背景色でクリアする。
 	D3D12_CPU_DESCRIPTOR_HANDLE dsvHandle = dsvDescriptorHeap_->GetCPUDescriptorHandleForHeapStart();
 	commandList_->OMSetRenderTargets(1, &rtvHandles_[backBufferIndex_], false, &dsvHandle);
 	float backBufferClearColor[] = {0.06f, 0.06f, 0.08f, 1.0f};
@@ -944,6 +1088,7 @@ void DirectXCommon::DrawSceneTextureToBackBuffer() {
 	D3D12_VIEWPORT gameViewport = viewport_;
 	D3D12_RECT gameScissor = scissorRect_;
 	if (editorLayoutEnabled_) {
+		// エディターの上部・左右パネルを避けた領域へ、16:9のゲーム画面を配置する。
 		const float kTopToolbarHeight = 44.0f;
 		const float kLeftPanelRatio = 0.22f;
 		const float kRightPanelRatio = 0.24f;
@@ -956,6 +1101,7 @@ void DirectXCommon::DrawSceneTextureToBackBuffer() {
 		const float availableStartX = leftPanelWidth;
 		const float availableStartY = kTopToolbarHeight;
 
+		// 幅を基準に大きさを決め、高さが収まらなければ高さを基準に再計算する。
 		float gameWidth = availableWidth;
 		float gameHeight = gameWidth / kGameAspect;
 		if (gameHeight > availableHeight) {
@@ -975,6 +1121,7 @@ void DirectXCommon::DrawSceneTextureToBackBuffer() {
 	commandList_->RSSetViewports(1, &gameViewport);
 	commandList_->RSSetScissorRects(1, &gameScissor);
 
+	// 全画面描画専用のSRVヒープ、ルートシグネチャ、PSOを設定する。
 	ID3D12DescriptorHeap* descriptorHeaps[] = {sceneSrvDescriptorHeap_.Get()};
 	commandList_->SetDescriptorHeaps(1, descriptorHeaps);
 	commandList_->SetGraphicsRootSignature(copyRootSignature_.Get());
@@ -985,6 +1132,7 @@ void DirectXCommon::DrawSceneTextureToBackBuffer() {
 		float effectiveVignetteStrength = vignetteStrength_;
 		int effectiveBoxFilterKernelSize = boxFilterKernelSize_;
 #ifdef USE_IMGUI
+		// エディターで再生していない間は、ビネットとボックスぼかしを抑制する。
 		const Hierarchy* hierarchy = Hierarchy::GetInstance();
 		if (editorLayoutEnabled_ && hierarchy && !hierarchy->IsPlayMode()) {
 			effectiveVignetteStrength = 0.0f;
@@ -994,26 +1142,39 @@ void DirectXCommon::DrawSceneTextureToBackBuffer() {
 		postEffectParameterMappedData_->vignetteStrength = effectiveVignetteStrength;
 		postEffectParameterMappedData_->boxFilterKernelSize = static_cast<float>(effectiveBoxFilterKernelSize);
 	}
+
+	// 定数バッファを渡し、頂点シェーダー内で生成する三角形1枚を描画する。
 	commandList_->SetGraphicsRootConstantBufferView(1, postEffectParameterResource_->GetGPUVirtualAddress());
 	commandList_->DrawInstanced(3, 1, 0, 0);
+
+	// 後続の描画に備えて、画面全体の描画範囲へ戻す。
 	commandList_->RSSetViewports(1, &viewport_);
 	commandList_->RSSetScissorRects(1, &scissorRect_);
 
+	// 読み取りに使用した3枚を、再び描画先として使える状態へ戻す。
 	for (int i = 0; i < 3; ++i) {
 		barriers[3 + i] = barriers[i];
 		barriers[3 + i].Transition.StateBefore = D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE;
 		barriers[3 + i].Transition.StateAfter = D3D12_RESOURCE_STATE_RENDER_TARGET;
 	}
 	commandList_->ResourceBarrier(3, &barriers[3]);
+
+	// 通常描画用のSRV設定へ戻し、このフレームでの画面出力済みフラグを立てる。
 	TextureManager::GetInstance()->GetSrvManager()->PreDraw();
 	sceneCopiedToBackBufferThisFrame_ = true;
 }
+
+// 未出力なら描画し、すでに出力済みなら呼び出し先の判定で何もしない。
 void DirectXCommon::EnsureSceneTextureCopiedToBackBuffer() { DrawSceneTextureToBackBuffer(); }
+
+// 現在のバックバッファに対応するフレーム番号を取得する。
 void DirectXCommon::FrameStart() {
 
 	// FrameStart
 	frameIndex_ = swapChain_->GetCurrentBackBufferIndex();
 }
+
+// バックバッファの状態を遷移させ、シーンテクスチャへの描画を準備する。
 void DirectXCommon::DrawCommandList() {
 
 	// TransitionBarrierの設定
@@ -1041,6 +1202,8 @@ void DirectXCommon::DrawCommandList() {
 	// Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> descriptorHeaps[] = {srvDescriptorHeap_.Get()};
 	// commandList_->SetDescriptorHeaps(1, descriptorHeaps->GetAddressOf());
 }
+
+// シーンテクスチャを描画先に設定し、各描画テクスチャと深度をクリアする。
 void DirectXCommon::SetMainRenderTarget() {
 	sceneCopiedToBackBufferThisFrame_ = false;
 	inOutlineRenderTarget_ = false;
@@ -1059,10 +1222,13 @@ void DirectXCommon::SetMainRenderTarget() {
 		float emissionClearColor[] = {0.0f, 0.0f, 0.0f, 0.0f};
 		commandList_->ClearRenderTargetView(sceneEmissionRtvHandle_, emissionClearColor, 0, nullptr);
 	}
+
+	// 深度のみを最大値へ戻し、このフレームの奥行き判定を開始する。
 	commandList_->ClearDepthStencilView(dsvHandle, D3D12_CLEAR_FLAG_DEPTH, 1.0f, 0, 0, nullptr);
 	TextureManager::GetInstance()->GetSrvManager()->PreDraw();
 }
 
+// すでに描画した内容を保持したまま、メインのシーン描画先へ戻す。
 void DirectXCommon::RestoreMainRenderTarget() {
 	inOutlineRenderTarget_ = false;
 	inEmissionRenderTarget_ = false;
@@ -1071,6 +1237,8 @@ void DirectXCommon::RestoreMainRenderTarget() {
 	commandList_->RSSetViewports(1, &viewport_);
 	commandList_->RSSetScissorRects(1, &scissorRect_);
 }
+
+// 以降の描画先を、ブルーム用の発光テクスチャへ切り替える。
 void DirectXCommon::BeginEmissionRenderTarget() {
 	if (sceneEmissionResource_ == nullptr || sceneEmissionRtvHandle_.ptr == 0) {
 		inEmissionRenderTarget_ = false;
@@ -1082,12 +1250,16 @@ void DirectXCommon::BeginEmissionRenderTarget() {
 	commandList_->RSSetScissorRects(1, &scissorRect_);
 	inEmissionRenderTarget_ = true;
 }
+
+// 発光テクスチャへの描画中であれば、メイン描画先へ戻す。
 void DirectXCommon::EndEmissionRenderTarget() {
 	if (!inEmissionRenderTarget_) {
 		return;
 	}
 	RestoreMainRenderTarget();
 }
+
+// 以降の描画先を、アウトライン用テクスチャへ切り替える。
 void DirectXCommon::BeginOutlineRenderTarget() {
 	if (sceneOutlineResource_ == nullptr || sceneOutlineRtvHandle_.ptr == 0) {
 		inOutlineRenderTarget_ = false;
@@ -1099,6 +1271,8 @@ void DirectXCommon::BeginOutlineRenderTarget() {
 	commandList_->RSSetScissorRects(1, &scissorRect_);
 	inOutlineRenderTarget_ = true;
 }
+
+// アウトライン描画が始まっている場合に、メイン描画先へ戻す。
 void DirectXCommon::EndOutlineRenderTarget() {
 	if (!inOutlineRenderTarget_) {
 		return;
@@ -1109,6 +1283,8 @@ void DirectXCommon::EndOutlineRenderTarget() {
 	commandList_->RSSetScissorRects(1, &scissorRect_);
 	inOutlineRenderTarget_ = false;
 }
+
+// barrier_に設定済みの対象を、画面表示用の状態へ変更する。
 void DirectXCommon::CrtvTransitionBarrier() {
 	// 画面に描く処理はすべて終わり、画面に映すので、状態を遷移
 	// 今回はRenderTargetからPresentにする。
@@ -1118,6 +1294,7 @@ void DirectXCommon::CrtvTransitionBarrier() {
 	commandList_->ResourceBarrier(1, &barrier_);
 }
 
+// HLSLファイルを読み込み、DXCでコンパイルしたシェーダーバイナリを返す。
 Microsoft::WRL::ComPtr<IDxcBlob> DirectXCommon::CompileShader(
     /* CompilerするShaderファイルへのパス*/ const std::wstring& filePath,
     // Compilerに使用するProfile
@@ -1183,11 +1360,14 @@ Microsoft::WRL::ComPtr<IDxcBlob> DirectXCommon::CompileShader(
 	// 実行用のバイナリを返却
 	return shaderBlob;
 }
+
+// CPUからMapして書き込める、指定バイト数のバッファを作成する。
 Microsoft::WRL::ComPtr<ID3D12Resource> DirectXCommon::CreateBufferResource(size_t sizeInBytes) {
 	// バッファの設定（UPLOAD用に変更）
 	D3D12_HEAP_PROPERTIES heapProperties = {};
 	heapProperties.Type = D3D12_HEAP_TYPE_UPLOAD;
 
+	// テクスチャではなく、行優先の一次元バッファとして作成する。
 	D3D12_RESOURCE_DESC resourceDesc = {};
 	resourceDesc.Dimension = D3D12_RESOURCE_DIMENSION_BUFFER;
 	resourceDesc.Width = sizeInBytes;
@@ -1213,6 +1393,7 @@ Microsoft::WRL::ComPtr<ID3D12Resource> DirectXCommon::CreateBufferResource(size_
 	return bufferResource;
 }
 
+// GPU同期を行い、保持しているリソースとイベントハンドルを解放する。
 void DirectXCommon::Finalize() {
 
 	// --- GPU 完了待ち ---
@@ -1226,12 +1407,14 @@ void DirectXCommon::Finalize() {
 	}
 
 	// --- Fence Event ---
+	// WindowsのイベントハンドルはCloseHandleで閉じる。
 	if (fenceEvent_) {
 		CloseHandle(fenceEvent_);
 		fenceEvent_ = nullptr;
 	}
 
 	// --- PostEffect ---
+	// 解放後の定数バッファを参照しないよう、Map先のポインターも無効化する。
 	postEffectParameterMappedData_ = nullptr;
 	postEffectParameterResource_.Reset();
 
@@ -1277,6 +1460,7 @@ void DirectXCommon::Finalize() {
 	swapChain_.Reset();
 
 	// --- Device ---
+	// ComPtrのResetで、このクラスが保持しているCOM参照を解放する。
 	device_.Reset();
 	debugController_.Reset();
 	dxgiFactory_.Reset();

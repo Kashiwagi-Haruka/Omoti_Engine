@@ -7,6 +7,7 @@
 #include "Object3d/Object3dCommon.h"
 #include "SrvManager/SrvManager.h"
 #include "TextureManager.h"
+#include "GameBase.h"
 #include "WinApp.h"
 #include <algorithm>
 #include <chrono>
@@ -669,7 +670,7 @@ void Primitive::UpdateCameraMatrices() {
 	} else {
 		cameraData_->worldPosition = {transform_.translate};
 	}
-	cameraData_->screenSize = {static_cast<float>(WinApp::kClientWidth), static_cast<float>(WinApp::kClientHeight)};
+	cameraData_->screenSize = {static_cast<float>(GameBase::GetInstance()->GetScreenWidth()), static_cast<float>(GameBase::GetInstance()->GetScreenHeight())};
 	cameraData_->fullscreenGrayscaleEnabled = Object3dCommon::GetInstance()->IsFullScreenGrayscaleEnabled() ? 1 : 0;
 	cameraData_->fullscreenSepiaEnabled = Object3dCommon::GetInstance()->IsFullScreenSepiaEnabled() ? 1 : 0;
 	cameraData_->textureViewProjection0 = textureViewProjection0_;

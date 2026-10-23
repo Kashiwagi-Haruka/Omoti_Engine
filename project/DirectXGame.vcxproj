@@ -381,7 +381,6 @@ copy "$(WindowsSdkDir)\bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)\
     <None Include="Resources\shader\Sprite\Sprite.hlsli" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="application\BagItem\reinforcementAmount\BaserinforcementAmountItem.h" />
     <ClInclude Include="application\Menu\CharacterDisplay\CharacterDisplayMenuType.h" />
     <ClInclude Include="application\Object\Characters\Playable\Base\Arcana.h" />
     <ClInclude Include="application\Object\Characters\Playable\Base\SkilltreeType.h" />
@@ -452,7 +451,6 @@ copy "$(WindowsSdkDir)\bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)\
     <ClInclude Include="application\UI\Attribute\AttributeUI.h" />
     <ClInclude Include="Engine\Editor\EditorTool\Command\EditorCommand.h" />
     <ClInclude Include="Engine\Audio\AudioMixer.h" />
-    <ClInclude Include="Engine\base\ScreenSize.h" />
     <ClInclude Include="Engine\Editor\EditorData\Audio\EditorAudio.h" />
     <ClInclude Include="Engine\Editor\EditorData\Camera\EditorCamera.h" />
     <ClInclude Include="Engine\Editor\EditorData\Light\EditorLight.h" />

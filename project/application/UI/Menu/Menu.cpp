@@ -2,6 +2,7 @@
 #include "TextureManager.h"
 #include "WinApp.h"
 #include "Input.h"
+#include "GameBase.h"
 #include "PlayCommand/PlayCommand.h"
 namespace{
 constexpr Vector2 kIconMargin = { 20.0f, 20.0f };
@@ -37,7 +38,7 @@ void Menu::Initialize() {
 	helpKeyboardSprite_->Initialize(TextureManager::GetInstance()->GetTextureIndexByfilePath("Resources/2d/Menu/Keyboard/HelpKey.png"));
 
 	characterDisplaySprite_->SetScale(kIconSize);
-	characterDisplaySprite_->SetPosition({WinApp::kClientWidth - (kIconMargin.x), kIconMargin.y});
+	characterDisplaySprite_->SetPosition({GameBase::GetInstance()->GetScreenWidth() - (kIconMargin.x), kIconMargin.y});
 	characterDisplaySprite_->SetAnchorPoint({1.0f, 0.0f});
 
 	teamSelectSprite_->SetScale(kIconSize);

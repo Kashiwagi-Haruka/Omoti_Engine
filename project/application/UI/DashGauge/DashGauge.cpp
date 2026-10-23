@@ -1,5 +1,6 @@
 #define NOMINMAX
 #include "DashGauge.h"
+#include "GameBase.h"
 #include "Sprite.h"
 #include "TextureManager.h"
 #include "WinApp.h"
@@ -20,7 +21,7 @@ constexpr Vector4 kFillColor{0.15f, 0.72f, 1.0f, 0.95f};
 } // namespace
 
 void DashGauge::Initialize() {
-	position_ = {static_cast<float>(WinApp::kClientWidth) * 0.55f, static_cast<float>(WinApp::kClientHeight) * 0.5f};
+	position_ = {static_cast<float>(GameBase::GetInstance()->GetScreenWidth()) * 0.55f, static_cast<float>(GameBase::GetInstance()->GetScreenHeight()) * 0.5f};
 	segmentSize_ = kSegmentSize;
 	const uint32_t whiteTextureHandle = TextureManager::GetInstance()->GetTextureIndexByfilePath("Resources/2d/white2x2.png");
 

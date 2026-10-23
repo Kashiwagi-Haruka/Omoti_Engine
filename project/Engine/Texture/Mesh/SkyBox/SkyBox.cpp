@@ -1,5 +1,5 @@
 #include "SkyBox.h"
-
+#include "GameBase.h"
 #include "Camera.h"
 #include "Function.h"
 #include "Object3d/Object3dCommon.h"
@@ -125,7 +125,7 @@ void SkyBox::Update() {
 
 	cameraResource_->Map(0, nullptr, reinterpret_cast<void**>(&cameraData_));
 	cameraData_->worldPosition = activeCamera ? activeCamera->GetWorldTranslate() : Vector3{0, 0, 0};
-	cameraData_->screenSize = {static_cast<float>(WinApp::kClientWidth), static_cast<float>(WinApp::kClientHeight)};
+	cameraData_->screenSize = {static_cast<float>(GameBase::GetInstance()->GetScreenWidth()), static_cast<float>(GameBase::GetInstance()->GetScreenHeight())};
 	cameraData_->fullscreenGrayscaleEnabled = 0;
 	cameraData_->fullscreenSepiaEnabled = 0;
 	cameraResource_->Unmap(0, nullptr);

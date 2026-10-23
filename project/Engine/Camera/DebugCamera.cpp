@@ -1,6 +1,6 @@
 #define NOMINMAX
 #include "DebugCamera.h"
-
+#include "GameBase.h"
 #include "Function.h"
 #include "Input.h"
 #include "WinApp.h"
@@ -23,7 +23,7 @@ Vector3 GetForwardAxis(const Matrix4x4& rotationMatrix) { return Function::Norma
 void DebugCamera::Initialize() {
 	// 既定値を実画面サイズに合わせて設定
 	fovY_ = 0.45f * 3.14159265f;
-	aspectRatio_ = float(WinApp::kClientWidth) / float(WinApp::kClientHeight);
+	aspectRatio_ = float(GameBase::GetInstance()->GetScreenWidth()) / float(GameBase::GetInstance()->GetScreenHeight());
 	nearZ_ = 0.1f;
 	farZ_ = 10000.0f;
 	matRot_ = Function::MakeIdentity4x4();

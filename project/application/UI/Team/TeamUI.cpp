@@ -5,6 +5,7 @@
 #include "Text/FreeTypeManager/FreeTypeManager.h"
 #include "TextureManager.h"
 #include "WinApp.h"
+#include "GameBase.h"
 #include <algorithm>
 namespace {
 constexpr Vector2 kIconSize{35.0f, 35.0f};
@@ -64,7 +65,7 @@ void TeamUI::Initialize(const Team& team) {
 
 	for (int i = 0; i < kMaxMembersCount; ++i) {
 		iconPositions_[i] = {
-		    static_cast<float>(WinApp::kClientWidth) - kRightMargin,
+		    static_cast<float>(GameBase::GetInstance()->GetScreenWidth()) - kRightMargin,
 		    kTopMargin + (kIconSize.y + kIconSpacing) * static_cast<float>(i),
 		};
 

@@ -8,6 +8,9 @@
 #include <xapofx.h>
 #include <xaudio2.h>
 #include <xaudio2fx.h>
+
+// RIFF形式のファイル内で使われるチャンクの見出し。
+// 現在の音声読み込みは、Media Foundationを使用している。
 struct ChunkHeader {
 	// チャンク識別子("RIFF" や "fmt " など)
 	char id[4];
@@ -21,21 +24,34 @@ struct RiffHeader {
 	// RIFF の種類("WAVE")
 	char type[4];
 };
+
 struct FormatChunk {
 	// fmt チャンク情報
 	ChunkHeader chunk;
 	// 波形フォーマット情報
 	WAVEFORMATEX fmt;
 };
+
+// 読み込んだ音声データと、サウンド単位の再生設定を保持する。
+// インスタンス一覧に自身を登録し、エディターから列挙できるようにする。
 struct SoundData {
+	// 生成・コピー・ムーブ時に、生成先のアドレスを一覧へ登録する。
 	SoundData();
 	SoundData(const SoundData& other);
 	SoundData(SoundData&& other) noexcept;
+
+	// 代入先のアドレスは変わらないため、登録状態を維持して内容を更新する。
 	SoundData& operator=(const SoundData& other);
 	SoundData& operator=(SoundData&& other) noexcept;
+
+	// 破棄時に、インスタンス一覧から自身を取り除く。
 	~SoundData();
 
+	// 現在存在しているSoundDataの一覧を取得する。
 	static const std::vector<SoundData*>& GetInstances();
+
+	// 拡張情報を含むフォーマットがあればそちらを返し、
+	// なければwfexを返す。返されたポインターの所有権は移らない。
 	const WAVEFORMATEX* GetWaveFormat() const;
 
 	// 再生時に使う波形フォーマット
@@ -56,12 +72,17 @@ private:
 	void UnregisterInstance();
 };
 
+// 音声ファイルの読み込み、再生、停止、音量、エフェクトを管理する。
+// サウンドごとのエフェクトに加え、共通ミキサーのエフェクトも扱う。
 class Audio {
 
 public:
+	// Audio側でも、AudioMixerと同じエフェクト型を使用する。
 	using MixerEffectType = AudioMixer::EffectType;
 	using MixerEffectSettings = AudioMixer::EffectSettings;
 
+	// エディターに表示するサウンド情報。
+	// soundDataは参照先を示すだけで、所有権は持たない。
 	struct EditorSoundEntry {
 		SoundData* soundData = nullptr;
 		std::string name;
@@ -80,9 +101,14 @@ private:
 
 	// API 呼び出し結果保持用
 	HRESULT result_;
+
+	// このAudioの初期化でCOMの参照カウントを増やしたかどうか。
+	// 終了時にCoUninitializeを呼ぶ必要があるかを判断する。
 	bool comInitialized_ = false;
 
+	// 1回の再生に対応するボイスと、その管理情報。
 	struct ActiveVoice {
+		// シーンからの再生と、エディターのお試し再生を区別する。
 		enum class PlaybackSource {
 			Scene,
 			EditorPreview,
@@ -111,14 +137,20 @@ private:
 
 	// 指定サウンドに紐づく再生中ボイスのみ停止
 	void StopVoicesForSound(const SoundData& soundData);
+
 	// 指定ボイスへエフェクトチェーンを再構築して適用
 	bool ApplyEffectsToVoice(IXAudio2SourceVoice* voice, const std::vector<MixerEffectSettings>& effects, std::vector<Microsoft::WRL::ComPtr<IUnknown>>& outInstances);
+
 	// 再生中ボイスを再作成して最新の設定を反映
+	// 現在の実装では再生位置を引き継がず、先頭から再生する。
 	bool RecreateActiveVoice(ActiveVoice& active, const SoundData& soundData);
+
 	// 全ボイスを停止
 	void StopAllVoices();
+
 	// 指定ソースの全ボイスを停止
 	void StopVoicesBySource(ActiveVoice::PlaybackSource playbackSource);
+
 	// 内部用の音声再生
 	void SoundPlayWaveInternal(const SoundData& soundData, bool isLoop, ActiveVoice::PlaybackSource playbackSource);
 
@@ -135,8 +167,11 @@ public:
 	SoundData SoundLoadFile(const char* filename);
 	// 音声データ解放
 	void SoundUnload(SoundData* soundData);
+
 	// 音声再生
+	// 呼び出すたびに新しいボイスを生成するため、重ね再生できる。
 	void SoundPlayWave(const SoundData& sounddata, bool isLoop = false);
+
 	// 指定サウンドを停止して先頭から再生(重ね再生しない)
 	void SoundPlayWaveFromStart(const SoundData& soundData, bool isLoop = false);
 	// エディターのお試し再生専用: 指定サウンドを停止して先頭から再生
@@ -151,14 +186,18 @@ public:
 	void SetSoundVolume(SoundData* soundData, float volume);
 	// エディター表示用のサウンド情報を取得
 	std::vector<EditorSoundEntry> GetEditorSoundEntries() const;
+
 	// 指定サウンドのエフェクトチェーンを取得
 	std::vector<MixerEffectSettings> GetSoundEffects(const SoundData* soundData) const;
 	// 指定サウンドのエフェクトチェーンを置き換え
 	void SetSoundEffects(SoundData* soundData, const std::vector<MixerEffectSettings>& effects);
 	// 指定サウンドにエフェクトを追加
 	void AddSoundEffect(SoundData* soundData, const MixerEffectSettings& effect);
+
 	// 指定サウンドのエフェクトを削除
+	// 現在の実装では、設定項目を消さずにenabledをfalseにする。
 	void RemoveSoundEffect(SoundData* soundData, size_t index);
+
 	// 指定サウンドのエフェクトをクリア
 	void ClearSoundEffects(SoundData* soundData);
 	// 指定サウンドの Reverb 有効/無効を設定
@@ -169,13 +208,16 @@ public:
 	void SetEqualizer(SoundData* soundData, bool enabled);
 	// 指定サウンドの Limiter 有効/無効を設定
 	void SetLimiter(SoundData* soundData, bool enabled);
+
 	// エディター表示/設定保存用のエフェクトチェーンを取得
 	std::vector<MixerEffectSettings> GetMixerEffects() const;
 	// AudioMixer エフェクトチェーンをまとめて置き換え
 	void SetMixerEffects(const std::vector<MixerEffectSettings>& effects);
 	// AudioMixer エフェクトを末尾に追加
+	// 現在の実装では、同じ種類の設定を置き換えて有効にする。
 	void AddMixerEffect(const MixerEffectSettings& effect);
 	// AudioMixer エフェクトを削除
+	// 現在の実装では、該当項目を無効にする。
 	void RemoveMixerEffect(size_t index);
 	// AudioMixer エフェクトチェーンをクリア(=デフォルト: 何もなし)
 	void ClearMixerEffects();

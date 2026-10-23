@@ -3,7 +3,7 @@
 #include "Input.h"
 #include "Object/Player/Player.h"
 #include "PlayCommand/PlayCommand.h"
-#include "ScreenSize.h"
+#include "GameBase.h"
 #include "Sprite/SpriteCommon.h"
 #include "TextureManager.h"
 
@@ -30,7 +30,7 @@ void UIManager::Initialize() {
 
 	controllerSprite_->Initialize(TextureManager::GetInstance()->GetTextureIndexByfilePath("Resources/2d/controller.png"));
 	controllerSprite_->SetScale({70.0f, 70.0f});
-	controllerSprite_->SetPosition({10.0f, SCREEN_SIZE::HEIGHT - 20.0f});
+	controllerSprite_->SetPosition({10.0f, GameBase::GetInstance()->GetScreenHeight() - 20.0f});
 	controllerSprite_->SetAnchorPoint({0.0f, 1.0f});
 	controllerSprite_->Update();
 

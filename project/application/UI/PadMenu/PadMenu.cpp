@@ -4,10 +4,11 @@
 #include "Input.h"
 #include <numbers>
 #include "WinApp.h"
+#include "GameBase.h"
 #include <cmath>
 namespace{
 float padMenuSize = 500.0f;
-Vector2 padMenuPos = {WinApp::kClientWidth/2.0f, WinApp::kClientHeight/2.0f};
+Vector2 padMenuPos = {GameBase::GetInstance()->GetScreenWidth()/2.0f, GameBase::GetInstance()->GetScreenHeight()/2.0f};
 float iconSize = 60.0f;
 float iconDistance = 150.0f;
 }
