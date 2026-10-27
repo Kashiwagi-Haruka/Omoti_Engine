@@ -14,8 +14,10 @@
 #include <d3dx12.h>
 #include <dxcapi.h>
 #include <format>
+#include <filesystem>
 #include <random>
 #include <thread>
+
 
 // DirectXとシェーダーコンパイラに必要なライブラリをリンクする。
 #pragma comment(lib, "d3d12.lib")
@@ -1299,7 +1301,18 @@ Microsoft::WRL::ComPtr<IDxcBlob> DirectXCommon::CompileShader(
     /* CompilerするShaderファイルへのパス*/ const std::wstring& filePath,
     // Compilerに使用するProfile
     const wchar_t* profile) {
-	// ここの中身をこの後書いていく
+	const auto normalizedPath = std::filesystem::weakly_canonical(std::filesystem::path(filePath)).wstring();
+
+	// 現在のコンパイル設定に対応する文字列
+	const std::wstring options = L"-E main -Zi -Qembed_debug -Od -Zpr";
+
+	const ShaderCacheKey key{normalizedPath, std::wstring(profile), options};
+
+	// 保存済みなら、ファイル読込・コンパイルを省略する
+	const auto it = shaderCache_.find(key);
+	if (it != shaderCache_.end()) {
+		return it->second;
+	}
 	// 1. hlslファイルを読む
 	// // これからシェーダーをコンパイルする旨をログに出す
 	Logger::Log(StringUtility::ConvertString_(std::format(L"Begin CompileShader, path:{}, profile:{}\n", filePath, profile)));
@@ -1358,6 +1371,9 @@ Microsoft::WRL::ComPtr<IDxcBlob> DirectXCommon::CompileShader(
 	shaderResult.Reset();
 
 	// 実行用のバイナリを返却
+	// コンパイルが正常に完了し、Blobを取得できた後
+	shaderCache_.emplace(key, shaderBlob);
+
 	return shaderBlob;
 }
 

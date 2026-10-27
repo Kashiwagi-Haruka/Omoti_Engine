@@ -14,6 +14,9 @@
 #include <chrono>
 #include <string>
 #include <vector>
+#include <map>
+#include <string>
+#include <tuple>
 
 #include "WinApp.h"
 
@@ -195,6 +198,15 @@ class DirectXCommon {
 	float deltaTime_ = 1.0f / 60.0f;
 	WinApp* winApp_ = nullptr;
 	std::chrono::steady_clock::time_point reference_;
+
+	//シェーダ用
+	using ShaderCacheKey = std::tuple<
+	    std::wstring, // 正規化したファイルパス
+	    std::wstring, // vs_6_0、ps_6_0など
+	    std::wstring  // コンパイルオプション
+	    >;
+
+	std::map<ShaderCacheKey, Microsoft::WRL::ComPtr<IDxcBlob>> shaderCache_;
 
 public:
 	// ウィンドウを受け取り、描画に必要なDirectXオブジェクトを生成する。
