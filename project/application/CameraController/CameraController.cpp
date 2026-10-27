@@ -5,7 +5,9 @@
 #include "PlayCommand/PlayCommand.h"
 #include <algorithm>
 #include <numbers>
+#ifdef USE_IMGUI
 #include "ImGui.h"
+#endif
 
 namespace {
 
@@ -57,7 +59,7 @@ void CameraController::Update() {
 		hasPendingCameraMode_ = false;
 	}
 
-	if (PlayCommand::GetNORMAL_ATTACK_PUSH()) {
+	if (PlayCommand::GetInstance()->GetNORMAL_ATTACK_PUSH()) {
 		normalAttackIdleTimer_ = 0.0f;
 	} else {
 		normalAttackIdleTimer_ += kDeltaTime;

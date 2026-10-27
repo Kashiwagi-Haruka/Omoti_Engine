@@ -41,7 +41,7 @@ void GameOverScene::Initialize() {
 }
 void GameOverScene::Update() {
 	BGMManager::GetInstance()->Play(BGMManager::BGMType::GameOver);
-	if (PlayCommand::GetDESIDE() && !isTransitionOut) {
+	if (PlayCommand::GetInstance()->GetDESIDE() && !isTransitionOut) {
 		transition->Initialize(true);
 		isTransitionOut = true;
 	}

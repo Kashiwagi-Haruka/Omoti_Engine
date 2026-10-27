@@ -137,26 +137,26 @@ void AttackOperation::Update() {
 	UpdateInputDisplayMode();
 
 	skillIconSPData_.translate = {1200.0f, 400.0f};
-	UpdateOperationSprite(skillIconSPData_, PlayCommand::GetSKILL_ATTACK());
+	UpdateOperationSprite(skillIconSPData_, PlayCommand::GetInstance()->GetSKILL_ATTACK());
 
 	dashSPData_.translate = {skillIconSPData_.translate.x, skillIconSPData_.translate.y + skillIconSPData_.size.y / 2.0f + 80.0f};
-	UpdateOperationSprite(dashSPData_, PlayCommand::GetDASH());
+	UpdateOperationSprite(dashSPData_, PlayCommand::GetInstance()->GetDASH());
 
 	specialAttackSPData_.translate = {dashSPData_.translate.x - 80.0f, dashSPData_.translate.y + dashSPData_.size.y};
 	if (specialAttackSPData_.sprite) {
 		specialAttackSPData_.sprite->SetColor(specialCooldownRemaining_ > 0.0f ? Vector4{0.55f, 0.55f, 0.55f, 1.0f} : Vector4{1.0f, 1.0f, 1.0f, 1.0f});
 	}
-	UpdateOperationSprite(specialAttackSPData_, PlayCommand::GetSPECIAL_ATTACK());
+	UpdateOperationSprite(specialAttackSPData_, PlayCommand::GetInstance()->GetSPECIAL_ATTACK());
 
 	normalAttackSPData_.translate = {specialAttackSPData_.translate.x - specialAttackSPData_.size.x - 20.0f, specialAttackSPData_.translate.y + specialAttackSPData_.size.y / 2.0f + 20.0f};
-	UpdateOperationSprite(normalAttackSPData_, PlayCommand::GetNORMAL_ATTACK_PUSH());
+	UpdateOperationSprite(normalAttackSPData_, PlayCommand::GetInstance()->GetNORMAL_ATTACK_PUSH());
 	jumpSPData_.translate = {specialAttackSPData_.translate.x, normalAttackSPData_.translate.y + normalAttackSPData_.size.y / 2.0f + 20.0f};
-	UpdateOperationSprite(jumpSPData_, PlayCommand::GetJUMP());
+	UpdateOperationSprite(jumpSPData_, PlayCommand::GetInstance()->GetJUMP());
 	specialGaugeSPData_.translate = specialAttackSPData_.translate;
 	if (specialGaugeSPData_.sprite) {
 		specialGaugeSPData_.sprite->SetColor(GetSpecialGaugeColor(currentAttribute_));
 	}
-	UpdateOperationSprite(specialGaugeSPData_, PlayCommand::GetSPECIAL_ATTACK());
+	UpdateOperationSprite(specialGaugeSPData_, PlayCommand::GetInstance()->GetSPECIAL_ATTACK());
 	attributeChangeSPData_.translate = {
 	    normalAttackSPData_.translate.x - normalAttackSPData_.size.x - 20.0f,
 	    jumpSPData_.translate.y,

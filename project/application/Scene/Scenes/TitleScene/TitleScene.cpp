@@ -87,7 +87,7 @@ void TitleScene::Update() {
 		
 	}
 
-	if (PlayCommand::GetDESIDE() && !isTransitionOut) {
+	if (PlayCommand::GetInstance()->GetDESIDE() && !isTransitionOut) {
 		transition->Initialize(true);
 		isTransitionOut = true;
 		GameLoad::GetInstance()->GameSceneLoad();

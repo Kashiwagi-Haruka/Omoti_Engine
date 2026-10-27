@@ -67,7 +67,7 @@ void PadMenu::Initialize() {
 	helpIcon_->Update();
 }
 void PadMenu::Update(){
-	if (!PlayCommand::GetPadMenuOpen()) {
+	if (!PlayCommand::GetInstance()->GetPadMenuOpen()) {
 		return;
 	}
 	isMenuSelect = true;
@@ -95,7 +95,7 @@ void PadMenu::Update(){
 	selectSprite_->Update();
 }
 void PadMenu::Draw(){
-	if (!PlayCommand::GetPadMenuOpen()) {
+	if (!PlayCommand::GetInstance()->GetPadMenuOpen()) {
 		return;
 	}
 	backgroundSprite_->Draw();

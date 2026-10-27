@@ -121,7 +121,7 @@ void Menu::UpdateIcon(Sprite* sprite,Sprite* keySprite){
 				if (sprite->GetPosition().y + (kIconSize.y * (1.0f-sprite->GetAnchorPoint().y)) >= Input::GetInstance()->GetMouseY()) {
 					sprite->SetScale(kSelectIconSize);
 					sprite->Update();
-					if (PlayCommand::GetDESIDE()) {
+					if (PlayCommand::GetInstance()->GetDESIDE()) {
 						keySprite->SetColor({1.0f, 1.0f, 0.0f, 1.0f});
 						keySprite->Update();
 					}

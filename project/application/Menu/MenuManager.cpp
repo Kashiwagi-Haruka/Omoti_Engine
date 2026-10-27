@@ -29,7 +29,6 @@ void MenuManager::UnloadTeamDisplay() {
 void MenuManager::Initialize(Team& team) {
 	team_ = &team;
 	menuType_ = Menu::NONE;
-	action_ = Pause::Action::kNone;
 	characterDisplay_->Initialize(team);
 	pause_->Initialize();
 }
@@ -37,34 +36,36 @@ void MenuManager::Initialize(Team& team) {
 void MenuManager::Update() {
 	switch (menuType_) {
 	case MenuManager::Menu::NONE:
-		if (PlayCommand::GetCharacterDisplay()) {
+		if (PlayCommand::GetInstance()->GetCharacterDisplay()) {
 			menuType_ = Menu::CharacterDisplay;
-		} else if (PlayCommand::GetPause()) {
+		} else if (PlayCommand::GetInstance()->GetPause()) {
 			menuType_ = Menu::Pause;
-			pause_->Update(true);
-		} else if (PlayCommand::GetTeamSelectDisplay()) {
+			pause_->Start();
+		} else if (PlayCommand::GetInstance()->GetTeamSelectDisplay()) {
 			menuType_ = Menu::TeamDisplay;
 			LoadTeamDisplay();
 			Input::GetInstance()->SetIsCursorStability(false);
 			Input::GetInstance()->SetIsCursorVisible(true);
+		} else {
+			pause_->Update();
 		}
 		break;
 	case MenuManager::Menu::Pause:
-		pause_->Update(true);
-		action_ = pause_->ConsumeAction();
-		if (action_ == Pause::Action::kResume || PlayCommand::GetESCAPE()) {
+		pause_->Update();
+		if (!pause_->IsPause()) {
 			menuType_ = Menu::NONE;
 		}
 		break;
 	case MenuManager::Menu::CharacterDisplay:
 		characterDisplay_->Update();
-		if (PlayCommand::GetESCAPE() || PlayCommand::GetCharacterDisplay()) {
+		if (PlayCommand::GetInstance()->GetESCAPE() || PlayCommand::GetInstance()->GetCharacterDisplay()) {
 			menuType_ = Menu::NONE;
 		}
 		break;
 	case MenuManager::Menu::TeamDisplay:
 		teamDisplay_->Update(*team_);
-		if ((!PlayCommand::GetTeamSelectDisplay() && (PlayCommand::GetESCAPE() || Input::GetInstance()->TriggerButton(Input::PadButton::kButtonB))) || PlayCommand::GetTeamSelectDisplay()) {
+		if ((!PlayCommand::GetInstance()->GetTeamSelectDisplay() && (PlayCommand::GetInstance()->GetESCAPE() || Input::GetInstance()->TriggerButton(Input::PadButton::kButtonB))) ||
+		    PlayCommand::GetInstance()->GetTeamSelectDisplay()) {
 			Close();
 		}
 
@@ -101,8 +102,4 @@ void MenuManager::Close() {
 	menuType_ = Menu::NONE;
 }
 
-Pause::Action MenuManager::ConsumeAction() {
-	const Pause::Action action = action_;
-	action_ = Pause::Action::kNone;
-	return action;
-}
+bool MenuManager::IsTitleBack() const { return pause_->IsTitleBack(); }

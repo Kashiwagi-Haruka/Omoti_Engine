@@ -1,43 +1,75 @@
 #include "PlayCommand.h"
 #include "Input.h"
 
-bool PlayCommand::GetMOVE_FRONT() {
+std::unique_ptr<PlayCommand> PlayCommand::instance_ = nullptr;
+
+PlayCommand* PlayCommand::GetInstance() {
+
+	if (instance_ == nullptr) {
+		instance_ = std::make_unique<PlayCommand>();
+	}
+	return instance_.get();
+}
+void PlayCommand::Finalize() { instance_.reset(); }
+
+bool PlayCommand::GetMOVE_FRONT() const{
+	if (isPause_) {
+		false;
+	}
 	if (Input::GetInstance()->PushKey(DIK_W)) {
 		return true;
 	}
 	return false;
 }
-bool PlayCommand::GetMOVE_BACK() {
+bool PlayCommand::GetMOVE_BACK() const {
+	if (isPause_) {
+		false;
+	}
 	if (Input::GetInstance()->PushKey(DIK_S)) {
 		return true;
 	}
 	return false;
 }
-bool PlayCommand::GetMOVE_LEFT() {
+bool PlayCommand::GetMOVE_LEFT() const {
+	if (isPause_) {
+		false;
+	}
 	if (Input::GetInstance()->PushKey(DIK_A)) {
 		return true;
 	}
 	return false;
 }
-bool PlayCommand::GetMOVE_RIGHT() {
+bool PlayCommand::GetMOVE_RIGHT() const {
+	if (isPause_) {
+		false;
+	}
 	if (Input::GetInstance()->PushKey(DIK_D)) {
 		return true;
 	}
 	return false;
 }
-bool PlayCommand::GetJUMP() {
+bool PlayCommand::GetJUMP() const {
+	if (isPause_) {
+		false;
+	}
 	if (Input::GetInstance()->TriggerKey(DIK_SPACE) || Input::GetInstance()->TriggerButton(Input::PadButton::kButtonA)) {
 		return true;
 	}
 	return false;
 }
-bool PlayCommand::GetDASH() {
+bool PlayCommand::GetDASH() const {
+	if (isPause_) {
+		false;
+	}
 	if (Input::GetInstance()->PushMouseButton(Input::MouseButton::kRight) || Input::GetInstance()->PushRightTrigger()) {
 		return true;
 	}
 	return false;
 }
-bool PlayCommand::GetDASH_TRIGGER(){ 
+bool PlayCommand::GetDASH_TRIGGER() const { 
+	if (isPause_) {
+		false;
+	}
 	if (Input::GetInstance()->TriggerMouseButton(Input::MouseButton::kRight) || Input::GetInstance()->TriggerRightTrigger()) {
 		return true;
 	}
@@ -45,86 +77,116 @@ bool PlayCommand::GetDASH_TRIGGER(){
 	return false;
 }
 
-bool PlayCommand::GetNORMAL_ATTACK_PUSH() {
+bool PlayCommand::GetNORMAL_ATTACK_PUSH() const {
+	if (isPause_) {
+		false;
+	}
 	if (Input::GetInstance()->PushMouseButton(Input::MouseButton::kLeft) ||Input::GetInstance()->PushButton(Input::PadButton::kButtonX)) {
 		return true;
 	}
 	return false;
 }
-bool PlayCommand::GetNORMAL_ATTACK_TRIGGER() {
+bool PlayCommand::GetNORMAL_ATTACK_TRIGGER() const {
+	if (isPause_) {
+		false;
+	}
 	if (Input::GetInstance()->TriggerMouseButton(Input::MouseButton::kLeft) || Input::GetInstance()->TriggerButton(Input::PadButton::kButtonX)) {
 		return true;
 	}
 	return false;
 }
-bool PlayCommand::GetNORMAL_ATTACK_RELEASE() {
+bool PlayCommand::GetNORMAL_ATTACK_RELEASE() const {
+	if (isPause_) {
+		false;
+	}
 	if (Input::GetInstance()->ReleaseMouseButton(Input::MouseButton::kLeft) || Input::GetInstance()->ReleaseButton(Input::PadButton::kButtonX)) {
 		return true;
 	}
 	return false;
 }
-bool PlayCommand::GetSKILL_ATTACK() {
+bool PlayCommand::GetSKILL_ATTACK() const {
+	if (isPause_) {
+		false;
+	}
 	if (Input::GetInstance()->TriggerKey(DIK_E) || Input::GetInstance()->TriggerButton(Input::PadButton::kButtonRightShoulder)) {
 		return true;
 	}
 	return false;
 }
-bool PlayCommand::GetSPECIAL_ATTACK() {
+bool PlayCommand::GetSPECIAL_ATTACK() const {
+	if (isPause_) {
+		false;
+	}
 	if (Input::GetInstance()->TriggerKey(DIK_Q) || Input::GetInstance()->TriggerButton(Input::PadButton::kButtonY)) {
 		return true;
 	}
 	return false;
 }
-bool PlayCommand::GetDESIDE() {
+bool PlayCommand::GetDESIDE() const {
 	if (Input::GetInstance()->TriggerKey(DIK_SPACE)||Input::GetInstance()->TriggerButton(Input::PadButton::kButtonA)) {
 		return true;
 	}
 	return false;
 }
-bool PlayCommand::GetESCAPE() {
+bool PlayCommand::GetESCAPE() const {
 	if (Input::GetInstance()->TriggerKey(DIK_ESCAPE)||Input::GetInstance()->TriggerButton(Input::PadButton::kButtonB)) {
 		return true;
 	}
 	return false;
 }
-bool PlayCommand::GetCURSOR_DISPLAY(){ 
+bool PlayCommand::GetCURSOR_DISPLAY() const { 
 	if (Input::GetInstance()->PushKey(DIK_LALT) || Input::GetInstance()->PushKey(DIK_RALT)) {
 		return true;
 	}
 	return false;
 
 }
-bool PlayCommand::GetPause(){ 
+bool PlayCommand::GetPause() const { 
 	if (Input::GetInstance()->TriggerKey(DIK_ESCAPE) || Input::GetInstance()->TriggerButton(Input::PadButton::kButtonStart)) {
 		return true;
 	}
 	return false;
 }
-bool PlayCommand::GetCharacterChange1(){
+bool PlayCommand::GetCharacterChange1() const {
+	if (isPause_) {
+		false;
+	}
 	if (Input::GetInstance()->TriggerKey(DIK_1) || Input::GetInstance()->TriggerButton(Input::PadButton::kButtonUp)) {
 		return true;
 	}
 	return false;
 }
-bool PlayCommand::GetCharacterChange2() {
+bool PlayCommand::GetCharacterChange2() const {
+	if (isPause_) {
+		false;
+	}
 	if (Input::GetInstance()->TriggerKey(DIK_2) || Input::GetInstance()->TriggerButton(Input::PadButton::kButtonRight)) {
 		return true;
 	}
 	return false;
 }
-bool PlayCommand::GetCharacterChange3() {
+bool PlayCommand::GetCharacterChange3() const {
+	if (isPause_) {
+		false;
+	}
 	if (Input::GetInstance()->TriggerKey(DIK_3) || Input::GetInstance()->TriggerButton(Input::PadButton::kButtonDown)) {
 		return true;
 	}
 	return false;
 }
-bool PlayCommand::GetCharacterChange4() {
+bool PlayCommand::GetCharacterChange4() const {
+	if (isPause_) {
+		false;
+	}
 	if (Input::GetInstance()->TriggerKey(DIK_4) || Input::GetInstance()->TriggerButton(Input::PadButton::kButtonLeft)) {
 		return true;
 	}
 	return false;
 }
-bool PlayCommand::GetTeamSelectDisplay(){
+bool PlayCommand::GetTeamSelectDisplay() const {
+	if (isPause_) {
+		false;
+	}
 	if (Input::GetInstance()->TriggerKey(DIK_L)) {
 		return true;
 	}
@@ -134,7 +196,10 @@ bool PlayCommand::GetTeamSelectDisplay(){
 	return false;
 }
 
-bool PlayCommand::GetCharacterDisplay(){
+bool PlayCommand::GetCharacterDisplay() const {
+	if (isPause_) {
+		false;
+	}
 	if (Input::GetInstance()->TriggerKey(DIK_C)) {
 		return true;
 	}
@@ -143,19 +208,22 @@ bool PlayCommand::GetCharacterDisplay(){
 	}
 	return false;
 }
-bool PlayCommand::GetPadMenuOpen(){ 
+bool PlayCommand::GetPadMenuOpen() const { 
+	if (isPause_) {
+		false;
+	}
 	if (Input::GetInstance()->PushButton(Input::PadButton::kButtonLeftShoulder)) {
 		return true;
 	}
 	return false;
 }
-bool PlayCommand::GetUpUI(){
+bool PlayCommand::GetUpUI() const {
 	if (Input::GetInstance()->TriggerButton(Input::PadButton::kButtonUp) || Input::GetInstance()->TriggerKey(DIK_W) || Input::GetInstance()->TriggerKey(DIK_UP)) {
 		return true;
 	}
 	return false; 
 }
-bool PlayCommand::GetDownUI(){ 
+bool PlayCommand::GetDownUI() const { 
 	if (Input::GetInstance()->TriggerButton(Input::PadButton::kButtonDown) || Input::GetInstance()->TriggerKey(DIK_S) || Input::GetInstance()->TriggerKey(DIK_DOWN)) {
 		return true;
 	}	

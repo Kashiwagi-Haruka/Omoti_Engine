@@ -97,7 +97,7 @@ void UIManager::Draw() {
 	padMenuUI_->Draw();
 
 	controllerSprite_->Draw();
-	if (PlayCommand::GetCURSOR_DISPLAY() || attributeUI_->GetIsAttributeMenuOpen()) {
+	if (PlayCommand::GetInstance()->GetCURSOR_DISPLAY() || attributeUI_->GetIsAttributeMenuOpen()) {
 		if (cursolSprite_) {
 			cursolSprite_->Draw();
 		}

@@ -1,9 +1,11 @@
 #include "Pause.h"
+#include "GameBase.h"
 #include "Data/Color.h"
 #include "Engine/Texture/Mesh/Object3d/Object3dCommon.h"
 #include "Engine/Texture/Sprite/SpriteCommon.h"
 #include "Function.h"
 #include "Input.h"
+#include "PlayCommand/PlayCommand.h"
 #include "Text/FreetypeManager/FreeTypeManager.h"
 #include "TextureManager.h"
 namespace {
@@ -44,6 +46,9 @@ Pause::Pause() {
 	selectSprites_[0]->SetColor({1.0f, 0.0f, 0.0f, 0.5f});
 	selectSprites_[1]->SetColor({0.0f, 1.0f, 0.0f, 0.5f});
 	selectSprites_[2]->SetColor({0.0f, 0.0f, 1.0f, 0.5f});
+	
+	titleBackBG_ = std::make_unique<Sprite>();
+
 }
 
 void Pause::Initialize() {
@@ -51,9 +56,11 @@ void Pause::Initialize() {
 	menuTexts_.clear();
 
 	startTime = 0.0f;
+	isPause_ = false;
 	isStart_ = false;
 	isEnd_ = false;
 	isActive_ = false;
+	isTitleBack_ = false;
 	action_ = Action::kNone;
 	selectIndex_ = 1;
 
@@ -70,6 +77,10 @@ void Pause::Initialize() {
 	    .translate{0.0f,  0.0f,  10.0f},
 	});
 	BG_->SetEnableLighting(false);
+	uint32_t titleBackHandle = TextureManager::GetInstance()->GetTextureIndexByfilePath("Resources/2d/Pause/TitleBack.png");
+	titleBackBG_->Initialize(titleBackHandle);
+	titleBackBG_->SetPosition({GameBase::GetInstance()->GetScreenHalfWidth(), GameBase::GetInstance()->GetScreenHalfHeight()});
+	titleBackBG_->SetAnchorPoint({0.5f, 0.5f});
 
 	pauseFontHandle_ = FreeTypeManager::CreateFace("Resources/Font/JF-Dot-jiskan24-2000.ttf", 0);
 	FreeTypeManager::SetPixelSizes(pauseFontHandle_, 72, 72);
@@ -96,30 +107,36 @@ void Pause::Initialize() {
 	}
 }
 
-Pause::Action Pause::ConsumeAction() {
-	Action action = action_;
-	action_ = Action::kNone;
-	return action;
-}
-
-void Pause::Update(bool isPause) {
-
-	action_ = Action::kNone;
-
-	if (isPause && !isActive_ && !isStart_) {
+void Pause::Start() { 
+	if (!isActive_ && !isStart_ ) {
+		action_ = Action::kNone; 
+		Object3dCommon::GetInstance()->SetFullScreenGrayscaleEnabled(false);
+		isPause_ = true;
 		startTime = 0.0f;
 		isStart_ = true;
 		isEnd_ = false;
 	}
-
-	if (!isPause && isActive_ && !isEnd_) {
+}
+void Pause::End() {
+	if (isActive_ && !isEnd_) {
 		startTime = 0.0f;
 		isEnd_ = true;
 		isStart_ = false;
 		Input::GetInstance()->SetIsCursorStability(true);
 		Input::GetInstance()->SetIsCursorVisible(false);
 	}
+}
 
+void Pause::Update() {
+
+
+	if (!isPause_) {
+		return;
+	} else {
+		if (PlayCommand::GetInstance()->GetPause()) {
+			End();
+		}	
+	}
 	float offsetX = kHiddenOffsetX;
 	if (isStart_) {
 		startTime += kTransitionSpeed;
@@ -137,6 +154,7 @@ void Pause::Update(bool isPause) {
 		offsetX = Function::Lerp(0.0f, kHiddenOffsetX, startTime);
 		if (startTime >= 1.0f) {
 			startTime = 1.0f;
+			isPause_ = false;
 			isEnd_ = false;
 			isActive_ = false;
 			offsetX = kHiddenOffsetX;
@@ -148,23 +166,37 @@ void Pause::Update(bool isPause) {
 	}
 
 	if (isActive_) {
-		bool moveUp = Input::GetInstance()->TriggerKey(DIK_W) || Input::GetInstance()->TriggerKey(DIK_UP) || Input::GetInstance()->TriggerButton(Input::PadButton::kButtonUp);
-		bool moveDown = Input::GetInstance()->TriggerKey(DIK_S) || Input::GetInstance()->TriggerKey(DIK_DOWN) || Input::GetInstance()->TriggerButton(Input::PadButton::kButtonDown);
-
-		if (moveUp && !moveDown) {
+		
+		if (PlayCommand::GetInstance()->GetUpUI() && !PlayCommand::GetInstance()->GetDownUI()) {
 			selectIndex_ = (selectIndex_ + kMenuCount - 1) % kMenuCount;
-		} else if (moveDown && !moveUp) {
+		} else if (PlayCommand::GetInstance()->GetDownUI() && !PlayCommand::GetInstance()->GetUpUI()) {
 			selectIndex_ = (selectIndex_ + 1) % kMenuCount;
 		}
 
-		bool confirm = Input::GetInstance()->TriggerKey(DIK_RETURN) || Input::GetInstance()->TriggerKey(DIK_SPACE) || Input::GetInstance()->TriggerButton(Input::PadButton::kButtonA);
-		bool cancel = Input::GetInstance()->TriggerKey(DIK_ESCAPE) || Input::GetInstance()->TriggerButton(Input::PadButton::kButtonStart) ||
-		              Input::GetInstance()->TriggerButton(Input::PadButton::kButtonB);
-
-		if (confirm) {
+		if (PlayCommand::GetInstance()->GetDESIDE()) {
 			action_ = kMenuActions[selectIndex_];
-		} else if (cancel) {
+		} else if (PlayCommand::GetInstance()->GetESCAPE()) {
 			action_ = Action::kResume;
+		}
+		switch (action_) {
+		case Pause::Action::kNone:
+			break;
+		case Pause::Action::kResume:
+			break;
+		case Pause::Action::kOptions:
+			break;
+		case Pause::Action::kLicense:
+			break;
+		case Pause::Action::kTitle:
+			if (isTitleBackVisit_) {
+				isTitleBack_ = true;
+				isTitleBackVisit_ = false;
+				break;
+			}
+			isTitleBackVisit_ = true;
+			break;
+		default:
+			break;
 		}
 	}
 	SelectSpriteUpdate();
@@ -184,7 +216,7 @@ void Pause::Update(bool isPause) {
 }
 void Pause::Draw() {
 
-	if (!IsVisible()) {
+	if (!isPause_) {
 		return;
 	}
 	Object3dCommon::GetInstance()->SetFullScreenGrayscaleEnabled(false);
@@ -261,4 +293,9 @@ void Pause::SelectSpriteUpdate() {
 		selectSprites_[i]->SetRotation(std::sinf(selectRotation_[i]));
 		selectSprites_[i]->SetScale({selectScale_[i], selectScale_[i]});
 	}
+}
+
+bool Pause::IsTitleBack()const{
+
+	return isTitleBack_;
 }
