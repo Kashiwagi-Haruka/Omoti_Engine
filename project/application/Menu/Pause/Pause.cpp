@@ -107,6 +107,7 @@ void Pause::Update(bool isPause) {
 	action_ = Action::kNone;
 
 	if (isPause && !isActive_ && !isStart_) {
+		Object3dCommon::GetInstance()->SetFullScreenGrayscaleEnabled(false);
 		startTime = 0.0f;
 		isStart_ = true;
 		isEnd_ = false;

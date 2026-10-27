@@ -140,38 +140,38 @@ void Player::Move() {
 	Vector3 inputAxis = {0.0f, 0.0f, 0.0f};
 	bool hasInput = false;
 
-	if (PlayCommand::GetMOVE_LEFT() || PlayCommand::GetMOVE_RIGHT()) {
+	if (PlayCommand::GetInstance()->GetMOVE_LEFT() || PlayCommand::GetInstance()->GetMOVE_RIGHT()) {
 
-		if (!PlayCommand::GetMOVE_RIGHT()) {
+		if (!PlayCommand::GetInstance()->GetMOVE_RIGHT()) {
 
-			if (PlayCommand::GetMOVE_LEFT()) {
+			if (PlayCommand::GetInstance()->GetMOVE_LEFT()) {
 
 				inputAxis.x = -1.0f;
 				hasInput = true;
 			}
 		}
 
-		if (!PlayCommand::GetMOVE_LEFT()) {
+		if (!PlayCommand::GetInstance()->GetMOVE_LEFT()) {
 
-			if (PlayCommand::GetMOVE_RIGHT()) {
+			if (PlayCommand::GetInstance()->GetMOVE_RIGHT()) {
 				inputAxis.x = 1.0f;
 				hasInput = true;
 			}
 		}
 	}
-	if (PlayCommand::GetMOVE_FRONT() || PlayCommand::GetMOVE_BACK()) {
+	if (PlayCommand::GetInstance()->GetMOVE_FRONT() || PlayCommand::GetInstance()->GetMOVE_BACK()) {
 
-		if (!PlayCommand::GetMOVE_FRONT()) {
+		if (!PlayCommand::GetInstance()->GetMOVE_FRONT()) {
 
-			if (PlayCommand::GetMOVE_BACK()) {
+			if (PlayCommand::GetInstance()->GetMOVE_BACK()) {
 				inputAxis.z = -1.0f;
 				hasInput = true;
 			}
 		}
 
-		if (!PlayCommand::GetMOVE_BACK()) {
+		if (!PlayCommand::GetInstance()->GetMOVE_BACK()) {
 
-			if (PlayCommand::GetMOVE_FRONT()) {
+			if (PlayCommand::GetInstance()->GetMOVE_FRONT()) {
 				inputAxis.z = 1.0f;
 				hasInput = true;
 			}
@@ -230,7 +230,7 @@ void Player::Move() {
 	if (!hasInput) {
 		isDash = false;
 	} else {
-		isDash = PlayCommand::GetDASH();
+		isDash = PlayCommand::GetInstance()->GetDASH();
 	}
 
 	if (!attack_->IsAttacking() && !attack_->IsFallingAttacking()) {
@@ -312,7 +312,7 @@ void Player::FaceLockOnTarget() {
 	transform_.rotate.y = Function::Lerp(transform_.rotate.y, transform_.rotate.y + angleDiff, rotateTimer);
 }
 void Player::Jump() {
-	if (PlayCommand::GetJUMP() && attack_->IsCanMove() && !isJump && !isfalling) {
+	if (PlayCommand::GetInstance()->GetJUMP() && attack_->IsCanMove() && !isJump && !isfalling) {
 		isJump = true;
 		jumpTimer = 0.0f;
 	}

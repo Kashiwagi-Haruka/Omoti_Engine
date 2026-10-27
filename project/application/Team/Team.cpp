@@ -72,10 +72,10 @@ void Team::Initialize() {
 
 void Team::Update() {
 	const bool characterChangeCommands[kMaxMembersCount] = {
-	    PlayCommand::GetCharacterChange1(),
-	    PlayCommand::GetCharacterChange2(),
-	    PlayCommand::GetCharacterChange3(),
-	    PlayCommand::GetCharacterChange4(),
+	    PlayCommand::GetInstance()->GetCharacterChange1(),
+	    PlayCommand::GetInstance()->GetCharacterChange2(),
+	    PlayCommand::GetInstance()->GetCharacterChange3(),
+	    PlayCommand::GetInstance()->GetCharacterChange4(),
 	};
 
 	for (int i = 0; i < kMaxMembersCount; ++i) {

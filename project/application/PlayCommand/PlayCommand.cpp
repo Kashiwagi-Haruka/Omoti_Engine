@@ -1,43 +1,74 @@
 #include "PlayCommand.h"
 #include "Input.h"
 
+std::unique_ptr<PlayCommand> PlayCommand::instance_ = nullptr;
+
+PlayCommand* PlayCommand::GetInstance() {
+
+	if (instance_ == nullptr) {
+		instance_ = std::make_unique<PlayCommand>();
+	}
+	return instance_.get();
+}
+
 bool PlayCommand::GetMOVE_FRONT() {
+	if (isPause_) {
+		false;
+	}
 	if (Input::GetInstance()->PushKey(DIK_W)) {
 		return true;
 	}
 	return false;
 }
 bool PlayCommand::GetMOVE_BACK() {
+	if (isPause_) {
+		false;
+	}
 	if (Input::GetInstance()->PushKey(DIK_S)) {
 		return true;
 	}
 	return false;
 }
 bool PlayCommand::GetMOVE_LEFT() {
+	if (isPause_) {
+		false;
+	}
 	if (Input::GetInstance()->PushKey(DIK_A)) {
 		return true;
 	}
 	return false;
 }
 bool PlayCommand::GetMOVE_RIGHT() {
+	if (isPause_) {
+		false;
+	}
 	if (Input::GetInstance()->PushKey(DIK_D)) {
 		return true;
 	}
 	return false;
 }
 bool PlayCommand::GetJUMP() {
+	if (isPause_) {
+		false;
+	}
 	if (Input::GetInstance()->TriggerKey(DIK_SPACE) || Input::GetInstance()->TriggerButton(Input::PadButton::kButtonA)) {
 		return true;
 	}
 	return false;
 }
 bool PlayCommand::GetDASH() {
+	if (isPause_) {
+		false;
+	}
 	if (Input::GetInstance()->PushMouseButton(Input::MouseButton::kRight) || Input::GetInstance()->PushRightTrigger()) {
 		return true;
 	}
 	return false;
 }
 bool PlayCommand::GetDASH_TRIGGER(){ 
+	if (isPause_) {
+		false;
+	}
 	if (Input::GetInstance()->TriggerMouseButton(Input::MouseButton::kRight) || Input::GetInstance()->TriggerRightTrigger()) {
 		return true;
 	}
@@ -46,30 +77,45 @@ bool PlayCommand::GetDASH_TRIGGER(){
 }
 
 bool PlayCommand::GetNORMAL_ATTACK_PUSH() {
+	if (isPause_) {
+		false;
+	}
 	if (Input::GetInstance()->PushMouseButton(Input::MouseButton::kLeft) ||Input::GetInstance()->PushButton(Input::PadButton::kButtonX)) {
 		return true;
 	}
 	return false;
 }
 bool PlayCommand::GetNORMAL_ATTACK_TRIGGER() {
+	if (isPause_) {
+		false;
+	}
 	if (Input::GetInstance()->TriggerMouseButton(Input::MouseButton::kLeft) || Input::GetInstance()->TriggerButton(Input::PadButton::kButtonX)) {
 		return true;
 	}
 	return false;
 }
 bool PlayCommand::GetNORMAL_ATTACK_RELEASE() {
+	if (isPause_) {
+		false;
+	}
 	if (Input::GetInstance()->ReleaseMouseButton(Input::MouseButton::kLeft) || Input::GetInstance()->ReleaseButton(Input::PadButton::kButtonX)) {
 		return true;
 	}
 	return false;
 }
 bool PlayCommand::GetSKILL_ATTACK() {
+	if (isPause_) {
+		false;
+	}
 	if (Input::GetInstance()->TriggerKey(DIK_E) || Input::GetInstance()->TriggerButton(Input::PadButton::kButtonRightShoulder)) {
 		return true;
 	}
 	return false;
 }
 bool PlayCommand::GetSPECIAL_ATTACK() {
+	if (isPause_) {
+		false;
+	}
 	if (Input::GetInstance()->TriggerKey(DIK_Q) || Input::GetInstance()->TriggerButton(Input::PadButton::kButtonY)) {
 		return true;
 	}
@@ -101,30 +147,45 @@ bool PlayCommand::GetPause(){
 	return false;
 }
 bool PlayCommand::GetCharacterChange1(){
+	if (isPause_) {
+		false;
+	}
 	if (Input::GetInstance()->TriggerKey(DIK_1) || Input::GetInstance()->TriggerButton(Input::PadButton::kButtonUp)) {
 		return true;
 	}
 	return false;
 }
 bool PlayCommand::GetCharacterChange2() {
+	if (isPause_) {
+		false;
+	}
 	if (Input::GetInstance()->TriggerKey(DIK_2) || Input::GetInstance()->TriggerButton(Input::PadButton::kButtonRight)) {
 		return true;
 	}
 	return false;
 }
 bool PlayCommand::GetCharacterChange3() {
+	if (isPause_) {
+		false;
+	}
 	if (Input::GetInstance()->TriggerKey(DIK_3) || Input::GetInstance()->TriggerButton(Input::PadButton::kButtonDown)) {
 		return true;
 	}
 	return false;
 }
 bool PlayCommand::GetCharacterChange4() {
+	if (isPause_) {
+		false;
+	}
 	if (Input::GetInstance()->TriggerKey(DIK_4) || Input::GetInstance()->TriggerButton(Input::PadButton::kButtonLeft)) {
 		return true;
 	}
 	return false;
 }
 bool PlayCommand::GetTeamSelectDisplay(){
+	if (isPause_) {
+		false;
+	}
 	if (Input::GetInstance()->TriggerKey(DIK_L)) {
 		return true;
 	}
@@ -135,6 +196,9 @@ bool PlayCommand::GetTeamSelectDisplay(){
 }
 
 bool PlayCommand::GetCharacterDisplay(){
+	if (isPause_) {
+		false;
+	}
 	if (Input::GetInstance()->TriggerKey(DIK_C)) {
 		return true;
 	}
@@ -144,6 +208,9 @@ bool PlayCommand::GetCharacterDisplay(){
 	return false;
 }
 bool PlayCommand::GetPadMenuOpen(){ 
+	if (isPause_) {
+		false;
+	}
 	if (Input::GetInstance()->PushButton(Input::PadButton::kButtonLeftShoulder)) {
 		return true;
 	}

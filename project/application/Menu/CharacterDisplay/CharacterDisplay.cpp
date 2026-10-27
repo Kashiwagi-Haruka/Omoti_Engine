@@ -153,25 +153,25 @@ void CharacterDisplay::Update() {
 
 	switch (selectMenuType_) {
 	case CharacterDisplayMenuType::STATUS:
-		if (PlayCommand::GetDownUI()) {
+		if (PlayCommand::GetInstance()->GetDownUI()) {
 			selectMenuType_ = CharacterDisplayMenuType::WEAPON;
 		}
 		status_->Update();
 		break;
 	case CharacterDisplayMenuType::WEAPON:
-		if (PlayCommand::GetUpUI()) {
+		if (PlayCommand::GetInstance()->GetUpUI()) {
 			selectMenuType_ = CharacterDisplayMenuType::STATUS;
 		}
-		if (PlayCommand::GetDownUI()) {
+		if (PlayCommand::GetInstance()->GetDownUI()) {
 			selectMenuType_ = CharacterDisplayMenuType::EQUIP;
 		}
 		weapon_->Update();
 		break;
 	case CharacterDisplayMenuType::EQUIP:
-		if (PlayCommand::GetUpUI()) {
+		if (PlayCommand::GetInstance()->GetUpUI()) {
 			selectMenuType_ = CharacterDisplayMenuType::WEAPON;
 		}
-		if (PlayCommand::GetDownUI()) {
+		if (PlayCommand::GetInstance()->GetDownUI()) {
 			selectMenuType_ = CharacterDisplayMenuType::SKILLTREE;
 		}
 		equip_->SetCamera(camera_.get());
@@ -179,26 +179,26 @@ void CharacterDisplay::Update() {
 		equip_->Update();
 		break;
 	case CharacterDisplayMenuType::SKILLTREE:
-		if (PlayCommand::GetUpUI()) {
+		if (PlayCommand::GetInstance()->GetUpUI()) {
 			selectMenuType_ = CharacterDisplayMenuType::EQUIP;
 		}
-		if (PlayCommand::GetDownUI()) {
+		if (PlayCommand::GetInstance()->GetDownUI()) {
 			selectMenuType_ = CharacterDisplayMenuType::REINFORCEMENT;
 		}
 		skilltree_->Update();
 		break;
 	case CharacterDisplayMenuType::REINFORCEMENT:
-		if (PlayCommand::GetUpUI()) {
+		if (PlayCommand::GetInstance()->GetUpUI()) {
 			selectMenuType_ = CharacterDisplayMenuType::SKILLTREE;
 		}
-		if (PlayCommand::GetDownUI()) {
+		if (PlayCommand::GetInstance()->GetDownUI()) {
 			selectMenuType_ = CharacterDisplayMenuType ::PROFILE;
 		}
 		reinforcement_->SetReinforcementCount(currentPlayable_->GetReinforcement());
 		reinforcement_->Update();
 		break;
 	case CharacterDisplayMenuType::PROFILE:
-		if (PlayCommand::GetUpUI()) {
+		if (PlayCommand::GetInstance()->GetUpUI()) {
 			selectMenuType_ = CharacterDisplayMenuType::REINFORCEMENT;
 		}
 		profile_->Update();

@@ -360,7 +360,7 @@ void GameScene::Update() {
 		ParticleManager::GetInstance()->Update();
 	skyDome->Update();
 	field->Update();
-	if (playAreaMode_ == PlayAreaMode::kSpiral && PlayCommand::GetNORMAL_ATTACK_TRIGGER() && !cameraController->IsLockOnCameraActive()) {
+	if (playAreaMode_ == PlayAreaMode::kSpiral && PlayCommand::GetInstance()->GetNORMAL_ATTACK_TRIGGER() && !cameraController->IsLockOnCameraActive()) {
 		EnemyManager* enemyManager = rasen_->GetEnemyManager();
 		if (Enemy* nearestEnemy = TryFindNearestAliveEnemy(*player, *enemyManager, kAttackCameraLockOnRange)) {
 			normalAttackTargetEnemy_ = nearestEnemy;
@@ -411,14 +411,6 @@ void GameScene::Update() {
 	} else {
 		openWorld_->Update(cameraController->GetCamera(), player.get());
 	}
-
-#ifdef _DEBUG
-	if (Input::GetInstance()->TriggerKey(DIK_P)) {
-		nextSceneName = "Result";
-		sceneTransition->Initialize(true);
-		isTransitionOut = true;
-	}
-#endif // _DEBUG
 
 	if (playAreaMode_ == PlayAreaMode::kSpiral) {
 		const bool isGameOver = team_->GetAreAllMembersDead() || rasen_->GetHouse()->GetHP() == 0;

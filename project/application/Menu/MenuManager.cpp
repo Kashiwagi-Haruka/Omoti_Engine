@@ -37,12 +37,12 @@ void MenuManager::Initialize(Team& team) {
 void MenuManager::Update() {
 	switch (menuType_) {
 	case MenuManager::Menu::NONE:
-		if (PlayCommand::GetCharacterDisplay()) {
+		if (PlayCommand::GetInstance()->GetCharacterDisplay()) {
 			menuType_ = Menu::CharacterDisplay;
-		} else if (PlayCommand::GetPause()) {
+		} else if (PlayCommand::GetInstance()->GetPause()) {
 			menuType_ = Menu::Pause;
 			pause_->Update(true);
-		} else if (PlayCommand::GetTeamSelectDisplay()) {
+		} else if (PlayCommand::GetInstance()->GetTeamSelectDisplay()) {
 			menuType_ = Menu::TeamDisplay;
 			LoadTeamDisplay();
 			Input::GetInstance()->SetIsCursorStability(false);
@@ -52,19 +52,20 @@ void MenuManager::Update() {
 	case MenuManager::Menu::Pause:
 		pause_->Update(true);
 		action_ = pause_->ConsumeAction();
-		if (action_ == Pause::Action::kResume || PlayCommand::GetESCAPE()) {
+		if (action_ == Pause::Action::kResume || PlayCommand::GetInstance()->GetESCAPE()) {
 			menuType_ = Menu::NONE;
 		}
 		break;
 	case MenuManager::Menu::CharacterDisplay:
 		characterDisplay_->Update();
-		if (PlayCommand::GetESCAPE() || PlayCommand::GetCharacterDisplay()) {
+		if (PlayCommand::GetInstance()->GetESCAPE() || PlayCommand::GetInstance()->GetCharacterDisplay()) {
 			menuType_ = Menu::NONE;
 		}
 		break;
 	case MenuManager::Menu::TeamDisplay:
 		teamDisplay_->Update(*team_);
-		if ((!PlayCommand::GetTeamSelectDisplay() && (PlayCommand::GetESCAPE() || Input::GetInstance()->TriggerButton(Input::PadButton::kButtonB))) || PlayCommand::GetTeamSelectDisplay()) {
+		if ((!PlayCommand::GetInstance()->GetTeamSelectDisplay() && (PlayCommand::GetInstance()->GetESCAPE() || Input::GetInstance()->TriggerButton(Input::PadButton::kButtonB))) ||
+		    PlayCommand::GetInstance()->GetTeamSelectDisplay()) {
 			Close();
 		}
 

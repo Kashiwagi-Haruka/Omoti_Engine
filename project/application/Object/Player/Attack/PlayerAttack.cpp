@@ -91,12 +91,12 @@ void PlayerAttack::Update() {
 	}
 
 	// ===== 左クリック長押し判定 =====
-	if (PlayCommand::GetNORMAL_ATTACK_PUSH()) {
+	if (PlayCommand::GetInstance()->GetNORMAL_ATTACK_PUSH()) {
 		attackHoldTimer_ += 1.0f / 60.0f;
 	}
 
 	// ===== 攻撃入力の処理 =====
-	if (PlayCommand::GetNORMAL_ATTACK_TRIGGER()||(canCombo_&&nextComboInput_)) {
+	if (PlayCommand::GetInstance()->GetNORMAL_ATTACK_TRIGGER() || (canCombo_ && nextComboInput_)) {
 
 		// ★ 空中にいる場合は落下攻撃
 		if (isfalling || isJump) {
@@ -169,7 +169,7 @@ void PlayerAttack::Update() {
 	}
 
 	// ===== 左クリックを離したとき =====
-	if (PlayCommand::GetNORMAL_ATTACK_RELEASE()) {
+	if (PlayCommand::GetInstance()->GetNORMAL_ATTACK_RELEASE()) {
 
 		// ★ 長押ししていた場合は重撃に変更
 		if (attackHoldTimer_ >= heavyAttackThreshold_ && isAttacking_) {
@@ -207,7 +207,7 @@ void PlayerAttack::Update() {
 		}
 	}
 	}
-	if (PlayCommand::GetSKILL_ATTACK()) {
+	if (PlayCommand::GetInstance()->GetSKILL_ATTACK()) {
 		// スキル攻撃
 		if (!isSkillAttack) {
 			ResetNormalAttackState();
@@ -226,7 +226,7 @@ void PlayerAttack::Update() {
 			comboTimer_ = 0.0f;
 		}
 	}
-	if (PlayCommand::GetSPECIAL_ATTACK()) {
+	if (PlayCommand::GetInstance()->GetSPECIAL_ATTACK()) {
 		// 必殺技
 		if (!isSpecialAttack && IsSpecialAttackReady()) {
 			ResetNormalAttackState();
