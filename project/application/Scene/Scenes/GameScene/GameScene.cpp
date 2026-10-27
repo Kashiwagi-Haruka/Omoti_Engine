@@ -300,8 +300,8 @@ void GameScene::Update() {
 		player->SetCharacterType(team_->GetActiveCharacterName());
 		menuManager_->SetCharacter(player->GetCharacterObject3d(), player->GetCurrentAttribute());
 	}
-	const Pause::Action pauseAction = menuManager_->ConsumeAction();
-	if (pauseAction == Pause::Action::kTitle) {
+
+	if (menuManager_->IsTitleBack()) {
 		if (!isTransitionOut) {
 			nextSceneName = "Title";
 			sceneTransition->Initialize(true);

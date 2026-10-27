@@ -3,6 +3,7 @@
 #include "AudioManager/BGMManager/BGMManager.h"
 #include "AudioManager/SEManager/SEManager.h"
 #include "Object/Load/GameLoad.h"
+#include "PlayCommand/PlayCommand.h"
 
 void Game::Initialize() {
 	FrameWork::Initialize();
@@ -37,6 +38,7 @@ void Game::Draw() {
 }
 
 void Game::Finalize() {
+	PlayCommand::GetInstance()->Finalize();
 	GameLoad::GetInstance()->Finalize();
 	SceneManager::GetInstance()->Finalize();
 	SEManager::GetInstance()->Finalize();

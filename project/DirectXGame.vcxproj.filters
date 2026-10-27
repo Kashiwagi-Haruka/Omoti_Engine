@@ -571,6 +571,7 @@
     <ClCompile Include="application\Object\StageSelect\Gate\StageSelectGate.cpp" />
     <ClCompile Include="application\UI\Attribute\AttributeUI.cpp" />
     <ClCompile Include="application\UI\Quest\QuestUI.cpp" />
+    <ClCompile Include="application\PostEffectManager\GameScene\GameScenePostEffectManager.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Engine\Camera\Camera.h">
@@ -1132,6 +1133,7 @@
     <ClInclude Include="application\Object\StageSelect\Gate\StageSelectGate.h" />
     <ClInclude Include="application\UI\Attribute\AttributeUI.h" />
     <ClInclude Include="application\UI\Quest\QuestUI.h" />
+    <ClInclude Include="application\PostEffectManager\GameScene\GameScenePostEffectManager.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include=".editorconfig" />

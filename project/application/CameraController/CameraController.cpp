@@ -5,7 +5,9 @@
 #include "PlayCommand/PlayCommand.h"
 #include <algorithm>
 #include <numbers>
+#ifdef USE_IMGUI
 #include "ImGui.h"
+#endif
 
 namespace {
 

@@ -23,7 +23,6 @@ class MenuManager {
 	};
 
 	Menu menuType_ = Menu::NONE;
-	Pause::Action action_ = Pause::Action::kNone;
 
 	void LoadTeamDisplay();
 	void UnloadTeamDisplay();
@@ -36,5 +35,5 @@ public:
 	void SetCharacter(Object3d* obj, Attribute attribute);
 	void Close();
 	bool IsActive() const { return menuType_ != Menu::NONE; }
-	Pause::Action ConsumeAction();
+	bool IsTitleBack() const;
 };

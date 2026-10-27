@@ -10,8 +10,9 @@ PlayCommand* PlayCommand::GetInstance() {
 	}
 	return instance_.get();
 }
+void PlayCommand::Finalize() { instance_.reset(); }
 
-bool PlayCommand::GetMOVE_FRONT() {
+bool PlayCommand::GetMOVE_FRONT() const{
 	if (isPause_) {
 		false;
 	}
@@ -20,7 +21,7 @@ bool PlayCommand::GetMOVE_FRONT() {
 	}
 	return false;
 }
-bool PlayCommand::GetMOVE_BACK() {
+bool PlayCommand::GetMOVE_BACK() const {
 	if (isPause_) {
 		false;
 	}
@@ -29,7 +30,7 @@ bool PlayCommand::GetMOVE_BACK() {
 	}
 	return false;
 }
-bool PlayCommand::GetMOVE_LEFT() {
+bool PlayCommand::GetMOVE_LEFT() const {
 	if (isPause_) {
 		false;
 	}
@@ -38,7 +39,7 @@ bool PlayCommand::GetMOVE_LEFT() {
 	}
 	return false;
 }
-bool PlayCommand::GetMOVE_RIGHT() {
+bool PlayCommand::GetMOVE_RIGHT() const {
 	if (isPause_) {
 		false;
 	}
@@ -47,7 +48,7 @@ bool PlayCommand::GetMOVE_RIGHT() {
 	}
 	return false;
 }
-bool PlayCommand::GetJUMP() {
+bool PlayCommand::GetJUMP() const {
 	if (isPause_) {
 		false;
 	}
@@ -56,7 +57,7 @@ bool PlayCommand::GetJUMP() {
 	}
 	return false;
 }
-bool PlayCommand::GetDASH() {
+bool PlayCommand::GetDASH() const {
 	if (isPause_) {
 		false;
 	}
@@ -65,7 +66,7 @@ bool PlayCommand::GetDASH() {
 	}
 	return false;
 }
-bool PlayCommand::GetDASH_TRIGGER(){ 
+bool PlayCommand::GetDASH_TRIGGER() const { 
 	if (isPause_) {
 		false;
 	}
@@ -76,7 +77,7 @@ bool PlayCommand::GetDASH_TRIGGER(){
 	return false;
 }
 
-bool PlayCommand::GetNORMAL_ATTACK_PUSH() {
+bool PlayCommand::GetNORMAL_ATTACK_PUSH() const {
 	if (isPause_) {
 		false;
 	}
@@ -85,7 +86,7 @@ bool PlayCommand::GetNORMAL_ATTACK_PUSH() {
 	}
 	return false;
 }
-bool PlayCommand::GetNORMAL_ATTACK_TRIGGER() {
+bool PlayCommand::GetNORMAL_ATTACK_TRIGGER() const {
 	if (isPause_) {
 		false;
 	}
@@ -94,7 +95,7 @@ bool PlayCommand::GetNORMAL_ATTACK_TRIGGER() {
 	}
 	return false;
 }
-bool PlayCommand::GetNORMAL_ATTACK_RELEASE() {
+bool PlayCommand::GetNORMAL_ATTACK_RELEASE() const {
 	if (isPause_) {
 		false;
 	}
@@ -103,7 +104,7 @@ bool PlayCommand::GetNORMAL_ATTACK_RELEASE() {
 	}
 	return false;
 }
-bool PlayCommand::GetSKILL_ATTACK() {
+bool PlayCommand::GetSKILL_ATTACK() const {
 	if (isPause_) {
 		false;
 	}
@@ -112,7 +113,7 @@ bool PlayCommand::GetSKILL_ATTACK() {
 	}
 	return false;
 }
-bool PlayCommand::GetSPECIAL_ATTACK() {
+bool PlayCommand::GetSPECIAL_ATTACK() const {
 	if (isPause_) {
 		false;
 	}
@@ -121,32 +122,32 @@ bool PlayCommand::GetSPECIAL_ATTACK() {
 	}
 	return false;
 }
-bool PlayCommand::GetDESIDE() {
+bool PlayCommand::GetDESIDE() const {
 	if (Input::GetInstance()->TriggerKey(DIK_SPACE)||Input::GetInstance()->TriggerButton(Input::PadButton::kButtonA)) {
 		return true;
 	}
 	return false;
 }
-bool PlayCommand::GetESCAPE() {
+bool PlayCommand::GetESCAPE() const {
 	if (Input::GetInstance()->TriggerKey(DIK_ESCAPE)||Input::GetInstance()->TriggerButton(Input::PadButton::kButtonB)) {
 		return true;
 	}
 	return false;
 }
-bool PlayCommand::GetCURSOR_DISPLAY(){ 
+bool PlayCommand::GetCURSOR_DISPLAY() const { 
 	if (Input::GetInstance()->PushKey(DIK_LALT) || Input::GetInstance()->PushKey(DIK_RALT)) {
 		return true;
 	}
 	return false;
 
 }
-bool PlayCommand::GetPause(){ 
+bool PlayCommand::GetPause() const { 
 	if (Input::GetInstance()->TriggerKey(DIK_ESCAPE) || Input::GetInstance()->TriggerButton(Input::PadButton::kButtonStart)) {
 		return true;
 	}
 	return false;
 }
-bool PlayCommand::GetCharacterChange1(){
+bool PlayCommand::GetCharacterChange1() const {
 	if (isPause_) {
 		false;
 	}
@@ -155,7 +156,7 @@ bool PlayCommand::GetCharacterChange1(){
 	}
 	return false;
 }
-bool PlayCommand::GetCharacterChange2() {
+bool PlayCommand::GetCharacterChange2() const {
 	if (isPause_) {
 		false;
 	}
@@ -164,7 +165,7 @@ bool PlayCommand::GetCharacterChange2() {
 	}
 	return false;
 }
-bool PlayCommand::GetCharacterChange3() {
+bool PlayCommand::GetCharacterChange3() const {
 	if (isPause_) {
 		false;
 	}
@@ -173,7 +174,7 @@ bool PlayCommand::GetCharacterChange3() {
 	}
 	return false;
 }
-bool PlayCommand::GetCharacterChange4() {
+bool PlayCommand::GetCharacterChange4() const {
 	if (isPause_) {
 		false;
 	}
@@ -182,7 +183,7 @@ bool PlayCommand::GetCharacterChange4() {
 	}
 	return false;
 }
-bool PlayCommand::GetTeamSelectDisplay(){
+bool PlayCommand::GetTeamSelectDisplay() const {
 	if (isPause_) {
 		false;
 	}
@@ -195,7 +196,7 @@ bool PlayCommand::GetTeamSelectDisplay(){
 	return false;
 }
 
-bool PlayCommand::GetCharacterDisplay(){
+bool PlayCommand::GetCharacterDisplay() const {
 	if (isPause_) {
 		false;
 	}
@@ -207,7 +208,7 @@ bool PlayCommand::GetCharacterDisplay(){
 	}
 	return false;
 }
-bool PlayCommand::GetPadMenuOpen(){ 
+bool PlayCommand::GetPadMenuOpen() const { 
 	if (isPause_) {
 		false;
 	}
@@ -216,13 +217,13 @@ bool PlayCommand::GetPadMenuOpen(){
 	}
 	return false;
 }
-bool PlayCommand::GetUpUI(){
+bool PlayCommand::GetUpUI() const {
 	if (Input::GetInstance()->TriggerButton(Input::PadButton::kButtonUp) || Input::GetInstance()->TriggerKey(DIK_W) || Input::GetInstance()->TriggerKey(DIK_UP)) {
 		return true;
 	}
 	return false; 
 }
-bool PlayCommand::GetDownUI(){ 
+bool PlayCommand::GetDownUI() const { 
 	if (Input::GetInstance()->TriggerButton(Input::PadButton::kButtonDown) || Input::GetInstance()->TriggerKey(DIK_S) || Input::GetInstance()->TriggerKey(DIK_DOWN)) {
 		return true;
 	}	

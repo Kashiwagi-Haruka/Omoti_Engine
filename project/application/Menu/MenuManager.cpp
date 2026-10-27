@@ -29,7 +29,6 @@ void MenuManager::UnloadTeamDisplay() {
 void MenuManager::Initialize(Team& team) {
 	team_ = &team;
 	menuType_ = Menu::NONE;
-	action_ = Pause::Action::kNone;
 	characterDisplay_->Initialize(team);
 	pause_->Initialize();
 }
@@ -41,18 +40,19 @@ void MenuManager::Update() {
 			menuType_ = Menu::CharacterDisplay;
 		} else if (PlayCommand::GetInstance()->GetPause()) {
 			menuType_ = Menu::Pause;
-			pause_->Update(true);
+			pause_->Start();
 		} else if (PlayCommand::GetInstance()->GetTeamSelectDisplay()) {
 			menuType_ = Menu::TeamDisplay;
 			LoadTeamDisplay();
 			Input::GetInstance()->SetIsCursorStability(false);
 			Input::GetInstance()->SetIsCursorVisible(true);
+		} else {
+			pause_->Update();
 		}
 		break;
 	case MenuManager::Menu::Pause:
-		pause_->Update(true);
-		action_ = pause_->ConsumeAction();
-		if (action_ == Pause::Action::kResume || PlayCommand::GetInstance()->GetESCAPE()) {
+		pause_->Update();
+		if (!pause_->IsPause()) {
 			menuType_ = Menu::NONE;
 		}
 		break;
@@ -102,8 +102,4 @@ void MenuManager::Close() {
 	menuType_ = Menu::NONE;
 }
 
-Pause::Action MenuManager::ConsumeAction() {
-	const Pause::Action action = action_;
-	action_ = Pause::Action::kNone;
-	return action;
-}
+bool MenuManager::IsTitleBack() const { return pause_->IsTitleBack(); }

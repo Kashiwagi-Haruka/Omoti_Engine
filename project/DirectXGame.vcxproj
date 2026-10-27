@@ -361,6 +361,7 @@ copy "$(WindowsSdkDir)\bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)\
     <ClCompile Include="application\Object\Characters\Playable\Individual\Sizuku\Special\Thunder\SizukuSpecialThunderHitEffect.cpp" />
     <ClCompile Include="application\Object\StageSelect\Gate\StageSelectGate.cpp" />
     <ClCompile Include="application\UI\Quest\QuestUI.cpp" />
+    <ClCompile Include="application\PostEffectManager\GameScene\GameScenePostEffectManager.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include=".editorconfig" />
@@ -598,6 +599,7 @@ copy "$(WindowsSdkDir)\bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)\
     <ClInclude Include="application\Object\Characters\Playable\Individual\Sizuku\Special\Thunder\SizukuSpecialThunderHitEffect.h" />
     <ClInclude Include="application\Object\StageSelect\Gate\StageSelectGate.h" />
     <ClInclude Include="application\UI\Quest\QuestUI.h" />
+    <ClInclude Include="application\PostEffectManager\GameScene\GameScenePostEffectManager.h" />
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="Resources\shader\FullScreenCopy\CopyImage.PS.hlsl">

@@ -33,9 +33,15 @@ private:
 	float startTime = 0.0f;
 	int selectIndex_ = 1;
 
+	//　ポーズ画面中か
+	bool isPause_;
+	//　ポーズ画面操作可能か
 	bool isActive_ = false;
 	bool isStart_ = false;
 	bool isEnd_ = false;
+	bool isTitleBack_ = false;
+	//　タイトル画面に戻すか聞くスプライトを表示するか
+	bool isTitleBackVisit_ = false;
 
 	Action action_ = Action::kNone;
 	std::unique_ptr<Camera> camera_;
@@ -46,6 +52,8 @@ private:
 	std::unique_ptr<Option> option_;
 	Attribute currentAttribute = Attribute::None;
 
+	std::unique_ptr<Sprite> titleBackBG_;
+	Text titleBackText_;
 
 	void CurrentCharacterUpdate();
 	void SelectSpriteUpdate();
@@ -53,10 +61,13 @@ private:
 public:
 	Pause();
 	void Initialize();
-	void Update(bool isPause);
+	void Start();
+	void End();
+	void Update();
 	void Draw();
-	bool IsVisible() const { return isActive_ || isStart_ || isEnd_; }
 	void SetCurrentCharacterObj(Object3d* obj) { currentCharacterObj_ = obj; }
 	void SetCurrentAttribute(Attribute attribute) { currentAttribute = attribute; }
-	Action ConsumeAction();
+	bool IsPause() const { return isPause_; };
+	bool IsTitleBack() const;
+
 };
