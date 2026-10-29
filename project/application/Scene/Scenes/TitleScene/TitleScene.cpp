@@ -73,8 +73,9 @@ void TitleScene::Update() {
 
 	BGSP_.sprite->SetRotation(BGSP_.rotate);
 	BGSP_.sprite->Update();
-	
-	if (Input::GetInstance()->GetMouseX()>-OfficialWebsiteSP_.sprite->GetScale().x*0.5f+OfficialWebsiteSP_.sprite->GetPosition().x && Input::GetInstance()->GetMouseX()<OfficialWebsiteSP_.sprite->GetScale().x*0.5f+OfficialWebsiteSP_.sprite->GetPosition().x) {
+	OfficialWebsiteSP_.sprite->SetColor({1.0f, 1.0f, 1.0f, 1.0f});
+	if (Input::GetInstance()->GetMouseX()>( - OfficialWebsiteSP_.sprite->GetScale().x * 0.5f) + OfficialWebsiteSP_.sprite->GetPosition().x &&
+	    Input::GetInstance()->GetMouseX() < OfficialWebsiteSP_.sprite->GetScale().x * 0.5f + OfficialWebsiteSP_.sprite->GetPosition().x) {
 		if (Input::GetInstance()->GetMouseY() > -OfficialWebsiteSP_.sprite->GetScale().y * 0.5f + OfficialWebsiteSP_.sprite->GetPosition().y &&
 		    Input::GetInstance()->GetMouseY() < OfficialWebsiteSP_.sprite->GetScale().y * 0.5f + OfficialWebsiteSP_.sprite->GetPosition().y) {
 			OfficialWebsiteSP_.sprite->SetColor({1.0f, 1.0f, 0.0f, 1.0f});
@@ -82,9 +83,8 @@ void TitleScene::Update() {
 				GameBase::GetInstance()->OpenHttps(L"https://iceflowergame.github.io/OfficialWebsite/");
 			}
 		} else {
-			OfficialWebsiteSP_.sprite->SetColor({1.0f, 1.0f, 1.0f, 1.0f});
+			
 		}
-		
 	}
 
 	if (PlayCommand::GetInstance()->GetDESIDE() && !isTransitionOut) {
