@@ -1,8 +1,9 @@
 #include "Option.h"
 #include "Text/FreetypeManager/FreeTypeManager.h"
 namespace{
-static const int kMenuCount = 3;
-std::u32string menuStrings[kMenuCount] = {U"カメラ", U"サウンド", U"戻る"};
+static const int kMenuCount = 4;
+std::u32string menuStrings[kMenuCount] = {
+    U"カメラ", U"サウンド", U"表示",U"戻る"};
 }
 
 Option::Option() {}

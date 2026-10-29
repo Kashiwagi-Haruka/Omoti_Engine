@@ -2,6 +2,7 @@
 #include "ImGuiManager.h"
 #include "Engine/Editor/EditorManager/EditorManager.h"
 #include "Engine/Editor/EditorTool/Hierarchy/Hierarchy.h"
+#include "GameBase.h"
 #include <dxgi1_6.h>
 
 #ifdef USE_IMGUI
