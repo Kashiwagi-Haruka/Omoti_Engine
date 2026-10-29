@@ -36,7 +36,7 @@ void SizukuSpecialThunder::Start(const SizukuSpecialContext& c) {
 	damagePosition_ = projectileTransform_.translate;
 	damageScale_ = {2, 2, 4};
 
-	ConfigureSpecialEmitter(*particleEmitter_, {0.75f, 0.55f, 1.0f, 1.0f}, 5.0f, 1.45f, 0.45f);
+	ConfigureSpecialEmitter(*particleEmitter_, {0.75f, 0.55f, 1.0f, 1.0f}, 5, 1.45f, 0.45f);
 	particleEmitter_->SetFrequency(0.35f);
 	particleEmitter_->SetAcceleration({0, 0, 0});
 	particleEmitter_->SetAreaMin({-0.5f, -0.5f, -0.5f});

@@ -4,8 +4,13 @@
 class Option {
 
 	enum class Menu {
+		// カメラ
 		kCAMERA,
+		// 音
 		kSOUND,
+		// 表示
+		kVIEW,
+		// 戻る
 		kBACK,
 	};
 
