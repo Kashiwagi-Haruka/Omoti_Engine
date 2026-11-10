@@ -12,7 +12,7 @@
 #include "Sprite.h"
 #include "Sprite/SpriteCommon.h"
 #include "Text/FreetypeManager/FreeTypeManager.h"
-#include "TextureManager.h"
+#include "Object/Load/GameLoad.h"
 #include "TutorialUI/TutorialUI.h"
 #include "UI/UIManager/UIManager.h"
 
@@ -70,7 +70,7 @@ void TutorialScene::Initialize() {
 	tutorialUI_->Initialize();
 	uiManager_->Initialize();
 
-	const auto controlHandle = TextureManager::GetInstance()->GetTextureIndexByfilePath("Resources/2d/option.png");
+	const auto controlHandle = GameLoad::GetInstance()->GetTextureHandle("option");
 
 	controlSprite_ = std::make_unique<Sprite>();
 	controlSprite_->Initialize(controlHandle);

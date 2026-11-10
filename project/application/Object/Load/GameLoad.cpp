@@ -1,14 +1,16 @@
 #include "GameLoad.h"
-#include "TextureManager.h"
+#include "GameBase.h"
+#include "Model/Model.h"
 #include "Model/ModelManager.h"
 #include "Sprite.h"
-#include "Model/Model.h"
 #include "Sprite/SpriteCommon.h"
+#include "TextureManager.h"
 #include "WinApp.h"
-#include "GameBase.h"
+
 #include <chrono>
 #include <filesystem>
 #include <stdexcept>
+#include <utility>
 
 std::unique_ptr<GameLoad> GameLoad::instance_ = nullptr;
 
@@ -16,17 +18,18 @@ GameLoad* GameLoad::GetInstance() {
 	if (instance_ == nullptr) {
 		instance_ = std::make_unique<GameLoad>();
 	}
+
 	return instance_.get();
 }
 
-GameLoad::GameLoad() {};
+GameLoad::GameLoad() = default;
+
 GameLoad::~GameLoad() {
 	if (loadFuture_.valid()) {
 		loadFuture_.wait();
-		
 	}
-	
 }
+
 void GameLoad::Finalize() { instance_.reset(); }
 
 void GameLoad::GameSceneLoad() {
@@ -60,47 +63,85 @@ void GameLoad::GameSceneLoad() {
 #endif
 	};
 
+	// {取得するときの名前, ファイルパス}
+	textureRequests_ = {
+	    {"hitVinett", "Resources/2d/Effect/HitVinett.png"},
+	    {"phase1",    "Resources/2d/phase1.png"          },
+	    {"phase2",    "Resources/2d/phase2.png"          },
+	    {"phase3",    "Resources/2d/phase3.png"          },
+	    {"phase4",    "Resources/2d/phase4.png"          },
+	    {"phase5",    "Resources/2d/phase5.png"          },
+	    {"bossHpBar", "Resources/2d/BossHpBar.png"       },
+	    {"warning",   "Resources/2d/warnig.png"          },
+	    {"white2x2",  "Resources/2d/white2x2.png"	     },
+	    {"cursor",             "Resources/2d/Cursor.png"            },
+	    {"controller",         "Resources/2d/controller.png"        },
+	    {"menuBG",             "Resources/2d/MenuBG.png"            },
+	    {"menuCursor",         "Resources/2d/MenuCursor.png"        },
+	    {"menuButton",         "Resources/2d/MenuButton.png"        },
+	    {"menuButtonSelected", "Resources/2d/MenuButtonSelected.png"},
+	    {"menuButtonDisabled", "Resources/2d/MenuButtonDisabled.png"},
+	    {"questBG",            "Resources/2d/QuestBG.png"           },
+	};
+
 	nextRequest_ = 0;
 	materialTextureHandles_.clear();
+
+	nextTextureRequest_ = 0;
+	textureHandles_.clear();
+
 	loadProgressPercent_ = 0.0f;
 	isLoadComplete_ = false;
+
 	hasLoadError_ = false;
 	loadError_.clear();
-	isLoading_ = true;
 
+	isLoading_ = true;
 }
 
 void GameLoad::InitializeLoadSprites() {
 	if (loadingSpinner_) {
 		return;
-		
 	}
+
 	auto* textures = TextureManager::GetInstance();
+
 	illustrationHandle_ = textures->GetTextureIndexByfilePath("Resources/2d/Load/Load.png");
-	const uint32_t white = textures->GetTextureIndexByfilePath(+kDefaultWhiteTexturePath);
+
+	const uint32_t white = textures->GetTextureIndexByfilePath(kDefaultWhiteTexturePath);
+
 	loadingSpinner_ = std::make_unique<Sprite>();
 	loadingSpinner_->Initialize(illustrationHandle_);
+
 	barBackground_ = std::make_unique<Sprite>();
 	barBackground_->Initialize(white);
 	barBackground_->SetColor({0.15f, 0.15f, 0.15f, 1.0f});
+
 	barFill_ = std::make_unique<Sprite>();
 	barFill_->Initialize(white);
 	barFill_->SetColor({0.2f, 0.7f, 1.0f, 1.0f});
+
 	const float width = static_cast<float>(GameBase::GetInstance()->GetScreenWidth());
+
 	const float height = static_cast<float>(GameBase::GetInstance()->GetScreenHeight());
-	// 左上基準で配置する
-	loadingSpinner_->SetPosition({(width - 200.0f), height * 0.65f});
+
+	// 左上基準で配置
+	loadingSpinner_->SetPosition({width - 200.0f, height * 0.65f});
 	loadingSpinner_->SetScale({100.0f, 100.0f});
+
 	const Vector2 barPosition{(width - 600.0f) * 0.5f, height * 0.8f};
+
 	barBackground_->SetPosition(barPosition);
 	barBackground_->SetScale({600.0f, 24.0f});
+
 	barFill_->SetPosition(barPosition);
 	barFill_->SetScale({0.0f, 24.0f});
+
 	loadingSpinner_->Update();
 	barBackground_->Update();
 	barFill_->Update();
-	
 }
+
 void GameLoad::StartNextModelLoad() {
 	const LoadRequest request = requests_.at(nextRequest_);
 
@@ -131,9 +172,11 @@ void GameLoad::StartNextModelLoad() {
 		if (result.model->GetModelData().vertices.empty()) {
 			throw std::runtime_error("Model has no vertices: " + source.string());
 		}
+
 		return result;
 	});
 }
+
 void GameLoad::Update() {
 	if (!isLoading_) {
 		return;
@@ -148,6 +191,23 @@ void GameLoad::Update() {
 	}
 
 	try {
+		// 単独テクスチャは1フレームに1件登録する。
+		// 画像の非同期読み込みはTextureManager側で行う。
+		if (nextTextureRequest_ < textureRequests_.size()) {
+			const auto& request = textureRequests_.at(nextTextureRequest_);
+
+			if (!std::filesystem::exists(request.filePath)) {
+				throw std::runtime_error("Texture file not found: " + request.filePath);
+			}
+
+			const uint32_t handle = textures->GetTextureIndexByfilePath(request.filePath);
+
+			textureHandles_.emplace(request.key, handle);
+
+			++nextTextureRequest_;
+		}
+
+		// 非同期で読み込んだモデルを登録
 		if (loadFuture_.valid() && loadFuture_.wait_for(std::chrono::seconds(0)) == std::future_status::ready) {
 
 			LoadedModel loaded = loadFuture_.get();
@@ -163,31 +223,50 @@ void GameLoad::Update() {
 			++nextRequest_;
 		}
 
+		// 次のモデルの読み込みを開始
 		if (!loadFuture_.valid() && nextRequest_ < requests_.size()) {
 			const LoadRequest& request = requests_.at(nextRequest_);
 
 			if (Model* existing = models->FindModel(request.key)) {
 				materialTextureHandles_.push_back(existing->GetModelData().material.textureIndex);
+
 				++nextRequest_;
 			} else {
 				StartNextModelLoad();
 			}
 		}
 
-		size_t readyTextures = 0;
+		// モデルが使用するテクスチャの完了数
+		size_t readyMaterialTextures = 0;
+
 		for (uint32_t handle : materialTextureHandles_) {
 			if (textures->IsTextureLoaded(handle)) {
-				++readyTextures;
+				++readyMaterialTextures;
 			}
 		}
 
-		// 1モデルにつき「モデル登録」「テクスチャ準備」の2段階
-		const size_t totalSteps = requests_.size() * 2;
-		const size_t completedSteps = nextRequest_ + readyTextures;
+		// 単独テクスチャの完了数
+		size_t readyStandaloneTextures = 0;
+
+		for (const auto& entry : textureHandles_) {
+			if (textures->IsTextureLoaded(entry.second)) {
+				++readyStandaloneTextures;
+			}
+		}
+
+		// モデル・単独テクスチャともに
+		// 「登録」「テクスチャ準備」の2段階で進捗を計算
+		const size_t totalSteps = (requests_.size() + textureRequests_.size()) * 2;
+
+		const size_t completedSteps = nextRequest_ + readyMaterialTextures + nextTextureRequest_ + readyStandaloneTextures;
 
 		loadProgressPercent_ = totalSteps == 0 ? 100.0f : 100.0f * static_cast<float>(completedSteps) / static_cast<float>(totalSteps);
 
-		if (nextRequest_ == requests_.size() && readyTextures == requests_.size()) {
+		const bool modelsReady = nextRequest_ == requests_.size() && readyMaterialTextures == requests_.size();
+
+		const bool texturesReady = nextTextureRequest_ == textureRequests_.size() && readyStandaloneTextures == textureRequests_.size();
+
+		if (modelsReady && texturesReady) {
 			loadProgressPercent_ = 100.0f;
 			isLoadComplete_ = true;
 			isLoading_ = false;
@@ -196,6 +275,7 @@ void GameLoad::Update() {
 		loadError_ = error.what();
 		hasLoadError_ = true;
 		isLoading_ = false;
+
 		// 失敗時はisLoadComplete_をtrueにしない
 		OutputDebugStringA(loadError_.c_str());
 	}
@@ -206,20 +286,33 @@ void GameLoad::Update() {
 	barBackground_->Update();
 	barFill_->Update();
 }
+
 void GameLoad::DrawLoadProgress() {
 	if (!loadingSpinner_) {
 		return;
-		
 	}
+
 	SpriteCommon::GetInstance()->DrawCommon();
+
 	// 未ロードのイラストは白い代替画像になるため、完了後に描画
-	  if (TextureManager::GetInstance()->IsTextureLoaded(+illustrationHandle_)) {
+	if (TextureManager::GetInstance()->IsTextureLoaded(illustrationHandle_)) {
 		loadingSpinner_->Draw();
-		
 	}
+
 	barBackground_->Draw();
+
 	if (loadProgressPercent_ > 0.0f) {
 		barFill_->Draw();
-		
 	}
+}
+
+uint32_t GameLoad::GetTextureHandle(const std::string& textureName) const {
+
+	const auto it = textureHandles_.find(textureName);
+
+	if (it == textureHandles_.end()) {
+		throw std::out_of_range("GameLoad texture is not registered: " + textureName);
+	}
+
+	return it->second;
 }

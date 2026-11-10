@@ -4,6 +4,7 @@
 #include "CameraController/CameraController.h"
 #include "Engine/Editor/EditorManager/EditorManager.h"
 #include "GameTimer/GameTimer.h"
+#include "Object/Load/GameLoad.h"
 #include "Object/Background/Sky.h"
 #include "Object/Boss/Boss.h"
 #include "Object/Characters/Enemy/EnemyManager.h"
@@ -17,8 +18,6 @@
 #include "Rasen/Rasen.h"
 #include "SceneManager.h"
 #include "Sprite/SpriteCommon.h"
-#include "TextureManager.h"
-#include "WinApp.h"
 #include <algorithm>
 #include <cmath>
 
@@ -171,7 +170,7 @@ void GameScene::Initialize() {
 	vinettColor_ = {255, 255, 255};
 	vinettStrength_ = 10.0f;
 	Object3dCommon::GetInstance()->SetVignetteStrength(vinettStrength_);
-	hitVinettTextureHandle_ = TextureManager::GetInstance()->GetTextureIndexByfilePath("Resources/2d/Effect/HitVinett.png");
+	hitVinettTextureHandle_ = GameLoad::GetInstance()->GetTextureHandle("hitVinett");
 	hitVinettSprite_ = std::make_unique<Sprite>();
 	hitVinettSprite_->Initialize(hitVinettTextureHandle_);
 	hitVinettSprite_->SetPosition({0.0f, 0.0f});
