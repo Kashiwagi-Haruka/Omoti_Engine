@@ -27,7 +27,5 @@ std::unique_ptr<BaseScene> SceneFactory::CreateScene(const std::string& sceneNam
 	}
 	return scene;
 }
-std::vector<std::string> SceneFactory::GetSceneNames() const {
-	return {"Title", "Game", "Result", "GameOver", "Sample", "StageSelect"
-	};
+std::vector<std::string> SceneFactory::GetSceneNames() const { return {"Title", "Game", "Result", "GameOver", "Sample", "StageSelect", "Tutorial"};
 }

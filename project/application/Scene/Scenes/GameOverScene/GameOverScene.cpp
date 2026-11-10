@@ -7,9 +7,9 @@
 #include "AudioManager/BGMManager/BGMManager.h"
 GameOverScene::GameOverScene() {
 
-	logoSP_.handle = TextureManager::GetInstance()->GetTextureIndexByfilePath("Resources/2d/over.png");
-	logoSP_.sprite = std::make_unique<Sprite>();
-	logoSP_.sprite->Initialize(logoSP_.handle);
+	logoSpriteData_.handle = TextureManager::GetInstance()->GetTextureIndexByfilePath("Resources/2d/over.png");
+	logoSpriteData_.sprite = std::make_unique<Sprite>();
+	logoSpriteData_.sprite->Initialize(logoSpriteData_.handle);
 	transition = std::make_unique<SceneTransition>();
 }
 
@@ -17,12 +17,12 @@ void GameOverScene::Finalize() {}
 
 void GameOverScene::Initialize() {
 
-	logoSP_.sprite->SetAnchorPoint({0.5f, 0.5f});
-	logoSP_.size = {1280, 720};
-	logoSP_.translate = {640, 360};
-	logoSP_.sprite->SetScale(logoSP_.size);
-	logoSP_.sprite->SetPosition(logoSP_.translate);
-	logoSP_.sprite->Update();
+	logoSpriteData_.sprite->SetAnchorPoint({0.5f, 0.5f});
+	logoSpriteData_.size = {1280, 720};
+	logoSpriteData_.translate = {640, 360};
+	logoSpriteData_.sprite->SetScale(logoSpriteData_.size);
+	logoSpriteData_.sprite->SetPosition(logoSpriteData_.translate);
+	logoSpriteData_.sprite->Update();
 
 	pressSpaceHandle = TextureManager::GetInstance()->GetTextureIndexByfilePath("Resources/2d/SPACE.png");
 
@@ -62,7 +62,7 @@ void GameOverScene::Update() {
 
 void GameOverScene::Draw() {
 	SpriteCommon::GetInstance()->DrawCommon();
-	logoSP_.sprite->Draw();
+	logoSpriteData_.sprite->Draw();
 	pressSpaceSprite->Draw();
 	if (isTransitionIn || isTransitionOut) {
 		transition->Draw();

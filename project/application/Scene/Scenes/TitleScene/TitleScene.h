@@ -16,10 +16,10 @@ class TitleScene : public BaseScene {
 		Vector2 translate = {0, 0};
 	};
 
-	SpriteData BGSP_;
-	SpriteData logoSP_;
-	SpriteData ruleSP_;
-	SpriteData OfficialWebsiteSP_;
+	SpriteData BackGroundSpriteData_;
+	SpriteData logoSpriteData_;
+	SpriteData ruleSpriteData_;
+	SpriteData OfficialWebsiteSpriteData_;
 	std::unique_ptr<Sprite> pressSpaceSprite = nullptr;
 	uint32_t pressSpaceHandle = 0;
 	Vector2 pressSpacePos = {640, 420};

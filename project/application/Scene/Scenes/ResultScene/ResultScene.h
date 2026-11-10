@@ -17,10 +17,10 @@ class ResultScene : public BaseScene {
 		Vector2 translate = {0, 0};
 	};
 
-	SpriteData logoSP_;
-	SpriteData starSP_[3];
-	SpriteData timeDigitSP_[4];
-	SpriteData houseHpStringSP_;
+	SpriteData logoSpriteData_;
+	SpriteData starSpriteData_[3];
+	SpriteData timeDigitSpriteData_[4];
+	SpriteData houseHpStringSpriteData_;
 
 	uint32_t starOnHandle_ = 0;
 	uint32_t starOffHandle_ = 0;
