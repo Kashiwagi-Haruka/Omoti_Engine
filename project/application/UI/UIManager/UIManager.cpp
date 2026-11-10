@@ -5,7 +5,7 @@
 #include "PlayCommand/PlayCommand.h"
 #include "GameBase.h"
 #include "Sprite/SpriteCommon.h"
-#include "TextureManager.h"
+#include "Object/Load/GameLoad.h"
 
 UIManager::UIManager() {
 	//生成
@@ -25,10 +25,10 @@ UIManager::~UIManager() {}
 
 void UIManager::Initialize() {
 	// 初期化
-	cursolSprite_->Initialize(TextureManager::GetInstance()->GetTextureIndexByfilePath("Resources/2d/Cursor.png"));
+	cursolSprite_->Initialize(GameLoad::GetInstance()->GetTextureHandle("cursor"));
 	cursolSprite_->SetScale({30.0f, 30.0f});
 
-	controllerSprite_->Initialize(TextureManager::GetInstance()->GetTextureIndexByfilePath("Resources/2d/controller.png"));
+	controllerSprite_->Initialize(GameLoad::GetInstance()->GetTextureHandle("controller"));
 	controllerSprite_->SetScale({70.0f, 70.0f});
 	controllerSprite_->SetPosition({10.0f, GameBase::GetInstance()->GetScreenHeight() - 20.0f});
 	controllerSprite_->SetAnchorPoint({0.0f, 1.0f});
