@@ -1,0 +1,69 @@
+{
+  "tabs": [
+    {
+      "title": "基本操作",
+      "items": [
+        {
+          "title": "移動",
+          "image": "Resources/2d/white2x2.png",
+          "description": "移動操作についての説明です。\n\nここに操作方法や補足を書きます。"
+        },
+        {
+          "title": "通常攻撃",
+          "image": "Resources/2d/white2x2.png",
+          "description": "通常攻撃についての説明です。\n\n攻撃の特徴や使いどころを書きます。"
+        },
+        {
+          "title": "回避",
+          "image": "Resources/2d/white2x2.png",
+          "description": "回避についての説明です。"
+        },
+        {
+          "title": "ジャンプ",
+          "image": "Resources/2d/white2x2.png",
+          "description": "ジャンプについての説明です。"
+        },
+        {
+          "title": "ロックオン",
+          "image": "Resources/2d/white2x2.png",
+          "description": "ロックオンについての説明です。"
+        },
+        {
+          "title": "キャラクター切り替え",
+          "image": "Resources/2d/white2x2.png",
+          "description": "キャラクター切り替えについての説明です。"
+        },
+        {
+          "title": "メニュー",
+          "image": "Resources/2d/white2x2.png",
+          "description": "メニューについての説明です。"
+        },
+        {
+          "title": "アイテム",
+          "image": "Resources/2d/white2x2.png",
+          "description": "アイテムについての説明です。"
+        },
+        {
+          "title": "詳細スクロールの確認",
+          "image": "Resources/2d/white2x2.png",
+          "description": "詳細欄にカーソルを置き、ホイールを下へ動かしてください。\n\n1. 基本操作を確認します。\n\n2. 敵の動きを観察します。\n\n3. 攻撃の届く距離を確認します。\n\n4. 敵の攻撃に合わせて回避します。\n\n5. 隙ができたら攻撃します。\n\n6. 状況に合わせてキャラクターを切り替えます。\n\n7. アイテムの残りを確認します。\n\n8. 危険なときは距離を取ります。\n\n9. もう一度、敵の動きを確認します。\n\nここが説明の最後です。"
+        }
+      ]
+    },
+    {
+      "title": "戦闘",
+      "items": [
+        {
+          "title": "スキル",
+          "image": "Resources/2d/white2x2.png",
+          "description": "スキルについての説明です。\n\nここに詳しい内容を追加してください。"
+        },
+        {
+          "title": "属性",
+          "image": "Resources/2d/white2x2.png",
+          "description": "属性についての説明です。"
+        }
+      ]
+    }
+  ]
+}

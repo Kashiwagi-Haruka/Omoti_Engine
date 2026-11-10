@@ -38,7 +38,8 @@ GameBase* GameBase::GetInstance() {
 // 各システムを終了する。
 // 描画リソースを使用するシステムを終了してから、DirectXとウィンドウを解放する。
 void GameBase::Finalize() {
-
+	// 描画環境やフォントを解放する前に集計スレッドを停止。
+	fpsChecker_.Finalize();
 	// フォント関連のリソースを解放する。
 	FreeTypeManager::Finalize();
 
@@ -106,6 +107,8 @@ void GameBase::Initialize(const wchar_t* TitleName, int32_t WindowWidth, int32_t
 
 	// フォント描画に使用するシステムを初期化する。
 	FreeTypeManager::Initialize();
+
+	fpsChecker_.Initialize();
 }
 
 // ウィンドウが存在する場合に、アイコンの設定を委譲する。
@@ -168,19 +171,53 @@ void GameBase::BeginFlame() {
 
 // ゲーム本体の描画後に、画面への出力を行う。
 void GameBase::EndFlame() {
-	// ImGuiのUI構築を終了する。
 	imguiM_->End();
 
-	// シーン画像にポストエフェクトを適用してバックバッファへ描画する。
+	// シーン画像をバックバッファへ描画。
 	dxCommon_->DrawSceneTextureToBackBuffer();
 
-	// シーンの上にImGuiを描画する。
+	// エディターなどのUIを描画。
 	imguiM_->Draw(dxCommon_.get());
 
-	// コマンド実行、画面表示、GPU同期を行う。
+	// ImGuiより後に、FPSを最前面へ描画する。
+	if (fpsChecker_.IsVisible()) {
+		const float width = GetScreenWidth();
+		const float height = GetScreenHeight();
+
+		if (width > 0.0f && height > 0.0f) {
+			auto* commandList = dxCommon_->GetCommandList();
+
+			// ImGui描画後の描画範囲を画面全体へ戻す。
+			D3D12_VIEWPORT viewport{};
+			viewport.TopLeftX = 0.0f;
+			viewport.TopLeftY = 0.0f;
+			viewport.Width = width;
+			viewport.Height = height;
+			viewport.MinDepth = 0.0f;
+			viewport.MaxDepth = 1.0f;
+
+			D3D12_RECT scissor{};
+			scissor.left = 0;
+			scissor.top = 0;
+			scissor.right = static_cast<LONG>(width);
+			scissor.bottom = static_cast<LONG>(height);
+
+			commandList->RSSetViewports(1, &viewport);
+			commandList->RSSetScissorRects(1, &scissor);
+
+			// Text描画で使うSRVヒープを設定。
+			TextureManager::GetInstance()->GetSrvManager()->PreDraw();
+
+			fpsChecker_.Draw();
+		}
+	}
+
+	// FPSを含む描画コマンドを実行して表示。
 	dxCommon_->PostDraw();
 
-	// 次のフレームに備え、フォント使用状況をリセットする。
+	// 非表示中もフレーム数は計測する。
+	fpsChecker_.CountFrame();
+
 	FreeTypeManager::ResetFontUsage();
 }
 
@@ -220,3 +257,9 @@ float GameBase::GetScreenHalfWidth() const { return GetScreenWidth() * 0.5f; }
 
 // 現在の高さから半高さを計算する。
 float GameBase::GetScreenHalfHeight() const { return GetScreenHeight() * 0.5f; }
+
+void GameBase::SetFPSVisible(bool visible) { fpsChecker_.SetVisible(visible); }
+
+bool GameBase::IsFPSVisible() const { return fpsChecker_.IsVisible(); }
+
+void GameBase::ToggleFPSVisible() { fpsChecker_.ToggleVisible(); }

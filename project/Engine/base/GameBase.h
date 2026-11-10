@@ -3,6 +3,7 @@
 #include "BlendMode/BlendModeManager.h"
 #include "Camera.h"
 #include "DirectXCommon.h"
+#include "Engine/FPS/FPSChecker.h"
 #include "Function.h"
 
 #include "Data/VertexData.h"
@@ -35,6 +36,8 @@ private:
 	// Windows APIなどの処理結果を保持するための変数。
 	HRESULT hr_;
 
+	FPSChecker fpsChecker_;
+
 public:
 	// 共有インスタンスを取得する。
 	// 初回の呼び出し時にインスタンスを生成する。
@@ -57,6 +60,15 @@ public:
 	// フレームの終了処理。
 	// シーン出力、ImGui描画、画面表示、GPU完了待ちを行う。
 	void EndFlame();
+
+	// オプション画面などから表示設定を変更する。
+	void SetFPSVisible(bool visible);
+
+	// 現在の表示設定を取得する。
+	bool IsFPSVisible() const;
+
+	// ショートカットキーなどで反転する。
+	void ToggleFPSVisible();
 
 	// Windowsメッセージを処理する。
 	// 終了要求を受け取った場合はfalseを返す。
