@@ -16,7 +16,7 @@ class GameOverScene : public BaseScene {
 		Vector2 translate = {0, 0};
 	};
 
-	SpriteData logoSP_;
+	SpriteData logoSpriteData_;
 	std::unique_ptr<Sprite> pressSpaceSprite = nullptr;
 	uint32_t pressSpaceHandle = 0;
 	Vector2 pressSpacePos = {640, 420};

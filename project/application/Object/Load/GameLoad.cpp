@@ -71,17 +71,9 @@ void GameLoad::GameSceneLoad() {
 	    {"phase3",    "Resources/2d/phase3.png"          },
 	    {"phase4",    "Resources/2d/phase4.png"          },
 	    {"phase5",    "Resources/2d/phase5.png"          },
-	    {"bossHpBar", "Resources/2d/BossHpBar.png"       },
-	    {"warning",   "Resources/2d/warnig.png"          },
 	    {"white2x2",  "Resources/2d/white2x2.png"	     },
 	    {"cursor",             "Resources/2d/Cursor.png"            },
 	    {"controller",         "Resources/2d/controller.png"        },
-	    {"menuBG",             "Resources/2d/MenuBG.png"            },
-	    {"menuCursor",         "Resources/2d/MenuCursor.png"        },
-	    {"menuButton",         "Resources/2d/MenuButton.png"        },
-	    {"menuButtonSelected", "Resources/2d/MenuButtonSelected.png"},
-	    {"menuButtonDisabled", "Resources/2d/MenuButtonDisabled.png"},
-	    {"questBG",            "Resources/2d/QuestBG.png"           },
 	};
 
 	nextRequest_ = 0;

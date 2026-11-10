@@ -573,6 +573,7 @@
     <ClCompile Include="application\UI\Quest\QuestUI.cpp" />
     <ClCompile Include="application\PostEffectManager\GameScene\GameScenePostEffectManager.cpp" />
     <ClCompile Include="Engine\FPS\FPSChecker.cpp" />
+    <ClCompile Include="Engine\math\Easing.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Engine\Camera\Camera.h">
@@ -1136,6 +1137,7 @@
     <ClInclude Include="application\UI\Quest\QuestUI.h" />
     <ClInclude Include="application\PostEffectManager\GameScene\GameScenePostEffectManager.h" />
     <ClInclude Include="Engine\FPS\FPSChecker.h" />
+    <ClInclude Include="Engine\math\Easing.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include=".editorconfig" />

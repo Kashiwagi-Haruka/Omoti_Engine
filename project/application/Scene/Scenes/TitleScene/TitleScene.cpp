@@ -7,20 +7,20 @@
 #include "TextureManager.h"
 #include "AudioManager/BGMManager/BGMManager.h"
 #include "Object/Load/GameLoad.h"
-#include <imgui.h>
+
 TitleScene::TitleScene() {
-	BGSP_.handle = TextureManager::GetInstance()->GetTextureIndexByfilePath("Resources/2d/title.png");
-	BGSP_.sprite = std::make_unique<Sprite>();
-	BGSP_.sprite->Initialize(BGSP_.handle);
-	logoSP_.handle = TextureManager::GetInstance()->GetTextureIndexByfilePath("Resources/2d/logo.png");
-	logoSP_.sprite = std::make_unique<Sprite>();
-	logoSP_.sprite->Initialize(logoSP_.handle);
-	ruleSP_.handle = TextureManager::GetInstance()->GetTextureIndexByfilePath("Resources/2d/rule.png");
-	ruleSP_.sprite = std::make_unique<Sprite>();
-	ruleSP_.sprite->Initialize(ruleSP_.handle);
-	OfficialWebsiteSP_.handle = TextureManager::GetInstance()->GetTextureIndexByfilePath("Resources/2d/Title/OfficialWebsite.png");
-	OfficialWebsiteSP_.sprite = std::make_unique<Sprite>();
-	OfficialWebsiteSP_.sprite->Initialize(OfficialWebsiteSP_.handle);
+	BackGroundSpriteData_.handle = TextureManager::GetInstance()->GetTextureIndexByfilePath("Resources/2d/title.png");
+	BackGroundSpriteData_.sprite = std::make_unique<Sprite>();
+	BackGroundSpriteData_.sprite->Initialize(BackGroundSpriteData_.handle);
+	logoSpriteData_.handle = TextureManager::GetInstance()->GetTextureIndexByfilePath("Resources/2d/logo.png");
+	logoSpriteData_.sprite = std::make_unique<Sprite>();
+	logoSpriteData_.sprite->Initialize(logoSpriteData_.handle);
+	ruleSpriteData_.handle = TextureManager::GetInstance()->GetTextureIndexByfilePath("Resources/2d/rule.png");
+	ruleSpriteData_.sprite = std::make_unique<Sprite>();
+	ruleSpriteData_.sprite->Initialize(ruleSpriteData_.handle);
+	OfficialWebsiteSpriteData_.handle = TextureManager::GetInstance()->GetTextureIndexByfilePath("Resources/2d/Title/OfficialWebsite.png");
+	OfficialWebsiteSpriteData_.sprite = std::make_unique<Sprite>();
+	OfficialWebsiteSpriteData_.sprite->Initialize(OfficialWebsiteSpriteData_.handle);
 	transition = std::make_unique<SceneTransition>();
 }
 
@@ -28,24 +28,24 @@ void TitleScene::Finalize() {}
 
 void TitleScene::Initialize() {
 
-	BGSP_.sprite->SetAnchorPoint({0.5f, 0.5f});
-	BGSP_.size = {2000, 2000};
-	BGSP_.translate = {640, 0};
-	BGSP_.sprite->SetScale(BGSP_.size);
-	BGSP_.sprite->SetPosition(BGSP_.translate);
-	BGSP_.sprite->Update();
-	logoSP_.sprite->SetAnchorPoint({0.5f, 0.5f});
-	logoSP_.sprite->SetPosition({640, 300});
-	logoSP_.sprite->SetScale({500, 500});
-	logoSP_.sprite->Update();
-	ruleSP_.sprite->SetAnchorPoint({0.5f, 0.5f});
-	ruleSP_.sprite->SetScale({640, 360});
-	ruleSP_.sprite->SetPosition({640, 300});
-	ruleSP_.sprite->Update();
-	OfficialWebsiteSP_.sprite->SetAnchorPoint({0.5f, 0.5f});
-	OfficialWebsiteSP_.sprite->SetPosition({1000, 80});
-	OfficialWebsiteSP_.sprite->SetScale({300, 60});
-	OfficialWebsiteSP_.sprite->Update();
+	BackGroundSpriteData_.sprite->SetAnchorPoint({0.5f, 0.5f});
+	BackGroundSpriteData_.size = {2000, 2000};
+	BackGroundSpriteData_.translate = {640, 0};
+	BackGroundSpriteData_.sprite->SetScale(BackGroundSpriteData_.size);
+	BackGroundSpriteData_.sprite->SetPosition(BackGroundSpriteData_.translate);
+	BackGroundSpriteData_.sprite->Update();
+	logoSpriteData_.sprite->SetAnchorPoint({0.5f, 0.5f});
+	logoSpriteData_.sprite->SetPosition({640, 300});
+	logoSpriteData_.sprite->SetScale({500, 500});
+	logoSpriteData_.sprite->Update();
+	ruleSpriteData_.sprite->SetAnchorPoint({0.5f, 0.5f});
+	ruleSpriteData_.sprite->SetScale({640, 360});
+	ruleSpriteData_.sprite->SetPosition({640, 300});
+	ruleSpriteData_.sprite->Update();
+	OfficialWebsiteSpriteData_.sprite->SetAnchorPoint({0.5f, 0.5f});
+	OfficialWebsiteSpriteData_.sprite->SetPosition({1000, 80});
+	OfficialWebsiteSpriteData_.sprite->SetScale({300, 60});
+	OfficialWebsiteSpriteData_.sprite->Update();
 	pressSpaceHandle = TextureManager::GetInstance()->GetTextureIndexByfilePath("Resources/2d/SPACE.png");
 
 	pressSpaceSprite = std::make_unique<Sprite>();
@@ -69,16 +69,16 @@ void TitleScene::Update() {
 	
 	GameLoad::GetInstance()->Update();
 
-	BGSP_.rotate += 0.01f;
+	BackGroundSpriteData_.rotate += 0.01f;
 
-	BGSP_.sprite->SetRotation(BGSP_.rotate);
-	BGSP_.sprite->Update();
-	OfficialWebsiteSP_.sprite->SetColor({1.0f, 1.0f, 1.0f, 1.0f});
-	if (Input::GetInstance()->GetMouseX()>( - OfficialWebsiteSP_.sprite->GetScale().x * 0.5f) + OfficialWebsiteSP_.sprite->GetPosition().x &&
-	    Input::GetInstance()->GetMouseX() < OfficialWebsiteSP_.sprite->GetScale().x * 0.5f + OfficialWebsiteSP_.sprite->GetPosition().x) {
-		if (Input::GetInstance()->GetMouseY() > -OfficialWebsiteSP_.sprite->GetScale().y * 0.5f + OfficialWebsiteSP_.sprite->GetPosition().y &&
-		    Input::GetInstance()->GetMouseY() < OfficialWebsiteSP_.sprite->GetScale().y * 0.5f + OfficialWebsiteSP_.sprite->GetPosition().y) {
-			OfficialWebsiteSP_.sprite->SetColor({1.0f, 1.0f, 0.0f, 1.0f});
+	BackGroundSpriteData_.sprite->SetRotation(BackGroundSpriteData_.rotate);
+	BackGroundSpriteData_.sprite->Update();
+	OfficialWebsiteSpriteData_.sprite->SetColor({1.0f, 1.0f, 1.0f, 1.0f});
+	if (Input::GetInstance()->GetMouseX()>( - OfficialWebsiteSpriteData_.sprite->GetScale().x * 0.5f) + OfficialWebsiteSpriteData_.sprite->GetPosition().x &&
+	    Input::GetInstance()->GetMouseX() < OfficialWebsiteSpriteData_.sprite->GetScale().x * 0.5f + OfficialWebsiteSpriteData_.sprite->GetPosition().x) {
+		if (Input::GetInstance()->GetMouseY() > -OfficialWebsiteSpriteData_.sprite->GetScale().y * 0.5f + OfficialWebsiteSpriteData_.sprite->GetPosition().y &&
+		    Input::GetInstance()->GetMouseY() < OfficialWebsiteSpriteData_.sprite->GetScale().y * 0.5f + OfficialWebsiteSpriteData_.sprite->GetPosition().y) {
+			OfficialWebsiteSpriteData_.sprite->SetColor({1.0f, 1.0f, 0.0f, 1.0f});
 			if (Input::GetInstance()->TriggerMouseButton(Input::MouseButton::kLeft)) {
 				GameBase::GetInstance()->OpenHttps(L"https://iceflowergame.github.io/OfficialWebsite/");
 			}
@@ -120,16 +120,16 @@ void TitleScene::Update() {
 void TitleScene::Draw() {
 
 	SpriteCommon::GetInstance()->DrawCommon();
-	BGSP_.sprite->Draw();
-	logoSP_.sprite->Draw();
+	BackGroundSpriteData_.sprite->Draw();
+	logoSpriteData_.sprite->Draw();
 	pressSpaceSprite->Draw();
-	OfficialWebsiteSP_.sprite->Draw();
+	OfficialWebsiteSpriteData_.sprite->Draw();
 	if (isTransitionIn || isTransitionOut) {
 		transition->Draw();
 	}
 
 	if (isTransitionOut) {
-		ruleSP_.sprite->Draw();
+		ruleSpriteData_.sprite->Draw();
 	}
 	if (isTransitionOut) {
 		GameLoad::GetInstance()->DrawLoadProgress();

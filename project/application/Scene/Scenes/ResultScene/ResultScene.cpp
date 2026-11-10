@@ -27,22 +27,22 @@ int CalculateStarCount(float timeSeconds, int houseHp) {
 }
 ResultScene::ResultScene() {
 
-	logoSP_.handle = TextureManager::GetInstance()->GetTextureIndexByfilePath("Resources/2d/result.png");
-	logoSP_.sprite = std::make_unique<Sprite>();
-	logoSP_.sprite->Initialize(logoSP_.handle);
+	logoSpriteData_.handle = TextureManager::GetInstance()->GetTextureIndexByfilePath("Resources/2d/result.png");
+	logoSpriteData_.sprite = std::make_unique<Sprite>();
+	logoSpriteData_.sprite->Initialize(logoSpriteData_.handle);
 	starOnHandle_ = TextureManager::GetInstance()->GetTextureIndexByfilePath("Resources/2d/StarOn.png");
 	starOffHandle_ = TextureManager::GetInstance()->GetTextureIndexByfilePath("Resources/2d/StarOff.png");
 	numberHandle_ = TextureManager::GetInstance()->GetTextureIndexByfilePath("Resources/2d/No.png");
 	houseHpStringHandle_ = TextureManager::GetInstance()->GetTextureIndexByfilePath("Resources/2d/houseHPString.png");
 
 	for (int i = 0; i < 4; ++i) {
-		timeDigitSP_[i].handle = numberHandle_;
-		timeDigitSP_[i].sprite = std::make_unique<Sprite>();
-		timeDigitSP_[i].sprite->Initialize(timeDigitSP_[i].handle);
+		timeDigitSpriteData_[i].handle = numberHandle_;
+		timeDigitSpriteData_[i].sprite = std::make_unique<Sprite>();
+		timeDigitSpriteData_[i].sprite->Initialize(timeDigitSpriteData_[i].handle);
 	}
-	houseHpStringSP_.handle = houseHpStringHandle_;
-	houseHpStringSP_.sprite = std::make_unique<Sprite>();
-	houseHpStringSP_.sprite->Initialize(houseHpStringSP_.handle);
+	houseHpStringSpriteData_.handle = houseHpStringHandle_;
+	houseHpStringSpriteData_.sprite = std::make_unique<Sprite>();
+	houseHpStringSpriteData_.sprite->Initialize(houseHpStringSpriteData_.handle);
 
 	transition = std::make_unique<SceneTransition>();
 }
@@ -50,13 +50,13 @@ ResultScene::ResultScene() {
 void ResultScene::Finalize() {}
 
 void ResultScene::Initialize() {
-	logoSP_.sprite->SetAnchorPoint({0.5f, 0.5f});
-	logoSP_.size = {1280, 720};
-	logoSP_.translate = {640, 360};
-	logoSP_.sprite->SetScale(logoSP_.size);
+	logoSpriteData_.sprite->SetAnchorPoint({0.5f, 0.5f});
+	logoSpriteData_.size = {1280, 720};
+	logoSpriteData_.translate = {640, 360};
+	logoSpriteData_.sprite->SetScale(logoSpriteData_.size);
 
-	logoSP_.sprite->SetPosition(logoSP_.translate);
-	logoSP_.sprite->Update();
+	logoSpriteData_.sprite->SetPosition(logoSpriteData_.translate);
+	logoSpriteData_.sprite->Update();
 
 	isSceneEnd_ = false;
 	// SPACE 画像読み込み
@@ -83,23 +83,23 @@ void ResultScene::Initialize() {
 	Vector2 starStart = {460, 360};
 	float starSpacing = 180.0f;
 	for (int i = 0; i < 3; ++i) {
-		starSP_[i].handle = (i < resultStars_) ? starOnHandle_ : starOffHandle_;
-		starSP_[i].sprite = std::make_unique<Sprite>();
-		starSP_[i].sprite->Initialize(starSP_[i].handle);
-		starSP_[i].sprite->SetAnchorPoint({0.5f, 0.5f});
-		starSP_[i].size = starSize_;
-		starSP_[i].translate = {starStart.x + starSpacing * i, starStart.y};
-		starSP_[i].sprite->SetScale(starSP_[i].size);
-		starSP_[i].sprite->SetPosition(starSP_[i].translate);
-		starSP_[i].sprite->Update();
+		starSpriteData_[i].handle = (i < resultStars_) ? starOnHandle_ : starOffHandle_;
+		starSpriteData_[i].sprite = std::make_unique<Sprite>();
+		starSpriteData_[i].sprite->Initialize(starSpriteData_[i].handle);
+		starSpriteData_[i].sprite->SetAnchorPoint({0.5f, 0.5f});
+		starSpriteData_[i].size = starSize_;
+		starSpriteData_[i].translate = {starStart.x + starSpacing * i, starStart.y};
+		starSpriteData_[i].sprite->SetScale(starSpriteData_[i].size);
+		starSpriteData_[i].sprite->SetPosition(starSpriteData_[i].translate);
+		starSpriteData_[i].sprite->Update();
 	}
 	Vector2 starTopLeft = {starStart.x - starSize_.x*3.0f, starStart.y+80.0f};
-	houseHpStringSP_.sprite->SetAnchorPoint({0.0f, 1.0f});
-	houseHpStringSP_.size = houseHpStringSize_;
-	houseHpStringSP_.translate = starTopLeft;
-	houseHpStringSP_.sprite->SetScale(houseHpStringSP_.size);
-	houseHpStringSP_.sprite->SetPosition(houseHpStringSP_.translate);
-	houseHpStringSP_.sprite->Update();
+	houseHpStringSpriteData_.sprite->SetAnchorPoint({0.0f, 1.0f});
+	houseHpStringSpriteData_.size = houseHpStringSize_;
+	houseHpStringSpriteData_.translate = starTopLeft;
+	houseHpStringSpriteData_.sprite->SetScale(houseHpStringSpriteData_.size);
+	houseHpStringSpriteData_.sprite->SetPosition(houseHpStringSpriteData_.translate);
+	houseHpStringSpriteData_.sprite->Update();
 	int minuteTens = (resultMinutes_ / 10) % 10;
 	int minuteOnes = resultMinutes_ % 10;
 	int secondTens = (resultSeconds_ / 10) % 10;
@@ -109,13 +109,13 @@ void ResultScene::Initialize() {
 	Vector2 digitStart = {580, 280};
 	float digitSpacing = 50.0f;
 	for (int i = 0; i < 4; ++i) {
-		timeDigitSP_[i].sprite->SetAnchorPoint({0.5f, 0.5f});
-		timeDigitSP_[i].size = timeDigitSize_;
-		timeDigitSP_[i].translate = {digitStart.x + digitSpacing * i, digitStart.y};
-		timeDigitSP_[i].sprite->SetScale(timeDigitSP_[i].size);
-		timeDigitSP_[i].sprite->SetPosition(timeDigitSP_[i].translate);
-		timeDigitSP_[i].sprite->SetTextureRange({300.0f * digits[i], 0}, numberTextureSize_);
-		timeDigitSP_[i].sprite->Update();
+		timeDigitSpriteData_[i].sprite->SetAnchorPoint({0.5f, 0.5f});
+		timeDigitSpriteData_[i].size = timeDigitSize_;
+		timeDigitSpriteData_[i].translate = {digitStart.x + digitSpacing * i, digitStart.y};
+		timeDigitSpriteData_[i].sprite->SetScale(timeDigitSpriteData_[i].size);
+		timeDigitSpriteData_[i].sprite->SetPosition(timeDigitSpriteData_[i].translate);
+		timeDigitSpriteData_[i].sprite->SetTextureRange({300.0f * digits[i], 0}, numberTextureSize_);
+		timeDigitSpriteData_[i].sprite->Update();
 	}
 
 	Input::GetInstance()->SetIsCursorStability(false);
@@ -126,14 +126,14 @@ void ResultScene::Initialize() {
 }
 void ResultScene::Update() {
 	BGMManager::GetInstance()->Play(BGMManager::BGMType::Result);
-	logoSP_.sprite->Update();
+	logoSpriteData_.sprite->Update();
 	for (int i = 0; i < 3; ++i) {
-		starSP_[i].sprite->Update();
+		starSpriteData_[i].sprite->Update();
 	}
 	for (int i = 0; i < 4; ++i) {
-		timeDigitSP_[i].sprite->Update();
+		timeDigitSpriteData_[i].sprite->Update();
 	}
-	houseHpStringSP_.sprite->Update();
+	houseHpStringSpriteData_.sprite->Update();
 	if ((Input::GetInstance()->TriggerKey(DIK_SPACE)||Input::GetInstance()->TriggerButton(Input::PadButton::kButtonA)) && !isTransitionOut) {
 		transition->Initialize(true);
 		isTransitionOut = true;
@@ -155,14 +155,14 @@ void ResultScene::Update() {
 
 void ResultScene::Draw() {
 	SpriteCommon::GetInstance()->DrawCommon();
-	logoSP_.sprite->Draw();
+	logoSpriteData_.sprite->Draw();
 	for (int i = 0; i < 3; ++i) {
-		starSP_[i].sprite->Draw();
+		starSpriteData_[i].sprite->Draw();
 	}
 	for (int i = 0; i < 4; ++i) {
-		timeDigitSP_[i].sprite->Draw();
+		timeDigitSpriteData_[i].sprite->Draw();
 	}
-	houseHpStringSP_.sprite->Draw();
+	houseHpStringSpriteData_.sprite->Draw();
 	pressSpaceSprite->Draw();
 	if (isTransitionIn || isTransitionOut) {
 		transition->Draw();
