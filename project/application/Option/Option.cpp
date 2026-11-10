@@ -15,16 +15,20 @@ void Option::Initialize() {
 	for (int i = 0; i < kMenuCount; ++i) {
 		Text text;
 		text.Initialize(fontHandle);
-		text.SetSize({1280.0f, 100.0f});
+		text.SetSize({300.0f, 100.0f});
 		text.SetString(menuStrings[i]);
 		text.SetPosition({640.0f, 200.0f + i * 100.0f});
 		text.SetAlign(TextAlign::Center);
-		text.SetColor({1.0f, 1.0f, 1.0f, 1.0f});
+		text.SetColor({0.0f, 0.0f, 0.0f, 1.0f});
 		text.UpdateLayout(false);
 		menuTexts_.push_back(text);
 	}
 }
-void Option::Update() {}
+void Option::Update() {
+	for (auto& menuText : menuTexts_) {
+		menuText.Update();
+	}
+}
 void Option::Draw() {
 	for (auto& menuText : menuTexts_) {
 		menuText.Draw();

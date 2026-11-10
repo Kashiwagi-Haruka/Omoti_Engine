@@ -48,7 +48,7 @@ Pause::Pause() {
 	selectSprites_[2]->SetColor({0.0f, 0.0f, 1.0f, 0.5f});
 	
 	titleBackBG_ = std::make_unique<Sprite>();
-
+	option_ = std::make_unique<Option>();
 }
 
 void Pause::Initialize() {
@@ -105,6 +105,7 @@ void Pause::Initialize() {
 		text.UpdateLayout(false);
 		menuTexts_.push_back(text);
 	}
+	option_->Initialize();
 }
 
 void Pause::Start() { 
@@ -167,23 +168,39 @@ void Pause::Update() {
 
 	if (isActive_) {
 		
-		if (PlayCommand::GetInstance()->GetUpUI() && !PlayCommand::GetInstance()->GetDownUI()) {
-			selectIndex_ = (selectIndex_ + kMenuCount - 1) % kMenuCount;
-		} else if (PlayCommand::GetInstance()->GetDownUI() && !PlayCommand::GetInstance()->GetUpUI()) {
-			selectIndex_ = (selectIndex_ + 1) % kMenuCount;
-		}
 
-		if (PlayCommand::GetInstance()->GetDESIDE()) {
-			action_ = kMenuActions[selectIndex_];
-		} else if (PlayCommand::GetInstance()->GetESCAPE()) {
-			action_ = Action::kResume;
-		}
 		switch (action_) {
 		case Pause::Action::kNone:
+			if (PlayCommand::GetInstance()->GetUpUI() && !PlayCommand::GetInstance()->GetDownUI()) {
+				selectIndex_ = (selectIndex_ + kMenuCount - 1) % kMenuCount;
+			} else if (PlayCommand::GetInstance()->GetDownUI() && !PlayCommand::GetInstance()->GetUpUI()) {
+				selectIndex_ = (selectIndex_ + 1) % kMenuCount;
+			}
+
+			if (PlayCommand::GetInstance()->GetDESIDE()) {
+				action_ = kMenuActions[selectIndex_];
+			} else if (PlayCommand::GetInstance()->GetESCAPE()) {
+				action_ = Action::kResume;
+			}
+			SelectSpriteUpdate();
+			if (!menuTexts_.empty()) {
+				const Vector2 selectPosition = {menuTexts_[selectIndex_].GetPosition().x + offsetX, menuTexts_[selectIndex_].GetPosition().y};
+				for (auto& selectSprite : selectSprites_) {
+					selectSprite->SetPosition(selectPosition);
+					selectSprite->Update();
+				}
+			}
+			CurrentCharacterUpdate();
+			BG_->Update();
+			pauseText_.Update(false);
+			for (auto& menuText : menuTexts_) {
+				menuText.Update(false);
+			}
 			break;
 		case Pause::Action::kResume:
 			break;
 		case Pause::Action::kOptions:
+			option_->Update();
 			break;
 		case Pause::Action::kLicense:
 			break;
@@ -199,62 +216,66 @@ void Pause::Update() {
 			break;
 		}
 	}
-	SelectSpriteUpdate();
-	if (!menuTexts_.empty()) {
-		const Vector2 selectPosition = {menuTexts_[selectIndex_].GetPosition().x + offsetX, menuTexts_[selectIndex_].GetPosition().y};
-		for (auto& selectSprite : selectSprites_) {
-			selectSprite->SetPosition(selectPosition);
-			selectSprite->Update();
-		}
-	}
-	CurrentCharacterUpdate();
-	BG_->Update();
-	pauseText_.Update(false);
-	for (auto& menuText : menuTexts_) {
-		menuText.Update(false);
-	}
+
 }
 void Pause::Draw() {
 
 	if (!isPause_) {
 		return;
 	}
+
 	Object3dCommon::GetInstance()->SetFullScreenGrayscaleEnabled(false);
-	camera_->Update();
-	BG_->SetCamera(camera_.get());
+	Camera* previousDefaultCamera = Object3dCommon::GetInstance()->GetDefaultCamera();
+	switch (action_) {
+	case Pause::Action::kNone:
 
-	Object3dCommon* object3dCommon = Object3dCommon::GetInstance();
-	Camera* previousDefaultCamera = object3dCommon->GetDefaultCamera();
-	object3dCommon->SetDefaultCamera(camera_.get());
-	if (currentCharacterObj_) {
-		currentCharacterObj_->SetCamera(camera_.get());
-		currentCharacterObj_->SetTransform({
-		    .scale{2.0f,  2.0f, 2.0f},
-		    .rotate{0.0f,  0.2f, 0.0f},
-		    .translate{-2.0f, 0.0f, 0.0f},
-		});
-		currentCharacterObj_->Update();
-	}
+		camera_->Update();
+		BG_->SetCamera(camera_.get());
 
-	object3dCommon->DrawCommon();
-	BG_->Draw();
-	if (currentCharacterObj_) {
-		object3dCommon->DrawCommon(Object3dCommon::DrawCommonType::MaterialColorOnlySkinning);
-		currentCharacterObj_->Draw();
-	}
+		
+		Object3dCommon::GetInstance()->SetDefaultCamera(camera_.get());
+		if (currentCharacterObj_) {
+			currentCharacterObj_->SetCamera(camera_.get());
+			currentCharacterObj_->SetTransform({
+			    .scale{2.0f,  2.0f, 2.0f},
+			    .rotate{0.0f,  0.2f, 0.0f},
+			    .translate{-2.0f, 0.0f, 0.0f},
+			});
+			currentCharacterObj_->Update();
+		}
 
-	pauseText_.Draw();
-	for (auto& menuText : menuTexts_) {
-		menuText.Draw();
-	}
-	SpriteCommon::GetInstance()->DrawCommon();
-	SpriteCommon::GetInstance()->SetBlendMode(BlendMode::kBlendModeAdd);
-	for (int i = 0; i < 3; ++i) {
-		selectSprites_[i]->Draw();
-	}
-	SpriteCommon::GetInstance()->SetBlendMode(BlendMode::kBlendModeAlpha);
+		Object3dCommon::GetInstance()->DrawCommon();
+		BG_->Draw();
+		if (currentCharacterObj_) {
+			Object3dCommon::GetInstance()->DrawCommon(Object3dCommon::DrawCommonType::MaterialColorOnlySkinning);
+			currentCharacterObj_->Draw();
+		}
 
-	object3dCommon->SetDefaultCamera(previousDefaultCamera);
+		pauseText_.Draw();
+		for (auto& menuText : menuTexts_) {
+			menuText.Draw();
+		}
+		SpriteCommon::GetInstance()->DrawCommon();
+		SpriteCommon::GetInstance()->SetBlendMode(BlendMode::kBlendModeAdd);
+		for (int i = 0; i < 3; ++i) {
+			selectSprites_[i]->Draw();
+		}
+		SpriteCommon::GetInstance()->SetBlendMode(BlendMode::kBlendModeAlpha);
+
+		Object3dCommon::GetInstance()->SetDefaultCamera(previousDefaultCamera);
+		break;
+	case Pause::Action::kResume:
+		break;
+	case Pause::Action::kOptions:
+		option_->Draw();
+		break;
+	case Pause::Action::kLicense:
+		break;
+	case Pause::Action::kTitle:
+		break;
+	default:
+		break;
+	}
 }
 
 void Pause::CurrentCharacterUpdate() {
