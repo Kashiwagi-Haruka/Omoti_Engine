@@ -14,6 +14,7 @@
 #include "Text/FreetypeManager/FreeTypeManager.h"
 #include "TextureManager.h"
 #include "TutorialUI/TutorialUI.h"
+#include "UI/UIManager/UIManager.h"
 
 #include <algorithm>
 #include <array>
@@ -52,6 +53,7 @@ void TutorialScene::Initialize() {
 	player_ = std::make_unique<Player>();
 	field_ = std::make_unique<Field>();
 	tutorialUI_ = std::make_unique<TutorialUI>();
+	uiManager_ = std::make_unique<UIManager>();
 
 	cameraController_->Initialize();
 
@@ -66,6 +68,7 @@ void TutorialScene::Initialize() {
 
 	field_->Initialize(camera);
 	tutorialUI_->Initialize();
+	uiManager_->Initialize();
 
 	const auto controlHandle = TextureManager::GetInstance()->GetTextureIndexByfilePath("Resources/2d/option.png");
 
@@ -478,6 +481,7 @@ void TutorialScene::Update() {
 	tutorialUI_->Update(tutorialProgress, skipProgress, -1, skipHoldTimer_ > 0.0f);
 
 	UpdateGuide();
+	uiManager_->Update();
 }
 
 void TutorialScene::Draw() {
@@ -497,7 +501,7 @@ void TutorialScene::Draw() {
 			sprite->Draw();
 		}
 	}
-
+	uiManager_->Draw();
 	// フォント描画へ切り替わるので最後に描く。
 	guideText_.Draw();
 }

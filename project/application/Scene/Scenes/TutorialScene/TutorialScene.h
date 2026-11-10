@@ -13,6 +13,7 @@ class Player;
 class Sky;
 class Sprite;
 class TutorialUI;
+class UIManager;
 
 class TutorialScene : public BaseScene {
 public:
@@ -53,6 +54,7 @@ private:
 	std::unique_ptr<Field> field_;
 	std::unique_ptr<Sprite> controlSprite_;
 	std::unique_ptr<TutorialUI> tutorialUI_;
+	std::unique_ptr<UIManager> uiManager_;
 
 	std::array<std::unique_ptr<Sprite>, kAttributeCount> attributeSprites_;
 
