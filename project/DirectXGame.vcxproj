@@ -362,6 +362,7 @@ copy "$(WindowsSdkDir)\bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)\
     <ClCompile Include="application\Object\StageSelect\Gate\StageSelectGate.cpp" />
     <ClCompile Include="application\UI\Quest\QuestUI.cpp" />
     <ClCompile Include="application\PostEffectManager\GameScene\GameScenePostEffectManager.cpp" />
+    <ClCompile Include="Engine\FPS\FPSChecker.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include=".editorconfig" />
@@ -600,6 +601,7 @@ copy "$(WindowsSdkDir)\bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)\
     <ClInclude Include="application\Object\StageSelect\Gate\StageSelectGate.h" />
     <ClInclude Include="application\UI\Quest\QuestUI.h" />
     <ClInclude Include="application\PostEffectManager\GameScene\GameScenePostEffectManager.h" />
+    <ClInclude Include="Engine\FPS\FPSChecker.h" />
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="Resources\shader\FullScreenCopy\CopyImage.PS.hlsl">
