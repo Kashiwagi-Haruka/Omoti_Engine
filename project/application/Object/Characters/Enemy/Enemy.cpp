@@ -49,6 +49,8 @@ void Enemy::Initialize(Camera* camera, Vector3 translates) {
     };
 	object_->SetTransform(transform_);
 	object_->SetCamera(camera_);
+	object_->SetOverlayEnabled(true);
+	object_->SetOverlayAmount(0.5f);
 	object_->Update();
 
 	enemyStun->Initialize();

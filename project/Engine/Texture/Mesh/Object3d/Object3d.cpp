@@ -4,9 +4,9 @@
 #include "DirectXCommon.h"
 #include "Engine/Editor/EditorTool/Hierarchy/Hierarchy.h"
 #include "Function.h"
+#include "GameBase.h"
 #include "Model/Model.h"
 #include "Model/ModelManager.h"
-#include "GameBase.h"
 #include "Object3d/Object3dCommon.h"
 #include "TextureManager.h"
 #include <algorithm>
@@ -47,7 +47,7 @@ void Object3d::Initialize() {
 	SetOverlayTexture("Resources/2d/iceFlower.png");
 	SetOverlayNoiseTexture("Resources/2d/noise.png");
 	SetOverlayPlacement({0.5f, 0.5f}, {1.0f, 1.0f});
-	SetOverlayAmount(0.6f);
+	SetOverlayAmount(0.0f);
 }
 namespace {
 bool IsIdentityMatrix(const Matrix4x4& matrix) {
@@ -161,9 +161,9 @@ void Object3d::UpdateBillboard() {
 			}
 		}
 		if (nodeAnimation) {
-			Vector3 translate = nodeAnimation->translate.keyframes.empty() ? Vector3{ 0.0f, 0.0f, 0.0f } : Animation::CalculateValue(nodeAnimation->translate, animationTime_);
-			Vector4 rotate = nodeAnimation->rotation.keyframes.empty() ? Vector4{ 0.0f, 0.0f, 0.0f, 1.0f } : Animation::CalculateValue(nodeAnimation->rotation, animationTime_);
-			Vector3 scale = nodeAnimation->scale.keyframes.empty() ? Vector3{ 1.0f, 1.0f, 1.0f } : Animation::CalculateValue(nodeAnimation->scale, animationTime_);
+			Vector3 translate = nodeAnimation->translate.keyframes.empty() ? Vector3{0.0f, 0.0f, 0.0f} : Animation::CalculateValue(nodeAnimation->translate, animationTime_);
+			Vector4 rotate = nodeAnimation->rotation.keyframes.empty() ? Vector4{0.0f, 0.0f, 0.0f, 1.0f} : Animation::CalculateValue(nodeAnimation->rotation, animationTime_);
+			Vector3 scale = nodeAnimation->scale.keyframes.empty() ? Vector3{1.0f, 1.0f, 1.0f} : Animation::CalculateValue(nodeAnimation->scale, animationTime_);
 			localMatrix = Function::MakeAffineMatrix(scale, rotate, translate);
 		}
 	}
@@ -178,7 +178,9 @@ void Object3d::UpdateBillboard() {
 	invViewRot.m[3][0] = invViewRot.m[3][1] = invViewRot.m[3][2] = 0.0f;
 
 	// 回転行列を作る（カメラの回転を打ち消して自分の回転を反映）
-	Matrix4x4 rotMat = Function::Multiply(Function::Multiply(Function::MakeRotateZMatrix(transform_.rotate.z), Function::Multiply(Function::MakeRotateXMatrix(transform_.rotate.x), Function::MakeRotateYMatrix(transform_.rotate.y))), invViewRot);
+	Matrix4x4 rotMat = Function::Multiply(
+	    Function::Multiply(Function::MakeRotateZMatrix(transform_.rotate.z), Function::Multiply(Function::MakeRotateXMatrix(transform_.rotate.x), Function::MakeRotateYMatrix(transform_.rotate.y))),
+	    invViewRot);
 
 	// スケール・平行移動
 	Matrix4x4 scaleMat = Function::MakeScaleMatrix(transform_.scale);
@@ -231,14 +233,30 @@ void Object3d::UpdateCameraMatrices() {
 void Object3d::Draw() {
 	CompleteAsyncModelLoadIfReady();
 
-	// --- 座標変換行列CBufferの場所を設定 ---
-	Object3dCommon::GetInstance()->GetDxCommon()->GetCommandList()->SetGraphicsRootConstantBufferView(1, transformResource_->GetGPUVirtualAddress());
-	// --- 平行光源CBufferの場所を設定 ---
-	Object3dCommon::GetInstance()->GetDxCommon()->GetCommandList()->SetGraphicsRootConstantBufferView(4, cameraResource_->GetGPUVirtualAddress());
 	Model* drawableModel = GetDrawableModel();
-	if (drawableModel) {
-		drawableModel->Draw(drawableModel == model_ ? skinCluster_ : nullptr, materialResource_.Get());
+	if (!drawableModel) {
+		return;
 	}
+
+	auto* commandList = Object3dCommon::GetInstance()->GetDxCommon()->GetCommandList();
+	auto* textureManager = TextureManager::GetInstance();
+
+	commandList->SetGraphicsRootConstantBufferView(1, transformResource_->GetGPUVirtualAddress());
+	commandList->SetGraphicsRootConstantBufferView(4, cameraResource_->GetGPUVirtualAddress());
+
+	// TextureManagerは非同期ロード中も代替の白画像SRVを保持する。
+	// 両方のロードが終わるまで合成を無効にし、白画像の表示を防ぐ。
+	const bool textureReady = textureManager->IsTextureLoaded(overlayTextureIndex_);
+	const bool noiseReady = textureManager->IsTextureLoaded(overlayNoiseTextureIndex_);
+	overlayData_->enabled = (overlayEnabled_ && textureReady && noiseReady) ? 1 : 0;
+
+	// CreatePSO::CreateRootSignatureの追加パラメーターに対応。
+	// root index 18 -> PS b8, 19 -> PS t9, 20 -> PS t10。
+	commandList->SetGraphicsRootConstantBufferView(18, overlayResource_->GetGPUVirtualAddress());
+	commandList->SetGraphicsRootDescriptorTable(19, textureManager->GetSrvHandleGPU(overlayTextureIndex_));
+	commandList->SetGraphicsRootDescriptorTable(20, textureManager->GetSrvHandleGPU(overlayNoiseTextureIndex_));
+
+	drawableModel->Draw(drawableModel == model_ ? skinCluster_ : nullptr, materialResource_.Get());
 }
 
 void Object3d::SetModel(const std::string& filePath) {
@@ -437,6 +455,27 @@ Vector4 Object3d::GetDissolveEdgeColor() const {
 	}
 	return {1.0f, 0.35f, 0.05f, 1.0f};
 }
+void Object3d::SetOverlayTexture(std::string textureName) { overlayTextureIndex_ = TextureManager::GetInstance()->GetTextureIndexByfilePath(textureName); }
+
+void Object3d::SetOverlayNoiseTexture(std::string textureName) { overlayNoiseTextureIndex_ = TextureManager::GetInstance()->GetTextureIndexByfilePath(textureName); }
+
+void Object3d::SetOverlayEnabled(bool enabled) {
+	assert(overlayData_);
+	overlayEnabled_ = enabled;
+	overlayData_->enabled = enabled ? 1 : 0;
+}
+
+void Object3d::SetOverlayPlacement(Vector2 center, Vector2 size) {
+	assert(overlayData_);
+	overlayData_->center = center;
+	overlayData_->size = {std::max(size.x, 0.0001f), std::max(size.y, 0.0001f)};
+}
+
+void Object3d::SetOverlayAmount(float amount) {
+	assert(overlayData_);
+	overlayData_->amount = std::clamp(amount, 0.0f, 1.0f);
+}
+
 void Object3d::CreateResources() {
 	transformResource_ = Object3dCommon::GetInstance()->CreateBufferResource(sizeof(TransformationMatrix));
 	cameraResource_ = Object3dCommon::GetInstance()->CreateBufferResource(sizeof(CameraForGpu));
@@ -449,4 +488,18 @@ void Object3d::CreateResources() {
 		materialData_->outlineColor = {0.0f, 0.0f, 0.0f, 1.0f};
 		materialData_->outlineWidth = 1.0f;
 	}
+
+	const size_t alignedOverlaySize = (sizeof(OverlaySettings) + size_t(255)) & ~size_t(255);
+	overlayResource_ = Object3dCommon::GetInstance()->CreateBufferResource(alignedOverlaySize);
+	assert(overlayResource_);
+
+	const HRESULT overlayMapResult = overlayResource_->Map(0, nullptr, reinterpret_cast<void**>(&overlayData_));
+	assert(SUCCEEDED(overlayMapResult));
+	*overlayData_ = OverlaySettings{};
+
+	// Initialize()から画像が設定される前にも、有効なSRVを保持する。
+	const uint32_t whiteTextureIndex = TextureManager::GetInstance()->GetTextureIndexByfilePath(kDefaultWhiteTexturePath);
+	overlayTextureIndex_ = whiteTextureIndex;
+	overlayNoiseTextureIndex_ = whiteTextureIndex;
+	overlayEnabled_ = false;
 }
