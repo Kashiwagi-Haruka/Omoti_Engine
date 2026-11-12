@@ -101,8 +101,8 @@ void CreatePSO::CreateRootSignature() {
 	// --- RootSignature ---
 	D3D12_ROOT_SIGNATURE_DESC descriptionRootSignature{};
 	descriptionRootSignature.Flags = D3D12_ROOT_SIGNATURE_FLAG_ALLOW_INPUT_ASSEMBLER_INPUT_LAYOUT;
-	D3D12_ROOT_PARAMETER rootParameters[18] = {};
-	D3D12_DESCRIPTOR_RANGE descriptorRange[10] = {};
+	D3D12_ROOT_PARAMETER rootParameters[21] = {};
+	D3D12_DESCRIPTOR_RANGE descriptorRange[12] = {};
 	descriptorRange[0].BaseShaderRegister = 0;
 	descriptorRange[0].NumDescriptors = 1;
 	descriptorRange[0].RangeType = D3D12_DESCRIPTOR_RANGE_TYPE_SRV;
@@ -230,14 +230,37 @@ void CreatePSO::CreateRootSignature() {
 	rootParameters[16].ShaderVisibility = D3D12_SHADER_VISIBILITY_VERTEX;
 	rootParameters[16].Descriptor.ShaderRegister = 8;
 
-	if (useSkinning_) {
-		rootParameters[17].ParameterType = D3D12_ROOT_PARAMETER_TYPE_DESCRIPTOR_TABLE;
-		rootParameters[17].ShaderVisibility = D3D12_SHADER_VISIBILITY_VERTEX;
-		rootParameters[17].DescriptorTable.pDescriptorRanges = &descriptorRange[9];
-		rootParameters[17].DescriptorTable.NumDescriptorRanges = 1;
+	// 通常描画でも有効な定義を置き、既存のルート番号を維持する。
+	// スキニングしないVSではこのパラメーターを使用しない。
+	rootParameters[17].ParameterType = D3D12_ROOT_PARAMETER_TYPE_DESCRIPTOR_TABLE;
+	rootParameters[17].ShaderVisibility = D3D12_SHADER_VISIBILITY_VERTEX;
+	rootParameters[17].DescriptorTable.pDescriptorRanges = &descriptorRange[9];
+	rootParameters[17].DescriptorTable.NumDescriptorRanges = 1;
+
+	// Overlay画像: PS t9。ノイズ: PS t10。
+	for (UINT i = 0; i < 2; ++i) {
+		auto& range = descriptorRange[10 + i];
+		range.RangeType = D3D12_DESCRIPTOR_RANGE_TYPE_SRV;
+		range.NumDescriptors = 1;
+		range.BaseShaderRegister = 9 + i;
+		range.RegisterSpace = 0;
+		range.OffsetInDescriptorsFromTableStart = D3D12_DESCRIPTOR_RANGE_OFFSET_APPEND;
+	}
+
+	// Overlay設定: PS b8。既存のVS b8とは可視性で分離する。
+	rootParameters[18].ParameterType = D3D12_ROOT_PARAMETER_TYPE_CBV;
+	rootParameters[18].ShaderVisibility = D3D12_SHADER_VISIBILITY_PIXEL;
+	rootParameters[18].Descriptor.ShaderRegister = 8;
+
+	for (UINT i = 0; i < 2; ++i) {
+		auto& parameter = rootParameters[19 + i];
+		parameter.ParameterType = D3D12_ROOT_PARAMETER_TYPE_DESCRIPTOR_TABLE;
+		parameter.ShaderVisibility = D3D12_SHADER_VISIBILITY_PIXEL;
+		parameter.DescriptorTable.NumDescriptorRanges = 1;
+		parameter.DescriptorTable.pDescriptorRanges = &descriptorRange[10 + i];
 	}
 	descriptionRootSignature.pParameters = rootParameters;
-	descriptionRootSignature.NumParameters = useSkinning_ ? _countof(rootParameters) : _countof(rootParameters) - 1;
+	descriptionRootSignature.NumParameters = _countof(rootParameters);
 
 	D3D12_STATIC_SAMPLER_DESC staticSampler[1] = {};
 	staticSampler[0].Filter = D3D12_FILTER_MIN_MAG_MIP_LINEAR;
@@ -332,7 +355,7 @@ void CreatePSO::CreateGraphicsPipeline(D3D12_CULL_MODE cullMode, bool depthEnabl
 	}
 	depthStencilDesc.DepthFunc = D3D12_COMPARISON_FUNC_LESS_EQUAL; // ★ 手前なら描画
 
-// --- 共通設定 ---
+	// --- 共通設定 ---
 	D3D12_GRAPHICS_PIPELINE_STATE_DESC baseDesc{};
 	baseDesc.pRootSignature = rootSignature_.Get();
 	baseDesc.InputLayout = inputLayoutDesc;

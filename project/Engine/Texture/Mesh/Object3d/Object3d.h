@@ -10,6 +10,7 @@
 #include "Vector2.h"
 #include "Vector4.h"
 #include <Windows.h>
+#include <cstdint>
 #include <d3d12.h>
 #include <future>
 #include <memory>
@@ -49,6 +50,12 @@ class Object3d {
 	};
 
 	static_assert(sizeof(OverlaySettings) == 48);
+
+	Microsoft::WRL::ComPtr<ID3D12Resource> overlayResource_;
+	OverlaySettings* overlayData_ = nullptr;
+	uint32_t overlayTextureIndex_ = 0;
+	uint32_t overlayNoiseTextureIndex_ = 0;
+	bool overlayEnabled_ = false;
 	Camera* camera_;
 
 	TransformationMatrix* transformationMatrixData_ = nullptr;
@@ -56,106 +63,107 @@ class Object3d {
 	CameraForGpu* cameraData_ = nullptr;
 	Microsoft::WRL::ComPtr<ID3D12Resource> cameraResource_;
 	Material* materialData_ = nullptr;
-	Microsoft::WRL::ComPtr<ID3D12Resource> materialResource_;
-	Model* model_ = nullptr;
-	Matrix4x4 worldMatrix;
-	Matrix4x4 worldViewProjectionMatrix;
-	bool isUseSetWorld;
-	std::unique_ptr<Model> modelInstance_;
-	std::future<std::unique_ptr<Model>> modelLoadFuture_;
-	const Animation::AnimationData* animation_ = nullptr;
-	float animationTime_ = 0.0f;
-	bool isLoopAnimation_ = true;
-	SkinCluster* skinCluster_ = nullptr;
-	Vector3 uvScale_ = {1.0f, 1.0f, 1.0f};
-	Vector3 uvRotate_ = {0.0f, 0.0f, 0.0f};
-	Vector3 uvTranslate_ = {0.0f, 0.0f, 0.0f};
-	Vector2 uvAnchor_ = {0.0f, 0.0f};
-	std::string editorId_;
-	std::string modelFilePath_;
-	void CompleteAsyncModelLoadIfReady();
-	Model* GetDrawableModel() const;
+Microsoft::WRL::ComPtr<ID3D12Resource> materialResource_;
+Model* model_ = nullptr;
+Matrix4x4 worldMatrix;
+Matrix4x4 worldViewProjectionMatrix;
+bool isUseSetWorld;
+std::unique_ptr<Model> modelInstance_;
+std::future<std::unique_ptr<Model>> modelLoadFuture_;
+const Animation::AnimationData* animation_ = nullptr;
+float animationTime_ = 0.0f;
+bool isLoopAnimation_ = true;
+SkinCluster* skinCluster_ = nullptr;
+Vector3 uvScale_ = {1.0f, 1.0f, 1.0f};
+Vector3 uvRotate_ = {0.0f, 0.0f, 0.0f};
+Vector3 uvTranslate_ = {0.0f, 0.0f, 0.0f};
+Vector2 uvAnchor_ = {0.0f, 0.0f};
+std::string editorId_;
+std::string modelFilePath_;
+void CompleteAsyncModelLoadIfReady();
+Model* GetDrawableModel() const;
 
 public:
-	Object3d() = default;
-	Object3d(const Object3d&) = delete;
-	Object3d& operator=(const Object3d&) = delete;
-	Object3d(Object3d&&) noexcept = default;
-	Object3d& operator=(Object3d&&) noexcept = default;
-	~Object3d();
-	void Initialize();
-	void Update();
-	void UpdateBillboard();
-	void UpdateCameraMatrices();
-	void Draw();
+Object3d() = default;
+Object3d(const Object3d&) = delete;
+Object3d& operator=(const Object3d&) = delete;
+Object3d(Object3d&&) noexcept = default;
+Object3d& operator=(Object3d&&) noexcept = default;
+~Object3d();
+void Initialize();
+void Update();
+void UpdateBillboard();
+void UpdateCameraMatrices();
+void Draw();
 
-	void CreateResources();
-	void SetModel(const std::string& filePath);
-	const std::string& GetModelFilePath() const { return modelFilePath_; }
+void CreateResources();
+void SetModel(const std::string& filePath);
+const std::string& GetModelFilePath() const { return modelFilePath_; }
 
-	void SetCamera(Camera* camera);
+void SetCamera(Camera* camera);
 
-	void SetTranslate(Vector3 translate);
-	void SetRotate(Vector3 Rotate);
-	void SetScale(Vector3 Scale);
-	void SetTransform(Transform transform) {
-		transform_ = transform;
-		isUseSetWorld = false;
-	}
-	void SetWorldMatrix(Matrix4x4 matrix) {
-		worldMatrix = matrix;
-		isUseSetWorld = true;
-	}
-	void SetColor(Vector4 color);
-	void SetEnableLighting(bool enable);
-	void SetGrayscaleEnabled(bool enable);
-	void SetSepiaEnabled(bool enable);
-	void SetDistortionStrength(float strength);
-	void SetDistortionFalloff(float falloff);
-	void SetOutlineColor(const Vector4& color);
-	void SetOutlineWidth(float width);
-	void SetUvTransform(const Matrix4x4& uvTransform);
-	void SetUvTransform(Vector3 scale, Vector3 rotate, Vector3 translate, Vector2 anchor = {0.0f, 0.0f});
-	void SetUvAnchor(Vector2 anchor);
-	void SetShininess(float shininess);
-	void SetEnvironmentCoefficient(float coefficient);
-	void SetDissolveEnabled(bool enable);
-	void SetDissolveThreshold(float threshold);
-	void SetDissolveEdgeWidth(float width);
-	void SetDissolveEdgeColor(const Vector4& color);
-	void SetOverlayTexture(std::string TextureName);
-	void SetOverlayNoiseTexture(std::string NoiseTextureName);
-	void SetOverlayEnabled(bool enabled);
-	void SetOverlayPlacement(Vector2 center, Vector2 size);
-	void SetOverlayAmount(float amount);
+void SetTranslate(Vector3 translate);
+void SetRotate(Vector3 Rotate);
+void SetScale(Vector3 Scale);
+void SetTransform(Transform transform) {
+	transform_ = transform;
+	isUseSetWorld = false;
+}
+void SetWorldMatrix(Matrix4x4 matrix) {
+	worldMatrix = matrix;
+	isUseSetWorld = true;
+}
+void SetColor(Vector4 color);
+void SetEnableLighting(bool enable);
+void SetGrayscaleEnabled(bool enable);
+void SetSepiaEnabled(bool enable);
+void SetDistortionStrength(float strength);
+void SetDistortionFalloff(float falloff);
+void SetOutlineColor(const Vector4& color);
+void SetOutlineWidth(float width);
+void SetUvTransform(const Matrix4x4& uvTransform);
+void SetUvTransform(Vector3 scale, Vector3 rotate, Vector3 translate, Vector2 anchor = {0.0f, 0.0f});
+void SetUvAnchor(Vector2 anchor);
+void SetShininess(float shininess);
+void SetEnvironmentCoefficient(float coefficient);
+void SetDissolveEnabled(bool enable);
+void SetDissolveThreshold(float threshold);
+void SetDissolveEdgeWidth(float width);
+void SetDissolveEdgeColor(const Vector4& color);
+void SetOverlayTexture(std::string TextureName);
+void SetOverlayNoiseTexture(std::string NoiseTextureName);
+void SetOverlayEnabled(bool enabled);
+void SetOverlayPlacement(Vector2 center, Vector2 size);
+void SetOverlayAmount(float amount);
 
-	Vector4 GetColor() const;
-	bool IsLightingEnabled() const;
-	float GetShininess() const;
-	float GetEnvironmentCoefficient() const;
-	bool IsDissolveEnabled() const;
-	float GetDissolveThreshold() const;
-	float GetDissolveEdgeWidth() const;
-	Vector4 GetDissolveEdgeColor() const;
-	bool IsGrayscaleEnabled() const;
-	bool IsSepiaEnabled() const;
-	float GetDistortionStrength() const;
-	float GetDistortionFalloff() const;
-	Vector4 GetOutlineColor() const;
-	float GetOutlineWidth() const;
-	Vector2 GetUvAnchor() const { return uvAnchor_; }
-	void SetAnimation(const Animation::AnimationData* animation, bool loop = true) {
-		animation_ = animation;
-		isLoopAnimation_ = loop;
-		animationTime_ = 0.0f;
-	}
-	void SetSkinCluster(SkinCluster* skinCluster) { skinCluster_ = skinCluster; }
-	void ResetAnimationTime(float time = 0.0f) { animationTime_ = time; }
-	Vector3 GetTranslate() { return transform_.translate; }
-	Vector3 GetRotate() { return transform_.rotate; }
-	Vector3 GetScale() { return transform_.scale; }
-	Transform GetTransform() const { return transform_; }
-	void SetEditorId(const std::string& id) { editorId_ = id; }
-	const std::string& GetEditorId() const { return editorId_; }
-	const Matrix4x4& GetWorldMatrix() const { return worldMatrix; }
-};
+Vector4 GetColor() const;
+bool IsLightingEnabled() const;
+float GetShininess() const;
+float GetEnvironmentCoefficient() const;
+bool IsDissolveEnabled() const;
+float GetDissolveThreshold() const;
+float GetDissolveEdgeWidth() const;
+Vector4 GetDissolveEdgeColor() const;
+bool IsGrayscaleEnabled() const;
+bool IsSepiaEnabled() const;
+float GetDistortionStrength() const;
+float GetDistortionFalloff() const;
+Vector4 GetOutlineColor() const;
+float GetOutlineWidth() const;
+Vector2 GetUvAnchor() const { return uvAnchor_; }
+void SetAnimation(const Animation::AnimationData* animation, bool loop = true) {
+	animation_ = animation;
+	isLoopAnimation_ = loop;
+	animationTime_ = 0.0f;
+}
+void SetSkinCluster(SkinCluster* skinCluster) { skinCluster_ = skinCluster; }
+void ResetAnimationTime(float time = 0.0f) { animationTime_ = time; }
+Vector3 GetTranslate() { return transform_.translate; }
+Vector3 GetRotate() { return transform_.rotate; }
+Vector3 GetScale() { return transform_.scale; }
+Transform GetTransform() const { return transform_; }
+void SetEditorId(const std::string& id) { editorId_ = id; }
+const std::string& GetEditorId() const { return editorId_; }
+const Matrix4x4& GetWorldMatrix() const { return worldMatrix; }
+}
+;
