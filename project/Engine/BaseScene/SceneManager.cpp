@@ -245,3 +245,11 @@ std::vector<std::string> SceneManager::GetSceneNames() const {
 
 	return sceneFactory_->GetSceneNames();
 }
+
+void SceneManager::DrawEditorUI() {
+#ifdef USE_IMGUI
+	if (scene_) {
+		scene_->DrawEditorUI();
+	}
+#endif
+}

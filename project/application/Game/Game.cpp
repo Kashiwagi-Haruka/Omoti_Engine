@@ -13,7 +13,8 @@ void Game::Initialize() {
 	GameBase::GetInstance()->SetWindowIconFromFile(L"Resources/2d/GameIcon/GameIcon.ico");
 	sceneFactory_ = std::make_unique<SceneFactory>();
 	SceneManager::GetInstance()->SetSceneFactory(sceneFactory_.get());
-	SceneManager::GetInstance()->ChangeScene("Title");
+	/*SceneManager::GetInstance()->ChangeScene("Title");*/
+	SceneManager::GetInstance()->ChangeScene("Character");
 	/*SceneManager::GetInstance()->ChangeScene("Sample");*/
 	/*SceneManager::GetInstance()->ChangeScene("Game");*/
 	/*SceneManager::GetInstance()->ChangeScene("Result");*/

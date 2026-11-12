@@ -85,7 +85,9 @@
     <FxCompile Include="Resources\shader\Skybox\Skybox.PS.hlsl">
       <Filter>Resources</Filter>
     </FxCompile>
-    <FxCompile Include="Resources\shader\Object3d\PS_Shader\SpecialGaugeEmissive.PS.hlsl" />
+    <FxCompile Include="Resources\shader\Object3d\PS_Shader\SpecialGaugeEmissive.PS.hlsl">
+      <Filter>Resources</Filter>
+    </FxCompile>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Engine\Camera\Camera.cpp">
@@ -532,48 +534,133 @@
     <ClCompile Include="Engine\Editor\EditorTool\ToolBar\ToolBar.cpp">
       <Filter>Engine\Editor\ToolBar</Filter>
     </ClCompile>
-    <ClCompile Include="application\UI\PadMenu\PadMenu.cpp" />
-    <ClCompile Include="application\Object\Characters\Base\CharacterParameterLoader.cpp" />
-    <ClCompile Include="application\Menu\HelpDisplay\HelpDisplay.cpp" />
-    <ClCompile Include="application\CameraController\CharacterCamera\SizukuSpecialCamera.cpp" />
-    <ClCompile Include="application\Menu\CharacterDisplay\Menu\Reinforcement\CharacterDisplayReinforcement.cpp" />
-    <ClCompile Include="application\Menu\CharacterDisplay\Menu\Equip\CharacterDisplayEquip.cpp" />
-    <ClCompile Include="application\Menu\CharacterDisplay\Menu\Profile\CharacterDisplayProfile.cpp" />
-    <ClCompile Include="application\Menu\CharacterDisplay\Menu\Skilltree\CharacterDisplaySkilltree.cpp" />
-    <ClCompile Include="application\Menu\CharacterDisplay\Menu\Status\CharacterDisplayStatus.cpp" />
-    <ClCompile Include="application\Menu\CharacterDisplay\Menu\Weapon\CharacterDisplayWeapon.cpp" />
-    <ClCompile Include="application\Menu\CharacterDisplay\Icon\CharacterDisplayIcon.cpp" />
-    <ClCompile Include="application\Object\Characters\Enemy\HostileIndicator\EnemyHostileIndicator.cpp" />
-    <ClCompile Include="application\Object\Characters\Enemy\LockOn\LockOnEnemy.cpp" />
-    <ClCompile Include="application\Object\RemoteCamera\RemoteCamera.cpp" />
-    <ClCompile Include="application\Menu\MenuManager.cpp" />
-    <ClCompile Include="application\LightManager\LightManager.cpp" />
-    <ClCompile Include="application\Object\Characters\Playable\Individual\Mei\MeiSpecial.cpp" />
-    <ClCompile Include="application\Object\Characters\Playable\Individual\Mei\MeiSkill.cpp" />
-    <ClCompile Include="application\Object\Characters\Playable\Individual\Sizuku\ChangeAttribute\ChangeAttribute.cpp" />
-    <ClCompile Include="application\Object\Characters\Playable\Individual\Sizuku\Special\Wind\SizukuSpecialWind.cpp" />
-    <ClCompile Include="application\Object\Characters\Playable\Individual\Sizuku\Special\Thunder\SizukuSpecialThunder.cpp" />
-    <ClCompile Include="application\Object\Characters\Playable\Individual\Sizuku\Special\Quantum\SizukuSpecialQuantum.cpp" />
-    <ClCompile Include="application\Object\Characters\Playable\Individual\Sizuku\Special\Imaginary\SizukuSpecialImaginary.cpp" />
-    <ClCompile Include="application\Object\Characters\Playable\Individual\Sizuku\Special\Ice\SizukuSpecialIce.cpp" />
-    <ClCompile Include="application\Object\Characters\Playable\Individual\Sizuku\Special\Fire\SizukuSpecialFire.cpp" />
-    <ClCompile Include="application\Object\Load\GameLoad.cpp" />
-    <ClCompile Include="application\Object\Characters\Playable\Individual\Sizuku\Skill\SizukuSkillFire.cpp" />
-    <ClCompile Include="application\Object\Characters\Playable\Individual\Sizuku\Skill\SizukuSkillIce.cpp" />
-    <ClCompile Include="application\Object\Characters\Playable\Individual\Sizuku\Skill\SizukuSkillWind.cpp" />
-    <ClCompile Include="application\Object\Characters\Playable\Individual\Sizuku\Skill\SizukuSkillThunder.cpp" />
-    <ClCompile Include="application\Object\Characters\Playable\Individual\Sizuku\Skill\SizukuSkillImaginary.cpp" />
-    <ClCompile Include="application\Object\Characters\Playable\Individual\Sizuku\Skill\SizukuSkillQuantum.cpp" />
-    <ClCompile Include="application\UI\DangerUI\DangerUI.cpp" />
-    <ClCompile Include="application\Object\Heal\Heal.cpp" />
-    <ClCompile Include="application\Scene\Scenes\StageSelectScene\StageSelectScene.cpp" />
-    <ClCompile Include="application\Object\Characters\Playable\Individual\Sizuku\Special\Thunder\SizukuSpecialThunderHitEffect.cpp" />
-    <ClCompile Include="application\Object\StageSelect\Gate\StageSelectGate.cpp" />
-    <ClCompile Include="application\UI\Attribute\AttributeUI.cpp" />
-    <ClCompile Include="application\UI\Quest\QuestUI.cpp" />
-    <ClCompile Include="application\PostEffectManager\GameScene\GameScenePostEffectManager.cpp" />
-    <ClCompile Include="Engine\FPS\FPSChecker.cpp" />
-    <ClCompile Include="Engine\math\Easing.cpp" />
+    <ClCompile Include="application\UI\Attribute\AttributeUI.cpp">
+      <Filter>Application</Filter>
+    </ClCompile>
+    <ClCompile Include="application\Object\Characters\Playable\Individual\Sizuku\ChangeAttribute\ChangeAttribute.cpp">
+      <Filter>Application</Filter>
+    </ClCompile>
+    <ClCompile Include="application\Menu\CharacterDisplay\Menu\Equip\CharacterDisplayEquip.cpp">
+      <Filter>Application</Filter>
+    </ClCompile>
+    <ClCompile Include="application\Menu\CharacterDisplay\Icon\CharacterDisplayIcon.cpp">
+      <Filter>Application</Filter>
+    </ClCompile>
+    <ClCompile Include="application\Menu\CharacterDisplay\Menu\Profile\CharacterDisplayProfile.cpp">
+      <Filter>Application</Filter>
+    </ClCompile>
+    <ClCompile Include="application\Menu\CharacterDisplay\Menu\Reinforcement\CharacterDisplayReinforcement.cpp">
+      <Filter>Application</Filter>
+    </ClCompile>
+    <ClCompile Include="application\Menu\CharacterDisplay\Menu\Skilltree\CharacterDisplaySkilltree.cpp">
+      <Filter>Application</Filter>
+    </ClCompile>
+    <ClCompile Include="application\Menu\CharacterDisplay\Menu\Status\CharacterDisplayStatus.cpp">
+      <Filter>Application</Filter>
+    </ClCompile>
+    <ClCompile Include="application\Menu\CharacterDisplay\Menu\Weapon\CharacterDisplayWeapon.cpp">
+      <Filter>Application</Filter>
+    </ClCompile>
+    <ClCompile Include="application\Object\Characters\Base\CharacterParameterLoader.cpp">
+      <Filter>Application</Filter>
+    </ClCompile>
+    <ClCompile Include="application\UI\DangerUI\DangerUI.cpp">
+      <Filter>Application</Filter>
+    </ClCompile>
+    <ClCompile Include="Engine\math\Easing.cpp">
+      <Filter>Engine</Filter>
+    </ClCompile>
+    <ClCompile Include="application\Object\Characters\Enemy\HostileIndicator\EnemyHostileIndicator.cpp">
+      <Filter>Application</Filter>
+    </ClCompile>
+    <ClCompile Include="Engine\FPS\FPSChecker.cpp">
+      <Filter>Engine</Filter>
+    </ClCompile>
+    <ClCompile Include="application\Object\Load\GameLoad.cpp">
+      <Filter>Application</Filter>
+    </ClCompile>
+    <ClCompile Include="application\PostEffectManager\GameScene\GameScenePostEffectManager.cpp">
+      <Filter>Application</Filter>
+    </ClCompile>
+    <ClCompile Include="application\Object\Heal\Heal.cpp">
+      <Filter>Application</Filter>
+    </ClCompile>
+    <ClCompile Include="application\Menu\HelpDisplay\HelpDisplay.cpp">
+      <Filter>Application</Filter>
+    </ClCompile>
+    <ClCompile Include="application\LightManager\LightManager.cpp">
+      <Filter>Application</Filter>
+    </ClCompile>
+    <ClCompile Include="application\Object\Characters\Enemy\LockOn\LockOnEnemy.cpp">
+      <Filter>Application</Filter>
+    </ClCompile>
+    <ClCompile Include="application\Object\Characters\Playable\Individual\Mei\MeiSkill.cpp">
+      <Filter>Application</Filter>
+    </ClCompile>
+    <ClCompile Include="application\Object\Characters\Playable\Individual\Mei\MeiSpecial.cpp">
+      <Filter>Application</Filter>
+    </ClCompile>
+    <ClCompile Include="application\Menu\MenuManager.cpp">
+      <Filter>Application</Filter>
+    </ClCompile>
+    <ClCompile Include="application\UI\PadMenu\PadMenu.cpp">
+      <Filter>Application</Filter>
+    </ClCompile>
+    <ClCompile Include="application\UI\Quest\QuestUI.cpp">
+      <Filter>Application</Filter>
+    </ClCompile>
+    <ClCompile Include="application\Object\RemoteCamera\RemoteCamera.cpp">
+      <Filter>Application</Filter>
+    </ClCompile>
+    <ClCompile Include="application\Object\Characters\Playable\Individual\Sizuku\Skill\SizukuSkillFire.cpp">
+      <Filter>Application</Filter>
+    </ClCompile>
+    <ClCompile Include="application\Object\Characters\Playable\Individual\Sizuku\Skill\SizukuSkillIce.cpp">
+      <Filter>Application</Filter>
+    </ClCompile>
+    <ClCompile Include="application\Object\Characters\Playable\Individual\Sizuku\Skill\SizukuSkillImaginary.cpp">
+      <Filter>Application</Filter>
+    </ClCompile>
+    <ClCompile Include="application\Object\Characters\Playable\Individual\Sizuku\Skill\SizukuSkillQuantum.cpp">
+      <Filter>Application</Filter>
+    </ClCompile>
+    <ClCompile Include="application\Object\Characters\Playable\Individual\Sizuku\Skill\SizukuSkillThunder.cpp">
+      <Filter>Application</Filter>
+    </ClCompile>
+    <ClCompile Include="application\Object\Characters\Playable\Individual\Sizuku\Skill\SizukuSkillWind.cpp">
+      <Filter>Application</Filter>
+    </ClCompile>
+    <ClCompile Include="application\CameraController\CharacterCamera\SizukuSpecialCamera.cpp">
+      <Filter>Application</Filter>
+    </ClCompile>
+    <ClCompile Include="application\Object\Characters\Playable\Individual\Sizuku\Special\Fire\SizukuSpecialFire.cpp">
+      <Filter>Application</Filter>
+    </ClCompile>
+    <ClCompile Include="application\Object\Characters\Playable\Individual\Sizuku\Special\Ice\SizukuSpecialIce.cpp">
+      <Filter>Application</Filter>
+    </ClCompile>
+    <ClCompile Include="application\Object\Characters\Playable\Individual\Sizuku\Special\Imaginary\SizukuSpecialImaginary.cpp">
+      <Filter>Application</Filter>
+    </ClCompile>
+    <ClCompile Include="application\Object\Characters\Playable\Individual\Sizuku\Special\Quantum\SizukuSpecialQuantum.cpp">
+      <Filter>Application</Filter>
+    </ClCompile>
+    <ClCompile Include="application\Object\Characters\Playable\Individual\Sizuku\Special\Thunder\SizukuSpecialThunder.cpp">
+      <Filter>Application</Filter>
+    </ClCompile>
+    <ClCompile Include="application\Object\Characters\Playable\Individual\Sizuku\Special\Thunder\SizukuSpecialThunderHitEffect.cpp">
+      <Filter>Application</Filter>
+    </ClCompile>
+    <ClCompile Include="application\Object\Characters\Playable\Individual\Sizuku\Special\Wind\SizukuSpecialWind.cpp">
+      <Filter>Application</Filter>
+    </ClCompile>
+    <ClCompile Include="application\Object\StageSelect\Gate\StageSelectGate.cpp">
+      <Filter>Application</Filter>
+    </ClCompile>
+    <ClCompile Include="application\Scene\Scenes\StageSelectScene\StageSelectScene.cpp">
+      <Filter>Application</Filter>
+    </ClCompile>
+    <ClCompile Include="application\Scene\Scenes\CharacterScene\CharacterScene.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Engine\Camera\Camera.h">
@@ -1089,55 +1176,154 @@
     <ClInclude Include="Engine\Editor\EditorTool\ToolBar\ToolBar.h">
       <Filter>Engine\Editor\ToolBar</Filter>
     </ClInclude>
-    <ClInclude Include="application\UI\PadMenu\PadMenu.h" />
-    <ClInclude Include="application\Object\Characters\Base\CharacterParameterLoader.h" />
-    <ClInclude Include="application\Menu\HelpDisplay\HelpDisplay.h" />
-    <ClInclude Include="application\Menu\CharacterDisplay\CharacterDisplayMenuType.h" />
-    <ClInclude Include="application\CameraController\CharacterCamera\SizukuSpecialCamera.h" />
-    <ClInclude Include="application\Menu\CharacterDisplay\Menu\Reinforcement\CharacterDisplayReinforcement.h" />
-    <ClInclude Include="application\Menu\CharacterDisplay\Menu\Equip\CharacterDisplayEquip.h" />
-    <ClInclude Include="application\Menu\CharacterDisplay\Menu\Profile\CharacterDisplayProfile.h" />
-    <ClInclude Include="application\Menu\CharacterDisplay\Menu\Skilltree\CharacterDisplaySkilltree.h" />
-    <ClInclude Include="application\Menu\CharacterDisplay\Menu\Status\CharacterDisplayStatus.h" />
-    <ClInclude Include="application\Menu\CharacterDisplay\Menu\Weapon\CharacterDisplayWeapon.h" />
-    <ClInclude Include="application\Object\Characters\Playable\Base\SkilltreeType.h" />
-    <ClInclude Include="application\Menu\CharacterDisplay\Icon\CharacterDisplayIcon.h" />
-    <ClInclude Include="application\Object\Characters\Enemy\HostileIndicator\EnemyHostileIndicator.h" />
-    <ClInclude Include="application\Object\Characters\Enemy\LockOn\LockOnEnemy.h" />
-    <ClInclude Include="application\Object\Characters\Playable\Base\Arcana.h" />
-    <ClInclude Include="application\Object\Characters\Playable\Base\UPParametersType.h" />
-    <ClInclude Include="application\Object\RemoteCamera\RemoteCamera.h" />
-    <ClInclude Include="application\Menu\MenuManager.h" />
-    <ClInclude Include="application\LightManager\LightManager.h" />
-    <ClInclude Include="application\Object\Characters\Playable\Individual\Mei\MeiSpecial.h" />
-    <ClInclude Include="application\Object\Characters\Playable\Individual\Mei\MeiSkill.h" />
-    <ClInclude Include="application\Object\Characters\Playable\Individual\Sizuku\ChangeAttribute\ChangeAttribute.h" />
-    <ClInclude Include="application\Object\Characters\Playable\Individual\Sizuku\Special\Wind\SizukuSpecialWind.h" />
-    <ClInclude Include="application\Object\Characters\Playable\Individual\Sizuku\Special\Thunder\SizukuSpecialThunder.h" />
-    <ClInclude Include="application\Object\Characters\Playable\Individual\Sizuku\Special\Quantum\SizukuSpecialQuantum.h" />
-    <ClInclude Include="application\Object\Characters\Playable\Individual\Sizuku\Special\Imaginary\SizukuSpecialImaginary.h" />
-    <ClInclude Include="application\Object\Characters\Playable\Individual\Sizuku\Special\Ice\SizukuSpecialIce.h" />
-    <ClInclude Include="application\Object\Characters\Playable\Individual\Sizuku\Special\Fire\SizukuSpecialFire.h" />
-    <ClInclude Include="application\Object\Characters\Playable\Individual\Sizuku\Special\SizukuSpecialAttributeBase.h" />
-    <ClInclude Include="application\Object\Load\GameLoad.h" />
-    <ClInclude Include="application\Object\Characters\Playable\Individual\Sizuku\Skill\SizukuSkillFire.h" />
-    <ClInclude Include="application\Object\Characters\Playable\Individual\Sizuku\Skill\SizukuSkillIce.h" />
-    <ClInclude Include="application\Object\Characters\Playable\Individual\Sizuku\Skill\SizukuSkillWind.h" />
-    <ClInclude Include="application\Object\Characters\Playable\Individual\Sizuku\Skill\SizukuSkillThunder.h" />
-    <ClInclude Include="application\Object\Characters\Playable\Individual\Sizuku\Skill\SizukuSkillImaginary.h" />
-    <ClInclude Include="application\Object\Characters\Playable\Individual\Sizuku\Skill\SizukuSkillQuantum.h" />
-    <ClInclude Include="application\Object\Characters\Playable\Individual\Sizuku\Skill\SizukuSkillAttributeBase.h" />
-    <ClInclude Include="application\UI\DangerUI\DangerUI.h" />
-    <ClInclude Include="application\Object\Characters\Playable\Individual\Sizuku\Special\SIzukuSpecialParticle.h" />
-    <ClInclude Include="application\Object\Heal\Heal.h" />
-    <ClInclude Include="application\Scene\Scenes\StageSelectScene\StageSelectScene.h" />
-    <ClInclude Include="application\Object\Characters\Playable\Individual\Sizuku\Special\Thunder\SizukuSpecialThunderHitEffect.h" />
-    <ClInclude Include="application\Object\StageSelect\Gate\StageSelectGate.h" />
-    <ClInclude Include="application\UI\Attribute\AttributeUI.h" />
-    <ClInclude Include="application\UI\Quest\QuestUI.h" />
-    <ClInclude Include="application\PostEffectManager\GameScene\GameScenePostEffectManager.h" />
-    <ClInclude Include="Engine\FPS\FPSChecker.h" />
-    <ClInclude Include="Engine\math\Easing.h" />
+    <ClInclude Include="application\Object\Characters\Playable\Base\Arcana.h">
+      <Filter>Application</Filter>
+    </ClInclude>
+    <ClInclude Include="application\UI\Attribute\AttributeUI.h">
+      <Filter>Application</Filter>
+    </ClInclude>
+    <ClInclude Include="application\Object\Characters\Playable\Individual\Sizuku\ChangeAttribute\ChangeAttribute.h">
+      <Filter>Application</Filter>
+    </ClInclude>
+    <ClInclude Include="application\Menu\CharacterDisplay\Menu\Equip\CharacterDisplayEquip.h">
+      <Filter>Application</Filter>
+    </ClInclude>
+    <ClInclude Include="application\Menu\CharacterDisplay\Icon\CharacterDisplayIcon.h">
+      <Filter>Application</Filter>
+    </ClInclude>
+    <ClInclude Include="application\Menu\CharacterDisplay\CharacterDisplayMenuType.h">
+      <Filter>Application</Filter>
+    </ClInclude>
+    <ClInclude Include="application\Menu\CharacterDisplay\Menu\Profile\CharacterDisplayProfile.h">
+      <Filter>Application</Filter>
+    </ClInclude>
+    <ClInclude Include="application\Menu\CharacterDisplay\Menu\Reinforcement\CharacterDisplayReinforcement.h">
+      <Filter>Application</Filter>
+    </ClInclude>
+    <ClInclude Include="application\Menu\CharacterDisplay\Menu\Skilltree\CharacterDisplaySkilltree.h">
+      <Filter>Application</Filter>
+    </ClInclude>
+    <ClInclude Include="application\Menu\CharacterDisplay\Menu\Status\CharacterDisplayStatus.h">
+      <Filter>Application</Filter>
+    </ClInclude>
+    <ClInclude Include="application\Menu\CharacterDisplay\Menu\Weapon\CharacterDisplayWeapon.h">
+      <Filter>Application</Filter>
+    </ClInclude>
+    <ClInclude Include="application\Object\Characters\Base\CharacterParameterLoader.h">
+      <Filter>Application</Filter>
+    </ClInclude>
+    <ClInclude Include="application\UI\DangerUI\DangerUI.h">
+      <Filter>Application</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\math\Easing.h">
+      <Filter>Engine</Filter>
+    </ClInclude>
+    <ClInclude Include="application\Object\Characters\Enemy\HostileIndicator\EnemyHostileIndicator.h">
+      <Filter>Application</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\FPS\FPSChecker.h">
+      <Filter>Engine</Filter>
+    </ClInclude>
+    <ClInclude Include="application\Object\Load\GameLoad.h">
+      <Filter>Application</Filter>
+    </ClInclude>
+    <ClInclude Include="application\PostEffectManager\GameScene\GameScenePostEffectManager.h">
+      <Filter>Application</Filter>
+    </ClInclude>
+    <ClInclude Include="application\Object\Heal\Heal.h">
+      <Filter>Application</Filter>
+    </ClInclude>
+    <ClInclude Include="application\Menu\HelpDisplay\HelpDisplay.h">
+      <Filter>Application</Filter>
+    </ClInclude>
+    <ClInclude Include="application\LightManager\LightManager.h">
+      <Filter>Application</Filter>
+    </ClInclude>
+    <ClInclude Include="application\Object\Characters\Enemy\LockOn\LockOnEnemy.h">
+      <Filter>Application</Filter>
+    </ClInclude>
+    <ClInclude Include="application\Object\Characters\Playable\Individual\Mei\MeiSkill.h">
+      <Filter>Application</Filter>
+    </ClInclude>
+    <ClInclude Include="application\Object\Characters\Playable\Individual\Mei\MeiSpecial.h">
+      <Filter>Application</Filter>
+    </ClInclude>
+    <ClInclude Include="application\Menu\MenuManager.h">
+      <Filter>Application</Filter>
+    </ClInclude>
+    <ClInclude Include="application\UI\PadMenu\PadMenu.h">
+      <Filter>Application</Filter>
+    </ClInclude>
+    <ClInclude Include="application\UI\Quest\QuestUI.h">
+      <Filter>Application</Filter>
+    </ClInclude>
+    <ClInclude Include="application\Object\RemoteCamera\RemoteCamera.h">
+      <Filter>Application</Filter>
+    </ClInclude>
+    <ClInclude Include="application\Object\Characters\Playable\Individual\Sizuku\Skill\SizukuSkillAttributeBase.h">
+      <Filter>Application</Filter>
+    </ClInclude>
+    <ClInclude Include="application\Object\Characters\Playable\Individual\Sizuku\Skill\SizukuSkillFire.h">
+      <Filter>Application</Filter>
+    </ClInclude>
+    <ClInclude Include="application\Object\Characters\Playable\Individual\Sizuku\Skill\SizukuSkillIce.h">
+      <Filter>Application</Filter>
+    </ClInclude>
+    <ClInclude Include="application\Object\Characters\Playable\Individual\Sizuku\Skill\SizukuSkillImaginary.h">
+      <Filter>Application</Filter>
+    </ClInclude>
+    <ClInclude Include="application\Object\Characters\Playable\Individual\Sizuku\Skill\SizukuSkillQuantum.h">
+      <Filter>Application</Filter>
+    </ClInclude>
+    <ClInclude Include="application\Object\Characters\Playable\Individual\Sizuku\Skill\SizukuSkillThunder.h">
+      <Filter>Application</Filter>
+    </ClInclude>
+    <ClInclude Include="application\Object\Characters\Playable\Individual\Sizuku\Skill\SizukuSkillWind.h">
+      <Filter>Application</Filter>
+    </ClInclude>
+    <ClInclude Include="application\Object\Characters\Playable\Individual\Sizuku\Special\SizukuSpecialAttributeBase.h">
+      <Filter>Application</Filter>
+    </ClInclude>
+    <ClInclude Include="application\CameraController\CharacterCamera\SizukuSpecialCamera.h">
+      <Filter>Application</Filter>
+    </ClInclude>
+    <ClInclude Include="application\Object\Characters\Playable\Individual\Sizuku\Special\Fire\SizukuSpecialFire.h">
+      <Filter>Application</Filter>
+    </ClInclude>
+    <ClInclude Include="application\Object\Characters\Playable\Individual\Sizuku\Special\Ice\SizukuSpecialIce.h">
+      <Filter>Application</Filter>
+    </ClInclude>
+    <ClInclude Include="application\Object\Characters\Playable\Individual\Sizuku\Special\Imaginary\SizukuSpecialImaginary.h">
+      <Filter>Application</Filter>
+    </ClInclude>
+    <ClInclude Include="application\Object\Characters\Playable\Individual\Sizuku\Special\SIzukuSpecialParticle.h">
+      <Filter>Application</Filter>
+    </ClInclude>
+    <ClInclude Include="application\Object\Characters\Playable\Individual\Sizuku\Special\Quantum\SizukuSpecialQuantum.h">
+      <Filter>Application</Filter>
+    </ClInclude>
+    <ClInclude Include="application\Object\Characters\Playable\Individual\Sizuku\Special\Thunder\SizukuSpecialThunder.h">
+      <Filter>Application</Filter>
+    </ClInclude>
+    <ClInclude Include="application\Object\Characters\Playable\Individual\Sizuku\Special\Thunder\SizukuSpecialThunderHitEffect.h">
+      <Filter>Application</Filter>
+    </ClInclude>
+    <ClInclude Include="application\Object\Characters\Playable\Individual\Sizuku\Special\Wind\SizukuSpecialWind.h">
+      <Filter>Application</Filter>
+    </ClInclude>
+    <ClInclude Include="application\Object\Characters\Playable\Base\SkilltreeType.h">
+      <Filter>Application</Filter>
+    </ClInclude>
+    <ClInclude Include="application\Object\StageSelect\Gate\StageSelectGate.h">
+      <Filter>Application</Filter>
+    </ClInclude>
+    <ClInclude Include="application\Scene\Scenes\StageSelectScene\StageSelectScene.h">
+      <Filter>Application</Filter>
+    </ClInclude>
+    <ClInclude Include="application\Object\Characters\Playable\Base\UPParametersType.h">
+      <Filter>Application</Filter>
+    </ClInclude>
+    <ClInclude Include="application\Scene\Scenes\CharacterScene\CharacterScene.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include=".editorconfig" />
@@ -1156,8 +1342,12 @@
     <None Include="Resources\shader\Skybox\Skybox.hlsli">
       <Filter>Resources</Filter>
     </None>
-    <None Include="Resources\shader\Object3d\hlsliCommon\Overlay.hlsli" />
-    <None Include="Resources\shader\Object3d\hlsliCommon\Dissolve.hlsli" />
+    <None Include="Resources\shader\Object3d\hlsliCommon\Dissolve.hlsli">
+      <Filter>Resources</Filter>
+    </None>
+    <None Include="Resources\shader\Object3d\hlsliCommon\Overlay.hlsli">
+      <Filter>Resources</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <Text Include="externals\imgui\LICENSE.txt" />
