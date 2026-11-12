@@ -1156,6 +1156,8 @@
     <None Include="Resources\shader\Skybox\Skybox.hlsli">
       <Filter>Resources</Filter>
     </None>
+    <None Include="Resources\shader\Object3d\hlsliCommon\Overlay.hlsli" />
+    <None Include="Resources\shader\Object3d\hlsliCommon\Dissolve.hlsli" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="externals\imgui\LICENSE.txt" />

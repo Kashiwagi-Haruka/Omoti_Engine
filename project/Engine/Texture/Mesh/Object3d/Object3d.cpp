@@ -43,6 +43,11 @@ void Object3d::Initialize() {
 	SetDissolveThreshold(0.0f);
 	SetDissolveEdgeWidth(0.02f);
 	SetDissolveEdgeColor({1.0f, 0.35f, 0.05f, 1.0f});
+	SetOverlayEnabled(false);
+	SetOverlayTexture("Resources/2d/iceFlower.png");
+	SetOverlayNoiseTexture("Resources/2d/noise.png");
+	SetOverlayPlacement({0.5f, 0.5f}, {1.0f, 1.0f});
+	SetOverlayAmount(0.6f);
 }
 namespace {
 bool IsIdentityMatrix(const Matrix4x4& matrix) {

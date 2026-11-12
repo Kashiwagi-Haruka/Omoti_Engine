@@ -1,4 +1,6 @@
 #include "../Object3d.hlsli"
+#include "../hlsliCommon/Dissolve.hlsli"
+#include "../hlsliCommon/Overlay.hlsli"
 struct Material
 {
     float4 color;
@@ -86,12 +88,26 @@ struct Camera
     int fullscreenSepiaEnabled;
     float2 padding2;
 };
+struct OverlaySettings
+{
+    int enabled;
+    float amount;
+    float softness;
+    float opacity;
+
+    float2 center;
+    float2 size;
+
+    float noiseScale;
+    float3 padding;
+};
 ConstantBuffer<Material> gMaterial : register(b0);
 ConstantBuffer<DirectionalLight> gDirectionalLight : register(b3);
 ConstantBuffer<Camera> gCamera : register(b4);
 ConstantBuffer<PointLightCount> gPointLightCount : register(b5);
 ConstantBuffer<SpotLightCount> gSpotLightCount : register(b6);
 ConstantBuffer<AreaLightCount> gAreaLightCount : register(b7);
+ConstantBuffer<OverlaySettings> gOverlay : register(b8);
 StructuredBuffer<SpotLight> gSpotLights : register(t2);
 StructuredBuffer<PointLight> gPointLights : register(t1);
 StructuredBuffer<AreaLight> gAreaLights : register(t3);
@@ -101,6 +117,8 @@ Texture2D<float> gDirectionalShadowMap : register(t5);
 Texture2D<float> gPointShadowMap : register(t6);
 Texture2D<float> gSpotShadowMap : register(t7);
 Texture2D<float> gAreaShadowMap : register(t8);
+Texture2D<float4> gOverlayTexture : register(t9);
+Texture2D<float> gOverlayNoiseTexture : register(t10);
 SamplerState gSampler : register(s0);
 struct PixelShaderOutput
 {
@@ -200,6 +218,38 @@ PixelShaderOutput main(Object3dVertexShaderOutput input)
     float radialScale = 1.0f + distortionWeight * abs(gMaterial.distortionStrength) * 0.2f;
     transformedUV.xy = distortionCenter + twistedOffset * radialScale;
     float4 textureColor = gTexture.Sample(gSampler, transformedUV.xy);
+    if (gOverlay.enabled != 0)
+    {
+    // 元テクスチャのUV変換と独立して配置する
+        float2 overlayUV = CalculateOverlayUV(
+        input.texcoord,
+        gOverlay.center,
+        gOverlay.size
+    );
+
+        float4 overlayColor =
+        gOverlayTexture.Sample(gSampler, overlayUV);
+
+        float noise = gOverlayNoiseTexture.Sample(
+        gSampler,
+        overlayUV * gOverlay.noiseScale
+    ).r;
+
+        float mask = CalculateDissolveMask(
+        noise,
+        gOverlay.amount,
+        gOverlay.softness
+    );
+
+        mask *= CalculateOverlayBounds(overlayUV);
+
+        textureColor.rgb = BlendOverlay(
+        textureColor.rgb,
+        overlayColor,
+        mask,
+        gOverlay.opacity
+    );
+    }
     if (gMaterial.enableLighting != 0)
     {
         ////half lambert

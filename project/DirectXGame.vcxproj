@@ -368,7 +368,9 @@ copy "$(WindowsSdkDir)\bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)\
   <ItemGroup>
     <None Include=".editorconfig" />
     <None Include="Resources\shader\FullScreenCopy\CopyImage.hlsli" />
+    <None Include="Resources\shader\Object3d\hlsliCommon\Dissolve.hlsli" />
     <None Include="Resources\shader\Object3d\Object3d.hlsli" />
+    <None Include="Resources\shader\Object3d\hlsliCommon\Overlay.hlsli" />
     <None Include="Resources\shader\Particle\Particle.hlsli">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Development|x64'">
       </ExcludedFromBuild>

@@ -35,7 +35,20 @@ class Object3d {
 	    {0.0f, 0.0f, 0.0f},
 	    {0.0f, 0.0f, 0.0f},
 	};
+	struct OverlaySettings {
+		int32_t enabled = 0;
+		float amount = 0.0f;
+		float softness = 0.02f;
+		float opacity = 1.0f;
 
+		Vector2 center = {0.5f, 0.5f};
+		Vector2 size = {1.0f, 1.0f};
+
+		float noiseScale = 4.0f;
+		float padding[3] = {};
+	};
+
+	static_assert(sizeof(OverlaySettings) == 48);
 	Camera* camera_;
 
 	TransformationMatrix* transformationMatrixData_ = nullptr;
@@ -110,6 +123,12 @@ public:
 	void SetDissolveThreshold(float threshold);
 	void SetDissolveEdgeWidth(float width);
 	void SetDissolveEdgeColor(const Vector4& color);
+	void SetOverlayTexture(std::string TextureName);
+	void SetOverlayNoiseTexture(std::string NoiseTextureName);
+	void SetOverlayEnabled(bool enabled);
+	void SetOverlayPlacement(Vector2 center, Vector2 size);
+	void SetOverlayAmount(float amount);
+
 	Vector4 GetColor() const;
 	bool IsLightingEnabled() const;
 	float GetShininess() const;
