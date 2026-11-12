@@ -13,6 +13,7 @@
 
 #include "DirectXCommon.h"
 #include "Input.h"
+#include "Engine/BaseScene/SceneManager.h"
 #include "SrvManager/SrvManager.h"
 #include "TextureManager.h"
 #include "WinApp.h"
@@ -170,9 +171,12 @@ void ImGuiManager::Begin() {
 	prevEditorLayoutEnabled_ = isEditorLayoutEnabled;
 #endif
 
-	// オブジェクト編集画面とアセット一覧を構築する。
+	// 共通のエディター画面を構築する。
 	editorManager->DrawObjectEditors();
 	editorManager->DrawAssetWindow();
+
+	// 現在のシーンが持つ専用ウィンドウを構築する。
+	SceneManager::GetInstance()->DrawEditorUI();
 }
 
 // UIの構築を終了し、描画用データを生成する。

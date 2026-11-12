@@ -74,6 +74,8 @@ public:
 	// シーンを終了し、共有インスタンスを解放する。
 	void Finalize();
 
+	void DrawEditorUI();
+
 	// 現在のシーン名を読み取り専用の参照で取得する。
 	const std::string& GetCurrentSceneName() const { return currentSceneName_; }
 

@@ -16,7 +16,6 @@
 #include "Engine/Editor/EditorData/Light/EditorLight.h"
 #include "Engine/Editor/EditorTool/Grid/EditorGrid.h"
 #include "Engine/Editor/EditorTool/Inspector/Inspector.h"
-#include "Object/Characters/Base/CharacterParameters.h"
 
 class Object3d;
 class Primitive;
@@ -47,16 +46,6 @@ public:
 	void OnSceneChangeRequested(const std::string& nextSceneName);
 
 private:
-	struct CharacterParameterEditorData {
-		std::string name;
-		BaseParameter lv1Base{};
-		Parameter lv1Parameter{};
-		BaseParameter levelUpBase{};
-		BaseParameter currentBase{};
-		Parameter currentParameter{};
-		int reinforcementAmount = 0;
-		bool hasUnsavedChanges = false;
-	};
 
 	struct EditorSnapshot {
 		std::vector<Transform> objectTransforms;
@@ -73,15 +62,12 @@ private:
 	void DrawSelectionBoxEditor();
 	void DrawSelectedObjectGuizmo(const ImGuiViewport* viewport, float contentStartY, float leftPanelWidth, float rightPanelWidth, float availableHeight);
 	void DrawCameraEditor();
-	void DrawCharacterParameterHierarchy();
-	void DrawCharacterParameterInspector();
 	void DrawCameraBillboards();
 	void StartPlayMode();
 	void HandleHierarchyAssetDrop();
 	void SyncSelectionBoxToTarget();
 	Transform GetSelectedTransform() const;
 	bool IsObjectSelected() const;
-	bool IsCharacterParameterSelected() const;
 	std::string GetSceneScopedEditorFilePath(const std::string& defaultFilePath) const;
 	void ResetForSceneChange();
 	void ApplyEditorSnapshot(const EditorSnapshot& snapshot);
@@ -127,8 +113,6 @@ private:
 	bool selectionBoxDirty_ = true;
 	size_t selectedObjectIndex_ = 0;
 	bool selectedIsPrimitive_ = false;
-	bool selectedIsCharacterParameter_ = false;
-	size_t selectedCharacterParameterIndex_ = 0;
 
 	bool hasUnsavedChanges_ = false;
 	bool isPlaying_ = false;
@@ -143,7 +127,6 @@ private:
 	EditorLight editorLight_{};
 	EditorAudio editorAudio_{};
 	EditorCamera editorCamera_{};
-	std::array<CharacterParameterEditorData, 4> characterParameterEditorDatas_{};
 
 public:
 	void RegisterCamera(Camera* camera);

@@ -8,6 +8,10 @@
 #include "AudioManager/BGMManager/BGMManager.h"
 #include "Object/Load/GameLoad.h"
 
+#ifdef USE_IMGUI
+#include <imgui.h>
+#endif
+
 TitleScene::TitleScene() {
 	BackGroundSpriteData_.handle = TextureManager::GetInstance()->GetTextureIndexByfilePath("Resources/2d/title.png");
 	BackGroundSpriteData_.sprite = std::make_unique<Sprite>();

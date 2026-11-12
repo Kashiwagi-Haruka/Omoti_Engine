@@ -41,4 +41,8 @@ public:
 
 	// シーンが終了状態かどうかを取得する。
 	virtual bool GetIsSceneEnd() const{ return isSceneEnd_; };
+
+	// シーン固有の編集ウィンドウ。
+	// 必要なシーンだけオーバーライドする。
+	virtual void DrawEditorUI() {}
 };
