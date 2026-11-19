@@ -79,6 +79,7 @@ void RemoteCamera::Draw() {
 	}
 	Object3dCommon::GetInstance()->DrawCommon(Object3dCommon::DrawCommonType::NoCull);
 	screen_->Draw();
+
 }
 
 void RemoteCamera::SetScreenTransform(const Transform& transform) {

@@ -44,8 +44,8 @@ void Object3d::Initialize() {
 	SetDissolveEdgeWidth(0.02f);
 	SetDissolveEdgeColor({1.0f, 0.35f, 0.05f, 1.0f});
 	SetOverlayEnabled(false);
-	SetOverlayTexture("Resources/2d/iceFlower.png");
-	SetOverlayNoiseTexture("Resources/2d/noise.png");
+	SetOverlayTexture("Resources/2d/ObjectOverlayEffect/Effect/iceFlower.png");
+	SetOverlayNoiseTexture("Resources/2d/ObjectOverlayEffect/noise/noise.png");
 	SetOverlayPlacement({0.5f, 0.5f}, {1.0f, 1.0f});
 	SetOverlayAmount(0.0f);
 }
