@@ -8,8 +8,8 @@
 namespace {
 const float kAppearanceDuration = 0.5f;      // 出現アニメーションの継続時間
 const float kReactionDisplayDuration = 3.0f; // 属性リアクション表示の継続時間
-constexpr float kAttributePlaneScale = 1.0f;
-constexpr float kComparisonPlaneScale = 0.75f;
+constexpr float kAttributePlaneScale = 2.0f;
+constexpr float kComparisonPlaneScale = 2.0f;
 const float kReactionCutSize = 200.0f;       // リアクション画像を切り取るサイズ
 } // namespace
 Adhesion::Adhesion() {
