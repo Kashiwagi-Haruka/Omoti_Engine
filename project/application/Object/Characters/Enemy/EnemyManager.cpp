@@ -48,7 +48,7 @@ Vector3 MakeDamageTextPosition(const Enemy& enemy, const Vector3& targetOffset) 
 }
 
 Vector3 MakeDamageTextScale(const Enemy& enemy) {
-	const Vector3 targetScale = enemy.GetScale();
+	const Vector3 targetScale = enemy.GetScale()*2.0f;
 	const float textScale = std::max(kDamageTextMinScale, std::max({targetScale.x, targetScale.y, targetScale.z}) * kDamageTextBaseScaleRate);
 	return {textScale, textScale, textScale};
 }
