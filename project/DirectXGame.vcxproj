@@ -217,6 +217,7 @@ copy "$(WindowsSdkDir)\bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)\
     <ClCompile Include="application\UI\DangerUI\DangerUI.cpp" />
     <ClCompile Include="application\UI\Attribute\AttributeUI.cpp" />
     <ClCompile Include="application\Scene\Scenes\CharacterScene\CharacterScene.cpp" />
+    <ClCompile Include="application\CameraController\LockOnCamera\AutoLockOnCamera\AutoLockOnCamera.cpp" />
     <ClCompile Include="Engine\math\Easing.cpp" />
     <ClCompile Include="Engine\Editor\EditorTool\Command\EditorCommand.cpp" />
     <ClCompile Include="Engine\Audio\AudioMixer.cpp" />
@@ -365,6 +366,9 @@ copy "$(WindowsSdkDir)\bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)\
     <ClCompile Include="application\UI\Quest\QuestUI.cpp" />
     <ClCompile Include="application\PostEffectManager\GameScene\GameScenePostEffectManager.cpp" />
     <ClCompile Include="Engine\FPS\FPSChecker.cpp" />
+    <ClCompile Include="application\Scene\Scenes\TutorialScene\TutorialFlow\TutorialFlow.cpp" />
+    <ClCompile Include="application\Scene\Scenes\TutorialScene\TutorialStep\TutorialState.cpp" />
+    <ClCompile Include="application\CameraController\LockOnCamera\SelfLockOnCamera\SelfLockOnCamera.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include=".editorconfig" />
@@ -457,6 +461,7 @@ copy "$(WindowsSdkDir)\bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)\
     <ClInclude Include="application\UI\DangerUI\DangerUI.h" />
     <ClInclude Include="application\UI\Attribute\AttributeUI.h" />
     <ClInclude Include="application\Scene\Scenes\CharacterScene\CharacterScene.h" />
+    <ClInclude Include="application\CameraController\LockOnCamera\AutoLockOnCamera\AutoLockOnCamera.h" />
     <ClInclude Include="Engine\math\Easing.h" />
     <ClInclude Include="Engine\Editor\EditorTool\Command\EditorCommand.h" />
     <ClInclude Include="Engine\Audio\AudioMixer.h" />
@@ -608,6 +613,9 @@ copy "$(WindowsSdkDir)\bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)\
     <ClInclude Include="application\UI\Quest\QuestUI.h" />
     <ClInclude Include="application\PostEffectManager\GameScene\GameScenePostEffectManager.h" />
     <ClInclude Include="Engine\FPS\FPSChecker.h" />
+    <ClInclude Include="application\Scene\Scenes\TutorialScene\TutorialFlow\TutorialFlow.h" />
+    <ClInclude Include="application\Scene\Scenes\TutorialScene\TutorialStep\TutorialState.h" />
+    <ClInclude Include="application\CameraController\LockOnCamera\SelfLockOnCamera\SelfLockOnCamera.h" />
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="Resources\shader\FullScreenCopy\CopyImage.PS.hlsl">

@@ -1,5 +1,6 @@
 #define NOMINMAX
 #include "Boss.h"
+#include "GameBase.h"
 #include "Camera.h"
 #include "Function.h"
 #include "Model/ModelManager.h"
@@ -100,8 +101,9 @@ void Boss::Update(const Vector3& housePos, const Vector3& playerPos, bool isPlay
 	if (!isAlive_) {
 		return;
 	}
-	const float deltaTime = 1.0f / 60.0f;
-	const float animationDeltaTime = Object3dCommon::GetInstance()->GetDxCommon()->GetDeltaTime();
+	const float deltaTime = GameBase::GetInstance()->GetDeltaTime();
+	
+	
 	animationTimer_ += deltaTime;
 	if (attackActiveTimer_ > 0.0f) {
 		attackActiveTimer_ -= deltaTime;
@@ -234,7 +236,7 @@ bool inAttackRange = false;
 
 	if (skeleton_ && !animationClips_.empty()) {
 		const auto& currentAnimation = animationClips_[currentAnimationIndex_];
-		animationTime_ = Animation::AdvanceTime(currentAnimation, animationTime_, animationDeltaTime, animationLoop_);
+		animationTime_ = Animation::AdvanceTime(currentAnimation, animationTime_, GameBase::GetInstance()->GetDeltaTime(), animationLoop_);
 		skeleton_->ApplyAnimation(currentAnimation, animationTime_);
 		skeleton_->Update();
 		if (!skinCluster_.mappedPalette.empty()) {

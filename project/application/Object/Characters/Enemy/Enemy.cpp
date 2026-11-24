@@ -51,6 +51,8 @@ void Enemy::Initialize(Camera* camera, Vector3 translates) {
 	object_->SetCamera(camera_);
 	object_->SetOverlayEnabled(true);
 	object_->SetOverlayAmount(0.0f);
+	object_->SetOutlineColor({1.0f, 1.0f, 0.0f, 1.0f});
+	object_->SetOutlineWidth(0.0f);
 	object_->Update();
 
 	enemyStun->Initialize();
@@ -90,7 +92,8 @@ void Enemy::SetCamera(Camera* camera) {
 }
 
 void Enemy::Update(const Vector3& housePos, const Vector3& houseScale, const Vector3& playerPos, bool isPlayerAlive) {
-	const float deltaTime = 1.0f / 60.0f;
+	const float deltaTime = GameBase::GetInstance()->GetDeltaTime();
+	
 	if (isDying_) {
 		deathTimer_ += deltaTime;
 		float progress = std::clamp(deathTimer_ / deathDuration_, 0.0f, 1.0f);
@@ -360,5 +363,10 @@ Attribute Enemy::GetLastReactionAppliedAttribute() const { return adhesion_ ? ad
 void Enemy::SetLockOn(bool isLockOn) {
 	if (lockOnEnemy_) {
 		lockOnEnemy_->SetActive(isLockOn);
+	}
+	if (isLockOn) {
+		object_->SetOutlineWidth(1.0f);
+	} else {
+		object_->SetOutlineWidth(0.0f);
 	}
 }

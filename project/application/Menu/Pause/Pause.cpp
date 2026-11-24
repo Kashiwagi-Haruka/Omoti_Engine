@@ -57,9 +57,7 @@ void Pause::Initialize() {
 
 	startTime = 0.0f;
 	isPause_ = false;
-	isStart_ = false;
-	isEnd_ = false;
-	isActive_ = false;
+	pauseState_ = PauseState::kNone;
 	isTitleBack_ = false;
 	action_ = Action::kNone;
 	selectIndex_ = 1;
@@ -109,20 +107,21 @@ void Pause::Initialize() {
 }
 
 void Pause::Start() { 
-	if (!isActive_ && !isStart_ ) {
+	
+	if (pauseState_== PauseState::kNone) {
+		pauseState_ = PauseState::kStart;
 		action_ = Action::kNone; 
 		Object3dCommon::GetInstance()->SetFullScreenGrayscaleEnabled(false);
 		isPause_ = true;
 		startTime = 0.0f;
-		isStart_ = true;
-		isEnd_ = false;
+
 	}
 }
 void Pause::End() {
-	if (isActive_ && !isEnd_) {
+	if (pauseState_ == PauseState::kActive) {
+		pauseState_ = PauseState::kEnd;
 		startTime = 0.0f;
-		isEnd_ = true;
-		isStart_ = false;
+
 		Input::GetInstance()->SetIsCursorStability(true);
 		Input::GetInstance()->SetIsCursorVisible(false);
 	}
@@ -139,36 +138,24 @@ void Pause::Update() {
 		}	
 	}
 	float offsetX = kHiddenOffsetX;
-	if (isStart_) {
+	switch (pauseState_) {
+	case Pause::PauseState::kNone:
+		break;
+	case Pause::PauseState::kStart:
 		startTime += kTransitionSpeed;
 		offsetX = Function::Lerp(kHiddenOffsetX, 0.0f, startTime);
 		if (startTime >= 1.0f) {
 			startTime = 1.0f;
-			isStart_ = false;
-			isActive_ = true;
+			pauseState_ = PauseState::kActive;
 			offsetX = 0.0f;
 			Input::GetInstance()->SetIsCursorStability(false);
 			Input::GetInstance()->SetIsCursorVisible(true);
 		}
-	} else if (isEnd_) {
-		startTime += kTransitionSpeed;
-		offsetX = Function::Lerp(0.0f, kHiddenOffsetX, startTime);
-		if (startTime >= 1.0f) {
-			startTime = 1.0f;
-			isPause_ = false;
-			isEnd_ = false;
-			isActive_ = false;
-			offsetX = kHiddenOffsetX;
-		}
-	} else if (isActive_) {
+		break;
+	case Pause::PauseState::kActive:
 		offsetX = 0.0f;
 		Input::GetInstance()->SetIsCursorStability(false);
 		Input::GetInstance()->SetIsCursorVisible(true);
-	}
-
-	if (isActive_) {
-		
-
 		switch (action_) {
 		case Pause::Action::kNone:
 			if (PlayCommand::GetInstance()->GetUpUI() && !PlayCommand::GetInstance()->GetDownUI()) {
@@ -198,6 +185,7 @@ void Pause::Update() {
 			}
 			break;
 		case Pause::Action::kResume:
+			End();
 			break;
 		case Pause::Action::kOptions:
 			option_->Update();
@@ -215,8 +203,20 @@ void Pause::Update() {
 		default:
 			break;
 		}
+		break;
+	case Pause::PauseState::kEnd:
+		startTime += kTransitionSpeed;
+		offsetX = Function::Lerp(0.0f, kHiddenOffsetX, startTime);
+		if (startTime >= 1.0f) {
+			startTime = 1.0f;
+			isPause_ = false;
+			pauseState_ = PauseState::kNone;
+			offsetX = kHiddenOffsetX;
+		}
+		break;
+	default:
+		break;
 	}
-
 }
 void Pause::Draw() {
 
@@ -265,6 +265,39 @@ void Pause::Draw() {
 		Object3dCommon::GetInstance()->SetDefaultCamera(previousDefaultCamera);
 		break;
 	case Pause::Action::kResume:
+		camera_->Update();
+		BG_->SetCamera(camera_.get());
+
+		Object3dCommon::GetInstance()->SetDefaultCamera(camera_.get());
+		if (currentCharacterObj_) {
+			currentCharacterObj_->SetCamera(camera_.get());
+			currentCharacterObj_->SetTransform({
+			    .scale{2.0f,  2.0f, 2.0f},
+			    .rotate{0.0f,  0.2f, 0.0f},
+			    .translate{-2.0f, 0.0f, 0.0f},
+			});
+			currentCharacterObj_->Update();
+		}
+
+		Object3dCommon::GetInstance()->DrawCommon();
+		BG_->Draw();
+		if (currentCharacterObj_) {
+			Object3dCommon::GetInstance()->DrawCommon(Object3dCommon::DrawCommonType::MaterialColorOnlySkinning);
+			currentCharacterObj_->Draw();
+		}
+
+		pauseText_.Draw();
+		for (auto& menuText : menuTexts_) {
+			menuText.Draw();
+		}
+		SpriteCommon::GetInstance()->DrawCommon();
+		SpriteCommon::GetInstance()->SetBlendMode(BlendMode::kBlendModeAdd);
+		for (int i = 0; i < 3; ++i) {
+			selectSprites_[i]->Draw();
+		}
+		SpriteCommon::GetInstance()->SetBlendMode(BlendMode::kBlendModeAlpha);
+
+		Object3dCommon::GetInstance()->SetDefaultCamera(previousDefaultCamera);
 		break;
 	case Pause::Action::kOptions:
 		option_->Draw();
@@ -272,6 +305,39 @@ void Pause::Draw() {
 	case Pause::Action::kLicense:
 		break;
 	case Pause::Action::kTitle:
+		camera_->Update();
+		BG_->SetCamera(camera_.get());
+
+		Object3dCommon::GetInstance()->SetDefaultCamera(camera_.get());
+		if (currentCharacterObj_) {
+			currentCharacterObj_->SetCamera(camera_.get());
+			currentCharacterObj_->SetTransform({
+			    .scale{2.0f,  2.0f, 2.0f},
+			    .rotate{0.0f,  0.2f, 0.0f},
+			    .translate{-2.0f, 0.0f, 0.0f},
+			});
+			currentCharacterObj_->Update();
+		}
+
+		Object3dCommon::GetInstance()->DrawCommon();
+		BG_->Draw();
+		if (currentCharacterObj_) {
+			Object3dCommon::GetInstance()->DrawCommon(Object3dCommon::DrawCommonType::MaterialColorOnlySkinning);
+			currentCharacterObj_->Draw();
+		}
+
+		pauseText_.Draw();
+		for (auto& menuText : menuTexts_) {
+			menuText.Draw();
+		}
+		SpriteCommon::GetInstance()->DrawCommon();
+		SpriteCommon::GetInstance()->SetBlendMode(BlendMode::kBlendModeAdd);
+		for (int i = 0; i < 3; ++i) {
+			selectSprites_[i]->Draw();
+		}
+		SpriteCommon::GetInstance()->SetBlendMode(BlendMode::kBlendModeAlpha);
+
+		Object3dCommon::GetInstance()->SetDefaultCamera(previousDefaultCamera);
 		break;
 	default:
 		break;

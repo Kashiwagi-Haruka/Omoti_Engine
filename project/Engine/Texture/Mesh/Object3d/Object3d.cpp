@@ -102,9 +102,7 @@ void Object3d::Update() {
 	}
 	Matrix4x4 localMatrix = baseNode ? baseNode->localMatrix : Function::MakeIdentity4x4();
 	if (animation_ && model_) {
-		float deltaTime = 1.0f / 60.0f;
-
-		deltaTime = Object3dCommon::GetInstance()->GetDxCommon()->GetDeltaTime();
+		float deltaTime = GameBase::GetInstance()->GetDeltaTime();
 
 		animationTime_ = Animation::AdvanceTime(*animation_, animationTime_, deltaTime, isLoopAnimation_);
 
@@ -147,9 +145,7 @@ void Object3d::UpdateBillboard() {
 	}
 	Matrix4x4 localMatrix = baseNode ? baseNode->localMatrix : Function::MakeIdentity4x4();
 	if (animation_ && model_) {
-		float deltaTime = 1.0f / 60.0f;
-
-		deltaTime = Object3dCommon::GetInstance()->GetDxCommon()->GetDeltaTime();
+		float deltaTime = GameBase::GetInstance()->GetDeltaTime();
 
 		animationTime_ = Animation::AdvanceTime(*animation_, animationTime_, deltaTime, isLoopAnimation_);
 
