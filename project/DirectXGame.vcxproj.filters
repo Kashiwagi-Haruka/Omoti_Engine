@@ -661,6 +661,10 @@
       <Filter>Application</Filter>
     </ClCompile>
     <ClCompile Include="application\Scene\Scenes\CharacterScene\CharacterScene.cpp" />
+    <ClCompile Include="application\Scene\Scenes\TutorialScene\TutorialFlow\TutorialFlow.cpp" />
+    <ClCompile Include="application\Scene\Scenes\TutorialScene\TutorialStep\TutorialState.cpp" />
+    <ClCompile Include="application\CameraController\LockOnCamera\AutoLockOnCamera\AutoLockOnCamera.cpp" />
+    <ClCompile Include="application\CameraController\LockOnCamera\SelfLockOnCamera\SelfLockOnCamera.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Engine\Camera\Camera.h">
@@ -1324,6 +1328,10 @@
       <Filter>Application</Filter>
     </ClInclude>
     <ClInclude Include="application\Scene\Scenes\CharacterScene\CharacterScene.h" />
+    <ClInclude Include="application\Scene\Scenes\TutorialScene\TutorialFlow\TutorialFlow.h" />
+    <ClInclude Include="application\Scene\Scenes\TutorialScene\TutorialStep\TutorialState.h" />
+    <ClInclude Include="application\CameraController\LockOnCamera\AutoLockOnCamera\AutoLockOnCamera.h" />
+    <ClInclude Include="application\CameraController\LockOnCamera\SelfLockOnCamera\SelfLockOnCamera.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include=".editorconfig" />

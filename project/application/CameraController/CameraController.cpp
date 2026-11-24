@@ -1,5 +1,6 @@
 #include "CameraController.h"
 #include "Camera.h"
+#include "GameBase.h"
 #include "Input.h"
 #include "Function.h"
 #include "PlayCommand/PlayCommand.h"
@@ -52,7 +53,7 @@ void CameraController::Initialize() {
 }
 
 void CameraController::Update() {
-	constexpr float kDeltaTime = 1.0f / 60.0f;
+
 	constexpr float kNormalAttackCameraReturnDelay = 0.8f;
 	if (!isCameraSwitching_ && hasPendingCameraMode_) {
 		cameraMode_ = pendingCameraMode_;
@@ -62,11 +63,12 @@ void CameraController::Update() {
 	if (PlayCommand::GetInstance()->GetNORMAL_ATTACK_PUSH()) {
 		normalAttackIdleTimer_ = 0.0f;
 	} else {
-		normalAttackIdleTimer_ += kDeltaTime;
+		normalAttackIdleTimer_ += GameBase::GetInstance()->GetDeltaTime();
+		
 	}
 
 	if (autoLockOnTimer_ > 0.0f) {
-		autoLockOnTimer_ -= kDeltaTime;
+		autoLockOnTimer_ -= GameBase::GetInstance()->GetDeltaTime();
 		RequestCameraMode(CameraMode::kLockOnCamera);
 		if (autoLockOnTimer_ <= 0.0f) {
 			ReturnToPlayerCamera();
@@ -131,7 +133,7 @@ void CameraController::Update() {
 	}
 
 	if (isCameraSwitching_) {
-		cameraSwitchTimer_ += kDeltaTime;
+		cameraSwitchTimer_ += GameBase::GetInstance()->GetDeltaTime();
 		const float linearT = std::clamp(cameraSwitchTimer_ / cameraSwitchDuration_, 0.0f, 1.0f);
 		const float t = SmoothStep(linearT);
 		Transform blendedTransform = targetTransform;

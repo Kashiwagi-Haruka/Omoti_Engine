@@ -20,6 +20,12 @@ public:
 		kLicense,
 		kTitle,
 	};
+	enum class PauseState {
+		kNone,
+		kStart,
+		kActive,
+		kEnd,
+	};
 
 private:
 
@@ -35,10 +41,9 @@ private:
 
 	//　ポーズ画面中か
 	bool isPause_;
-	//　ポーズ画面操作可能か
-	bool isActive_ = false;
-	bool isStart_ = false;
-	bool isEnd_ = false;
+	// ポーズ画面の状態
+	PauseState pauseState_ = PauseState::kNone;
+	// タイトルに戻るか
 	bool isTitleBack_ = false;
 	//　タイトル画面に戻すか聞くスプライトを表示するか
 	bool isTitleBackVisit_ = false;

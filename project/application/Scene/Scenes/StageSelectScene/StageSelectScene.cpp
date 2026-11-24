@@ -19,8 +19,9 @@ void StageSelectScene::Initialize() {
 	ModelManager::GetInstance()->LoadModel("Resources/3d/Rasen/Select/gate", "gate");
 
 	cameraController_->Initialize();
-
+	tutorialStageGate_->SetStageName("Tutorial");
 	tutorialStageGate_->Initialize();
+	stage1Gate_->SetStageName("Stage1");
 	stage1Gate_->Initialize();
 
 	player_->Initialize(cameraController_->GetCamera());

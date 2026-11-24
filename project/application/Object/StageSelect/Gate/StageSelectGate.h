@@ -4,6 +4,7 @@
 #include "Object3d/Object3d.h"
 #include "Primitive/Primitive.h"
 #include <memory>
+#include <string>
 
 class Camera;
 
@@ -11,6 +12,7 @@ class StageSelectGate {
 private:
 	std::unique_ptr<Object3d> gate_;
 	std::unique_ptr<Primitive> Portal_;
+	std::unique_ptr<Primitive> StageNamePlate_;
 
 	Vector3 position_{0.0f, 0.0f, 0.0f};
 
@@ -20,6 +22,7 @@ private:
 
 	AABB portalAABB_{};
 	Camera* camera_ = nullptr;
+	std::string stageName_ = "Stage1";
 
 	void UpdateTransform();
 
@@ -31,6 +34,7 @@ public:
 	void Update();
 	void Draw();
 
+	void SetStageName(const std::string& stageName);
 	void SetCamera(Camera* camera) { camera_ = camera; }
 	void SetPosition(const Vector3& position);
 
