@@ -14,7 +14,7 @@
       "HP": 3000.0,
       "Attack": 0.0,
       "Deffence": 0.0,
-      "Speed": 0.1,
+      "Speed": 0.45,
       "CriticalRate": 0.0,
       "CriticalDamage": 1.5,
       "HealingEffect": 0.0,

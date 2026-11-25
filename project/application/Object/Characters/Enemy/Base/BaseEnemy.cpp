@@ -161,6 +161,7 @@ void BaseEnemy::Update(const Vector3& housePosition, const Vector3& houseScale, 
 	}
 
 	const float deltaTime = GameBase::GetInstance()->GetDeltaTime();
+
 	if (isDying_) {
 		deathTimer_ += deltaTime;
 		const float progress = std::clamp(deathTimer_ / deathDuration_, 0.0f, 1.0f);
@@ -180,6 +181,7 @@ void BaseEnemy::Update(const Vector3& housePosition, const Vector3& houseScale, 
 	if (!IsAttacking()) {
 		attackTimer_ += deltaTime;
 	}
+
 	damageInvincibleTimer_ = std::max(0.0f, damageInvincibleTimer_ - deltaTime);
 	object_->SetColor(damageInvincibleTimer_ > 0.0f ? kDamageInvincibleColor : kDefaultColor);
 
@@ -204,13 +206,18 @@ void BaseEnemy::Update(const Vector3& housePosition, const Vector3& houseScale, 
 		enemyStun_->SetCamera(camera_);
 		enemyStun_->SetTranslate(transform_.translate);
 		enemyStun_->Update();
+
 		if (static_cast<float>(stunFrames_) >= stunFramesMax_) {
 			isStunned_ = false;
 		}
 	}
 
+	const Vector3 positionBeforeBehavior = transform_.translate;
 	UpdateBehavior(housePosition, houseScale, playerPosition, isPlayerAlive, canMove);
-	UpdatePresentation(true, deltaTime, false);
+
+	const bool isMoving = transform_.translate.x != positionBeforeBehavior.x || transform_.translate.z != positionBeforeBehavior.z;
+	UpdatePresentation(true, deltaTime, isMoving);
+
 	enemyAttack_->Update();
 
 	if (hp_ <= 0) {
