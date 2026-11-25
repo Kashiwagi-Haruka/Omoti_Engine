@@ -63,13 +63,7 @@ void TutorialScene::Initialize() {
 	tutorialUI_->Initialize();
 	uiManager_->Initialize();
 
-	const auto controlHandle = GameLoad::GetInstance()->GetTextureHandle("option");
 
-	controlSprite_ = std::make_unique<Sprite>();
-	controlSprite_->Initialize(controlHandle);
-	controlSprite_->SetScale({700.0f, 100.0f});
-	controlSprite_->SetPosition({10.0f, 600.0f});
-	controlSprite_->Update();
 
 	const Vector2 guideSize{580.0f, 260.0f};
 	const Vector2 guidePosition{
@@ -342,7 +336,7 @@ void TutorialScene::Draw() {
 
 	SpriteCommon::GetInstance()->DrawCommon();
 
-	controlSprite_->Draw();
+	
 	tutorialUI_->Draw();
 	guideWindowSprite_->Draw();
 
