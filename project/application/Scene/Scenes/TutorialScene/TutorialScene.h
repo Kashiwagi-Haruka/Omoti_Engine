@@ -43,6 +43,7 @@ private:
 	std::unique_ptr<Sprite> controlSprite_;
 	std::unique_ptr<TutorialUI> tutorialUI_;
 	std::unique_ptr<UIManager> uiManager_;
+	std::unique_ptr<Sprite> guideWindowSprite_;
 
 	std::array<std::unique_ptr<Sprite>, kAttributeCount> attributeSprites_;
 
