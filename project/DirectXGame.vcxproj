@@ -372,6 +372,7 @@ copy "$(WindowsSdkDir)\bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)\
     <ClCompile Include="application\Scene\Scenes\TutorialScene\TutorialStep\TutorialState.cpp" />
     <ClCompile Include="application\CameraController\LockOnCamera\SelfLockOnCamera\SelfLockOnCamera.cpp" />
     <ClCompile Include="application\Object\Characters\Enemy\StageEnemyLayout.cpp" />
+    <ClCompile Include="application\Scene\Scenes\TutorialScene\TutorialProgressWindow\TutorialProgressWindow.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include=".editorconfig" />
@@ -622,6 +623,7 @@ copy "$(WindowsSdkDir)\bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)\
     <ClInclude Include="application\Scene\Scenes\TutorialScene\TutorialStep\TutorialState.h" />
     <ClInclude Include="application\CameraController\LockOnCamera\SelfLockOnCamera\SelfLockOnCamera.h" />
     <ClInclude Include="application\Object\Characters\Enemy\StageEnemyLayout.h" />
+    <ClInclude Include="application\Scene\Scenes\TutorialScene\TutorialProgressWindow\TutorialProgressWindow.h" />
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="Resources\shader\FullScreenCopy\CopyImage.PS.hlsl">
