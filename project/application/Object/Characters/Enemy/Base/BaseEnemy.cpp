@@ -61,6 +61,7 @@ void BaseEnemy::Initialize(Camera* camera, Vector3 position) {
 
 	object_->Initialize();
 	object_->SetModel(modelName_);
+	InitializeModelAnimation(*object_);
 	object_->SetCamera(camera_);
 	object_->SetTransform(transform_);
 	object_->SetOverlayEnabled(true);
@@ -131,7 +132,9 @@ void BaseEnemy::TryStartAttack(float cooldown) {
 	attackTimer_ = 0.0f;
 }
 
-void BaseEnemy::UpdatePresentation(bool updateAdhesion) {
+void BaseEnemy::UpdatePresentation(bool updateAdhesion, float deltaTime, bool isMoving) {
+	UpdateModelAnimation(deltaTime, isMoving);
+
 	object_->SetCamera(camera_);
 	object_->SetTransform(transform_);
 	object_->Update();
@@ -165,7 +168,7 @@ void BaseEnemy::Update(const Vector3& housePosition, const Vector3& houseScale, 
 		object_->SetColor(kDeathColor);
 		enemyAttack_->Cancel();
 		enemyAttack_->Update();
-		UpdatePresentation(false);
+		UpdatePresentation(false, deltaTime, false);
 
 		if (progress >= 1.0f) {
 			isAlive_ = false;
@@ -191,7 +194,7 @@ void BaseEnemy::Update(const Vector3& housePosition, const Vector3& houseScale, 
 			isBackStepping_ = false;
 			backStepTimer_ = 0.0f;
 		}
-		UpdatePresentation(true);
+		UpdatePresentation(true, deltaTime, false);
 		return;
 	}
 
@@ -207,7 +210,7 @@ void BaseEnemy::Update(const Vector3& housePosition, const Vector3& houseScale, 
 	}
 
 	UpdateBehavior(housePosition, houseScale, playerPosition, isPlayerAlive, canMove);
-	UpdatePresentation(true);
+	UpdatePresentation(true, deltaTime, false);
 	enemyAttack_->Update();
 
 	if (hp_ <= 0) {

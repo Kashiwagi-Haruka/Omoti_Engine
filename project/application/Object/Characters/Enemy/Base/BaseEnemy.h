@@ -63,13 +63,14 @@ protected:
 	explicit BaseEnemy(const EnemyParameter& config);
 
 	virtual void UpdateBehavior(const Vector3& housePosition, const Vector3& houseScale, const Vector3& playerPosition, bool isPlayerAlive, bool canMove) = 0;
-
+	virtual void InitializeModelAnimation(Object3d&) {}
+	virtual void UpdateModelAnimation(float, bool) {}
 	void MoveToward(const Vector3& target, float speed);
 	void TryStartAttack(float cooldown);
 
 private:
 	void StartDeathAnimation();
-	void UpdatePresentation(bool updateAdhesion);
+	void UpdatePresentation(bool updateAdhesion, float deltaTime, bool isMoving);
 
 	std::string modelName_;
 	Vector3 initialScale_;
