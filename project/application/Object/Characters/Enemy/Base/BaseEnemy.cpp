@@ -65,6 +65,7 @@ void BaseEnemy::Initialize(Camera* camera, Vector3 position) {
 	object_->SetCamera(camera_);
 	object_->SetTransform(transform_);
 	object_->SetOverlayEnabled(true);
+	iceOverlayProgress_ = 0.0f;
 	object_->SetOverlayAmount(0.0f);
 	object_->SetOutlineColor({1.0f, 1.0f, 0.0f, 1.0f});
 	object_->SetOutlineWidth(0.0f);
@@ -133,17 +134,30 @@ void BaseEnemy::TryStartAttack(float cooldown) {
 }
 
 void BaseEnemy::UpdatePresentation(bool updateAdhesion, float deltaTime, bool isMoving) {
-	UpdateModelAnimation(deltaTime, isMoving);
+	constexpr float kIceOverlayFadeSeconds = 0.25f;
+	constexpr float kIceOverlayMaxAmount = 0.5f;
 
-	object_->SetCamera(camera_);
-	object_->SetTransform(transform_);
-	object_->Update();
+	UpdateModelAnimation(deltaTime, isMoving);
 
 	if (updateAdhesion) {
 		adhesion_->SetCamera(camera_);
 		adhesion_->SetTransform(transform_);
 		adhesion_->Update();
 	}
+
+	const bool hasIceAdhesion = !isDying_ && adhesion_->GetCurrentAttribute() == Attribute::Ice;
+	const float progressStep = deltaTime / kIceOverlayFadeSeconds;
+
+	if (hasIceAdhesion) {
+		iceOverlayProgress_ = std::min(iceOverlayProgress_ + progressStep, 1.0f);
+	} else {
+		iceOverlayProgress_ = std::max(iceOverlayProgress_ - progressStep, 0.0f);
+	}
+
+	object_->SetOverlayAmount(Function::Lerp(0.0f, kIceOverlayMaxAmount, iceOverlayProgress_));
+	object_->SetCamera(camera_);
+	object_->SetTransform(transform_);
+	object_->Update();
 
 	hpBar_->SetCamera(camera_);
 	hpBar_->SetHP(hp_);
@@ -226,6 +240,9 @@ void BaseEnemy::Update(const Vector3& housePosition, const Vector3& houseScale, 
 }
 
 void BaseEnemy::Draw() {
+	const bool hasIceAdhesion = !isDying_ && adhesion_->GetCurrentAttribute() == Attribute::Ice;
+
+	object_->SetOverlayAmount(hasIceAdhesion ? 0.5f : 0.0f);
 	object_->Draw();
 	hpBar_->Draw();
 	lockOnEnemy_->Draw();
