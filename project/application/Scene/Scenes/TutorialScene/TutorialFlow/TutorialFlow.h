@@ -44,6 +44,7 @@ public:
 	bool IsFinished() const;
 	float Progress() const;
 	std::u32string Guide(const TutorialFrame& frame) const;
+	float CurrentStepProgress() const { return stepProgress_; }
 
 private:
 	std::vector<std::unique_ptr<TutorialState>> steps_;

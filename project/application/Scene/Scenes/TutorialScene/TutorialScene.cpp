@@ -89,7 +89,7 @@ void TutorialScene::Initialize() {
 
 	const auto fontHandle = FreeTypeManager::CreateFace("Resources/Font/irohakakuC-Medium.ttf", 0);
 	FreeTypeManager::SetPixelSizes(fontHandle, 24, 24);
-
+	progressWindow_.Initialize(fontHandle);
 	guideText_.Initialize(fontHandle);
 	guideText_.SetSize(guideSize);
 	guideText_.SetPosition(guidePosition);
@@ -195,6 +195,7 @@ void TutorialScene::UpdateAttributeMenu() {
 }
 
 void TutorialScene::UpdateGuide(const TutorialFrame& frame) {
+	progressWindow_.Update(tutorialFlow_.CurrentStep(), tutorialFlow_.CurrentStepProgress());
 	std::u32string text = tutorialFlow_.Guide(frame);
 
 	if (frame.isPaused) {
@@ -339,7 +340,7 @@ void TutorialScene::Draw() {
 	
 	tutorialUI_->Draw();
 	guideWindowSprite_->Draw();
-
+	progressWindow_.DrawBackground();
 	if (isAttributeMenuOpen_) {
 		for (const auto& sprite : attributeSprites_) {
 			sprite->Draw();
@@ -348,6 +349,7 @@ void TutorialScene::Draw() {
 
 	uiManager_->Draw();
 	guideText_.Draw();
+	progressWindow_.DrawText();
 }
 void TutorialScene::Finalize() {
 	auto* input = Input::GetInstance();

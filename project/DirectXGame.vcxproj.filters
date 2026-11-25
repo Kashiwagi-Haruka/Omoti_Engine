@@ -664,6 +664,7 @@
     <ClCompile Include="application\Object\Characters\Enemy\EnemyFactory.cpp" />
     <ClCompile Include="application\Object\Characters\Enemy\StageEnemyLayout.cpp" />
     <ClCompile Include="application\Object\Characters\Enemy\Base\Parameter\EnemyParameter.cpp" />
+    <ClCompile Include="application\Scene\Scenes\TutorialScene\TutorialProgressWindow\TutorialProgressWindow.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Engine\Camera\Camera.h">
@@ -1330,6 +1331,7 @@
     <ClInclude Include="application\Object\Characters\Enemy\EnemyFactory.h" />
     <ClInclude Include="application\Object\Characters\Enemy\StageEnemyLayout.h" />
     <ClInclude Include="application\Object\Characters\Enemy\Base\Parameter\EnemyParameter.h" />
+    <ClInclude Include="application\Scene\Scenes\TutorialScene\TutorialProgressWindow\TutorialProgressWindow.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include=".editorconfig" />

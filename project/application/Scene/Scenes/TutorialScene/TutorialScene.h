@@ -3,7 +3,7 @@
 #include "BaseScene.h"
 #include "Text/Text.h"
 #include "Scene/Scenes/TutorialScene/TutorialFlow/TutorialFlow.h"
-
+#include "Scene/Scenes/TutorialScene/TutorialProgressWindow/TutorialProgressWindow.h"
 #include <array>
 #include <memory>
 #include <string>
@@ -35,6 +35,7 @@ private:
 	void UpdateGuide(const TutorialFrame& frame);
 
 	TutorialFlow tutorialFlow_;
+	TutorialProgressWindow progressWindow_;
 
 	std::unique_ptr<CameraController> cameraController_;
 	std::unique_ptr<Sky> skyDome_;
