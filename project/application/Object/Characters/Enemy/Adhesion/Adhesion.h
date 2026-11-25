@@ -138,4 +138,5 @@ public:
 	/// 描画する
 	/// </summary>
 	void Draw();
+	Attribute GetCurrentAttribute() const { return currentAttribute_; }
 };

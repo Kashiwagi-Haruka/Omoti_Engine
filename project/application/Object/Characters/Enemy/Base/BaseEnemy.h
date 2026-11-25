@@ -86,6 +86,7 @@ private:
 	bool isStunned_ = false;
 	int stunFrames_ = 0;
 	float stunFramesMax_ = 45.0f;
+	float iceOverlayProgress_ = 0.0f;
 
 	float attackTimer_ = 0.0f;
 	float damageInvincibleTimer_ = 0.0f;
