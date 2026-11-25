@@ -24,7 +24,7 @@ int CalculateAttributeReactionDamage(const Parameter& playerParameter) {
 	return std::max(0, static_cast<int>(std::round(reactionDamage)));
 }
 
-void ApplyAttributeDamage(Enemy& enemy, EnemyManager& enemyManager, Attribute attribute, const Parameter& playerParameter) {
+void ApplyAttributeDamage(BaseEnemy& enemy, EnemyManager& enemyManager, Attribute attribute, const Parameter& playerParameter) {
 	if (!enemy.AddAdhesionAttribute(attribute)) {
 		return;
 	}
@@ -37,13 +37,13 @@ void ApplyAttributeDamage(Enemy& enemy, EnemyManager& enemyManager, Attribute at
 
 bool CollisionManager::HandleGameSceneCollisions(
     Player& player, EnemyManager& enemyManager, House& house, Boss* boss, SpecialGaugeBallManager* specialGaugeBallManager, Vector3* outHitEnemyPos, bool* outDidPlayerAttackHitEnemy,
-    Enemy** outNormalAttackHitEnemy) {
+    BaseEnemy** outNormalAttackHitEnemy) {
 	bool didNormalAttackHitEnemy = false;
-	Enemy* normalAttackHitEnemy = nullptr;
+	BaseEnemy* normalAttackHitEnemy = nullptr;
 	bool didPlayerAttackHitEnemy = false;
 	AABB playerAabb = MakeAabb(player.GetPosition(), player.GetScale());
 	AABB houseAabb = MakeAabb(house.GetPosition(), house.GetScale());
-	auto tryEnemyFlinch = [](Enemy* target) {
+	auto tryEnemyFlinch = [](BaseEnemy* target) {
 		if (!target->IsAttacking()) {
 			target->Stun();
 		}

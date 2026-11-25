@@ -144,7 +144,90 @@ void ShowBase(const char* label, const Json& object) {
 }
 #endif
 } // namespace
+void CharacterScene::LoadStageEnemies() {
+	try {
+		stageEnemies_ = LoadStageEnemyLayout(kStage1EnemyPath);
+		stageEnemiesLoaded_ = true;
+		stageEnemyStatus_ = "Loaded Stage 1 enemies.";
+	} catch (const std::exception& error) {
+		stageEnemyStatus_ = error.what();
+	}
+}
 
+void CharacterScene::DrawStageEnemyEditor() {
+#ifdef USE_IMGUI
+	if (!ImGui::Begin("Stage 1 Enemies")) {
+		ImGui::End();
+		return;
+	}
+
+	if (ImGui::Button("Reload JSON")) {
+		LoadStageEnemies();
+	}
+
+	if (stageEnemiesLoaded_) {
+		ImGui::SameLine();
+		if (ImGui::Button("Save JSON")) {
+			try {
+				SaveStageEnemyLayout(kStage1EnemyPath, stageEnemies_);
+				stageEnemyStatus_ = "Saved Stage 1 enemies.";
+			} catch (const std::exception& error) {
+				stageEnemyStatus_ = error.what();
+			}
+		}
+
+		static constexpr const char* phases[] = {
+		    "Phase 1", "Phase 2", "Phase 3", "Phase 4", "Phase 5",
+		};
+		static constexpr const char* types[] = {"Switch", "BrainStealer"};
+
+		ImGui::Combo("Phase", &selectedEnemyPhase_, phases, IM_ARRAYSIZE(phases));
+		auto& spawns = stageEnemies_.at(static_cast<std::size_t>(selectedEnemyPhase_));
+
+		if (ImGui::Button("Add enemy")) {
+			spawns.push_back({
+			    EnemyType::Switch, {-38.0f, 1.5f, -56.0f}
+            });
+		}
+		ImGui::SameLine();
+		ImGui::Text("Enemies: %zu", spawns.size());
+
+		auto removedIndex = spawns.size();
+		for (std::size_t index = 0; index < spawns.size(); ++index) {
+			ImGui::PushID(static_cast<int>(index));
+
+			auto& spawn = spawns[index];
+			int typeIndex = spawn.type == EnemyType::Switch ? 0 : 1;
+			if (ImGui::Combo("Type", &typeIndex, types, IM_ARRAYSIZE(types))) {
+				spawn.type = typeIndex == 0 ? EnemyType::Switch : EnemyType::BrainStealer;
+			}
+
+			float position[] = {
+			    spawn.position.x,
+			    spawn.position.y,
+			    spawn.position.z,
+			};
+			if (ImGui::DragFloat3("Position (X, Y, Z)", position, 0.1f)) {
+				spawn.position = {position[0], position[1], position[2]};
+			}
+
+			if (ImGui::Button("Remove enemy")) {
+				removedIndex = index;
+			}
+
+			ImGui::Separator();
+			ImGui::PopID();
+		}
+
+		if (removedIndex < spawns.size()) {
+			spawns.erase(spawns.begin() + static_cast<std::ptrdiff_t>(removedIndex));
+		}
+	}
+
+	ImGui::TextWrapped("%s", stageEnemyStatus_.c_str());
+	ImGui::End();
+#endif
+}
 void CharacterScene::Initialize() {
 	// エディターの再生開始でも Initialize が呼ばれる。
 	// 同じインスタンス内の未保存データは維持する。
@@ -158,7 +241,7 @@ void CharacterScene::Initialize() {
 		characters_[i].name = names[i];
 		Load(characters_[i]);
 	}
-
+	LoadStageEnemies();
 	selectedIndex_ = 0;
 	initialized_ = true;
 }
@@ -243,6 +326,7 @@ void CharacterScene::Save(CharacterData& data) {
 
 void CharacterScene::DrawEditorUI() {
 #ifdef USE_IMGUI
+	DrawStageEnemyEditor();
 	if (!ImGui::Begin("Character Parameters")) {
 		ImGui::End();
 		return;

@@ -42,11 +42,11 @@ const Transform kRemoteCameraScreenTransform = {
     {-8.0f, 4.5f, 8.0f},
 };
 
-Enemy* TryFindNearestAliveEnemy(Player& player, EnemyManager& enemyManager, float maxDistance) {
+BaseEnemy* TryFindNearestAliveEnemy(Player& player, EnemyManager& enemyManager, float maxDistance) {
 	const Vector3 playerPos = player.GetPosition();
 	const float playerYaw = player.GetRotate().y;
 	const Vector3 playerForward = {std::sinf(playerYaw), 0.0f, std::cosf(playerYaw)};
-	Enemy* nearestEnemy = nullptr;
+	BaseEnemy* nearestEnemy = nullptr;
 	float nearestDistanceSq = 0.0f;
 	const float maxDistanceSq = maxDistance * maxDistance;
 
@@ -73,7 +73,7 @@ Enemy* TryFindNearestAliveEnemy(Player& player, EnemyManager& enemyManager, floa
 	return nearestEnemy;
 }
 
-void ApplyLockOnMarker(EnemyManager& enemyManager, Enemy* lockOnEnemy) {
+void ApplyLockOnMarker(EnemyManager& enemyManager, BaseEnemy* lockOnEnemy) {
 	for (const auto& enemy : enemyManager.GetEnemies()) {
 		if (enemy) {
 			enemy->SetLockOn(enemy.get() == lockOnEnemy && enemy->GetIsAlive() && !enemy->IsDying() && enemy->GetHP() > 0);
@@ -81,7 +81,7 @@ void ApplyLockOnMarker(EnemyManager& enemyManager, Enemy* lockOnEnemy) {
 	}
 }
 
-bool ContainsLockOnEnemy(EnemyManager& enemyManager, Enemy* lockOnEnemy) {
+bool ContainsLockOnEnemy(EnemyManager& enemyManager, BaseEnemy* lockOnEnemy) {
 	if (!lockOnEnemy) {
 		return false;
 	}
@@ -361,7 +361,7 @@ void GameScene::Update() {
 	field->Update();
 	if (playAreaMode_ == PlayAreaMode::kSpiral && PlayCommand::GetInstance()->GetNORMAL_ATTACK_TRIGGER() && !cameraController->IsLockOnCameraActive()) {
 		EnemyManager* enemyManager = rasen_->GetEnemyManager();
-		if (Enemy* nearestEnemy = TryFindNearestAliveEnemy(*player, *enemyManager, kAttackCameraLockOnRange)) {
+		if (BaseEnemy* nearestEnemy = TryFindNearestAliveEnemy(*player, *enemyManager, kAttackCameraLockOnRange)) {
 			normalAttackTargetEnemy_ = nearestEnemy;
 			player->SetAttackApproachTarget(nearestEnemy->GetPosition());
 			cameraController->SetNormalAttackTarget(nearestEnemy->GetPosition());
@@ -430,13 +430,13 @@ void GameScene::Update() {
 		Boss* activeBoss = (rasen_->IsBossActive() && boss_->GetIsAlive()) ? boss_.get() : nullptr;
 		Vector3 hitEnemyPos{};
 		bool didPlayerAttackHitEnemy = false;
-		Enemy* normalAttackHitEnemy = nullptr;
+		BaseEnemy* normalAttackHitEnemy = nullptr;
 		const bool didNormalAttackHitEnemy = collisionManager_.HandleGameSceneCollisions(
 		    *player, *rasen_->GetEnemyManager(), *rasen_->GetHouse(), activeBoss, specialGaugeBallManager_.get(), &hitEnemyPos, &didPlayerAttackHitEnemy, &normalAttackHitEnemy);
 		if (didPlayerAttackHitEnemy) {
 			hitVinettTimer_ = kHitVinettDuration_;
 		}
-		Enemy* playerLockOnTarget = player->GetLockOnTarget();
+		BaseEnemy* playerLockOnTarget = player->GetLockOnTarget();
 		if (playerLockOnTarget && !ContainsLockOnEnemy(*rasen_->GetEnemyManager(), playerLockOnTarget)) {
 			player->ClearLockOnTarget();
 			playerLockOnTarget = nullptr;

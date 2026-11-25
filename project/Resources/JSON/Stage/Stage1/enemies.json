@@ -1,0 +1,495 @@
+{
+  "phases": [
+    [
+      {
+        "position": [
+          -38.0,
+          1.5,
+          -56.0
+        ],
+        "type": "BrainStealer"
+      },
+      {
+        "position": [
+          -30.0,
+          1.5,
+          -56.0
+        ],
+        "type": "BrainStealer"
+      },
+      {
+        "position": [
+          -22.0,
+          1.5,
+          -56.0
+        ],
+        "type": "Switch"
+      },
+      {
+        "position": [
+          -14.0,
+          1.5,
+          -56.0
+        ],
+        "type": "Switch"
+      },
+      {
+        "position": [
+          -6.0,
+          1.5,
+          -56.0
+        ],
+        "type": "Switch"
+      }
+    ],
+    [
+      {
+        "position": [
+          -38.0,
+          1.5,
+          -56.0
+        ],
+        "type": "Switch"
+      },
+      {
+        "position": [
+          -30.0,
+          1.5,
+          -56.0
+        ],
+        "type": "Switch"
+      },
+      {
+        "position": [
+          -22.0,
+          1.5,
+          -56.0
+        ],
+        "type": "Switch"
+      },
+      {
+        "position": [
+          -14.0,
+          1.5,
+          -56.0
+        ],
+        "type": "BrainStealer"
+      },
+      {
+        "position": [
+          -6.0,
+          1.5,
+          -56.0
+        ],
+        "type": "Switch"
+      },
+      {
+        "position": [
+          -38.0,
+          1.5,
+          -47.0
+        ],
+        "type": "Switch"
+      },
+      {
+        "position": [
+          -30.0,
+          1.5,
+          -47.0
+        ],
+        "type": "Switch"
+      },
+      {
+        "position": [
+          -22.0,
+          1.5,
+          -47.0
+        ],
+        "type": "BrainStealer"
+      }
+    ],
+    [
+      {
+        "position": [
+          -38.0,
+          1.5,
+          -56.0
+        ],
+        "type": "Switch"
+      },
+      {
+        "position": [
+          -30.0,
+          1.5,
+          -56.0
+        ],
+        "type": "Switch"
+      },
+      {
+        "position": [
+          -22.0,
+          1.5,
+          -56.0
+        ],
+        "type": "Switch"
+      },
+      {
+        "position": [
+          -14.0,
+          1.5,
+          -56.0
+        ],
+        "type": "BrainStealer"
+      },
+      {
+        "position": [
+          -6.0,
+          1.5,
+          -56.0
+        ],
+        "type": "Switch"
+      },
+      {
+        "position": [
+          -38.0,
+          1.5,
+          -47.0
+        ],
+        "type": "Switch"
+      },
+      {
+        "position": [
+          -30.0,
+          1.5,
+          -47.0
+        ],
+        "type": "Switch"
+      },
+      {
+        "position": [
+          -22.0,
+          1.5,
+          -47.0
+        ],
+        "type": "BrainStealer"
+      },
+      {
+        "position": [
+          -14.0,
+          1.5,
+          -47.0
+        ],
+        "type": "Switch"
+      },
+      {
+        "position": [
+          -6.0,
+          1.5,
+          -47.0
+        ],
+        "type": "Switch"
+      },
+      {
+        "position": [
+          -38.0,
+          1.5,
+          -38.0
+        ],
+        "type": "Switch"
+      },
+      {
+        "position": [
+          -30.0,
+          1.5,
+          -38.0
+        ],
+        "type": "BrainStealer"
+      }
+    ],
+    [
+      {
+        "position": [
+          -38.0,
+          1.5,
+          -56.0
+        ],
+        "type": "Switch"
+      },
+      {
+        "position": [
+          -30.0,
+          1.5,
+          -56.0
+        ],
+        "type": "Switch"
+      },
+      {
+        "position": [
+          -22.0,
+          1.5,
+          -56.0
+        ],
+        "type": "Switch"
+      },
+      {
+        "position": [
+          -14.0,
+          1.5,
+          -56.0
+        ],
+        "type": "BrainStealer"
+      },
+      {
+        "position": [
+          -6.0,
+          1.5,
+          -56.0
+        ],
+        "type": "Switch"
+      },
+      {
+        "position": [
+          -38.0,
+          1.5,
+          -47.0
+        ],
+        "type": "Switch"
+      },
+      {
+        "position": [
+          -30.0,
+          1.5,
+          -47.0
+        ],
+        "type": "Switch"
+      },
+      {
+        "position": [
+          -22.0,
+          1.5,
+          -47.0
+        ],
+        "type": "BrainStealer"
+      },
+      {
+        "position": [
+          -14.0,
+          1.5,
+          -47.0
+        ],
+        "type": "Switch"
+      },
+      {
+        "position": [
+          -6.0,
+          1.5,
+          -47.0
+        ],
+        "type": "Switch"
+      },
+      {
+        "position": [
+          -38.0,
+          1.5,
+          -38.0
+        ],
+        "type": "Switch"
+      },
+      {
+        "position": [
+          -30.0,
+          1.5,
+          -38.0
+        ],
+        "type": "BrainStealer"
+      },
+      {
+        "position": [
+          -22.0,
+          1.5,
+          -38.0
+        ],
+        "type": "Switch"
+      },
+      {
+        "position": [
+          -14.0,
+          1.5,
+          -38.0
+        ],
+        "type": "Switch"
+      },
+      {
+        "position": [
+          -6.0,
+          1.5,
+          -38.0
+        ],
+        "type": "Switch"
+      }
+    ],
+    [
+      {
+        "position": [
+          -38.0,
+          1.5,
+          -56.0
+        ],
+        "type": "Switch"
+      },
+      {
+        "position": [
+          -30.0,
+          1.5,
+          -56.0
+        ],
+        "type": "Switch"
+      },
+      {
+        "position": [
+          -22.0,
+          1.5,
+          -56.0
+        ],
+        "type": "Switch"
+      },
+      {
+        "position": [
+          -14.0,
+          1.5,
+          -56.0
+        ],
+        "type": "BrainStealer"
+      },
+      {
+        "position": [
+          -6.0,
+          1.5,
+          -56.0
+        ],
+        "type": "Switch"
+      },
+      {
+        "position": [
+          -38.0,
+          1.5,
+          -47.0
+        ],
+        "type": "Switch"
+      },
+      {
+        "position": [
+          -30.0,
+          1.5,
+          -47.0
+        ],
+        "type": "Switch"
+      },
+      {
+        "position": [
+          -22.0,
+          1.5,
+          -47.0
+        ],
+        "type": "BrainStealer"
+      },
+      {
+        "position": [
+          -14.0,
+          1.5,
+          -47.0
+        ],
+        "type": "Switch"
+      },
+      {
+        "position": [
+          -6.0,
+          1.5,
+          -47.0
+        ],
+        "type": "Switch"
+      },
+      {
+        "position": [
+          -38.0,
+          1.5,
+          -38.0
+        ],
+        "type": "Switch"
+      },
+      {
+        "position": [
+          -30.0,
+          1.5,
+          -38.0
+        ],
+        "type": "BrainStealer"
+      },
+      {
+        "position": [
+          -22.0,
+          1.5,
+          -38.0
+        ],
+        "type": "Switch"
+      },
+      {
+        "position": [
+          -14.0,
+          1.5,
+          -38.0
+        ],
+        "type": "Switch"
+      },
+      {
+        "position": [
+          -6.0,
+          1.5,
+          -38.0
+        ],
+        "type": "Switch"
+      },
+      {
+        "position": [
+          -38.0,
+          1.5,
+          -29.0
+        ],
+        "type": "BrainStealer"
+      },
+      {
+        "position": [
+          -30.0,
+          1.5,
+          -29.0
+        ],
+        "type": "Switch"
+      },
+      {
+        "position": [
+          -22.0,
+          1.5,
+          -29.0
+        ],
+        "type": "Switch"
+      },
+      {
+        "position": [
+          -14.0,
+          1.5,
+          -29.0
+        ],
+        "type": "Switch"
+      },
+      {
+        "position": [
+          -6.0,
+          1.5,
+          -29.0
+        ],
+        "type": "BrainStealer"
+      }
+    ]
+  ],
+  "schemaVersion": 1
+}

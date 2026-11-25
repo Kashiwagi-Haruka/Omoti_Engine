@@ -252,9 +252,6 @@
     <ClCompile Include="application\Menu\CharacterDisplay\Background\CharacterDisplaySkyDome.cpp">
       <Filter>Application\Menu\CharacterDisplay</Filter>
     </ClCompile>
-    <ClCompile Include="application\Object\Characters\Enemy\Enemy.cpp">
-      <Filter>Application\Object\Character\Enemy</Filter>
-    </ClCompile>
     <ClCompile Include="application\Object\Characters\Enemy\EnemyAttack.cpp">
       <Filter>Application\Object\Character\Enemy</Filter>
     </ClCompile>
@@ -662,6 +659,11 @@
     <ClCompile Include="application\Scene\Scenes\TutorialScene\TutorialStep\TutorialState.cpp" />
     <ClCompile Include="application\CameraController\LockOnCamera\AutoLockOnCamera\AutoLockOnCamera.cpp" />
     <ClCompile Include="application\CameraController\LockOnCamera\SelfLockOnCamera\SelfLockOnCamera.cpp" />
+    <ClCompile Include="application\Object\Characters\Enemy\Individual\Switch\SwitchEnemy.cpp" />
+    <ClCompile Include="application\Object\Characters\Enemy\Individual\BrainStealer\BrainStealer.cpp" />
+    <ClCompile Include="application\Object\Characters\Enemy\EnemyFactory.cpp" />
+    <ClCompile Include="application\Object\Characters\Enemy\StageEnemyLayout.cpp" />
+    <ClCompile Include="application\Object\Characters\Enemy\Base\Parameter\EnemyParameter.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Engine\Camera\Camera.h">
@@ -855,9 +857,6 @@
     </ClInclude>
     <ClInclude Include="application\Menu\CharacterDisplay\Background\CharacterDisplaySkyDome.h">
       <Filter>Application\Menu\CharacterDisplay</Filter>
-    </ClInclude>
-    <ClInclude Include="application\Object\Characters\Enemy\Enemy.h">
-      <Filter>Application\Object\Character\Enemy</Filter>
     </ClInclude>
     <ClInclude Include="application\Object\Characters\Enemy\EnemyAttack.h">
       <Filter>Application\Object\Character\Enemy</Filter>
@@ -1326,6 +1325,11 @@
     <ClInclude Include="application\Scene\Scenes\TutorialScene\TutorialStep\TutorialState.h" />
     <ClInclude Include="application\CameraController\LockOnCamera\AutoLockOnCamera\AutoLockOnCamera.h" />
     <ClInclude Include="application\CameraController\LockOnCamera\SelfLockOnCamera\SelfLockOnCamera.h" />
+    <ClInclude Include="application\Object\Characters\Enemy\Individual\Switch\SwitchEnemy.h" />
+    <ClInclude Include="application\Object\Characters\Enemy\Individual\BrainStealer\BrainStealer.h" />
+    <ClInclude Include="application\Object\Characters\Enemy\EnemyFactory.h" />
+    <ClInclude Include="application\Object\Characters\Enemy\StageEnemyLayout.h" />
+    <ClInclude Include="application\Object\Characters\Enemy\Base\Parameter\EnemyParameter.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include=".editorconfig" />

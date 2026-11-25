@@ -14,7 +14,7 @@
 class Camera;
 class PlayerBullet;
 class Field;
-class Enemy;
+class BaseEnemy;
 
 class Player {
 
@@ -87,7 +87,7 @@ Vector3 movementLimitCenter_{0.0f, 2.5f, 0.0f};
 	float attackApproachStopDistance_ = 5.0f;
 	float attackApproachRange_ = 10.0f;
 	float attackApproachSpeed_ = 0.35f;
-	Enemy* lockOnTarget_ = nullptr;
+	BaseEnemy* lockOnTarget_ = nullptr;
 	// 攻撃中のみロックオン対象へ体の正面を維持する。
 	void FaceLockOnTarget();
 
@@ -99,9 +99,9 @@ public:
 	void Update();
 	void Draw(bool drawOutline = true);
 	void SetAttackApproachTarget(const Vector3& target);
-	void SetLockOnTarget(Enemy* target) { lockOnTarget_ = target; }
+	void SetLockOnTarget(BaseEnemy* target) { lockOnTarget_ = target; }
 	void ClearLockOnTarget() { lockOnTarget_ = nullptr; }
-	Enemy* GetLockOnTarget() const { return lockOnTarget_; }
+	BaseEnemy* GetLockOnTarget() const { return lockOnTarget_; }
 	void Jump();
 	void Falling();
 	PlayerSkill* GetSkill() { return attack_->GetSkill(); }
