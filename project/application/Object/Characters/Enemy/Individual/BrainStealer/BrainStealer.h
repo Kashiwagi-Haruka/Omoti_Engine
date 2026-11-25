@@ -2,7 +2,11 @@
 
 #include "Object/Characters/Enemy/Base/BaseEnemy.h"
 #include "Object/Characters/Enemy/Base/Parameter/EnemyParameter.h"
+#include "Animation/Animation.h"
+#include "Animation/Skeleton.h"
+#include "Animation/SkinCluster.h"
 
+#include <vector>
 #include <string>
 
 class BrainStealer final : public BaseEnemy {
@@ -21,7 +25,14 @@ public:
 
 protected:
 	void UpdateBehavior(const Vector3& housePosition, const Vector3& houseScale, const Vector3& playerPosition, bool isPlayerAlive, bool canMove) override;
+	void InitializeModelAnimation(Object3d& object) override;
+	void UpdateModelAnimation(float deltaTime, bool isMoving) override;
 
 private:
 	SpecificParameter specificParameter_;
+	std::vector<Animation::AnimationData> animationClips_;
+	std::unique_ptr<Skeleton> skeleton_;
+	SkinCluster skinCluster_{};
+	const Animation::AnimationData* currentClip_ = nullptr;
+	float animationTime_ = 0.0f;
 };
