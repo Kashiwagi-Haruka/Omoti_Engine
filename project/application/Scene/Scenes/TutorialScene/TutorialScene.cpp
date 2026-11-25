@@ -71,15 +71,34 @@ void TutorialScene::Initialize() {
 	controlSprite_->SetPosition({10.0f, 600.0f});
 	controlSprite_->Update();
 
+	const Vector2 guideSize{580.0f, 260.0f};
+	const Vector2 guidePosition{
+	    GameBase::GetInstance()->GetScreenWidth() - 600.0f,
+	    120.0f,
+	};
+	constexpr float kGuideWindowPadding = 16.0f;
+
+	const auto guideWindowHandle = TextureManager::GetInstance()->GetTextureIndexByfilePath("Resources/2d/tuatorial/TutorialWindow.png");
+
+	guideWindowSprite_ = std::make_unique<Sprite>();
+	guideWindowSprite_->Initialize(guideWindowHandle);
+	guideWindowSprite_->SetAnchorPoint({0.0f, 0.0f});
+	guideWindowSprite_->SetPosition({
+	    guidePosition.x - kGuideWindowPadding,
+	    guidePosition.y - kGuideWindowPadding,
+	});
+	guideWindowSprite_->SetScale({
+	    guideSize.x + 2.0f * kGuideWindowPadding,
+	    guideSize.y + 2.0f * kGuideWindowPadding,
+	});
+	guideWindowSprite_->Update();
+
 	const auto fontHandle = FreeTypeManager::CreateFace("Resources/Font/irohakakuC-Medium.ttf", 0);
 	FreeTypeManager::SetPixelSizes(fontHandle, 24, 24);
 
 	guideText_.Initialize(fontHandle);
-	guideText_.SetSize({580.0f, 260.0f});
-	guideText_.SetPosition({
-	    GameBase::GetInstance()->GetScreenWidth() - 600.0f,
-	    120.0f,
-	});
+	guideText_.SetSize(guideSize);
+	guideText_.SetPosition(guidePosition);
 	guideText_.SetAlign(TextAlign::Left);
 	guideText_.SetColor({1.0f, 1.0f, 1.0f, 1.0f});
 
@@ -325,6 +344,7 @@ void TutorialScene::Draw() {
 
 	controlSprite_->Draw();
 	tutorialUI_->Draw();
+	guideWindowSprite_->Draw();
 
 	if (isAttributeMenuOpen_) {
 		for (const auto& sprite : attributeSprites_) {
@@ -335,7 +355,6 @@ void TutorialScene::Draw() {
 	uiManager_->Draw();
 	guideText_.Draw();
 }
-
 void TutorialScene::Finalize() {
 	auto* input = Input::GetInstance();
 	input->SetIsCursorStability(false);
