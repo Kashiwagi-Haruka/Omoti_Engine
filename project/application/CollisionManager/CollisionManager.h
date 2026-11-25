@@ -3,7 +3,7 @@
 #include "Vector3.h"
 #include <string>
 #include <vector>
-class Enemy;
+class BaseEnemy;
 class EnemyManager;
 class House;
 class Player;
@@ -51,5 +51,5 @@ public:
 	/// <returns></returns>
 	bool HandleGameSceneCollisions(
 	    Player& player, EnemyManager& enemyManager, House& house, Boss* boss, SpecialGaugeBallManager* specialGaugeBallManager = nullptr, Vector3* outHitEnemyPos = nullptr,
-	    bool* outDidPlayerAttackHitEnemy = nullptr, Enemy** outNormalAttackHitEnemy = nullptr);
+	    bool* outDidPlayerAttackHitEnemy = nullptr, BaseEnemy** outNormalAttackHitEnemy = nullptr);
 };

@@ -1,6 +1,7 @@
 #pragma once
 
 #include "BaseScene.h"
+#include "Object/Characters/Enemy/StageEnemyLayout.h"
 
 #include <array>
 #include <cstddef>
@@ -28,9 +29,16 @@ private:
 	void Load(CharacterData& data);
 	void Save(CharacterData& data);
 	void Recalculate(CharacterData& data);
+	void LoadStageEnemies();
+	void DrawStageEnemyEditor();
 
 	std::array<CharacterData, 4> characters_{};
 	std::size_t selectedIndex_ = 0;
 	bool initialized_ = false;
 	std::string status_;
+
+	StageEnemyLayout stageEnemies_{};
+	int selectedEnemyPhase_ = 0;
+	bool stageEnemiesLoaded_ = false;
+	std::string stageEnemyStatus_;
 };

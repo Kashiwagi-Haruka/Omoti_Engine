@@ -47,6 +47,7 @@ void GameLoad::GameSceneLoad() {
 	    {"Resources/3d/CharacterDisplay", "CharacterDisplaySkydome"},
 	    {"Resources/3d", "sizuku", true},
 	    {"Resources/3d", "Enemy"},
+	    {"Resources/3d/Enemy/Brain", "Brain", true},
 	    {"Resources/3d", "WaterBoss", true},
 	    {"Resources/3d", "EnemyStun"},
 	    {"Resources/3d", "EnemyAttack"},

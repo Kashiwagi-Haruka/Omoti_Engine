@@ -4,7 +4,7 @@
 #include "Function.h"
 #include "Input.h"
 #include "Model/ModelManager.h"
-#include "Object/Characters/Enemy/Enemy.h"
+#include "Object/Characters/Enemy/Base/BaseEnemy.h"
 #include <algorithm>
 #include <numbers>
 #include "Object3d/Object3dCommon.h"

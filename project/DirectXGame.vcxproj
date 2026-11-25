@@ -160,6 +160,10 @@ copy "$(WindowsSdkDir)\bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)\
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="application\Object\Characters\Enemy\Base\BaseEnemy.cpp" />
+    <ClCompile Include="application\Object\Characters\Enemy\Base\Parameter\EnemyParameter.cpp" />
+    <ClCompile Include="application\Object\Characters\Enemy\EnemyFactory.cpp" />
+    <ClCompile Include="application\Object\Characters\Enemy\Individual\BrainStealer\BrainStealer.cpp" />
+    <ClCompile Include="application\Object\Characters\Enemy\Individual\Switch\SwitchEnemy.cpp" />
     <ClCompile Include="application\Object\Characters\Playable\Weapon\Allow\Allow.cpp" />
     <ClCompile Include="application\CameraController\LockOnCamera\LockOnCamera.cpp" />
     <ClCompile Include="application\Object\Characters\Enemy\Adhesion\Adhesion.cpp" />
@@ -171,7 +175,6 @@ copy "$(WindowsSdkDir)\bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)\
     <ClCompile Include="application\Menu\CharacterDisplay\CharacterDisplay.cpp" />
     <ClCompile Include="application\Menu\CharacterDisplay\Background\CharacterDisplaySkyDome.cpp" />
     <ClCompile Include="application\Object\Characters\Playable\Individual\Sizuku\Sizuku.cpp" />
-    <ClCompile Include="application\Object\Characters\Enemy\Enemy.cpp" />
     <ClCompile Include="application\Object\Characters\Enemy\EnemyAttack.cpp" />
     <ClCompile Include="application\Object\Characters\Enemy\EnemyHitEffect.cpp" />
     <ClCompile Include="application\Object\Characters\Enemy\EnemyManager.cpp" />
@@ -368,6 +371,7 @@ copy "$(WindowsSdkDir)\bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)\
     <ClCompile Include="application\Scene\Scenes\TutorialScene\TutorialFlow\TutorialFlow.cpp" />
     <ClCompile Include="application\Scene\Scenes\TutorialScene\TutorialStep\TutorialState.cpp" />
     <ClCompile Include="application\CameraController\LockOnCamera\SelfLockOnCamera\SelfLockOnCamera.cpp" />
+    <ClCompile Include="application\Object\Characters\Enemy\StageEnemyLayout.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include=".editorconfig" />
@@ -392,6 +396,10 @@ copy "$(WindowsSdkDir)\bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)\
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="application\Menu\CharacterDisplay\CharacterDisplayMenuType.h" />
+    <ClInclude Include="application\Object\Characters\Enemy\Base\Parameter\EnemyParameter.h" />
+    <ClInclude Include="application\Object\Characters\Enemy\EnemyFactory.h" />
+    <ClInclude Include="application\Object\Characters\Enemy\Individual\BrainStealer\BrainStealer.h" />
+    <ClInclude Include="application\Object\Characters\Enemy\Individual\Switch\SwitchEnemy.h" />
     <ClInclude Include="application\Object\Characters\Playable\Base\Arcana.h" />
     <ClInclude Include="application\Object\Characters\Playable\Base\SkilltreeType.h" />
     <ClInclude Include="application\Object\Characters\Playable\Base\UPParametersType.h" />
@@ -412,7 +420,6 @@ copy "$(WindowsSdkDir)\bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)\
     <ClInclude Include="application\Menu\CharacterDisplay\Background\CharacterDisplaySkyDome.h" />
     <ClInclude Include="application\Object\Characters\Playable\Individual\Sizuku\Sizuku.h" />
     <ClInclude Include="application\Object\Characters\Enemy\Base\BaseEnemy.h" />
-    <ClInclude Include="application\Object\Characters\Enemy\Enemy.h" />
     <ClInclude Include="application\Object\Characters\Enemy\EnemyAttack.h" />
     <ClInclude Include="application\Object\Characters\Enemy\EnemyHitEffect.h" />
     <ClInclude Include="application\Object\Characters\Enemy\EnemyManager.h" />
@@ -614,6 +621,7 @@ copy "$(WindowsSdkDir)\bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)\
     <ClInclude Include="application\Scene\Scenes\TutorialScene\TutorialFlow\TutorialFlow.h" />
     <ClInclude Include="application\Scene\Scenes\TutorialScene\TutorialStep\TutorialState.h" />
     <ClInclude Include="application\CameraController\LockOnCamera\SelfLockOnCamera\SelfLockOnCamera.h" />
+    <ClInclude Include="application\Object\Characters\Enemy\StageEnemyLayout.h" />
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="Resources\shader\FullScreenCopy\CopyImage.PS.hlsl">
