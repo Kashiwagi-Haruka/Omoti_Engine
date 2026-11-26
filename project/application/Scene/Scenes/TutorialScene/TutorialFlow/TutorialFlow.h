@@ -7,6 +7,7 @@
 #include <string>
 #include <vector>
 
+// TutorialFlow.h
 struct TutorialFrame {
 	float deltaTime = 0.0f;
 	bool isPaused = false;
@@ -16,9 +17,9 @@ struct TutorialFrame {
 	bool skillStarted = false;
 	bool specialStarted = false;
 	bool specialOnCooldown = false;
+	bool attributeChangeConfirmed = false;
 	Attribute attribute = Attribute::None;
 };
-
 class TutorialState;
 
 class TutorialFlow {

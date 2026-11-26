@@ -44,7 +44,7 @@ void EnemyAttack::Update() {
 	if (state_ == State::Idle)
 		return;
 
-	timer_ += 1.0f / 60.0f;
+	timer_ += GameBase::GetInstance()->GetDeltaTime();
 	float t = std::min(timer_ / swingTime_, 1.0f);
 
 	// 鎌を振り下ろす回転
