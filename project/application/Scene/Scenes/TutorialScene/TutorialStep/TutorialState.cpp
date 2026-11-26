@@ -46,9 +46,49 @@ class AttackStep final : public TutorialState {
 public:
 	AttackStep() : TutorialState(Step::Attack) {}
 
-	Result Update(const TutorialFrame& frame) override { return FromDone(frame.attacking); }
+	void Enter(const TutorialFrame&) override { count_ = 0; }
 
-	std::u32string Guide(const TutorialFrame&) const override { return U"左クリック / Xボタンで攻撃しよう"; }
+	Result Update(const TutorialFrame& frame) override {
+		if (frame.normalAttackStarted) {
+			++count_;
+		}
+
+		return {
+		    static_cast<float>(count_) / static_cast<float>(kTargetCount),
+		    count_ >= kTargetCount,
+		};
+	}
+
+	std::u32string Guide(const TutorialFrame&) const override {
+		return U"左クリック / Xボタンで通常攻撃を3回\n"
+		       U"発動回数 " +
+		       ToText(count_) + U" / " + ToText(kTargetCount);
+	}
+
+private:
+	static constexpr std::size_t kTargetCount = 3;
+	std::size_t count_ = 0;
+};
+
+class AttributeAttackStep final : public TutorialState {
+public:
+	AttributeAttackStep() : TutorialState(Step::AttributeAttack) {}
+
+	void Enter(const TutorialFrame& frame) override { selectedAttribute_ = frame.attribute; }
+
+	Result Update(const TutorialFrame& frame) override {
+		const bool attackStarted = frame.normalAttackStarted || frame.skillStarted || frame.specialStarted;
+
+		return FromDone(frame.attribute == selectedAttribute_ && attackStarted);
+	}
+
+	std::u32string Guide(const TutorialFrame&) const override {
+		return U"切り替えた属性のまま攻撃しよう\n"
+		       U"通常攻撃・スキル・必殺技のどれか1回";
+	}
+
+private:
+	Attribute selectedAttribute_ = Attribute::None;
 };
 
 class SkillStep final : public TutorialState {
@@ -150,6 +190,7 @@ std::unique_ptr<TutorialState> MakeSkillStep() { return std::make_unique<SkillSt
 std::unique_ptr<TutorialState> MakeSpecialStep() { return std::make_unique<SpecialStep>(); }
 
 std::unique_ptr<TutorialState> MakeAttributeStep() { return std::make_unique<AttributeStep>(); }
+std::unique_ptr<TutorialState> MakeAttributeAttackStep() { return std::make_unique<AttributeAttackStep>(); }
 
 std::unique_ptr<TutorialState> MakePauseStep() { return std::make_unique<PauseStep>(); }
 

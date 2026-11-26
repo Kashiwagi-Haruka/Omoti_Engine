@@ -58,6 +58,9 @@ class PlayerAttack {
 	PlayerModels* models_ = nullptr;
 
 	Transform playerTransform_;
+	// private
+	bool normalAttackStartedThisFrame_ = false;
+
 
 public:
 	PlayerAttack();
@@ -70,6 +73,8 @@ public:
 	void EndAttack();
 	void ResetNormalAttackState();
 
+	// public
+	bool DidStartNormalAttack() const { return normalAttackStartedThisFrame_; }
 	bool IsAttacking() const { return isAttacking_; }            // 攻撃中かどうかを返す関数
 	bool IsFallingAttacking() const { return isFallingAttack_; } // 落下攻撃中かどうかを返す関数
 	bool isSkillAttacking() const { return isSkillAttack; }      // スキル攻撃中かどうかを返す関数

@@ -19,6 +19,7 @@ TutorialFlow::TutorialFlow() {
 	steps_.push_back(MakeSkillStep());
 	steps_.push_back(MakeSpecialStep());
 	steps_.push_back(MakeAttributeStep());
+	steps_.push_back(MakeAttributeAttackStep());
 	steps_.push_back(MakePauseStep());
 	steps_.push_back(MakeCompleteStep());
 }

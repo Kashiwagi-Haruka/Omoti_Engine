@@ -15,7 +15,8 @@ class Sky;
 class Sprite;
 class TutorialUI;
 class UIManager;
-
+// 前方宣言
+class Object3d;
 class TutorialScene : public BaseScene {
 public:
 	TutorialScene();
@@ -45,7 +46,8 @@ private:
 	std::unique_ptr<TutorialUI> tutorialUI_;
 	std::unique_ptr<UIManager> uiManager_;
 	std::unique_ptr<Sprite> guideWindowSprite_;
-
+	void UpdateTrainingDummy();
+	std::unique_ptr<Object3d> trainingDummy_;
 	std::array<std::unique_ptr<Sprite>, kAttributeCount> attributeSprites_;
 
 	Text guideText_;

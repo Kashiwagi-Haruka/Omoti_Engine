@@ -17,7 +17,8 @@
 #include "TextureManager.h"
 #include "TutorialUI/TutorialUI.h"
 #include "UI/UIManager/UIManager.h"
-
+#include "Object3d/Object3d.h"
+#include "RigidBody.h"
 #include <algorithm>
 #include <array>
 #include <cmath>
@@ -37,7 +38,15 @@ constexpr std::array<const char*, 6> kAttributeTexturePaths = {
     "Resources/2d/Attribute/Fire.png",    "Resources/2d/Attribute/Ice.png",       "Resources/2d/Attribute/Wind.png",
     "Resources/2d/Attribute/Thunder.png", "Resources/2d/Attribute/Imaginary.png", "Resources/2d/Attribute/Quantum.png",
 };
+constexpr Vector3 kTrainingDummyPosition{-5.0f, 1.5f, 1.0f};
+constexpr Vector3 kTrainingDummyScale{1.5f, 1.5f, 1.5f};
 
+AABB MakeTrainingAabb(const Vector3& center, const Vector3& halfSize) {
+	return {
+	    {center.x - halfSize.x, center.y - halfSize.y, center.z - halfSize.z},
+	    {center.x + halfSize.x, center.y + halfSize.y, center.z + halfSize.z},
+	};
+}
 } // namespace
 
 TutorialScene::TutorialScene() = default;
@@ -59,7 +68,16 @@ void TutorialScene::Initialize() {
 	player_->Initialize(camera);
 	player_->SetCharacterType("Sizuku");
 	field_->Initialize(camera);
-
+	trainingDummy_ = std::make_unique<Object3d>();
+	trainingDummy_->Initialize();
+	trainingDummy_->SetModel("Enemy");
+	trainingDummy_->SetCamera(camera);
+	trainingDummy_->SetTransform({
+	    .scale = kTrainingDummyScale,
+	    .rotate = {0.0f, 0.0f, 0.0f},
+	    .translate = kTrainingDummyPosition,
+	});
+	trainingDummy_->Update();
 	tutorialUI_->Initialize();
 	uiManager_->Initialize();
 
@@ -142,7 +160,35 @@ void TutorialScene::InitializeAttributeMenu() {
 		sprite->Update();
 	}
 }
+void TutorialScene::UpdateTrainingDummy() {
+	const AABB dummyBounds = MakeTrainingAabb(kTrainingDummyPosition, kTrainingDummyScale);
 
+	const auto overlapsDummy = [&dummyBounds](const Vector3& center, const Vector3& halfSize) { return RigidBody::isCollision(MakeTrainingAabb(center, halfSize), dummyBounds); };
+
+	auto* sword = player_->GetSword();
+	auto* skill = player_->GetSkill();
+	auto* special = player_->GetSpecial();
+
+	const float swordHalfSize = sword->GetHitSize();
+	const bool swordHit = sword->IsAttacking() && overlapsDummy(sword->GetPosition(), {swordHalfSize, swordHalfSize, swordHalfSize});
+	const bool skillHit = skill->IsDamaging() && overlapsDummy(skill->GetDamagePosition(), skill->GetDamageScale());
+	const bool specialHit = special->IsDamaging() && overlapsDummy(special->GetDamagePosition(), special->GetDamageScale());
+
+	bool rainHit = false;
+	if (special->IsRainDamaging()) {
+		const Vector3 rainHalfSize = special->GetRainDamageScale();
+		for (const auto& rain : special->GetRainDamageTransforms()) {
+			if (overlapsDummy(rain.translate, rainHalfSize)) {
+				rainHit = true;
+				break;
+			}
+		}
+	}
+
+	const bool hit = swordHit || skillHit || specialHit || rainHit;
+	trainingDummy_->SetColor(hit ? Vector4{1.0f, 0.35f, 0.35f, 1.0f} : Vector4{1.0f, 1.0f, 1.0f, 1.0f});
+	trainingDummy_->Update();
+}
 void TutorialScene::UpdateAttributeMenu() {
 	if (!isAttributeMenuOpen_) {
 		return;
@@ -272,17 +318,20 @@ void TutorialScene::Update() {
 		skyDome_->Update();
 		field_->Update();
 
-		const bool wasSkillAttacking = player_->GetIsSkillAttack();
-		const bool wasSpecialAttacking = player_->GetIsSpecialAttack();
+trainingDummy_->SetCamera(camera);
 
 		if (!isAttributeMenuOpen_) {
+			const bool wasSkillAttacking = player_->GetIsSkillAttack();
+			const bool wasSpecialAttacking = player_->GetIsSpecialAttack();
+
 			player_->Update();
+
+			frame.normalAttackStarted = player_->DidStartNormalAttack();
+			frame.skillStarted = !wasSkillAttacking && player_->GetIsSkillAttack();
+			frame.specialStarted = !wasSpecialAttacking && player_->GetIsSpecialAttack();
 		}
 
-		frame.skillStarted = !wasSkillAttacking && player_->GetIsSkillAttack();
-		frame.specialStarted = !wasSpecialAttacking && player_->GetIsSpecialAttack();
-		frame.attacking = player_->GetComboStep() > 0;
-
+		UpdateTrainingDummy();
 		UpdateAttributeMenu();
 
 		const auto leftStick = input->GetJoyStickLXY();
@@ -333,6 +382,7 @@ void TutorialScene::Draw() {
 
 	skyDome_->Draw();
 	field_->Draw();
+	trainingDummy_->Draw();
 	player_->Draw();
 
 	SpriteCommon::GetInstance()->DrawCommon();

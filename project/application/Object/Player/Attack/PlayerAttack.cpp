@@ -63,6 +63,7 @@ void PlayerAttack::SetAttackName(std::string AttackName) {
 }
 
 void PlayerAttack::Update() {
+	normalAttackStartedThisFrame_ = false;
 	// 攻撃の更新処理をここに記述
 	for (auto& [name, cooldown] : specialAttackCooldowns_) {
 		(void)name;
@@ -123,7 +124,7 @@ void PlayerAttack::Update() {
 				nextComboInput_ = true; // 自動的に次のコンボが始まるフラグを立てる
 			}
 			
-
+			normalAttackStartedThisFrame_ = true;
 			// 次のコンボ段階に進む
 			comboStep_++;
 			if (comboStep_ > 4) {
