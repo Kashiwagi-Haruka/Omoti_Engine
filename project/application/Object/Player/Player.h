@@ -166,6 +166,7 @@ public:
 	bool IsSizuku() const { return currentCharacterName_ == "Sizuku"; }
 	const BaseParameter& GetCurrentBaseParameter() const;
 	const Parameter& GetCurrentCombatParameter() const;
+	bool DidStartNormalAttack() const { return attack_->DidStartNormalAttack(); }
 
 private:
 	std::string currentCharacterName_ = "Sizuku";

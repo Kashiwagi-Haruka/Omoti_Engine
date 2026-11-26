@@ -12,7 +12,7 @@ struct TutorialFrame {
 	bool isPaused = false;
 	bool moving = false;
 	bool looking = false;
-	bool attacking = false;
+	bool normalAttackStarted = false;
 	bool skillStarted = false;
 	bool specialStarted = false;
 	bool specialOnCooldown = false;
@@ -30,6 +30,7 @@ public:
 		Skill,
 		Special,
 		AttributeChange,
+		AttributeAttack,
 		Pause,
 		Complete,
 	};

@@ -12,8 +12,8 @@ namespace {
 using Step = TutorialFlow::Step;
 
 // TutorialFlow::Step の列挙順に対応する。
-constexpr std::array<const char32_t*, 8> kStepNames{
-    U"移動", U"視点操作", U"通常攻撃", U"スキル", U"必殺技", U"属性変更", U"ポーズ", U"完了",
+constexpr std::array<const char32_t*, 9> kStepNames{
+    U"移動", U"視点操作", U"通常攻撃", U"スキル", U"必殺技", U"属性変更", U"属性変更後の攻撃", U"ポーズ", U"完了",
 };
 
 void AppendRow(std::u32string& text, Step step, int percent) {

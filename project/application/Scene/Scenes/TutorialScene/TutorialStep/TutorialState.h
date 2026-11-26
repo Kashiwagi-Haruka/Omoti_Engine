@@ -29,3 +29,4 @@ std::unique_ptr<TutorialState> MakeSpecialStep();
 std::unique_ptr<TutorialState> MakeAttributeStep();
 std::unique_ptr<TutorialState> MakePauseStep();
 std::unique_ptr<TutorialState> MakeCompleteStep();
+std::unique_ptr<TutorialState> MakeAttributeAttackStep();
