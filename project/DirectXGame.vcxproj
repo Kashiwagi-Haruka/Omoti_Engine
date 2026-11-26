@@ -396,6 +396,7 @@ copy "$(WindowsSdkDir)\bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)\
     <None Include="Resources\shader\Sprite\Sprite.hlsli" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="application\CameraController\TargetOrbitCamera.h" />
     <ClInclude Include="application\Menu\CharacterDisplay\CharacterDisplayMenuType.h" />
     <ClInclude Include="application\Object\Characters\Enemy\Base\Parameter\EnemyParameter.h" />
     <ClInclude Include="application\Object\Characters\Enemy\EnemyFactory.h" />

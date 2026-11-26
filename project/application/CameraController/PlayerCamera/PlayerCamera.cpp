@@ -1,4 +1,5 @@
 #include "PlayerCamera.h"
+#include "GameBase.h"
 #include "Camera.h"
 #include "Input.h"
 #include <imgui.h>
@@ -41,7 +42,7 @@ void PlayerCamera::Update() {
 	transform_.rotate = {orbitPitch_, orbitYaw_, 0.0f};
 
 	if (shakeTimer_ > 0.0f) {
-		shakeTimer_ -= dxCommon_->GetDeltaTime();
+		shakeTimer_ -= GameBase::GetInstance()->GetDeltaTime();
 		if (shakeTimer_ < 0.0f) {
 			shakeTimer_ = 0.0f;
 		}

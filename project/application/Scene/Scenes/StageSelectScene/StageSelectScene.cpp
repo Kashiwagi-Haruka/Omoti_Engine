@@ -64,17 +64,17 @@ void StageSelectScene::Update() {
 	cameraController_->SetPlayerTransform(cameraPlayerTransform);
 	cameraController_->Update();
 
-	const Vector3 playerPosition = player_->GetPosition();
+const Vector3 playerPosition = player_->GetPosition();
 	const Vector3 playerScale = player_->GetScale();
 
-	// プレイヤーの位置を中心とする仮の接触判定。
-	// モデルの大きさに合わせて係数を調整する。
-	const Vector3 playerHalfSize = {0.5f * std::abs(playerScale.x), 1.0f * std::abs(playerScale.y), 0.5f * std::abs(playerScale.z)};
+	// プレイヤーモデルに合わせた当たり判定の半サイズ。
+	const Vector3 playerHalfSize = {
+	    0.5f * std::abs(playerScale.x),
+	    1.0f * std::abs(playerScale.y),
+	    0.5f * std::abs(playerScale.z),
+	};
 
-	const AABB playerAABB = {
-	    {playerPosition.x - playerHalfSize.x, playerPosition.y - playerHalfSize.y, playerPosition.z - playerHalfSize.z},
-	    {playerPosition.x + playerHalfSize.x, playerPosition.y + playerHalfSize.y, playerPosition.z + playerHalfSize.z}
-    };
+	const AABB playerAABB = RigidBody::MakeAABB(playerPosition, playerHalfSize);
 
 	if (tutorialStageGate_->IsTouchingPlayer(playerAABB)) {
 		selectedStage_ = StageNames::TUTORIAL_STAGE;

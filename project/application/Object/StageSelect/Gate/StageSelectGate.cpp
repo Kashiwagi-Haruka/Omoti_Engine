@@ -34,11 +34,10 @@ void StageSelectGate::UpdateTransform() {
 	Portal_->SetTranslate(position_);
 	Portal_->SetScale(portalScale_);
 
-	StageNamePlate_->SetTranslate({position_.x, position_.y + 6.0f, position_.z-1.5f});
+	StageNamePlate_->SetTranslate({position_.x, position_.y + 6.0f, position_.z - 1.5f});
 	StageNamePlate_->SetScale({10.0f, 10.0f, 1.0f});
 
-	portalAABB_.min = {position_.x - portalHalfSize_.x, position_.y - portalHalfSize_.y, position_.z - portalHalfSize_.z};
-	portalAABB_.max = {position_.x + portalHalfSize_.x, position_.y + portalHalfSize_.y, position_.z + portalHalfSize_.z};
+	portalAABB_ = RigidBody::MakeAABB(position_, portalHalfSize_);
 }
 
 void StageSelectGate::Update() {

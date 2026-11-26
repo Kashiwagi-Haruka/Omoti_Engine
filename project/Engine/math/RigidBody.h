@@ -48,5 +48,19 @@ bool isCollision(const AABB& aabb1, const AABB& aabb2);
 bool isCollision(const AABB& aabb, const Sphere& sphere);
 bool isCollision(const AABB& aabb, const Segment& segment);
 void DrawAABB(const AABB& aabb, const Matrix4x4& viewProjectionMatrix, const Matrix4x4& viewportMatrix, uint32_t color);
-
+// halfSize には各軸の非負の半サイズを渡す。
+inline AABB MakeAABB(const Vector3& center, const Vector3& halfSize) {
+	return {
+	    {
+         center.x - halfSize.x,
+         center.y - halfSize.y,
+         center.z - halfSize.z,
+	     },
+	    {
+         center.x + halfSize.x,
+         center.y + halfSize.y,
+         center.z + halfSize.z,
+	     },
+	};
+}
 }; // namespace RigidBody
