@@ -412,7 +412,27 @@ Vector3 RotateVectorByQuaternion(const Vector3& v, const Vector4& q) {
 	Vector4 rq = MultiplyQuaternion(MultiplyQuaternion(nq, vq), ConjugateQuaternion(nq));
 	return {rq.x, rq.y, rq.z};
 }
+float NormalizeAngle(float angle) {
+	constexpr float kFullTurn = 2.0f * kPi;
+	angle = std::fmod(angle, kFullTurn);
 
+	if (angle > kPi) {
+		angle -= kFullTurn;
+	} else if (angle < -kPi) {
+		angle += kFullTurn;
+	}
+	return angle;
+}
+
+float GetNearestAngle(float current, float target) { return current + NormalizeAngle(target - current); }
+
+Vector3 LerpRotationShortest(const Vector3& start, const Vector3& end, float ratio) {
+	return {
+	    Lerp(start.x, GetNearestAngle(start.x, end.x), ratio),
+	    Lerp(start.y, GetNearestAngle(start.y, end.y), ratio),
+	    Lerp(start.z, GetNearestAngle(start.z, end.z), ratio),
+	};
+}
 } // namespace Function
 // Vector3加算
 Vector3 operator+(const Vector3& v1, const Vector3& v2) { return {v1.x + v2.x, v1.y + v2.y, v1.z + v2.z}; }

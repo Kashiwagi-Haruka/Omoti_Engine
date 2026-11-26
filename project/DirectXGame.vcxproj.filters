@@ -1332,6 +1332,7 @@
     <ClInclude Include="application\Object\Characters\Enemy\StageEnemyLayout.h" />
     <ClInclude Include="application\Object\Characters\Enemy\Base\Parameter\EnemyParameter.h" />
     <ClInclude Include="application\Scene\Scenes\TutorialScene\TutorialProgressWindow\TutorialProgressWindow.h" />
+    <ClInclude Include="application\CameraController\TargetOrbitCamera.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include=".editorconfig" />

@@ -83,7 +83,14 @@ Vector4 MakeQuaternionFromAxisAngle(const Vector3& axis, float radian);
 Vector3 RotateVectorByQuaternion(const Vector3& v, const Vector4& q);
 // 子Transformに親Transformを適用した行列を返す
 Matrix4x4 MakeParentAffineMatrix(const Transform& child, const Transform& parent);
+// ラジアンを [-π, π] に収める。
+float NormalizeAngle(float angle);
 
+// target と同じ向きで、current に最も近い角度を返す。
+float GetNearestAngle(float current, float target);
+
+// オイラー角の各成分を、角度の差が小さい方向へ補間する。
+Vector3 LerpRotationShortest(const Vector3& start, const Vector3& end, float ratio);
 } // namespace Function
 // Vector3同士の加算
 Vector3 operator+(const Vector3& v1, const Vector3& v2);

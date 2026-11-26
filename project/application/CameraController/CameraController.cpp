@@ -69,7 +69,6 @@ void CameraController::Update() {
 
 	if (autoLockOnTimer_ > 0.0f) {
 		autoLockOnTimer_ -= GameBase::GetInstance()->GetDeltaTime();
-		RequestCameraMode(CameraMode::kLockOnCamera);
 		if (autoLockOnTimer_ <= 0.0f) {
 			ReturnToPlayerCamera();
 		}
@@ -97,15 +96,18 @@ void CameraController::Update() {
 
 	playerCamera_->SetPlayerPos(playerPos);
 	playerCamera_->Update();
-	lockOnCamera_->SetPlayerPos(playerPos);
-	lockOnCamera_->SetFollowPosition(playerCamera_->GetTransform().translate);
-	lockOnCamera_->SetOrbitPitch(playerCamera_->GetTransform().rotate.x);
-	lockOnCamera_->Update();
+	const Transform playerView = playerCamera_->GetTransform();
 
-	normalAttackCamera_->SetPlayerPos(playerPos);
-	normalAttackCamera_->SetFollowPosition(playerCamera_->GetTransform().translate);
-	normalAttackCamera_->SetOrbitPitch(playerCamera_->GetTransform().rotate.x);
-	normalAttackCamera_->Update();
+	for (TargetOrbitCamera* orbitCamera : {
+	         static_cast<TargetOrbitCamera*>(lockOnCamera_.get()),
+	         static_cast<TargetOrbitCamera*>(normalAttackCamera_.get()),
+	     }) {
+		orbitCamera->SetPlayerPos(playerPos);
+		orbitCamera->SetFollowPosition(playerView.translate);
+		orbitCamera->SetOrbitPitch(playerView.rotate.x);
+		orbitCamera->Update();
+	}
+
 	sizukuSpecialCamera_->Update();
 	if (cameraMode_ == CameraMode::kSizukuSpecialCamera && sizukuSpecialCamera_->GetIsEnd()) {
 		ReturnToPlayerCamera();
