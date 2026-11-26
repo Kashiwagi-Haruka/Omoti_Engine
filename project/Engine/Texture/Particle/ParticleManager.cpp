@@ -120,7 +120,7 @@ void ParticleManager::Initialize(DirectXCommon* dxCommon) {
 	initPerFrameResource_ = dxCommon_->CreateBufferResource(sizeof(PerFrame));
 	initPerFrameResource_->Map(0, nullptr, reinterpret_cast<void**>(&initPerFrameData_));
 	*initPerFrameData_ = PerFrame{};
-	initPerFrameData_->deltaTime = 1.0f / 60.0f;
+	initPerFrameData_->deltaTime = dxCommon_->GetDeltaTime();
 }
 
 void ParticleManager::CreateParticleGroup(const std::string& name, const std::string& textureFilePath) {
@@ -251,7 +251,7 @@ void ParticleManager::Emit(
 	emitterData_->translate = transform.translate;
 	emitterData_->radius = std::max({std::abs(area.min.x), std::abs(area.min.y), std::abs(area.min.z), std::abs(area.max.x), std::abs(area.max.y), std::abs(area.max.z)});
 	emitterData_->count = std::min(count, kMaxParticles_);
-	emitterData_->lifeTime = std::max(life, 1.0f / 60.0f);
+	emitterData_->lifeTime = std::max(life, dxCommon_->GetDeltaTime());
 	emitterData_->acceleration = accel;
 	emitterData_->particleScale = transform.scale;
 	emitterData_->beforeColor = beforeColor;
@@ -272,7 +272,7 @@ void ParticleManager::Emit(
 	perFrameData_->time = 0.0f;
 	perFrameData_->deltaTime = dxCommon_->GetDeltaTime();
 	if (perFrameData_->deltaTime <= 0.0f) {
-		perFrameData_->deltaTime = 1.0f / 60.0f;
+		perFrameData_->deltaTime = dxCommon_->GetDeltaTime();
 	}
 	perFrameData_->time += perFrameData_->deltaTime;
 
@@ -534,7 +534,7 @@ void ParticleManager::UpdateParticlesByCompute() {
 	updateEmitterData_->emit = 0;
 	updatePerFrameData_->deltaTime = dxCommon_->GetDeltaTime();
 	if (updatePerFrameData_->deltaTime <= 0.0f) {
-		updatePerFrameData_->deltaTime = 1.0f / 60.0f;
+		updatePerFrameData_->deltaTime = dxCommon_->GetDeltaTime();
 	}
 	updatePerFrameData_->time += updatePerFrameData_->deltaTime;
 
@@ -601,7 +601,7 @@ void ParticleManager::InitializeParticlesByCompute() {
 
 	initEmitterData_->emit = 2;
 	initPerFrameData_->time = 0.0f;
-	initPerFrameData_->deltaTime = 1.0f / 60.0f;
+	initPerFrameData_->deltaTime = dxCommon_->GetDeltaTime();
 
 	ID3D12DescriptorHeap* heaps[] = {srvManager_->GetDescriptorHeap().Get()};
 	dxCommon_->GetCommandList()->SetDescriptorHeaps(1, heaps);

@@ -3,6 +3,7 @@
 #include "Function.h"
 #include "GameBase.h"
 #include "Model/ModelManager.h"
+#include "GameBase.h"
 #include "Object3d/Object3dCommon.h"
 #include "ParticleManager.h"
 #include "Camera.h"
@@ -14,7 +15,6 @@
 #include <string>
 
 namespace {
-constexpr float kFrameTime = 1.0f / 60.0f;
 constexpr const char* kParticleTexturePath = "Resources/2d/ArrowParticle.png";
 constexpr float kIceShardMinSpeed = 4.0f;
 constexpr float kIceShardMaxSpeed = 7.0f;
@@ -159,13 +159,12 @@ void EnemyHitEffect::Update() {
 		return;
 	}
 
-	activeTimer_ -= kFrameTime;
+	activeTimer_ -= GameBase::GetInstance()->GetDeltaTime();
 	if (activeTimer_ <= 0.0f) {
 		isActive_ = false;
 		return;
 	}
 
-	const float deltaTime = kFrameTime;
 	const float scaleRatio = std::max(activeTimer_ / activeDuration_, 0.0f);
 	Matrix4x4 billboardMatrix = Function::MakeIdentity4x4();
 	if (camera_) {
@@ -188,8 +187,8 @@ void EnemyHitEffect::Update() {
 		}
 	}
 	for (auto& shard : iceShards_) {
-		shard.transform.translate += shard.velocity * deltaTime;
-		shard.transform.rotate += shard.angularVelocity * deltaTime;
+		shard.transform.translate += shard.velocity * GameBase::GetInstance()->GetDeltaTime();
+		shard.transform.rotate += shard.angularVelocity * GameBase::GetInstance()->GetDeltaTime();
 		const float currentScale = shard.baseScale * scaleRatio;
 		shard.transform.scale = {currentScale, currentScale, currentScale};
 		if (shard.object) {

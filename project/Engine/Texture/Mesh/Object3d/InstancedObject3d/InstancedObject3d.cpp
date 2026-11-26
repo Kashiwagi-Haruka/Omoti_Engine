@@ -1,4 +1,5 @@
 #include "Camera.h"
+#include "GameBase.h"
 #include "DirectXCommon.h"
 #include "Engine/Editor/EditorTool/Hierarchy/Hierarchy.h"
 #include "Function.h"
@@ -67,11 +68,8 @@ void InstancedObject3d::Update() {
 	}
 	Matrix4x4 localMatrix = baseNode ? baseNode->localMatrix : Function::MakeIdentity4x4();
 	if (animation_ && model_) {
-		float deltaTime = 1.0f / 60.0f;
 
-		deltaTime = Object3dCommon::GetInstance()->GetDxCommon()->GetDeltaTime();
-
-		animationTime_ = Animation::AdvanceTime(*animation_, animationTime_, deltaTime, isLoopAnimation_);
+		animationTime_ = Animation::AdvanceTime(*animation_, animationTime_, GameBase::GetInstance()->GetDeltaTime(), isLoopAnimation_);
 
 		const Animation::NodeAnimation* nodeAnimation = nullptr;
 		if (baseNode) {
@@ -117,11 +115,8 @@ void InstancedObject3d::UpdateBillboard() {
 	}
 	Matrix4x4 localMatrix = baseNode ? baseNode->localMatrix : Function::MakeIdentity4x4();
 	if (animation_ && model_) {
-		float deltaTime = 1.0f / 60.0f;
 
-		deltaTime = Object3dCommon::GetInstance()->GetDxCommon()->GetDeltaTime();
-
-		animationTime_ = Animation::AdvanceTime(*animation_, animationTime_, deltaTime, isLoopAnimation_);
+		animationTime_ = Animation::AdvanceTime(*animation_, animationTime_, GameBase::GetInstance()->GetDeltaTime(), isLoopAnimation_);
 
 		const Animation::NodeAnimation* nodeAnimation = nullptr;
 		if (baseNode) {

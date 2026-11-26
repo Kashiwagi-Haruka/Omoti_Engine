@@ -41,7 +41,7 @@ void PlayerCamera::Update() {
 	transform_.rotate = {orbitPitch_, orbitYaw_, 0.0f};
 
 	if (shakeTimer_ > 0.0f) {
-		shakeTimer_ -= 1.0f / 60.0f;
+		shakeTimer_ -= dxCommon_->GetDeltaTime();
 		if (shakeTimer_ < 0.0f) {
 			shakeTimer_ = 0.0f;
 		}

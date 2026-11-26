@@ -1,5 +1,6 @@
 #include "NormalAttackCamera.h"
 #include "Camera.h"
+#include "GameBase.h"
 #include "Function.h"
 #include "Input.h"
 #include <cmath>
@@ -66,7 +67,7 @@ void NormalAttackCamera::Update() {
 	transform_.rotate = {orbitPitch_, orbitYaw_, 0.0f};
 
 	if (shakeTimer_ > 0.0f) {
-		shakeTimer_ -= 1.0f / 60.0f;
+		shakeTimer_ -= GameBase::GetInstance()->GetDeltaTime();
 		if (shakeTimer_ < 0.0f) {
 			shakeTimer_ = 0.0f;
 		}

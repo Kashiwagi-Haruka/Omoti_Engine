@@ -1,5 +1,6 @@
 #define NOMINMAX
 #include "EnemyManager.h"
+#include "GameBase.h"
 #include "Function.h "
 #include "Object3d/Object3dCommon.h"
 
@@ -172,7 +173,7 @@ void EnemyManager::AddEnemy(Camera* camera, const StageEnemySpawn& spawn) {
 void EnemyManager::Update(Camera* camera, const Vector3& housePos, const Vector3& houseScale, const Vector3& playerPos, bool isPlayerAlive, bool isMovementPaused) {
 	switch (waveState_) {
 	case WaveState::kWaiting:
-		waveTimer_ += 1.0f / 60.0f;
+		waveTimer_ += GameBase::GetInstance()->GetDeltaTime();
 		if (waveTimer_ >= waveDelay_) {
 			StartNextWave();
 		}

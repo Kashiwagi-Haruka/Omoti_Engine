@@ -1,5 +1,6 @@
 #define NOMINMAX
 #include "Damage.h"
+#include "GameBase.h"
 #include "Camera.h"
 #include "Data/Color.h"
 #include "Function.h"
@@ -114,13 +115,13 @@ void Damage::Update() {
 	}
 
 	if (!isFading_ && appearTimer_ < kAppearDuration_) {
-		appearTimer_ = std::min(appearTimer_ + 1.0f / 60.0f, kAppearDuration_);
+		appearTimer_ = std::min(appearTimer_ + GameBase::GetInstance()->GetDeltaTime(), kAppearDuration_);
 		const float appearEase = SmoothStep(appearTimer_ / kAppearDuration_);
 		alpha_ = std::clamp(kAppearStartAlpha_ + (1.0f - kAppearStartAlpha_) * appearEase, 0.0f, 1.0f);
 	}
 
 	if (timer_ > 0.0f) {
-		timer_ -= 1.0f / 60.0f;
+		timer_ -= GameBase::GetInstance()->GetDeltaTime();
 		if (timer_ <= 0.0f) {
 			if (isFading_) {
 				isVisible_ = false;

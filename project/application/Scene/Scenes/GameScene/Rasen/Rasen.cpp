@@ -1,6 +1,5 @@
 #include "Rasen.h"
-
-#include "Input.h"
+#include "GameBase.h"
 #include "Object/Boss/Boss.h"
 #include "Object/Characters/Enemy/EnemyManager.h"
 #include "Object/Player/Player.h"
@@ -131,17 +130,16 @@ void Rasen::Update(Camera* camera, Player* player, Boss* boss) {
 	}
 
 	if (isPhaseSpriteActive_ && !isBossActive_) {
-		const float deltaTime = 1.0f / 60.0f;
 		const float moveSpeed = 500.0f;
 		const float stopDuration = 0.8f;
 		const float centerX = 640.0f - phaseSpriteSize_.x / 2.0f;
 		if (isPhaseSpritePaused_) {
-			phaseSpriteStopTimer_ += deltaTime;
+			phaseSpriteStopTimer_ += GameBase::GetInstance()->GetDeltaTime();
 			if (phaseSpriteStopTimer_ >= stopDuration) {
 				isPhaseSpritePaused_ = false;
 			}
 		} else {
-			phaseSpriteX_ -= moveSpeed * deltaTime;
+			phaseSpriteX_ -= moveSpeed * GameBase::GetInstance()->GetDeltaTime();
 			if (phaseSpriteX_ <= centerX) {
 				phaseSpriteX_ = centerX;
 				isPhaseSpritePaused_ = true;
@@ -170,7 +168,7 @@ void Rasen::Update(Camera* camera, Player* player, Boss* boss) {
 	}
 
 	if (enemyManager->AreAllWavesComplete() && !isBossActive_) {
-		//const float deltaTime = 1.0f / 60.0f;
+		//const float deltaTime = GameBase::GetInstance()->GetDeltaTime();
 		//if (!isWarningActive_) {
 		//	isWarningActive_ = true;
 		//	warningTimer_ = 0.0f;

@@ -1,5 +1,6 @@
 #define NOMINMAX
 #include "PlayerAttack.h"
+#include "GameBase.h"
 #include "PlayCommand/PlayCommand.h"
 #include "AudioManager/SEManager/SEManager.h"
 
@@ -67,7 +68,7 @@ void PlayerAttack::Update() {
 	// 攻撃の更新処理をここに記述
 	for (auto& [name, cooldown] : specialAttackCooldowns_) {
 		(void)name;
-		cooldown = std::max(0.0f, cooldown - 1.0f / 60.0f);
+		cooldown = std::max(0.0f, cooldown - GameBase::GetInstance()->GetDeltaTime() * 60.0f);
 	}
 	//  落下攻撃中は他の攻撃不可
 	if (isFallingAttack_) {
@@ -83,7 +84,7 @@ void PlayerAttack::Update() {
 	if (!isSkillAttack && !IsSpecialAnimationPlaying()) {
 	// コンボタイマーの更新
 	if (comboTimer_ > 0.0f) {
-		comboTimer_ -= 1.0f / 60.0f;
+		comboTimer_ -= GameBase::GetInstance()->GetDeltaTime();
 		if (comboTimer_ <= 0.0f) {
 			// タイムアウト: コンボリセット
 			comboStep_ = 0;
@@ -93,7 +94,7 @@ void PlayerAttack::Update() {
 
 	// ===== 左クリック長押し判定 =====
 	if (PlayCommand::GetInstance()->GetNORMAL_ATTACK_PUSH()) {
-		attackHoldTimer_ += 1.0f / 60.0f;
+		attackHoldTimer_ += GameBase::GetInstance()->GetDeltaTime();
 	}
 
 	// ===== 攻撃入力の処理 =====

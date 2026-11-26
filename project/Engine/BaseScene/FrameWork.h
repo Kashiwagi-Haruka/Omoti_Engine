@@ -1,17 +1,9 @@
 #pragma once
-#include "AbstractSceneFactory.h"
-#include <memory>
 
 // アプリケーションの実行手順を定義する基底クラス。
 // 初期化 → 更新・描画の繰り返し → 終了処理の流れを管理する。
 // Drawが純粋仮想関数のため、このクラス自体はインスタンス化できない。
 class FrameWork {
-
-	// シーンを生成するファクトリーの所有権を保持する。
-	// アクセス指定を省略しているためprivateとなる。
-	// 現在の実装では、このメンバーを使用する処理はない。
-	std::unique_ptr<AbstractSceneFactory> sceneFactory_ = nullptr;
-
 protected:
 	// メインループの終了要求。
 	// 派生クラスからtrueにすることで、ループの終了を要求できる。

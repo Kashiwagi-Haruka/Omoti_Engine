@@ -1,5 +1,6 @@
 #define NOMINMAX
 #include "Player.h"
+#include "GameBase.h"
 #include "Camera.h"
 #include "Function.h"
 #include "Input.h"
@@ -419,7 +420,7 @@ void Player::Update() {
 
 	//  --- ダメージ後の無敵時間 ---
 	if (isInvincible_) {
-		invincibleTimer_ -= 1.0f / 60.0f;
+		invincibleTimer_ -= GameBase::GetInstance()->GetDeltaTime();
 		if (invincibleTimer_ <= 0.0f) {
 			isInvincible_ = false;
 		}

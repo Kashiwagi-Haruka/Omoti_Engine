@@ -132,22 +132,19 @@ public:
 	}
 };
 
+// TutorialState.cpp
 class AttributeStep final : public TutorialState {
 public:
 	AttributeStep() : TutorialState(Step::AttributeChange) {}
 
-	void Enter(const TutorialFrame& frame) override { initialAttribute_ = frame.attribute; }
-
-	Result Update(const TutorialFrame& frame) override { return FromDone(frame.attribute != initialAttribute_); }
+	Result Update(const TutorialFrame& frame) override { return FromDone(frame.attributeChangeConfirmed); }
 
 	std::u32string Guide(const TutorialFrame&) const override {
-		return U"今と違う属性に変更しよう\n"
+		return U"今と違う属性に切り替えよう\n"
 		       U"Yキーを押しながらマウスで選択\n"
-		       U"パッド：LTを押しながら左スティック";
+		       U"パッド：LTを押しながら左スティック\n"
+		       U"選んだ状態でYキー / LTを離して確定";
 	}
-
-private:
-	Attribute initialAttribute_ = Attribute::None;
 };
 
 class PauseStep final : public TutorialState {
