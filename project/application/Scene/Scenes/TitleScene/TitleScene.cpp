@@ -7,6 +7,7 @@
 #include "TextureManager.h"
 #include "AudioManager/BGMManager/BGMManager.h"
 #include "Object/Load/GameLoad.h"
+#include "StringUtility.h"
 
 #ifdef USE_IMGUI
 #include <imgui.h>
@@ -85,7 +86,20 @@ void TitleScene::Update() {
 	BGMManager::GetInstance()->Play(BGMManager::BGMType::Title);
 	
 	// ゲームのロード進行状況を更新
-	GameLoad::GetInstance()->Update();
+	auto* gameLoad = GameLoad::GetInstance();
+	gameLoad->Update();
+
+	if (isTransitionOut && gameLoad->HasLoadError()) {
+		isTransitionOut = false;
+		isTransitionIn = false;
+
+		const std::wstring message = std::wstring(
+		                                 L"ゲームの開始に必要な素材を読み込めませんでした。\n"
+		                                 L"素材を確認してから、ゲームを再起動してください。\n\n") +
+		                             StringUtility::ConvertString_(gameLoad->GetLoadError());
+
+		MessageBoxW(GetActiveWindow(), message.c_str(), L"ロードエラー", MB_OK | MB_ICONERROR);
+	}
 
 	// 背景スプライトの回転
 	BackGroundSpriteData_.rotate += backgroundRotationSpeed;
@@ -110,10 +124,10 @@ void TitleScene::Update() {
 	}
 
 	// スペースキーが押された場合、シーン遷移を開始
-	if (PlayCommand::GetInstance()->GetDESIDE() && !isTransitionOut) {
+	if (PlayCommand::GetInstance()->GetDESIDE() && !isTransitionOut && !gameLoad->HasLoadError()) {
 		transition->Initialize(true);
 		isTransitionOut = true;
-		GameLoad::GetInstance()->GameSceneLoad();
+		gameLoad->GameSceneLoad();
 	}
 
 	// シーン遷移の更新

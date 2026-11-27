@@ -84,46 +84,62 @@ void TextureManager::ApplyTextureImage(TextureData& textureData, DirectX::Scratc
 		srvDesc.Texture2D.MipLevels = UINT(textureData.metadata.mipLevels);
 	}
 	dxCommon_->GetDevice()->CreateShaderResourceView(textureData.resource.Get(), &srvDesc, textureData.srvHandleCPU);
-	textureData.isLoaded = true;
-	textureData.isLoading = false;
+	textureData.loadState = TextureLoadState::Ready;
 }
 
 void TextureManager::Update() { CompleteFinishedLoads(); }
 
-bool TextureManager::IsTextureLoaded(uint32_t srvIndex) {
+TextureLoadState TextureManager::GetTextureLoadState(uint32_t srvIndex, std::string* failedPath) {
 	CompleteFinishedLoads();
-	for (const auto& [key, data] : textureDatas) {
+
+	for (const auto& [filePath, data] : textureDatas) {
 		if (data.srvIndex == srvIndex) {
-			return data.isLoaded;
+			if (failedPath && data.loadState == TextureLoadState::Failed) {
+				*failedPath = filePath;
+			}
+			return data.loadState;
 		}
 	}
-	return true;
+
+	// RenderTexture など、このマネージャーのロード対象外の SRV。
+	return TextureLoadState::Ready;
 }
+
+bool TextureManager::IsTextureLoaded(uint32_t srvIndex) { return GetTextureLoadState(srvIndex) == TextureLoadState::Ready; }
 
 void TextureManager::CompleteFinishedLoads() {
 	for (auto& [filePath, textureData] : textureDatas) {
-		if (!textureData.isLoading || !textureData.loadFuture.valid()) {
+		auto& future = textureData.loadFuture;
+		if (!future.valid() || future.wait_for(std::chrono::seconds(0)) != std::future_status::ready) {
 			continue;
 		}
-		if (textureData.loadFuture.wait_for(std::chrono::seconds(0)) != std::future_status::ready) {
+
+		// 再読み込みや外部登録で差し替え済みなら、古い結果を破棄する。
+		if (textureData.loadState != TextureLoadState::Loading) {
+			future = {};
 			continue;
 		}
+
 		DirectX::ScratchImage mipImages;
 		try {
-			mipImages = textureData.loadFuture.get();
+			mipImages = future.get();
 		} catch (const std::exception& exception) {
-			// Keep the white placeholder SRV valid when background decoding fails.
-			// In particular, never pass an empty resource to the D3D12 upload helpers.
-			textureData.isLoading = false;
-			std::string log = "[TextureManager] Async load failed: " + filePath + " (" + exception.what() + ")\n";
+			textureData.loadState = TextureLoadState::Failed;
+			const std::string log = "[TextureManager] Async load failed: " + filePath + " (" + exception.what() + ")\n";
+			OutputDebugStringA(log.c_str());
+			continue;
+		} catch (...) {
+			textureData.loadState = TextureLoadState::Failed;
+			const std::string log = "[TextureManager] Async load failed: " + filePath + " (unknown error)\n";
 			OutputDebugStringA(log.c_str());
 			continue;
 		}
-		std::wstring filePathW = StringUtility::ConvertString_(filePath);
-		const bool isDDS = filePathW.size() >= 4 && _wcsicmp(filePathW.c_str() + (filePathW.size() - 4), L".dds") == 0;
+
+		const std::wstring filePathW = StringUtility::ConvertString_(filePath);
+		const bool isDDS = filePathW.size() >= 4 && _wcsicmp(filePathW.c_str() + filePathW.size() - 4, L".dds") == 0;
 		ApplyTextureImage(textureData, std::move(mipImages), isDDS);
 
-		std::string log = "Texture Async Loaded: " + filePath + " | SRV Index: " + std::to_string(textureData.srvIndex) + " | GPU Handle: " + std::to_string(textureData.srvHandleGPU.ptr) + "\n";
+		const std::string log = "Texture Async Loaded: " + filePath + " | SRV Index: " + std::to_string(textureData.srvIndex) + " | GPU Handle: " + std::to_string(textureData.srvHandleGPU.ptr) + "\n";
 		OutputDebugStringA(log.c_str());
 	}
 }
@@ -145,7 +161,8 @@ void TextureManager::LoadTextureName(const std::string& filePath) {
 	if (filePath == kDefaultWhiteTexturePath) {
 		DirectX::ScratchImage mipImages = LoadTextureImage(filePath);
 		ApplyTextureImage(textureData, std::move(mipImages), false);
-		std::string log = "Texture Loaded: " + filePath + " | SRV Index: " + std::to_string(textureData.srvIndex) + " | GPU Handle: " + std::to_string(textureData.srvHandleGPU.ptr) + "\n";
+
+		const std::string log = "Texture Loaded: " + filePath + " | SRV Index: " + std::to_string(textureData.srvIndex) + " | GPU Handle: " + std::to_string(textureData.srvHandleGPU.ptr) + "\n";
 		OutputDebugStringA(log.c_str());
 		return;
 	}
@@ -155,10 +172,8 @@ void TextureManager::LoadTextureName(const std::string& filePath) {
 	textureData.metadata = whiteIt->second.metadata;
 	textureData.resource = whiteIt->second.resource;
 	dxCommon_->GetDevice()->CreateShaderResourceView(textureData.resource.Get(), nullptr, textureData.srvHandleCPU);
-	textureData.isLoading = true;
+
 	textureData.loadFuture = std::async(std::launch::async, [filePath]() {
-		// WIC is COM-based. std::async worker threads do not inherit the main
-		// thread's COM initialization, so initialize it for the decode job.
 		const HRESULT comResult = CoInitializeEx(nullptr, COINIT_MULTITHREADED);
 		const bool shouldUninitialize = SUCCEEDED(comResult);
 		try {
@@ -174,8 +189,8 @@ void TextureManager::LoadTextureName(const std::string& filePath) {
 			throw;
 		}
 	});
+	textureData.loadState = TextureLoadState::Loading;
 }
-
 // メモリ上の画像データを読み込み、SRV を作成する
 void TextureManager::LoadTextureFromMemory(const std::string& key, const uint8_t* data, size_t size) {
 	if (textureDatas.contains(key)) {
@@ -209,7 +224,7 @@ void TextureManager::LoadTextureFromMemory(const std::string& key, const uint8_t
 	srvDesc.Texture2D.MipLevels = UINT(textureData.metadata.mipLevels);
 
 	dxCommon_->GetDevice()->CreateShaderResourceView(textureData.resource.Get(), &srvDesc, textureData.srvHandleCPU);
-
+	textureData.loadState = TextureLoadState::Ready;
 	std::string log = "Embedded Texture Loaded: " + key + " | SRV Index: " + std::to_string(textureData.srvIndex) + " | GPU Handle: " + std::to_string(textureData.srvHandleGPU.ptr) + "\n";
 	OutputDebugStringA(log.c_str());
 }
@@ -251,7 +266,7 @@ void TextureManager::LoadTextureFromRGBA8(const std::string& key, uint32_t width
 	srvDesc.Texture2D.MipLevels = UINT(textureData.metadata.mipLevels);
 
 	dxCommon_->GetDevice()->CreateShaderResourceView(textureData.resource.Get(), &srvDesc, textureData.srvHandleCPU);
-
+	textureData.loadState = TextureLoadState::Ready;
 	std::string log = "Embedded Texture Loaded (RGBA8): " + key + " | SRV Index: " + std::to_string(textureData.srvIndex) + " | GPU Handle: " + std::to_string(textureData.srvHandleGPU.ptr) + "\n";
 	OutputDebugStringA(log.c_str());
 }
@@ -277,6 +292,8 @@ void TextureManager::RegisterExternalTexture(const std::string& key, ID3D12Resou
 	textureData.metadata.dimension = DirectX::TEX_DIMENSION_TEXTURE2D;
 	textureData.metadata.miscFlags = 0;
 	textureData.metadata.miscFlags2 = 0;
+
+	textureData.loadState = TextureLoadState::Ready;
 }
 // メタデータに基づいてテクスチャリソースを作成する
 Microsoft::WRL::ComPtr<ID3D12Resource> TextureManager::CreateTextureResource(DirectX::TexMetadata& metadata) {
@@ -456,7 +473,9 @@ void TextureManager::RefreshTexture(const std::string& filePath) {
 		mipImages = std::move(image);
 	} else {
 		hr = DirectX::GenerateMipMaps(image.GetImages(), image.GetImageCount(), image.GetMetadata(), DirectX::TEX_FILTER_SRGB, 0, mipImages);
-		assert(SUCCEEDED(hr));
+		if (FAILED(hr)) {
+			return;
+		}
 	}
 
 	// 3. 新しいメタデータでリソースを作り直す
@@ -487,7 +506,7 @@ void TextureManager::RefreshTexture(const std::string& filePath) {
 
 	// 既存のハンドルに対して CreateShaderResourceView を呼ぶことで中身が差し替わる
 	dxCommon_->GetDevice()->CreateShaderResourceView(textureData.resource.Get(), &srvDesc, textureData.srvHandleCPU);
-
+	textureData.loadState = TextureLoadState::Ready;
 	// デバッグログ
 	std::string log = "[TextureManager] Refreshed: " + filePath + " (Index: " + std::to_string(textureData.srvIndex) + ")\n";
 	OutputDebugStringA(log.c_str());
