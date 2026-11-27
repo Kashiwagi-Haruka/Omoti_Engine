@@ -11,7 +11,20 @@
 #include <filesystem>
 #include <stdexcept>
 #include <utility>
+namespace {
 
+bool IsRequiredTextureReady(TextureManager& textures, uint32_t handle) {
+	std::string failedPath;
+	const TextureLoadState state = textures.GetTextureLoadState(handle, &failedPath);
+
+	if (state == TextureLoadState::Failed) {
+		throw std::runtime_error("Failed to load required texture: " + failedPath);
+	}
+
+	return state == TextureLoadState::Ready;
+}
+
+} // namespace
 std::unique_ptr<GameLoad> GameLoad::instance_ = nullptr;
 
 GameLoad* GameLoad::GetInstance() {
@@ -33,7 +46,7 @@ GameLoad::~GameLoad() {
 void GameLoad::Finalize() { instance_.reset(); }
 
 void GameLoad::GameSceneLoad() {
-	if (isLoading_ || isLoadComplete_) {
+	if (isLoading_ || isLoadComplete_ || hasLoadError_) {
 		return;
 	}
 
@@ -178,14 +191,7 @@ void GameLoad::Update() {
 	auto* textures = TextureManager::GetInstance();
 	auto* models = ModelManager::GetInstance();
 
-	// ロード画面の画像が出せるようになってから開始
-	if (!textures->IsTextureLoaded(illustrationHandle_)) {
-		return;
-	}
-
 	try {
-		// 単独テクスチャは1フレームに1件登録する。
-		// 画像の非同期読み込みはTextureManager側で行う。
 		if (nextTextureRequest_ < textureRequests_.size()) {
 			const auto& request = textureRequests_.at(nextTextureRequest_);
 
@@ -194,69 +200,53 @@ void GameLoad::Update() {
 			}
 
 			const uint32_t handle = textures->GetTextureIndexByfilePath(request.filePath);
-
 			textureHandles_.emplace(request.key, handle);
-
 			++nextTextureRequest_;
 		}
 
-		// 非同期で読み込んだモデルを登録
 		if (loadFuture_.valid() && loadFuture_.wait_for(std::chrono::seconds(0)) == std::future_status::ready) {
-
 			LoadedModel loaded = loadFuture_.get();
 			const LoadRequest& request = requests_.at(nextRequest_);
 
-			// GPUリソース作成・テクスチャ登録はメインスレッド
+			// GPU リソース作成とテクスチャ登録はメインスレッドで行う。
 			loaded.model->Initialize();
-
 			materialTextureHandles_.push_back(loaded.model->GetModelData().material.textureIndex);
 
 			models->RegisterLoadedModel(request.key, loaded.directory, loaded.filename, request.isGltf, std::move(loaded.model));
-
 			++nextRequest_;
 		}
 
-		// 次のモデルの読み込みを開始
 		if (!loadFuture_.valid() && nextRequest_ < requests_.size()) {
 			const LoadRequest& request = requests_.at(nextRequest_);
 
 			if (Model* existing = models->FindModel(request.key)) {
 				materialTextureHandles_.push_back(existing->GetModelData().material.textureIndex);
-
 				++nextRequest_;
 			} else {
 				StartNextModelLoad();
 			}
 		}
 
-		// モデルが使用するテクスチャの完了数
 		size_t readyMaterialTextures = 0;
-
 		for (uint32_t handle : materialTextureHandles_) {
-			if (textures->IsTextureLoaded(handle)) {
+			if (IsRequiredTextureReady(*textures, handle)) {
 				++readyMaterialTextures;
 			}
 		}
 
-		// 単独テクスチャの完了数
 		size_t readyStandaloneTextures = 0;
-
 		for (const auto& entry : textureHandles_) {
-			if (textures->IsTextureLoaded(entry.second)) {
+			if (IsRequiredTextureReady(*textures, entry.second)) {
 				++readyStandaloneTextures;
 			}
 		}
 
-		// モデル・単独テクスチャともに
-		// 「登録」「テクスチャ準備」の2段階で進捗を計算
 		const size_t totalSteps = (requests_.size() + textureRequests_.size()) * 2;
-
 		const size_t completedSteps = nextRequest_ + readyMaterialTextures + nextTextureRequest_ + readyStandaloneTextures;
 
 		loadProgressPercent_ = totalSteps == 0 ? 100.0f : 100.0f * static_cast<float>(completedSteps) / static_cast<float>(totalSteps);
 
 		const bool modelsReady = nextRequest_ == requests_.size() && readyMaterialTextures == requests_.size();
-
 		const bool texturesReady = nextTextureRequest_ == textureRequests_.size() && readyStandaloneTextures == textureRequests_.size();
 
 		if (modelsReady && texturesReady) {
@@ -268,13 +258,10 @@ void GameLoad::Update() {
 		loadError_ = error.what();
 		hasLoadError_ = true;
 		isLoading_ = false;
-
-		// 失敗時はisLoadComplete_をtrueにしない
 		OutputDebugStringA(loadError_.c_str());
 	}
 
 	barFill_->SetScale({600.0f * (loadProgressPercent_ / 100.0f), 24.0f});
-
 	loadingSpinner_->Update();
 	barBackground_->Update();
 	barFill_->Update();
@@ -287,13 +274,16 @@ void GameLoad::DrawLoadProgress() {
 
 	SpriteCommon::GetInstance()->DrawCommon();
 
-	// 未ロードのイラストは白い代替画像になるため、完了後に描画
-	if (TextureManager::GetInstance()->IsTextureLoaded(illustrationHandle_)) {
+	switch (TextureManager::GetInstance()->GetTextureLoadState(illustrationHandle_)) {
+	case TextureLoadState::Loading:
+		break;
+	case TextureLoadState::Ready:
+	case TextureLoadState::Failed:
 		loadingSpinner_->Draw();
+		break;
 	}
 
 	barBackground_->Draw();
-
 	if (loadProgressPercent_ > 0.0f) {
 		barFill_->Draw();
 	}

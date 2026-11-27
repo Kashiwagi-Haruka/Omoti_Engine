@@ -13,7 +13,11 @@ class DirectXCommon;
 class SrvManager;
 
 constexpr const char* kDefaultWhiteTexturePath = "Resources/2d/white2x2.png";
-
+enum class TextureLoadState {
+	Loading,
+	Ready,
+	Failed,
+};
 // テクスチャの読み込み・SRV管理を行うシングルトン
 class TextureManager {
 
@@ -26,8 +30,8 @@ private:
 		uint32_t srvIndex;                               // SRV 管理番号
 		D3D12_CPU_DESCRIPTOR_HANDLE srvHandleCPU;        // CPU 側 SRV ハンドル
 		D3D12_GPU_DESCRIPTOR_HANDLE srvHandleGPU;        // GPU 側 SRV ハンドル
-		bool isLoading = false;                          // 非同期ロード中か
-		bool isLoaded = false;                           // 本来のテクスチャ読み込み完了か
+		// TextureData のメンバー
+		TextureLoadState loadState = TextureLoadState::Failed;
 		std::future<DirectX::ScratchImage> loadFuture;   // ファイル読み込み・mip 作成ジョブ
 	};
 
@@ -80,7 +84,8 @@ public:
 	uint32_t GetTextureIndexByfilePath(const std::string& filePath);
 	// ファイルパスから SRV インデックスを取得する  Yoshida追加しました。
 	uint32_t GetTextureIndexByfilePathAndRefreshTexture(const std::string& filePath);
-
+	// failedPath を渡すと、失敗したテクスチャのパスまたは登録キーを取得できる。
+	TextureLoadState GetTextureLoadState(uint32_t srvIndex, std::string* failedPath = nullptr);
 
 	// ファイルパスから GPU SRV ハンドルを取得する
 	D3D12_GPU_DESCRIPTOR_HANDLE GetSrvHandleGPU(const std::string& filePath);
